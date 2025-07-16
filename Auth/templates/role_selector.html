@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Seleccion de rol</title>
+    <link rel="stylesheet" href="{% static 'Auth/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'Auth/css/role_selector.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+</head>
+
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card" id="role-card">
+            <button id="btn-back" type="button" class="btn-back mb-3">
+                <i class="bi bi-arrow-left icon-back"></i> Volver
+            </button>
+            <h2 class="card-title-text">Seleccionar Rol</h2>
+            <div class="roles">
+                <div class="role" data-value="salesperson">
+                    <i class="bi bi-person-badge-fill icon-role"></i>
+                    <span class="role-text">Vendedor</span>
+                </div>
+                <div class="role" data-value="stocker">
+                    <i class="bi bi-person-gear icon-role"></i>
+                    <span class="role-text">Repositor</span>
+                </div>
+                <div class="role" data-value="administrator">
+                    <i class="bi bi-person-lock icon-role"></i>
+                    <span class="role-text">Administrador</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="pinModal"
+      tabindex="-1"
+      aria-labelledby="pinModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header flex-column">
+            <i id="modalIcon" class="bi bi-person-badge-fill"></i>
+            <h5 class="modal-title" id="pinModalLabel">Escribir PIN de perfil</h5>
+          </div>
+          <div class="modal-body">
+            <div class="pin-inputs">
+              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+            </div>
+            <div class="error-msg" id="errorMsg">PIN incorrecto. Intenta de nuevo.</div>
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" id="btnCancelPin" class="btn btn-danger text-center d-flex">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'Auth/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'Auth/js/role_selector.js' %}"></script>
+</body>
+
+</html>
