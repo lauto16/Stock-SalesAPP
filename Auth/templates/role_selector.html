@@ -15,6 +15,18 @@
 </head>
 
 <body>
+
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+    <div id="liveToast" class="toast text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Operación realizada con éxito.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
     <div class="auth-wrapper">
         <div class="auth-card" id="role-card">
             <button id="btn-back" type="button" class="btn-back mb-3">
@@ -47,26 +59,22 @@
       data-bs-backdrop="static"
       data-bs-keyboard="false"
     >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header flex-column">
-            <i id="modalIcon" class="bi bi-person-badge-fill"></i>
-            <h5 class="modal-title" id="pinModalLabel">Escribir PIN de perfil</h5>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header flex-column position-relative">
+          <button id="btnCancelPin" type="button" class="btn position-absolute top-0 end-0 m-2 btnCancelPin" data-bs-dismiss="modal" aria-label="Cerrar">X</button>
+          <i id="modalIcon" class="bi bi-person-badge-fill"></i>
+          <h5 class="modal-title" id="pinModalLabel">Escribir PIN del rol</h5>
+        </div>
+    
+        <div class="modal-body">
+          <div class="pin-inputs">
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
           </div>
-          <div class="modal-body">
-            <div class="pin-inputs">
-              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-              <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-            </div>
-            <div class="error-msg" id="errorMsg">PIN incorrecto. Intenta de nuevo.</div>
-          </div>
-          <div class="modal-footer text-center">
-            <button type="button" id="btnCancelPin" class="btn btn-danger text-center d-flex">
-              Cancelar
-            </button>
-          </div>
+          <div class="error-msg" id="errorMsg">PIN incorrecto. Intenta de nuevo.</div>
         </div>
       </div>
     </div>

@@ -6,18 +6,17 @@ const pinInputs = document.querySelectorAll(".pin-digit");
 const modalIcon = document.getElementById("modalIcon");
 const errorMsg = document.getElementById("errorMsg");
 const btnCancelPin = document.getElementById("btnCancelPin");
+const pinModal = document.getElementById("pinModal")
 
 let selectedRole = null;
 let pinValue = "";
 
-// Mapa rol -> icon bootstrap
 const roleIcons = {
     salesperson: "bi-person-badge-fill",
     stocker: "bi-person-gear",
     administrator: "bi-person-lock",
 };
 
-// Mapa rol -> URL redirect
 const roleRedirects = {
     salesperson: "/sales/",
     stocker: "/inventary/",
@@ -39,6 +38,58 @@ function selectRole(role) {
     resetPinInputs();
     modal.show();
 }
+
+function submitPin() {
+    console.log('sending pin');
+    
+    const correctPin = 0
+    if (pinValue === correctPin) {
+        errorMsg.style.display = "none";
+        modal.hide();
+        window.location.href = roleRedirects[selectedRole] || "/";
+    } else {
+        errorMsg.style.display = "block";
+        resetPinInputs();
+    }
+}
+
+function errorHandler(message){
+    const toastElement = document.getElementById('liveToast');
+    toastElement.querySelector('.toast-body').textContent = message;
+    toastElement.classList.remove("text-bg-success");
+    toastElement.classList.add("text-bg-danger");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+
+function successHandler(message){
+    const toastElement = document.getElementById('liveToast');
+    toastElement.querySelector('.toast-body').textContent = message;
+    toastElement.classList.add("text-bg-success");
+    toastElement.classList.remove("text-bg-danger");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+
+btnBack.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.history.back();
+});
+
+btnCancelPin.addEventListener("click", () => {
+    modal.hide();
+    selectedRole = null;
+    roles.forEach((r) => r.classList.remove("selected"));
+});
+
+roles.forEach((role) => {
+    role.addEventListener("click", () => {
+        roles.forEach((r) => r.classList.remove("selected"));
+        role.classList.add("selected");
+        selectedRole = role.getAttribute("data-value");
+        selectRole(selectedRole);
+    });
+});
 
 pinInputs.forEach((input, idx) => {
     input.addEventListener("input", (e) => {
@@ -64,35 +115,8 @@ pinInputs.forEach((input, idx) => {
     });
 });
 
-function submitPin() {
-    const correctPin = 0 //hacer fetch aca
-    if (pinValue === correctPin) {
-        errorMsg.style.display = "none";
-        modal.hide();
-        window.location.href = roleRedirects[selectedRole] || "/";
-    } else {
-        errorMsg.style.display = "block";
-        resetPinInputs();
+pinModal.addEventListener("shown.bs.modal", () => {
+    if (pinInputs.length > 0) {
+        pinInputs[0].focus();
     }
-}
-
-btnBack.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.history.back();
 });
-
-roles.forEach((role) => {
-    role.addEventListener("click", () => {
-        roles.forEach((r) => r.classList.remove("selected"));
-        role.classList.add("selected");
-        selectedRole = role.getAttribute("data-value");
-        selectRole(selectedRole);
-    });
-});
-
-btnCancelPin.addEventListener("click", () => {
-    modal.hide();
-    selectedRole = null;
-    roles.forEach((r) => r.classList.remove("selected"));
-});
-

@@ -106,25 +106,30 @@ body {
     color: #e1ecf7;
     text-align: center;
 }
+
 .modal-header {
     border-bottom: none;
     justify-content: center;
 }
+
 .modal-header .bi {
     font-size: 3rem;
     color: #4aa6ff;
     margin-bottom: 0.5rem;
 }
+
 .modal-title {
     font-weight: 600;
     font-size: 1.3rem;
 }
+
 .pin-inputs {
     margin-top: 1.5rem;
     display: flex;
     justify-content: center;
     gap: 15px;
 }
+
 .pin-inputs input {
     width: 45px;
     height: 55px;
@@ -139,20 +144,29 @@ body {
     caret-color: transparent;
     transition: background-color 0.3s;
 }
+
 .pin-inputs input:focus {
     background-color: #4aa6ff;
     color: #121c2b;
 }
+
 .pin-inputs input::placeholder {
     color: #4aa6ff;
     opacity: 0.6;
 }
+
 .modal-footer {
     border-top: none;
 }
+
 .error-msg {
     color: #ff6b6b;
     font-weight: 600;
     margin-top: 1rem;
     display: none;
+}
+
+.btnCancelPin{
+    color: #fff;
+    outline: none;
 }
