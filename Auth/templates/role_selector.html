@@ -8,10 +8,7 @@
     <title>Seleccion de rol</title>
     <link rel="stylesheet" href="{% static 'Auth/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'Auth/css/role_selector.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-    />
+    <link rel="stylesheet" href="{% static 'Auth/css/bootstrap-icons.css' %}" />
 </head>
 
 <body>
@@ -66,14 +63,19 @@
           <i id="modalIcon" class="bi bi-person-badge-fill"></i>
           <h5 class="modal-title" id="pinModalLabel">Escribir PIN del rol</h5>
         </div>
-    
+
         <div class="modal-body">
-          <div class="pin-inputs">
-            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit" />
-          </div>
+          <form autocomplete="off">
+            <input type="text" name="fakeuser" style="display:none" autocomplete="off" />
+            <div class="pin-inputs">
+
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" class="pin-digit" />
+            <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" class="pin-digit" />
+
+            </div>
+          </form>
           <div class="error-msg" id="errorMsg">PIN incorrecto. Intenta de nuevo.</div>
         </div>
       </div>
