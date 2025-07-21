@@ -1,47 +1,57 @@
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
     }
-    return cookieValue;
+  }
+  return cookieValue;
 }
 
-const submitFormButton = document.getElementById('submit-form');
+function errorHandler(message) {
+  const toastElement = document.getElementById("liveToast");
+  toastElement.querySelector(".toast-body").textContent = message;
+  toastElement.classList.remove("text-bg-success");
+  toastElement.classList.add("text-bg-danger");
+  const toast = new bootstrap.Toast(toastElement);
+  toast.show();
+}
 
-submitFormButton.addEventListener('click', (e) => {
-    e.preventDefault()
-    username = document.getElementById("username").value.trim();
-    password = document.getElementById("password").value.trim();
+const submitFormButton = document.getElementById("submit-form");
 
-    if (!username || !password) {
-        alert("Por favor, completa usuario y contraseña.");
-        return;
-    }
+submitFormButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  username = document.getElementById("username").value.trim();
+  password = document.getElementById("password").value.trim();
 
-    fetch("", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie('csrftoken')
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        })
+  if (!username || !password) {
+    alert("Por favor, completa usuario y contraseña.");
+    return;
+  }
+
+  fetch("", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: JSON.stringify({
+      username: username,
+      password: password,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        window.location.href = `/${data.redirect_to}/`;
+      } else {
+        errorHandler('Usuario o contraseña incorrectas')
+      }
     })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = "/role_selector/";
-            } else {
-                alert("Error de autenticación");
-            }
-        })
-        .catch(() => alert("Error en la comunicación con el servidor."));
+    .catch(() => alert("Error en la comunicación con el servidor."));
 });

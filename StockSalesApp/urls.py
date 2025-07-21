@@ -1,4 +1,4 @@
-from Auth.views import auth, role_selector
+from Auth.views import auth, pin_verify
 from django.contrib import admin
 from django.urls import path
 
@@ -7,5 +7,5 @@ from django.urls import path
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('auth/', auth, name='auth_view'),
-    path('role_selector/', role_selector, name='role_selector_view'),
+    path('pin_verify/', pin_verify, name='pin_verify_view'),
 ]

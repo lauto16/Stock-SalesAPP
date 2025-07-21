@@ -1,4 +1,3 @@
-const btnBack = document.getElementById("btn-back");
 const roles = document.querySelectorAll(".role");
 const submitFormBtn = document.getElementById("submit-form");
 const modal = new bootstrap.Modal(document.getElementById("pinModal"));
@@ -11,16 +10,31 @@ const pinModal = document.getElementById("pinModal");
 let selectedRole = null;
 let pinValue = "";
 
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+const roleRedirects = {
+  salesperson: "sales",
+  stocker: "inventory",
+  administrator: "dashboard",
+};
+
 const roleIcons = {
   salesperson: "bi-person-badge-fill",
   stocker: "bi-person-gear",
   administrator: "bi-person-lock",
-};
-
-const roleRedirects = {
-  salesperson: "/sales/",
-  stocker: "/inventary/",
-  administrator: "/dashboard/",
 };
 
 function resetPinInputs() {
@@ -32,25 +46,33 @@ function resetPinInputs() {
   pinValue = "";
 }
 
-function selectRole(role) {
-  selectedRole = role;
-  modalIcon.className = "bi " + roleIcons[role];
-  resetPinInputs();
-  modal.show();
-}
-
 function submitPin() {
-  console.log("sending pin");
+  fetch("", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: JSON.stringify({
+      user_pin: pinValue,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        const newPath = roleRedirects[data.role] || "/";
+        const newUrl = window.location.origin + '/' + newPath;
+        window.location.replace(newUrl);
 
-  const correctPin = 0;
-  if (pinValue === correctPin) {
-    errorMsg.style.display = "none";
-    modal.hide();
-    window.location.href = roleRedirects[selectedRole] || "/";
-  } else {
-    errorMsg.style.display = "block";
-    resetPinInputs();
-  }
+      } else {
+        resetPinInputs();
+        errorHandler("El pin es incorrecto");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al verificar el pin:", err);
+      errorHandler("Ocurrió un error inesperado");
+    });
 }
 
 function errorHandler(message) {
@@ -70,36 +92,6 @@ function successHandler(message) {
   const toast = new bootstrap.Toast(toastElement);
   toast.show();
 }
-
-btnBack.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.history.back();
-});
-
-function closeModal() {
-  modal.hide();
-  selectedRole = null;
-  roles.forEach((r) => r.classList.remove("selected"));
-}
-
-btnCancelPin.addEventListener("click", () => {
-  closeModal();
-});
-
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape" || event.key === "Esc") {
-    closeModal();
-  }
-});
-
-roles.forEach((role) => {
-  role.addEventListener("click", () => {
-    roles.forEach((r) => r.classList.remove("selected"));
-    role.classList.add("selected");
-    selectedRole = role.getAttribute("data-value");
-    selectRole(selectedRole);
-  });
-});
 
 pinInputs.forEach((input, idx) => {
   input.addEventListener("input", (e) => {
@@ -130,3 +122,6 @@ pinModal.addEventListener("shown.bs.modal", () => {
     pinInputs[0].focus();
   }
 });
+
+modal.show()
+pinInputs[0].focus();
