@@ -50,7 +50,7 @@ submitFormButton.addEventListener("click", (e) => {
       if (data.success) {
         window.location.href = `/${data.redirect_to}/`;
       } else {
-        errorHandler('Usuario o contraseña incorrectas')
+        errorHandler("Usuario o contraseña incorrectas");
       }
     })
     .catch(() => alert("Error en la comunicación con el servidor."));

@@ -18,6 +18,7 @@ def pin_verify(request: HttpRequest) -> HttpResponse:
             pin_is_valid = AuthVerifyer.verifyUserPin(user_pin=user_pin, user=user)
 
             if pin_is_valid:
+                request.session['pin_verified'] = True
                 return JsonResponse({'success': True, 'role': user.role.name})
             else:
                 return JsonResponse({'error': 'Pin inválido.'}, status=401)
@@ -51,11 +52,11 @@ def auth(request: HttpRequest) -> HttpResponse:
 
             user = AuthVerifyer.verifyAuthenticity(request=request, username=username, password=password)
 
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'success': True, 'redirect_to': 'pin_verify'})
-            else:
+            if user is None:
                 return JsonResponse({'error': 'Credenciales inválidas.'}, status=401)
+
+            login(request, user)
+            return JsonResponse({'success': True, 'redirect_to': 'pin_verify'})
 
         except JSONDecodeError:
             return JsonResponse({'error': 'Formato JSON incorrecto.'}, status=400)

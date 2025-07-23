@@ -78,7 +78,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
-    
+
 ]
 
 STATICFILES_FINDERS = [
@@ -105,3 +105,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Auth.CustomUser'
+
+LOGIN_URL = '/auth/'
