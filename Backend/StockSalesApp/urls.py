@@ -1,13 +1,10 @@
-from Auth.views import auth, pin_verify
-from Inventory.views import inventory
-from django.contrib import admin
-from django.urls import path
+from rest_framework.routers import DefaultRouter
+from django.urls import path, include
+from InventoryAPI.views import *
 
+router_products = DefaultRouter()
+router_products.register(r'products', ProductViewSet, basename='product')
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    path('auth/', auth, name='auth_view'),
-    path('pin_verify/', pin_verify, name='pin_verify_view'),
-    path('', pin_verify, name='pin_verify_view'),
-    path('inventory/', inventory, name='inventory_view')
+    path('api/', include(router_products.urls))
 ]

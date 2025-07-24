@@ -35,3 +35,4 @@ dist/
 *.env
 .env.*
 docker-compose.override.yml
+populate_db.py

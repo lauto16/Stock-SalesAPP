@@ -1,3 +1,23 @@
 from django.db import models
 
-# Create your models here.
+
+class Provider(models.Model):
+    """
+    Represents a single provider
+    """
+    
+    name = models.CharField(max_length=100, unique=True)
+    
+
+class Product(models.Model):
+    """
+    Represents a single product, unique and sellable
+    """
+
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=120)
+    stock = models.IntegerField()
+    sell_price = models.FloatField()
+    buy_price = models.FloatField()
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, null=True, blank=True)
+    last_modification = models.DateField(auto_now_add=True)
