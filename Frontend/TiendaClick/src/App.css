@@ -16882,7 +16882,7 @@ html.maximized-card {
   z-index: 0;
   height: 70px;
   font-size: 70px;
-  color: rgba(0, 0, 0, 0.15);
+  opacity: 0.15;
   transition: transform 0.3s linear;
 }
 
