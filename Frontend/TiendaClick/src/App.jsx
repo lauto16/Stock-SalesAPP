@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import './App.css'
+import './css/App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Dashboard from './components/Dashboard.jsx'
-import Inventory from './components/Inventory.jsx'
+import Dashboard from './components/dashboard/Dashboard.jsx'
+import Inventory from './components/inventory/Inventory.jsx'
 
 function App() {
 

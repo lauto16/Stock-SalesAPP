@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import Header from "../components/Header";
-import TableHeader from "./inventory/TableHeader";
-import Pagination from "./inventory/Pagination";
-import "/css/inventory.css";
+import Header from "./Header";
+import TableHeader from "./TableHeader";
+import Pagination from "./Pagination";
+import "../../css/inventory.css";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -81,5 +81,6 @@ export default function InventoryPage() {
                 </div>
             </div>
         </div>
+
     );
 }
