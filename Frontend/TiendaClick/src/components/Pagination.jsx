@@ -1,4 +1,19 @@
-export default function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
+function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
+  const maxPagesToShow = 5;
+  
+  let startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
+  let endPage = startPage + maxPagesToShow - 1;
+  
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(endPage - maxPagesToShow + 1, 1);
+  }
+  
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
   const handleClick = (event, page) => {
     event.preventDefault();
     onPageChange(page);
