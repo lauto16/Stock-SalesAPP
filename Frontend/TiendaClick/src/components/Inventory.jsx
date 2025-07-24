@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
-import TableHeader from "../components/TableHeader";
-import Pagination from "../components/Pagination";
+import TableHeader from "../components/TableHeader.jsx";
+import Pagination from "../components/Pagination.jsx";
 import "../inventory.css";
 import Search from "./Search";
 
@@ -85,12 +85,12 @@ export default function InventoryPage() {
                             ) : (
                                 items.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{item.code}</td>
-                                        <td>{item.name}</td>
-                                        <td>${item.sell_price}</td>
-                                        <td>${item.buy_price}</td>
-                                        <td>{item.stock}</td>
-                                        <td>{item.last_modification}</td>
+                                        <td className="col-code">{item.code}</td>
+                                        <td className="col-name">{item.name}</td>
+                                        <td className="col-sell-price">${item.sell_price}</td>
+                                        <td className="col-buy-price">${item.buy_price}</td>
+                                        <td className="col-stock">{item.stock}</td>
+                                        <td className="col-last-modification">{item.last_modification}</td>
                                     </tr>
                                 ))
                             )}

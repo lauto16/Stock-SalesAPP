@@ -24,6 +24,7 @@ body {
 }
 
 .btn-sales {
+    display: none;
     background-color: transparent;
     color: #494949;
     border: 2px solid #f0a868;
