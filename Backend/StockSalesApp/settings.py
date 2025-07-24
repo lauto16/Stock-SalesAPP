@@ -17,11 +17,10 @@ INSTALLED_APPS = [
     'FilesAPI',
     'Inventory',
     'InventoryAPI',
-    'Sales',
     'SalesAPI',
     'rest_framework',
-    'Stats',
     'StatsAPI',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -32,6 +31,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'StockSalesApp.urls'
@@ -107,3 +107,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'Auth.CustomUser'
 
 LOGIN_URL = '/auth/'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}

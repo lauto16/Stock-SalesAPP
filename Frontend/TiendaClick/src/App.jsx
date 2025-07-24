@@ -1,18 +1,14 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import SalesChart from './components/SalesChart.jsx'
 import ActionBox from './components/ActionBox.jsx'
+import InventoryPage from './components/Inventory.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div>
-      <div className="app-wrapper">
-        {/* <topbar path="{path}"> */}
-        {/* <sidenav path="{path}" mainpage="{mainPage}" page="{page}"> */}
+    /*<div>
         <main className="app-main">
           <div className="app-content-header">
             <div className="container-fluid">
@@ -114,12 +110,9 @@ function App() {
             </div>
           </div>
         </main>
-        {/* <footer></footer> */}
-        {/* </sidenav> */}
-        {/* </topbar> */}
       </div>
-    </div>
-
+    </div>*/
+  <InventoryPage/>
   )
 }
 
