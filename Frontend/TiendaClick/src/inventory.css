@@ -58,7 +58,7 @@ td {
     background-color: #6a8d73;
 }
 
-.table-bordered > :not(caption) > * > * {
+.table-bordered> :not(caption)>*>* {
     border-color: #d4d4d4;
 }
 
@@ -71,6 +71,23 @@ td {
     color: #494949;
     border: 1px solid #6a8d73;
 }
+
+
+
+.page-link {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    min-width: 30px;
+    height: 30px;
+    line-height: 1.2;
+    border-radius: 4px;
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+
 
 .page-item.active .page-link {
     background-color: #f5c193;
@@ -94,4 +111,34 @@ td {
 
 #table-body td {
     background-color: #f9f9f9;
+}
+
+
+.table-container table th,
+.table-container table td {
+    font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+
+    .col-code,
+    .col-buy-price,
+    .col-last-modification {
+        display: none;
+    }
+
+    .table-container table th,
+    .table-container table td {
+        font-size: 0.75rem;
+    }
+
+    .page-link {
+        font-size: 0.75rem;
+        padding: 0.10rem 0.2rem;
+        min-width: 20px;
+        height: 20px;
+        line-height: 1.2;
+        border-radius: 4px;
+    }
+    
 }

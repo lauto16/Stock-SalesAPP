@@ -67,12 +67,12 @@ export default function InventoryPage() {
                             ) : (
                                 items.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{item.code}</td>
-                                        <td>{item.name}</td>
-                                        <td>${item.sell_price}</td>
-                                        <td>${item.buy_price}</td>
-                                        <td>{item.stock}</td>
-                                        <td>{item.last_modification}</td>
+                                        <td className="col-code">{item.code}</td>
+                                        <td className="col-name">{item.name}</td>
+                                        <td className="col-sell-price">${item.sell_price}</td>
+                                        <td className="col-buy-price">${item.buy_price}</td>
+                                        <td className="col-stock">{item.stock}</td>
+                                        <td className="col-last-modification">{item.last_modification}</td>
                                     </tr>
                                 ))
                             )}

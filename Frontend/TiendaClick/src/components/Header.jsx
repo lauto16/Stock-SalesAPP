@@ -5,9 +5,6 @@ export default function Header({ userRole, onGoToSales }) {
           <h1>INVENTARIO</h1>
           <div className="user-role">&lt;{userRole}&gt;</div>
         </div>
-        <button id="btn-sales" className="btn btn-sales" onClick={onGoToSales}>
-          Ir a ventas
-        </button>
       </div>
     );
   }
