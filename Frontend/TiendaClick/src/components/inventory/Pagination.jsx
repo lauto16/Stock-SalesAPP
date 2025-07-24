@@ -1,7 +1,6 @@
-function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
+export default function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
   const maxPagesToShow = 5;
   
-  // Calcula el rango de páginas que se mostrarán
   let startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
   let endPage = startPage + maxPagesToShow - 1;
   
@@ -60,5 +59,3 @@ function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
     </nav>
   );
 }
-
-export default Pagination
