@@ -23,7 +23,7 @@ function SideBar() {
                         <NavLink name={"Panel Administrativo"}></NavLink>
                         <NavLink name={"Estadísticas"}></NavLink>
                         <NavLink name={"Ventas"}></NavLink>
-                        <NavLink name={"Inventario"}></NavLink>
+                        <NavLink name={"Inventario"} url={"inventory"}></NavLink>
                         {/* Titulo */}
                         <li class="nav-header">DESCARGAR DOCUMENTOS</li>
                         <NavLink name={"Informe de Ventas"}></NavLink>
