@@ -26,12 +26,12 @@ export default function InventoryPage() {
     const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
 
     const columns = [
-        { key: 'code', label: 'Código' },
-        { key: 'name', label: 'Nombre' },
-        { key: 'sell_price', label: 'Precio Venta' },
-        { key: 'buy_price', label: 'Precio Compra' },
-        { key: 'stock', label: 'Stock' },
-        { key: 'last_modification', label: 'Última Modificación' },
+        { className: "code", key: "code", label: 'Código' },
+        { className: "name", key: "name", label: 'Nombre' },
+        { className: "sell-price", key: "sell_price", label: 'Precio Venta' },
+        { className: "buy-price", key: "buy_price", label: 'Precio Compra' },
+        { className: "stock", key: "stock", label: 'Stock' },
+        { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
     ];
     const fetchProducts = (page, search = "") => {
         setLoading(true);

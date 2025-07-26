@@ -1,12 +1,11 @@
 export default function Table({ items = [], loading = false, columns = [] }) {
-
-
+  // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
   return (
     <table className="table table-bordered align-middle">
       <thead>
         <tr>
           {columns.map((col, index) => (
-            <th key={index} className={`col-${col.key}`}>{col.label}</th>
+            <th key={index} className={`col-${col.className}`}>{col.label}</th>
           ))}
         </tr>
       </thead>
@@ -23,7 +22,7 @@ export default function Table({ items = [], loading = false, columns = [] }) {
           items.map((item, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((col, colIndex) => (
-                <td key={colIndex} className={`col-${col.key}`}>
+                <td key={colIndex} className={`col-${col.className}`}>
                   {item[col.key]}
                 </td>
               ))}
@@ -32,5 +31,6 @@ export default function Table({ items = [], loading = false, columns = [] }) {
         )}
       </tbody>
     </table>
+
   );
 }
