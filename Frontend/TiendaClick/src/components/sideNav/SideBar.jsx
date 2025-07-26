@@ -19,7 +19,7 @@ function SideBar() {
                         <NavLink name={"Ventas"}></NavLink>
                         <NavLink name={"Inventario"} url={"/inventory/"}></NavLink>
                         {/* Titulo */}
-                        <li class="nav-header">DESCARGAR DOCUMENTOS</li>
+                        <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                         <NavLink name={"Informe de Ventas"}></NavLink>
 
                     </ul>

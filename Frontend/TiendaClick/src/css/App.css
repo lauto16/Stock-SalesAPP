@@ -15817,6 +15817,7 @@ body:not(.app-loaded) .app-footer {
 
 .card {
   box-shadow: 0 0 1px rgba(var(--bs-body-color-rgb), 0.125), 0 1px 3px rgba(var(--bs-body-color-rgb), 0.2);
+  max-width: fit-content;
 }
 
 .card[class*=card-]:not(.card-outline)>.card-header,
