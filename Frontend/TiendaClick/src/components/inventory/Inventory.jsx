@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
-import TableHeader from "./TableHeader";
+import Table from "./Table.jsx";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
@@ -25,6 +25,14 @@ export default function InventoryPage() {
     const PAGE_SIZE = 10;
     const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
 
+    const columns = [
+        { key: 'code', label: 'Código' },
+        { key: 'name', label: 'Nombre' },
+        { key: 'sell_price', label: 'Precio Venta' },
+        { key: 'buy_price', label: 'Precio Compra' },
+        { key: 'stock', label: 'Stock' },
+        { key: 'last_modification', label: 'Última Modificación' },
+    ];
     const fetchProducts = (page, search = "") => {
         setLoading(true);
         axios
@@ -70,16 +78,16 @@ export default function InventoryPage() {
     const selectProduct = (e, code) => {
         const selectedProductsAux = [...selectedProducts];
         const row = e.currentTarget;
-        if (!selectedProductsAux.includes(code)){
+        if (!selectedProductsAux.includes(code)) {
             selectedProductsAux.push(code);
             setSelectedProducts(selectedProductsAux);
             row.classList.add('selected-product');
         }
-        else{
+        else {
             unselectProduct(e, code)
         }
     };
-    
+
 
     useEffect(() => {
         console.log(selectedProducts);
@@ -105,21 +113,7 @@ export default function InventoryPage() {
                             />
                         </div>
                     </div>
-
-                    <table className="table table-bordered align-middle">
-                        <TableHeader />
-                        <tbody id="table-body">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan="6">Cargando inventario...</td>
-                                </tr>
-                            ) : (
-                                items.map((item, index) => (
-                                    <Product selectedProducts={selectedProducts} key={index} item={item} index={index} selectProduct={selectProduct} />
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                    <Table items={items} columns={columns} loading={loading} />
                 </div>
             </div>
         </div>
