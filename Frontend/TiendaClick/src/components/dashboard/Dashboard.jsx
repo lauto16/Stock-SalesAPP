@@ -4,15 +4,16 @@ import ActionBox from './ActionBox.jsx'
 import DashboardHeader from './DashboardHeader.jsx';
 import SideBar from '../sideNav/SideBar.jsx';
 import Footer from '../footer/Footer.jsx';
-
+import Nav from "../sideNav/Nav.jsx";
 function Dashboard() {
+
     return (
         <>
             <div className="d-flex dashboard" >
                 <SideBar />
 
                 <main className="flex-grow-1 p-3">
-
+                    <Nav />
                     <DashboardHeader />
 
                     <section className="app-content container-fluid">
@@ -24,17 +25,12 @@ function Dashboard() {
                         </div>
 
                         <div className="row">
-                            <div className="col-lg-7 connectedSortable">
-                                <div className="card mb-4">
-                                    <div className="card-header">
-                                        <h3 className="card-title">Sales Value</h3>
-                                        <SalesChart />
-                                    </div>
-                                    <div className="card-body">
-                                        <div id="revenue-chart" />
-                                    </div>
-                                </div>
+                            <div className="card">
+                                <div className="card-header"> <h4> Ventas</h4></div>
+                                <SalesChart />
                             </div>
+
+
                         </div>
                     </section>
 
