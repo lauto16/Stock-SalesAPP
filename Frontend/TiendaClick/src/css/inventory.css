@@ -1,3 +1,5 @@
+@import "./src/css/bootstrap-icons.css";
+
 body {
     background-color: #ffffff;
     font-family: "Segoe UI", sans-serif;
@@ -21,6 +23,7 @@ body {
     font-style: italic;
     color: #6a8d73;
     font-size: 0.9rem;
+    margin-left: 20px;
 }
 
 .btn-sales {
@@ -120,7 +123,7 @@ td {
     font-size: 1rem;
 }
 
-input[type="text"] {
+.search-input{
     max-width: 200px;
     border: 1px solid #6a8d73;
     border-radius: 4px;
@@ -133,7 +136,7 @@ input[type="text"] {
     height: 38px;
 }
 
-.container-modified{
+.container-modified {
     margin-left: 30px;
     margin-right: 30px;
     padding: 0;
@@ -147,6 +150,70 @@ input[type="text"] {
 .search-elements {
     width: 100%;
     max-width: 280px;
+}
+
+
+tr.selected-product td {
+    background-color: #d8d8d8 !important;
+}
+
+.btn-group .btn {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 10px !important;
+    color: #555;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 5px !important;
+}
+
+.btn-group .btn:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+    color: #000;
+}
+
+.btn-group .btn {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-group .btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+.btn-group .btn:hover {
+    opacity: 0.7;
+}
+
+.btn-group .btn i {
+    transition: transform 0.2s ease;
+}
+
+.btn-group .btn:hover i {
+    transform: scale(1.15);
+}
+
+
+.thead-products {
+    user-select: none;
+}
+
+.add-product-button{
+    color: #28a792 !important;
+}
+
+.remove-products-button{
+    color: #dc3545 !important;
+}
+
+.modal-backdrop.show {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+.add-product-send-button{
+    background-color: #6a8d73;
+    border: 1px solid #6a8d73;
 }
 
 @media (max-width: 620px) {
@@ -173,24 +240,48 @@ input[type="text"] {
 }
 
 @media (max-width: 800px) {
+
+    .user-role {
+        margin-left: 0;
+    }
+
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header>div:first-child {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .btn-group {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
     .search-wrapper {
         width: 100%;
         padding: 0 10px;
         margin-left: 5%;
         margin-right: 5%;
     }
-    
+
     .input-group.w-100 {
         display: flex;
         width: 100%;
     }
-    
+
     .input-group.w-100 .form-control.search-input {
         flex: 7;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
-    
+
     .input-group.w-100 .btn {
         flex: 3;
         border-top-left-radius: 0;

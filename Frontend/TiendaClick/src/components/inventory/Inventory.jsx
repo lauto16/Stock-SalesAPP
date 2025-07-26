@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import Header from "./Header";
-import TableHeader from "./TableHeader";
+import Table from "./Table.jsx";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
+import Product from "./Product";
+import AddProductModal from "./AddProductModal";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -15,10 +16,23 @@ export default function InventoryPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedProducts, setSelectedProducts] = useState([])
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
 
     const PAGE_SIZE = 10;
     const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
 
+    const columns = [
+        { className: "code", key: "code", label: 'Código' },
+        { className: "name", key: "name", label: 'Nombre' },
+        { className: "sell-price", key: "sell_price", label: 'Precio Venta' },
+        { className: "buy-price", key: "buy_price", label: 'Precio Compra' },
+        { className: "stock", key: "stock", label: 'Stock' },
+        { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
+    ];
     const fetchProducts = (page, search = "") => {
         setLoading(true);
         axios
@@ -51,14 +65,39 @@ export default function InventoryPage() {
     };
 
     const handleGoToSales = (page) => {
-        console.log('test');
-
+        //to implement
     }
+
+    const unselectProduct = (e, code) => {
+        const row = e.currentTarget;
+        const selectedProductsAux = selectedProducts.filter(c => c !== code);
+        setSelectedProducts(selectedProductsAux);
+        row.classList.remove('selected-product');
+    };
+
+    const selectProduct = (e, code) => {
+        const selectedProductsAux = [...selectedProducts];
+        const row = e.currentTarget;
+        if (!selectedProductsAux.includes(code)) {
+            selectedProductsAux.push(code);
+            setSelectedProducts(selectedProductsAux);
+            row.classList.add('selected-product');
+        }
+        else {
+            unselectProduct(e, code)
+        }
+    };
+
+
+    useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
 
     return (
         <div className="d-flex justify-content-center mt-5">
+            <AddProductModal show={showModal} handleClose={handleClose} />
             <div className="container container-modified">
-                <Header userRole={userRole} onGoToSales={handleGoToSales} />
+                <Header userRole={userRole} onGoToSales={handleGoToSales} onAddProduct={handleOpen} />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
                         <Pagination
@@ -74,28 +113,7 @@ export default function InventoryPage() {
                             />
                         </div>
                     </div>
-
-                    <table className="table table-bordered align-middle">
-                        <TableHeader />
-                        <tbody id="table-body">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan="6">Cargando inventario...</td>
-                                </tr>
-                            ) : (
-                                items.map((item, index) => (
-                                    <tr key={index}>
-                                        <td className="col-code">{item.code}</td>
-                                        <td className="col-name">{item.name}</td>
-                                        <td className="col-sell-price">${item.sell_price}</td>
-                                        <td className="col-buy-price">${item.buy_price}</td>
-                                        <td className="col-stock">{item.stock}</td>
-                                        <td className="col-last-modification">{item.last_modification}</td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                    <Table items={items} columns={columns} loading={loading} />
                 </div>
             </div>
         </div>
