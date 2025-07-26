@@ -13,7 +13,7 @@ function Dashboard() {
                 <SideBar />
 
                 <main className="flex-grow-1 p-3">
-                    <Nav handleOnClickSignOut={handleOnClickSignOut} />
+                    <Nav />
                     <DashboardHeader />
 
                     <section className="app-content container-fluid">
@@ -29,6 +29,8 @@ function Dashboard() {
                                 <div className="card-header"> <h4> Ventas</h4></div>
                                 <SalesChart />
                             </div>
+
+
                         </div>
                     </section>
 

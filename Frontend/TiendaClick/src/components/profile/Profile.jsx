@@ -1,6 +1,6 @@
 import React from 'react';
 import { useUser } from '../../context/UserContext.jsx';
-function Profile({ handleOnClickSignOut }) {
+function Profile() {
     const { user } = useUser();
     const avatar = "/7979300.webp"
     return (
@@ -20,7 +20,7 @@ function Profile({ handleOnClickSignOut }) {
                 </li>
                 <li className="user-body">
                     <a href="#" className="btn btn-default btn-flat">Profile</a>
-                    <button href="#" onClick={handleOnClickSignOut} className="btn btn-default btn-flat float-end btn-danger">Sign out</button>
+                    <button href="#" className="btn btn-default btn-flat float-end btn-danger">Sign out</button>
                 </li>
             </ul>
 

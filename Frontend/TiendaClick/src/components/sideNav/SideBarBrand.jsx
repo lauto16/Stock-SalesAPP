@@ -10,7 +10,7 @@ function SideBarBrand() {
                     search: "?query=string",
                     hash: "#hash",
                 }}>
-                <img src="/logo.svg" alt="TiendaClick" className="brand-image " />
+                <img src="/logo.webp" alt="TiendaClick" className="brand-image " />
 
             </Link>
             <Link className="nav-link"

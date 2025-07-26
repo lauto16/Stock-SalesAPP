@@ -2,7 +2,6 @@ import React from 'react';
 import Profile from '../profile/Profile.jsx';
 function Nav() {
 
-    const name = "John Mayer"
     return (
         <nav className="app-header navbar navbar-expand bg-body" id="navigation" tabIndex={-1}>
             <div className="container-fluid">
