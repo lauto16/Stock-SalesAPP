@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import { getProviders, addProduct } from "../../services/axios.services";
+import Select from "react-select";
 
 export default function AddProductModal({ show, handleClose }) {
     const {
@@ -10,8 +11,14 @@ export default function AddProductModal({ show, handleClose }) {
         handleSubmit,
         watch,
         reset,
+        control,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            provider: null,
+        },
+    }
+    );
 
     const [providers, setProviders] = useState([])
 
@@ -26,7 +33,7 @@ export default function AddProductModal({ show, handleClose }) {
 
         if (show) {
             getProviders()
-                .then((res) => setProviders(res.data.results))
+                .then((res) => setProviders(res.data))
                 .catch((err) => console.error("Error al obtener proveedores:", err));
         }
     }, [show]);
@@ -49,9 +56,9 @@ export default function AddProductModal({ show, handleClose }) {
             return;
         }
 
-        addProduct(data.code, data.name, data.stock, data.sellingPrice, data.purchasePrice)
-        .then(data => handleBeforeClose())
-        .catch(err => console.error(err));
+        addProduct(data.code, data.name, data.stock, data.sellingPrice, data.purchasePrice, data.provider)
+            .then(data => handleBeforeClose())
+            .catch(err => console.error(err));
 
     };
 
@@ -72,7 +79,7 @@ export default function AddProductModal({ show, handleClose }) {
                     <Row className="g-3">
                         <Col md={6} className="d-flex flex-column">
                             <CustomInput
-                                label="Codigo"
+                                label="Codi1go"
                                 icon="bi-upc"
                                 type="text"
                                 placeholder="Codigo"
@@ -97,14 +104,27 @@ export default function AddProductModal({ show, handleClose }) {
                         <Col md={6} className="d-flex flex-column">
                             <Form.Group className="mb-3">
                                 <Form.Label>Proveedor</Form.Label>
-                                <Form.Select {...register("provider", { required: true })}>
-                                    <option value="">Seleccionar proveedor</option>
-                                    {providers.map((provider, index) => (
-                                        <option key={index}>
-                                            {provider.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                <Controller
+                                    name="provider"
+                                    control={control}
+                                    render={({ field }) => {
+                                        const selectedOption = providers.find(p => p.id === field.value);
+
+                                        return (
+                                            <Select
+                                                {...field}
+                                                value={selectedOption ? { value: selectedOption.id, label: selectedOption.name } : null}
+                                                onChange={(option) => {
+                                                    field.onChange(option ? option.value : null);
+                                                }}
+                                                options={providers.map(p => ({ value: p.id, label: p.name }))}
+                                                isSearchable
+                                                placeholder="Seleccionar proveedor..."
+                                                noOptionsMessage={() => "No se encontraron proveedores"}
+                                            />
+                                        );
+                                    }}
+                                />
                                 {errors.provider && (
                                     <small className="text-danger">El proveedor es requerido</small>
                                 )}
@@ -140,6 +160,9 @@ export default function AddProductModal({ show, handleClose }) {
                                         placeholder="Porcentaje de ganancia %"
                                         value={`${calculateProfitMargin()} %`}
                                         disabled
+                                        style={{
+                                            color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792"
+                                        }}
                                     />
                                 </div>
                             </Form.Group>
