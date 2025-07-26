@@ -4,7 +4,7 @@ import ActionBox from './ActionBox.jsx'
 import DashboardHeader from './DashboardHeader.jsx';
 import SideBar from '../sideNav/SideBar.jsx';
 import Footer from '../footer/Footer.jsx';
-
+import Nav from "../sideNav/Nav.jsx";
 function Dashboard() {
     return (
         <>
@@ -12,7 +12,7 @@ function Dashboard() {
                 <SideBar />
 
                 <main className="flex-grow-1 p-3">
-
+                    <Nav />
                     <DashboardHeader />
 
                     <section className="app-content container-fluid">

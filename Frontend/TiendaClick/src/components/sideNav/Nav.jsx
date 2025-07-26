@@ -1,27 +1,28 @@
 import React from 'react';
 function Nav() {
     return (
-        <nav className="app-header navbar navbar-expand bg-body">
+        <nav className="app-header navbar navbar-expand bg-body" id="navigation" tabIndex={-1}>
+            {/*begin::Container*/}
             <div className="container-fluid">
-                <ul className="navbar-nav">
+                {/*begin::Start Navbar Links*/}
+                <ul className="navbar-nav" role="navigation" aria-label="Navigation 1">
                     <li className="nav-item">
                         <a className="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                             <i className="bi bi-list" />
                         </a>
                     </li>
-                    <li className="nav-item d-none d-md-block">
-                        <a href="#" className="nav-link">Home</a>
-                    </li>
-                    <li className="nav-item d-none d-md-block">
-                        <a href="#" className="nav-link">Contact</a>
-                    </li>
                 </ul>
-                <ul className="navbar-nav ms-auto">
+                {/*end::Start Navbar Links*/}
+                {/*begin::End Navbar Links*/}
+                <ul className="navbar-nav ms-auto" role="navigation" aria-label="Navigation 2">
+                    {/*begin::Navbar Search*/}
                     <li className="nav-item">
                         <a className="nav-link" data-widget="navbar-search" href="#" role="button">
                             <i className="bi bi-search" />
                         </a>
                     </li>
+                    {/*end::Navbar Search*/}
+                    {/*begin::Messages Dropdown Menu*/}
                     <li className="nav-item dropdown">
                         <a className="nav-link" data-bs-toggle="dropdown" href="#">
                             <i className="bi bi-chat-text" />
@@ -29,6 +30,7 @@ function Nav() {
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <a href="#" className="dropdown-item">
+                                {/*begin::Message*/}
                                 <div className="d-flex">
                                     <div className="flex-shrink-0">
                                         <img src="../assets/img/user1-128x128.jpg" alt="User Avatar" className="img-size-50 rounded-circle me-3" />
@@ -44,9 +46,11 @@ function Nav() {
                                         </p>
                                     </div>
                                 </div>
+                                {/*end::Message*/}
                             </a>
                             <div className="dropdown-divider" />
                             <a href="#" className="dropdown-item">
+                                {/*begin::Message*/}
                                 <div className="d-flex">
                                     <div className="flex-shrink-0">
                                         <img src="../assets/img/user8-128x128.jpg" alt="User Avatar" className="img-size-50 rounded-circle me-3" />
@@ -64,9 +68,11 @@ function Nav() {
                                         </p>
                                     </div>
                                 </div>
+                                {/*end::Message*/}
                             </a>
                             <div className="dropdown-divider" />
                             <a href="#" className="dropdown-item">
+                                {/*begin::Message*/}
                                 <div className="d-flex">
                                     <div className="flex-shrink-0">
                                         <img src="../assets/img/user3-128x128.jpg" alt="User Avatar" className="img-size-50 rounded-circle me-3" />
@@ -84,11 +90,14 @@ function Nav() {
                                         </p>
                                     </div>
                                 </div>
+                                {/*end::Message*/}
                             </a>
                             <div className="dropdown-divider" />
                             <a href="#" className="dropdown-item dropdown-footer">See All Messages</a>
                         </div>
                     </li>
+                    {/*end::Messages Dropdown Menu*/}
+                    {/*begin::Notifications Dropdown Menu*/}
                     <li className="nav-item dropdown">
                         <a className="nav-link" data-bs-toggle="dropdown" href="#">
                             <i className="bi bi-bell-fill" />
@@ -115,26 +124,34 @@ function Nav() {
                             <a href="#" className="dropdown-item dropdown-footer"> See All Notifications </a>
                         </div>
                     </li>
+                    {/*end::Notifications Dropdown Menu*/}
+                    {/*begin::Fullscreen Toggle*/}
                     <li className="nav-item">
                         <a className="nav-link" href="#" data-lte-toggle="fullscreen">
                             <i data-lte-icon="maximize" className="bi bi-arrows-fullscreen" />
                             <i data-lte-icon="minimize" className="bi bi-fullscreen-exit" style={{ display: 'none' }} />
                         </a>
                     </li>
+                    {/*end::Fullscreen Toggle*/}
+                    {/*begin::User Menu Dropdown*/}
                     <li className="nav-item dropdown user-menu">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img src="../assets/img/user2-160x160.jpg" className="user-image rounded-circle shadow" alt="User Image" />
+                            <img src="/user.svg" className="user-image rounded-circle shadow" alt="User Image" />
                             <span className="d-none d-md-inline">Alexander Pierce</span>
                         </a>
                         <ul className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            {/*begin::User Image*/}
                             <li className="user-header text-bg-primary">
-                                <img src="../assets/img/user2-160x160.jpg" className="rounded-circle shadow" alt="User Image" />
+                                <img src="/user.svg" className="rounded-circle shadow" alt="User Image" />
                                 <p>
                                     Alexander Pierce - Web Developer
                                     <small>Member since Nov. 2023</small>
                                 </p>
                             </li>
+                            {/*end::User Image*/}
+                            {/*begin::Menu Body*/}
                             <li className="user-body">
+                                {/*begin::Row*/}
                                 <div className="row">
                                     <div className="col-4 text-center">
                                         <a href="#">Followers</a>
@@ -152,9 +169,12 @@ function Nav() {
                                 <a href="#" className="btn btn-default btn-flat float-end">Sign out</a>
                             </li>
                         </ul>
+
                     </li>
                 </ul>
             </div>
-        </nav>);
+        </nav>
+
+    );
 }
 export default Nav
