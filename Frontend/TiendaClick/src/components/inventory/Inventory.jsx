@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import Header from "./Header";
 import TableHeader from "./TableHeader";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
 import Product from "./Product";
+import AddProductModal from "./AddProductModal";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -17,6 +17,10 @@ export default function InventoryPage() {
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([])
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
 
     const PAGE_SIZE = 10;
     const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
@@ -83,8 +87,9 @@ export default function InventoryPage() {
 
     return (
         <div className="d-flex justify-content-center mt-5">
+            <AddProductModal show={showModal} handleClose={handleClose} />
             <div className="container container-modified">
-                <Header userRole={userRole} onGoToSales={handleGoToSales} />
+                <Header userRole={userRole} onGoToSales={handleGoToSales} onAddProduct={handleOpen} />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
                         <Pagination

@@ -7,10 +7,10 @@ export default function Header({ userRole, onAddProduct, onDeleteSelected, onSel
       </div>
 
       <div className="btn-group">
-        <button type="button" className="btn btn-primary" title="Agregar producto" onClick={onAddProduct}>
+        <button type="button" className="btn btn-primary add-product-button" title="Agregar producto" onClick={onAddProduct}>
           <i className="bi bi-plus-circle-fill"></i>
         </button>
-        <button type="button" className="btn btn-danger" title="Eliminar productos seleccionados" onClick={onDeleteSelected}>
+        <button type="button" className="btn btn-danger remove-products-button" title="Eliminar productos seleccionados" onClick={onDeleteSelected}>
           <i className="bi bi-trash-fill"></i>
         </button>
         <button type="button" className="btn btn-primary" title="Seleccionar todos" onClick={onSelectAll}>
