@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'StatsAPI',
     'corsheaders',
+    'ProvidersAPI',
 ]
 
 MIDDLEWARE = [
