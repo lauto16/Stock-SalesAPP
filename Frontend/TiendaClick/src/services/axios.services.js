@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-export default async function getProviders() {
-    return axios.get(`${apiUrl}/providers/`);
+const apiUrl = `http://${window.location.hostname}:8000/api/`;
+
+async function getProviders() {
+    return axios.get(`${apiUrl}providers/`);
   }
 
-export async function addProduct(code, name, stock, sell_price, buy_price) {
-  const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
+async function addProduct(code, name, stock, sell_price, buy_price) {
 
   const productData = {
     code,
@@ -15,7 +16,7 @@ export async function addProduct(code, name, stock, sell_price, buy_price) {
     buy_price
   };
 
-  return axios.post(apiUrl, productData)
+  return axios.post(`${apiUrl}/products/`, productData)
     .then(response => {
       console.log('Product created:', response.data);
       return response.data;
@@ -24,4 +25,9 @@ export async function addProduct(code, name, stock, sell_price, buy_price) {
       console.error('Error al crear el producto:', error);
       throw error;
     });
+}
+
+export {
+  addProduct,
+  getProviders
 }
