@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import CustomInput from "./CustomInput";
-import addProduct, { getProviders } from "../../services/axios.services";
+import { getProviders, addProduct } from "../../services/axios.services";
 
 export default function AddProductModal({ show, handleClose }) {
     const {
@@ -12,6 +12,8 @@ export default function AddProductModal({ show, handleClose }) {
         reset,
         formState: { errors },
     } = useForm();
+
+    const [providers, setProviders] = useState([])
 
     const codeInputRef = useRef(null);
 
@@ -24,7 +26,7 @@ export default function AddProductModal({ show, handleClose }) {
 
         if (show) {
             getProviders()
-                .then((res) => setProviders(res.data))
+                .then((res) => setProviders(res.data.results))
                 .catch((err) => console.error("Error al obtener proveedores:", err));
         }
     }, [show]);
@@ -97,8 +99,8 @@ export default function AddProductModal({ show, handleClose }) {
                                 <Form.Label>Proveedor</Form.Label>
                                 <Form.Select {...register("provider", { required: true })}>
                                     <option value="">Seleccionar proveedor</option>
-                                    {providers.map((provider) => (
-                                        <option key={provider.id} value={provider.id}>
+                                    {providers.map((provider, index) => (
+                                        <option key={index}>
                                             {provider.name}
                                         </option>
                                     ))}
