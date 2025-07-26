@@ -6,6 +6,7 @@ import TableHeader from "./TableHeader";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
+import Product from "./Product";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -15,6 +16,7 @@ export default function InventoryPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedProducts, setSelectedProducts] = useState([])
 
     const PAGE_SIZE = 10;
     const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
@@ -51,9 +53,33 @@ export default function InventoryPage() {
     };
 
     const handleGoToSales = (page) => {
-        console.log('test');
-
+        //to implement
     }
+
+    const unselectProduct = (e, code) => {
+        const row = e.currentTarget;
+        const selectedProductsAux = selectedProducts.filter(c => c !== code);
+        setSelectedProducts(selectedProductsAux);
+        row.classList.remove('selected-product');
+    };
+
+    const selectProduct = (e, code) => {
+        const selectedProductsAux = [...selectedProducts];
+        const row = e.currentTarget;
+        if (!selectedProductsAux.includes(code)){
+            selectedProductsAux.push(code);
+            setSelectedProducts(selectedProductsAux);
+            row.classList.add('selected-product');
+        }
+        else{
+            unselectProduct(e, code)
+        }
+    };
+    
+
+    useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
 
     return (
         <div className="d-flex justify-content-center mt-5">
@@ -84,14 +110,7 @@ export default function InventoryPage() {
                                 </tr>
                             ) : (
                                 items.map((item, index) => (
-                                    <tr key={index}>
-                                        <td className="col-code">{item.code}</td>
-                                        <td className="col-name">{item.name}</td>
-                                        <td className="col-sell-price">${item.sell_price}</td>
-                                        <td className="col-buy-price">${item.buy_price}</td>
-                                        <td className="col-stock">{item.stock}</td>
-                                        <td className="col-last-modification">{item.last_modification}</td>
-                                    </tr>
+                                    <Product selectedProducts={selectedProducts} key={index} item={item} index={index} selectProduct={selectProduct} />
                                 ))
                             )}
                         </tbody>

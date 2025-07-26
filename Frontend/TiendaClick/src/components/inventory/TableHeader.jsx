@@ -1,6 +1,6 @@
 export default function TableHeader() {
   return (
-    <thead>
+    <thead className="thead-products">
       <tr>
         <th className="col-code">Código</th>
         <th className="col-name">Nombre</th>
