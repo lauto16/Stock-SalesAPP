@@ -1,18 +1,12 @@
 import React from 'react';
 import NavLink from './NavLink.jsx'
-
+import SideBarBrand from './SideBarBrand.jsx';
 function SideBar() {
     return (
 
         <aside className="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             {/* ACA IRIA EL NOMBRE DE LA APP desde otro component*/}
-
-            <div className="sidebar-brand">
-                <a href="../index.html" className="brand-link">
-                    <img src="../assets/img/AdminLTELogo.png" alt="AdminLTE Logo" className="brand-image opacity-75 shadow" />
-                    <span className="brand-text fw-light">TiendaClick</span>
-                </a>
-            </div>
+            <SideBarBrand />
 
 
             <div className="sidebar-wrapper">
@@ -23,7 +17,7 @@ function SideBar() {
                         <NavLink name={"Panel Administrativo"}></NavLink>
                         <NavLink name={"Estadísticas"}></NavLink>
                         <NavLink name={"Ventas"}></NavLink>
-                        <NavLink name={"Inventario"} url={"inventory"}></NavLink>
+                        <NavLink name={"Inventario"} url={"/inventory/"}></NavLink>
                         {/* Titulo */}
                         <li class="nav-header">DESCARGAR DOCUMENTOS</li>
                         <NavLink name={"Informe de Ventas"}></NavLink>

@@ -17279,3 +17279,11 @@ fieldset legend {
   margin: 0;
   display: flex;
 }
+
+.brand-image {
+  width: 40px;
+  height: auto;
+  display: block;
+  color: white;
+  margin: 0 auto;
+}
