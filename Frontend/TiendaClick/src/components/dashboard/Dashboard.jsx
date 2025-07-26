@@ -29,8 +29,10 @@ function Dashboard() {
                                 <div className="card-header"> <h4> Ventas</h4></div>
                                 <SalesChart />
                             </div>
-
-
+                            <div className="card">
+                                <div className="card-header"> <h4> Ventas</h4></div>
+                                <SalesChart />
+                            </div>
                         </div>
                     </section>
 
