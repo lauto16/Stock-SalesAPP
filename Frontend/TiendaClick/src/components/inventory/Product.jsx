@@ -1,24 +1,25 @@
-export default function Product(props) {
-    const item = props.item
-    const selectProduct = props.selectProduct
-    const index = props.index
-    const selectedProducts = props.selectedProducts
+import { useState } from "react"
 
-    
+export default function Product({ item, columns, selectedItems, setSelectedItems }) {
+    const isSelected = selectedItems.has(item.code);
 
+    const toggleSelection = () => {
+        const updated = new Map(selectedItems);
+        if (updated.has(item.code)) {
+            updated.delete(item.code);
+        } else {
+            updated.set(item.code, item);
+        }
+        setSelectedItems(updated);
+    };
     return (
-        <tr
-            id={item.code}
-            onClick={(e) => selectProduct(e, item.code)}
-            key={index}
-            className={selectedProducts.includes(item.code) ? 'selected-product' : ''}
-        >
-            <td className="col-code">{item.code}</td>
-            <td className="col-name">{item.name}</td>
-            <td className="col-sell-price">${item.sell_price}</td>
-            <td className="col-buy-price">${item.buy_price}</td>
-            <td className="col-stock">{item.stock}</td>
-            <td className="col-last-modification">{item.last_modification}</td>
+        <tr onClick={toggleSelection} className={isSelected ? 'selected-product' : ''}>
+            {columns.map((col, colIndex) => (
+                <td key={colIndex} className={`col-${col.className}`}>
+                    {item[col.key]}
+                </td>
+            ))}
         </tr>
+
     )
 }

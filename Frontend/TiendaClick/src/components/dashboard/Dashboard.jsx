@@ -5,6 +5,7 @@ import DashboardHeader from './DashboardHeader.jsx';
 import SideBar from '../sideNav/SideBar.jsx';
 import Footer from '../footer/Footer.jsx';
 import Nav from "../sideNav/Nav.jsx";
+import Table from "../inventory/Table.jsx";
 function Dashboard() {
 
     return (
@@ -30,8 +31,8 @@ function Dashboard() {
                                 <SalesChart />
                             </div>
                             <div className="card">
-                                <div className="card-header"> <h4> Ventas</h4></div>
-                                <SalesChart />
+                                <div className="card-header"> <h4> Inventario Faltante</h4></div>
+                                <Table />
                             </div>
                         </div>
                     </section>

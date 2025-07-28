@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Header from "./Header";
 import Table from "./Table.jsx";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
-import Product from "./Product";
 import AddProductModal from "./AddProductModal";
+import { fetchProducts } from "../../services/axios.services.js";
+import { set } from "react-hook-form";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -16,9 +16,8 @@ export default function InventoryPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedProducts, setSelectedProducts] = useState([])
     const [showModal, setShowModal] = useState(false);
-
+    const [selectedItems, setSelectedItems] = useState(new Map());
     const handleOpen = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
 
@@ -33,21 +32,6 @@ export default function InventoryPage() {
         { className: "stock", key: "stock", label: 'Stock' },
         { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
     ];
-    const fetchProducts = (page, search = "") => {
-        setLoading(true);
-        axios
-            .get(`${apiUrl}?page=${page}&search=${search}`)
-            .then((response) => {
-                setItems(response.data.results);
-                setTotalPages(Math.ceil(response.data.count / PAGE_SIZE));
-                setCurrentPage(page);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error al obtener el inventario:", error);
-                setLoading(false);
-            });
-    };
 
     const handleSearchSubmit = () => {
         console.log("Buscando:", searchInput);
@@ -55,12 +39,27 @@ export default function InventoryPage() {
     };
 
     useEffect(() => {
-        fetchProducts(1, searchQuery);
-    }, [searchQuery]);
+        const fetchData = async () => {
+            try {
+                const data = await fetchProducts({
+                    page: currentPage,
+                    search: searchQuery,
+                    setLoading,
+                });
+                setItems(data.results);
+                setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+            } catch (error) {
+                setItems([]);
+            }
+        };
+
+        fetchData();
+    }, [searchQuery, currentPage]);
+
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
-            fetchProducts(page, searchQuery);
+            setCurrentPage(page);
         }
     };
 
@@ -68,30 +67,9 @@ export default function InventoryPage() {
         //to implement
     }
 
-    const unselectProduct = (e, code) => {
-        const row = e.currentTarget;
-        const selectedProductsAux = selectedProducts.filter(c => c !== code);
-        setSelectedProducts(selectedProductsAux);
-        row.classList.remove('selected-product');
-    };
-
-    const selectProduct = (e, code) => {
-        const selectedProductsAux = [...selectedProducts];
-        const row = e.currentTarget;
-        if (!selectedProductsAux.includes(code)) {
-            selectedProductsAux.push(code);
-            setSelectedProducts(selectedProductsAux);
-            row.classList.add('selected-product');
-        }
-        else {
-            unselectProduct(e, code)
-        }
-    };
-
-
     useEffect(() => {
-        console.log(selectedProducts);
-    }, [selectedProducts]);
+        console.log(selectedItems)
+    }, [selectedItems]);
 
     return (
         <div className="d-flex justify-content-center mt-5">
@@ -113,7 +91,7 @@ export default function InventoryPage() {
                             />
                         </div>
                     </div>
-                    <Table items={items} columns={columns} loading={loading} />
+                    <Table items={items} columns={columns} loading={loading} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                 </div>
             </div>
         </div>

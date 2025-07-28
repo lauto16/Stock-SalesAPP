@@ -17289,3 +17289,7 @@ fieldset legend {
   color: white;
   margin: 0 auto;
 }
+
+.card {
+  margin: 0.5rem;
+}

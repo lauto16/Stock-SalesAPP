@@ -1,4 +1,6 @@
-export default function Table({ items = [], loading = false, columns = [] }) {
+import { useState, useEffect } from "react";
+import Product from "./Product.jsx";
+export default function Table({ items = [], loading = false, columns = [], selectedItems, setSelectedItems }) {
   // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
   return (
     <table className="table table-bordered align-middle">
@@ -19,15 +21,11 @@ export default function Table({ items = [], loading = false, columns = [] }) {
             <td colSpan={columns.length}>No hay datos para mostrar.</td>
           </tr>
         ) : (
-          items.map((item, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((col, colIndex) => (
-                <td key={colIndex} className={`col-${col.className}`}>
-                  {item[col.key]}
-                </td>
-              ))}
-            </tr>
+          items.map((item) => (
+            <Product item={item} key={item.code} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
+
           ))
+
         )}
       </tbody>
     </table>
