@@ -5,8 +5,7 @@ import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
 import AddProductModal from "./AddProductModal";
-import { fetchProducts } from "../../services/axios.services.js";
-import { set } from "react-hook-form";
+import { fetchSearchProducts, fetchProducts } from "../../services/axios.services.js";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -18,11 +17,10 @@ export default function InventoryPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Map());
-    const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [allSearchResults, setAllSearchResults] = useState([]);
 
     const PAGE_SIZE = 10;
-    const apiUrl = `http://${window.location.hostname}:8000/api/products/`;
 
     const columns = [
         { className: "code", key: "code", label: 'Código' },
@@ -33,29 +31,54 @@ export default function InventoryPage() {
         { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
     ];
 
-    const handleSearchSubmit = () => {
-        console.log("Buscando:", searchInput);
-        setSearchQuery(searchInput);
+    const clearSearch = () => {
+        setIsSearching(false);
+        setSearchQuery("");
+        setSearchInput("");
+        setCurrentPage(1);
+    };
+
+
+    const handleSearchSubmit = async (query) => {
+        if (query.length >= 2) {
+            setIsSearching(true);
+            setSearchQuery(query);
+            setCurrentPage(1);
+            setLoading(true);
+            const results = await fetchSearchProducts(query);
+            setAllSearchResults(results);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const data = await fetchProducts({
-                    page: currentPage,
-                    search: searchQuery,
-                    setLoading,
-                });
-                setItems(data.results);
-                setTotalPages(Math.ceil(data.count / PAGE_SIZE));
-            } catch (error) {
-                setItems([]);
-            }
+            if (isSearching) return;
+            setLoading(true);
+            const data = await fetchProducts({
+                page: currentPage,
+                search: "",
+                setLoading,
+            });
+            setItems(data.results);
+            setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+            setLoading(false);
         };
 
         fetchData();
-    }, [searchQuery, currentPage]);
+    }, [currentPage, isSearching]);
 
+    useEffect(() => {
+        if (!isSearching) return;
+
+        const total = Math.ceil(allSearchResults.length / PAGE_SIZE);
+        setTotalPages(total);
+
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageItems = allSearchResults.slice(start, end);
+        setItems(pageItems);
+    }, [allSearchResults, currentPage, isSearching]);
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -63,12 +86,12 @@ export default function InventoryPage() {
         }
     };
 
-    const handleGoToSales = (page) => {
-        //to implement
-    }
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
+    const handleGoToSales = () => { };
 
     useEffect(() => {
-        console.log(selectedItems)
+        console.log(selectedItems);
     }, [selectedItems]);
 
     return (
@@ -87,11 +110,20 @@ export default function InventoryPage() {
                             <Search
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
-                                onSearch={handleSearchSubmit}
+                                onSearch={() => handleSearchSubmit(searchInput)}
                             />
                         </div>
                     </div>
-                    <Table items={items} columns={columns} loading={loading} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+                    <Table
+                        items={items}
+                        columns={columns}
+                        loading={loading}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                    />
+                    <button className="btn btn-outline-secondary ms-2" onClick={clearSearch}>
+                        Limpiar resultados de busqueda
+                    </button>
                 </div>
             </div>
         </div>

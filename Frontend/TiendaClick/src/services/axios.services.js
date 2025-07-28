@@ -27,11 +27,12 @@ async function addProduct(code, name, stock, sell_price, buy_price, provider) {
       throw error;
     });
 }
+
 async function fetchProducts({ page = 1, search = "", setLoading }) {
   try {
     setLoading(true);
     const response = await axios.get(`${apiUrl}products/?page=${page}&search=${search}`);
-    return response.data; // contiene tanto `results` como `count`
+    return response.data;
   } catch (error) {
     console.error("Error al obtener el inventario:", error);
     return { results: [], count: 0 };
@@ -40,7 +41,24 @@ async function fetchProducts({ page = 1, search = "", setLoading }) {
   }
 }
 
+async function fetchSearchProducts(search) {
+  const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Search request failed with status: ${response.status}`);
+    }
+    const products = await response.json();
+    return products;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return null;
+  }
+}
+
 export {
+  fetchSearchProducts,
   addProduct,
   getProviders,
   fetchProducts
