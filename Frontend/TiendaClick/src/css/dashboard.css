@@ -1,0 +1,35 @@
+main {
+    height: 100%;
+    margin: 0;
+}
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.stock-input {
+    width: 50px;
+    padding: 4px 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    display: inline-block;
+    content: center;
+}
+
+.stock-input:focus {
+    border-color: #007bff;
+    /* color azul al enfocar */
+}
+
+.scrollable-card-body {
+    max-height: 300px;
+    /* ajustalo según tu diseño */
+    overflow-y: auto;
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Product from "./Product.jsx";
-export default function Table({ items = [], loading = false, columns = [], selectedItems, setSelectedItems }) {
+export default function Table({ items = [], loading, columns = [], selectedItems, setSelectedItems }) {
   // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
   return (
     <table className="table table-bordered align-middle">

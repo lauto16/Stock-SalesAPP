@@ -14,31 +14,39 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     Set of django views for each API request
     """
-
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = ProductPagination
-    #authentication_classes = [SessionAuthentication, TokenAuthentication]
-    #permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['get'], url_path='low-stock/(?P<limit>\d+)')
     def low_stock(self, request, limit=None):
         """
-        Return all products with stock less than `limit`
+        Return up to 150 products with stock less than or equal to `limit`, sorted by stock ascending
         """
         try:
             limit = int(limit)
         except ValueError:
             return Response({'error': 'Invalid limit'}, status=status.HTTP_400_BAD_REQUEST)
 
-        products = Product.objects.filter(stock__lt=limit)
-        page = self.paginate_queryset(products)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        products = Product.objects.filter(
+            stock__lte=limit).order_by('stock')[:150]
 
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['delete'], url_path='delete-by-code/(?P<code>[^/.]+)')
+    def destroy_by_code(self, request, code=None):
+        """
+        Removes a certain product from DB
+        """
+        product = Product.objects.filter(code=code)
+        if not product.exists():
+            return Response({"error": f'No se pudo eliminar el producto "{code}"'}, status=status.HTTP_400_BAD_REQUEST)
+
+        product.delete()
+        return Response({'success': True})
 
 
 class ProductSearchView(APIView):
