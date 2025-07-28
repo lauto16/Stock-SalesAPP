@@ -5,7 +5,6 @@ import Table from "./Table.jsx";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
-import Product from "./Product";
 import AddProductModal from "./AddProductModal";
 
 export default function InventoryPage() {
@@ -88,7 +87,6 @@ export default function InventoryPage() {
         }
     };
 
-
     useEffect(() => {
         console.log(selectedProducts);
     }, [selectedProducts]);
@@ -117,7 +115,5 @@ export default function InventoryPage() {
                 </div>
             </div>
         </div>
-
-
     );
 }

@@ -79,7 +79,7 @@ export default function AddProductModal({ show, handleClose }) {
                     <Row className="g-3">
                         <Col md={6} className="d-flex flex-column">
                             <CustomInput
-                                label="Codi1go"
+                                label="Codigo"
                                 icon="bi-upc"
                                 type="text"
                                 placeholder="Codigo"
