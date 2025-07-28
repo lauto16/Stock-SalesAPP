@@ -71,10 +71,11 @@ async function fetchLowStock({ setLoading, amount = 100 }) {
   try {
     setLoading(true);
     const response = await axios.get(`${apiUrl}products/low-stock/${amount}/`);
-    return response.data; // contiene tanto `results` como `count`
+    return response.data;
+
   } catch (error) {
     console.error("Error al obtener el inventario:", error);
-    return { results: [], count: 0 };
+    return [];
   } finally {
     setLoading(false);
   }

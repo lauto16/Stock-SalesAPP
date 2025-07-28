@@ -23,13 +23,17 @@ function Dashboard() {
     ];
     useEffect(() => {
         const get_products = async () => {
-            const data = await fetchLowStock({ setLoading, amount })
-            setProducts(data);
-            console.log("Productos con bajo stock:", data);
-        }
-        get_products()
-    }, [amount])
-
+            const data = await fetchLowStock({ setLoading, amount });
+            //validate data structure just in case
+            if (Array.isArray(data)) {
+                setProducts(data);
+            } else {
+                console.warn("La respuesta no es un array");
+                setProducts([]);
+            }
+        };
+        get_products();
+    }, [amount]);
 
     const handleButtonClick = () => {
         const value_input = inputRef.current?.value;
@@ -62,7 +66,7 @@ function Dashboard() {
                             </div>
                             <div className="card">
                                 <div className="card-header stock-header">
-                                    <Link to={"/inventory/"} className="text-decoration-none"><h5>Stock Faltante</h5></Link>
+                                    <Link to={"/inventory/"} className="text-decoration-none text-danger"><h5>Stock Faltante</h5></Link>
 
                                     <div className="input-group w-auto">
                                         <span className="input-group-text user-select-none">Stock menor que</span>
