@@ -5,20 +5,21 @@ function SideBar() {
     return (
 
         <aside className="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-            {/* ACA IRIA EL NOMBRE DE LA APP desde otro component*/}
+            {/* sidebar brand from another component */}
             <SideBarBrand />
 
 
             <div className="sidebar-wrapper">
                 <nav className="mt-2">
                     <ul className="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" aria-label="Main navigation" data-accordion="false" id="navigation">
-
+                        {/* Headline */}
+                        <li className="nav-header">MENÚ PRINCIPAL</li>
 
                         <NavLink name={"Panel Administrativo"}></NavLink>
                         <NavLink name={"Estadísticas"}></NavLink>
                         <NavLink name={"Ventas"}></NavLink>
                         <NavLink name={"Inventario"} url={"/inventory/"}></NavLink>
-                        {/* Titulo */}
+                        {/* Headline */}
                         <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                         <NavLink name={"Informe de Ventas"}></NavLink>
 

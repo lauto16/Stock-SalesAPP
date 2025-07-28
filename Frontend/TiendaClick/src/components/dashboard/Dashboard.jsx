@@ -54,10 +54,10 @@ function Dashboard() {
 
                     <section className="app-content container-fluid  mb-4">
                         <div className="row">
-                            <ActionBox name="New Orders" number="150" url="#" cardClass="text-bg-success" svgName="cart" linkTxt="moreInfo" />
-                            <ActionBox name="Bounce Rate" number="53" url="#" cardClass="text-bg-success" svgName="bars" linkTxt="moreInfo" />
+                            <ActionBox name="Ventas" number="150" url="#" cardClass="text-bg-success" svgName="cart" linkTxt="moreInfo" />
+                            <ActionBox name="Bounce Rate" number="53" url="#" cardClass="text-bg-warning" svgName="bars" linkTxt="moreInfo" />
                             <ActionBox name="User Registrations" number="44" url="#" cardClass="text-bg-danger" svgName="new-person" linkTxt="moreInfo" />
-                            <ActionBox name="new-person" number="150" url="#" cardClass="text-bg-danger" svgName="cake-graph" linkTxt="moreInfo" />
+                            <ActionBox name="new-person" number="150" url="#" cardClass="text-bg-info" svgName="cake-graph" linkTxt="moreInfo" />
                         </div>
                         <div className="row">
                             <div className="card">
