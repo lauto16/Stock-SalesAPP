@@ -10,6 +10,7 @@ router_providers = DefaultRouter()
 router_providers.register(r'providers', ProviderViewSet, basename='provider')
 
 urlpatterns = [
+    path('api/products/search/', ProductSearchView.as_view(), name='product-search'), 
     path('api/', include(router_products.urls)),
-    path('api/', include(router_providers.urls))
+    path('api/', include(router_providers.urls)),
 ]
