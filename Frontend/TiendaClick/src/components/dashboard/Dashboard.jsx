@@ -65,7 +65,7 @@ function Dashboard() {
                                     <Link to={"/inventory/"} className="text-decoration-none"><h5>Stock Faltante</h5></Link>
 
                                     <div className="input-group w-auto">
-                                        <span className="input-group-text">N° Stock</span>
+                                        <span className="input-group-text user-select-none">Stock menor que</span>
                                         <input
                                             type="number"
                                             min="1"
