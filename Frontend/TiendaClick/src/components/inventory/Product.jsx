@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function Product({ item, columns, selectedItems, setSelectedItems }) {
+export default function Product({ item, columns, selectedItems = new Map(), setSelectedItems }) {
     const isSelected = selectedItems.has(item.code);
 
     const toggleSelection = () => {

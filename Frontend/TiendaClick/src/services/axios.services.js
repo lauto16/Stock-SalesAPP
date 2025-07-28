@@ -66,11 +66,25 @@ async function deleteProductByCode(code) {
     throw error.response?.data || error;
   }
 };
+async function fetchLowStock({ setLoading, amount = 100 }) {
+  // amount -> quantity of products to get, max 150
+  try {
+    setLoading(true);
+    const response = await axios.get(`${apiUrl}products/low-stock/${amount}/`);
+    return response.data; // contiene tanto `results` como `count`
+  } catch (error) {
+    console.error("Error al obtener el inventario:", error);
+    return { results: [], count: 0 };
+  } finally {
+    setLoading(false);
+  }
+}
 
 export {
   fetchSearchProducts,
   addProduct,
   getProviders,
   fetchProducts,
+  fetchLowStock,
   deleteProductByCode
 }
