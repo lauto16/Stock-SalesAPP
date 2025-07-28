@@ -5,7 +5,8 @@ import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
 import AddProductModal from "./AddProductModal";
-import { fetchSearchProducts, fetchProducts } from "../../services/axios.services.js";
+import { fetchSearchProducts, fetchProducts, deleteProductByCode } from "../../services/axios.services.js";
+import { useNotifications } from '../../context/NotificationSystem';
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -19,6 +20,7 @@ export default function InventoryPage() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSearching, setIsSearching] = useState(false);
     const [allSearchResults, setAllSearchResults] = useState([]);
+    const { addNotification } = useNotifications();
 
     const PAGE_SIZE = 10;
 
@@ -38,6 +40,28 @@ export default function InventoryPage() {
         setCurrentPage(1);
     };
 
+    const handleDelete = async (codes) => {
+    const newItems = [...items];
+
+    for (const code of codes) {
+        try {
+            const result = await deleteProductByCode(code);
+            if (result.success) {
+                addNotification('success', `Producto ${code} eliminado con éxito`);
+
+                const index = newItems.findIndex(item => item.code === code);
+                if (index !== -1) {
+                    newItems.splice(index, 1);
+                }
+            }
+        } catch (error) {
+            addNotification('error', `El producto ${code} no se pudo eliminar`);
+        }
+    }
+
+    setItems(newItems); // actualizamos la tabla con los nuevos datos
+    setSelectedItems(new Map()); // limpiamos selección
+};
 
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
@@ -98,7 +122,7 @@ export default function InventoryPage() {
         <div className="d-flex justify-content-center mt-5">
             <AddProductModal show={showModal} handleClose={handleClose} />
             <div className="container container-modified">
-                <Header userRole={userRole} onGoToSales={handleGoToSales} onAddProduct={handleOpen} />
+                <Header userRole={userRole} onGoToSales={handleGoToSales} onAddProduct={handleOpen} onDeleteSelected={(e) => handleDelete(Array.from(selectedItems.keys()))}/>
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
                         <Pagination
@@ -121,9 +145,10 @@ export default function InventoryPage() {
                         selectedItems={selectedItems}
                         setSelectedItems={setSelectedItems}
                     />
-                    <button className="btn btn-outline-secondary ms-2" onClick={clearSearch}>
+                    <button className="btn btn-outline-secondary clear-search-results-button" onClick={clearSearch}>
                         Limpiar resultados de busqueda
                     </button>
+
                 </div>
             </div>
         </div>

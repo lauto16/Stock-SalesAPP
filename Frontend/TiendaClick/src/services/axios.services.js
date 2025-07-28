@@ -31,7 +31,7 @@ async function addProduct(code, name, stock, sell_price, buy_price, provider) {
 async function fetchProducts({ page = 1, search = "", setLoading }) {
   try {
     setLoading(true);
-    const response = await axios.get(`${apiUrl}products/?page=${page}&search=${search}`);
+    const response = await axios.get(`${apiUrl}products/?page=${page}`);
     return response.data;
   } catch (error) {
     console.error("Error al obtener el inventario:", error);
@@ -57,9 +57,20 @@ async function fetchSearchProducts(search) {
   }
 }
 
+async function deleteProductByCode(code) {
+  try {
+    const response = await axios.delete(`${apiUrl}products/delete-by-code/${code}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar el producto:", error.response?.data || error.message);
+    throw error.response?.data || error;
+  }
+};
+
 export {
   fetchSearchProducts,
   addProduct,
   getProviders,
-  fetchProducts
+  fetchProducts,
+  deleteProductByCode
 }

@@ -216,6 +216,17 @@ tr.selected-product td {
     border: 1px solid #6a8d73;
 }
 
+.event-handler-success{
+    background-color: #28a792 !important;
+    color: white;
+}
+
+.event-handler-error{
+    background-color: #dc3545 !important;
+    color: white;
+}
+
+
 @media (max-width: 620px) {
 
     .col-code,
@@ -287,6 +298,11 @@ tr.selected-product td {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         white-space: nowrap;
+    }
+
+    .clear-search-results-button{
+        margin-left: 20%;
+        margin-right: 20%;
     }
 
 }

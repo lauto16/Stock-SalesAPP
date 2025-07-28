@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, TabPane } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import { getProviders, addProduct } from "../../services/axios.services";
 import Select from "react-select";
+import { useNotifications } from '../../context/NotificationSystem';
 
 export default function AddProductModal({ show, handleClose }) {
     const {
@@ -19,9 +20,8 @@ export default function AddProductModal({ show, handleClose }) {
         },
     }
     );
-
+    const { addNotification } = useNotifications();
     const [providers, setProviders] = useState([])
-
     const codeInputRef = useRef(null);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export default function AddProductModal({ show, handleClose }) {
         if (show) {
             getProviders()
                 .then((res) => setProviders(res.data))
-                .catch((err) => console.error("Error al obtener proveedores:", err));
+                .catch((err) => handleBeforeClose('error', 'No se pudieron cargar los proveedores'));
         }
     }, [show]);
 
@@ -46,9 +46,12 @@ export default function AddProductModal({ show, handleClose }) {
         return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
     };
 
-    const handleBeforeClose = () => {
+    const handleBeforeClose = (type, message) => {
         handleClose()
-        reset()
+        if (type === 'success') {
+            reset()
+        }
+        addNotification(type, message);
     }
 
     const onSubmit = (data) => {
@@ -57,8 +60,8 @@ export default function AddProductModal({ show, handleClose }) {
         }
 
         addProduct(data.code, data.name, data.stock, data.sellingPrice, data.purchasePrice, data.provider)
-            .then(data => handleBeforeClose())
-            .catch(err => console.error(err));
+            .then(data => handleBeforeClose('success', 'Producto agregado con éxito'))
+            .catch(err => handleBeforeClose('error', 'Error al cargar el producto'));
 
     };
 
