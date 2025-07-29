@@ -68,6 +68,11 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 addNotification("success", "Producto actualizado con éxito");
                 unselectAll();
                 handleClose();
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
+
             } else {
                 addNotification("error", error || "Error al actualizar el producto");
             }
