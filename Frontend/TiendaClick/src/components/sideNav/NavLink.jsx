@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router'
-function SideBar({ name, url }) {
+function SideBar({ name, url = "" }) {
     //if url is "", gets transformed to "/"
-    const urlPath = url ?? '/'
     return (
         <li className="nav-item">
 
             <Link className="nav-link"
                 to={{
-                    pathname: urlPath,
+                    pathname: url,
                     search: "?query=string",
                     hash: "#hash",
                 }}>

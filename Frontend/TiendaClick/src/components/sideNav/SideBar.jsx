@@ -16,9 +16,9 @@ function SideBar() {
                         <li className="nav-header">MENÚ PRINCIPAL</li>
 
                         <NavLink name={"Panel Administrativo"}></NavLink>
-                        <NavLink name={"Estadísticas"}></NavLink>
+                        <NavLink name={"Proveedores"} url={"/providers"}></NavLink>
                         <NavLink name={"Ventas"}></NavLink>
-                        <NavLink name={"Inventario"} url={"/inventory/"}></NavLink>
+                        <NavLink name={"Inventario"} url={"/inventory"}></NavLink>
                         {/* Headline */}
                         <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                         <NavLink name={"Informe de Ventas"}></NavLink>
