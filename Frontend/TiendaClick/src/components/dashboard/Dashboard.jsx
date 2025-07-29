@@ -64,15 +64,16 @@ function Dashboard() {
                                 <div className="card-header"> <h4> Ventas</h4></div>
                                 <SalesChart />
                             </div>
-                            <div className="card">
+                            <div className="card card-stock">
                                 <div className="card-header stock-header">
-                                    <Link to={"/inventory/"} className="text-decoration-none text-danger"><h5>Stock Faltante</h5></Link>
+
+                                    <Link to={"/inventory/"} className="text-decoration-none text-dark"><h5>Stock Faltante</h5></Link>
 
                                     <div className="input-group w-auto">
                                         <span className="input-group-text user-select-none">Stock menor que</span>
                                         <input
                                             type="number"
-                                            min="1"
+                                            min="0"
                                             defaultValue={amount}
                                             className="form-control"
                                             ref={inputRef}
@@ -85,7 +86,7 @@ function Dashboard() {
                                             onClick={handleButtonClick}
                                             type="button"
                                         >
-                                            Buscar
+                                            <i className="bi bi-search"></i>
                                         </button>
                                     </div>
                                 </div>
