@@ -110,6 +110,58 @@ async function updateProduct(oldCode, updatedData) {
   }
 }
 
+async function updateSelectedPrices(data, selectedItems) {
+  try {
+    const codes = Array.from(selectedItems.keys());
+    const payload = {
+      ...data,
+      codes,
+    };
+
+    const response = await axios.patch(`${apiUrl}products/patch-selected-prices/`, payload);
+    if (response.data && typeof response.data.success === "boolean") {
+      return {
+        success: response.data.success,
+        error: response.data.error || "",
+      };
+    } else {
+      return {
+        success: false,
+        error: "Respuesta inesperada del servidor",
+      };
+    }
+  } catch (error) {
+    const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    return {
+      success: false,
+      error: backendError,
+    };
+  }
+}
+
+async function updateAllPrices(data) {
+  try {
+    const response = await axios.patch(`${apiUrl}products/patch-all-prices/`, data);
+    if (response.data && typeof response.data.success === "boolean") {
+      return {
+        success: response.data.success,
+        error: response.data.error || "",
+      };
+    } else {
+      return {
+        success: false,
+        error: "Respuesta inesperada del servidor",
+      };
+    }
+  } catch (error) {
+    const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    return {
+      success: false,
+      error: backendError,
+    };
+  }
+}
+
 export {
   fetchSearchProducts,
   addProduct,
@@ -118,5 +170,7 @@ export {
   fetchLowStock,
   deleteProductByCode,
   fetchGetByCode,
-  updateProduct
+  updateProduct,
+  updateAllPrices,
+  updateSelectedPrices
 }

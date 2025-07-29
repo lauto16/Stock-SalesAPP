@@ -80,7 +80,6 @@ export default function Header({
           <Dropdown.Toggle
             split
             variant="primary"
-            disabled={!isSomethingSelected}
             title="Más acciones"
           >
             <i className="bi bi-list"></i>
@@ -91,11 +90,17 @@ export default function Header({
               <i className="bi bi-graph-up-arrow me-2"></i>
               Aumentar precios
             </Dropdown.Item>
-            <Dropdown.Item onClick={onTemporaryOffer}>
+            <Dropdown.Item
+              onClick={onTemporaryOffer}
+              disabled={!isSomethingSelected}
+            >
               <i className="bi bi-clock-history me-2"></i>
               Oferta temporal
             </Dropdown.Item>
-            <Dropdown.Item onClick={onCreateCombo}>
+            <Dropdown.Item
+              onClick={onCreateCombo}
+              disabled={!isSomethingSelected}
+            >
               <i className="bi bi-box2-heart me-2"></i>
               Crear combo
             </Dropdown.Item>

@@ -184,7 +184,7 @@ export default function AddProductModal({ show, handleClose }) {
                         <Button
                             variant="success"
                             type="submit"
-                            className="mt-2 add-product-send-button"
+                            className="mt-2 send-form-button"
                         >
                             Agregar
                         </Button>

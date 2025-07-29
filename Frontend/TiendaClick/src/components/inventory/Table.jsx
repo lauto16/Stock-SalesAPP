@@ -22,7 +22,6 @@ export default function Table({ setIsSomethingSelected, items = [], loading, col
         ) : (
           items.map((item) => (
             <Product setIsSomethingSelected={setIsSomethingSelected} item={item} key={item.code} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
-
           ))
 
         )}

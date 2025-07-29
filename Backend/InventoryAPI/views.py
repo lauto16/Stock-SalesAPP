@@ -195,6 +195,85 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @action(detail=False, methods=["patch"], url_path="patch-selected-prices")
+    def patch_selected(self, request):
+        """
+        Updates a list of selected products by code
+        """
+        """
+        TODO: Add the functionality to take care of edge cases when user wants to apply discount/rise prices to
+        discounts(ofertas) and product combos ------> This needs to be done when the combos and discount structure and
+        DB are ready
+        """
+        percentage = request.data.get("percentage")
+        # include_discounted = request.data.get("includeDiscounted", False)
+        # include_combos = request.data.get("includeCombos", False)
+        codes = request.data.get("codes", [])
+
+        if not isinstance(codes, list) or not codes:
+            return Response(
+                {
+                    "success": False,
+                    "error": "Debe proporcionar una lista de códigos de productos",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        for code in codes:
+            product = Product.objects.filter(code=code).first()
+
+            if not product:
+                return Response(
+                    {
+                        "success": False,
+                        "error": f"No se encontró el producto con código {code}",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # if not include_discounted and product.has_discount:
+            #     continue
+
+            # if not include_combos and product.is_combo:
+            #     continue
+
+            if isinstance(percentage, (int, float)):
+                product.sell_price = product.sell_price * (1 + (percentage / 100))
+                product.last_modification = timezone.now()
+                product.save()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["patch"], url_path="patch-all-prices")
+    def patch_all(self, request):
+        """
+        Updates all products
+        """
+        """
+        TODO: Add the functionality to take care of edge cases when user wants to apply discount/rise prices to
+        discounts(ofertas) and product combos ------> This needs to be done when the combos and discount structure and
+        DB are ready
+        """
+        percentage = request.data.get("percentage")
+        # include_discounted = request.data.get("includeDiscounted", False)
+        # include_combos = request.data.get("includeCombos", False)
+
+        products = Product.objects.all()
+
+        for product in products:
+            # if not include_discounted and product.has_discount:
+            #     continue
+
+            # if not include_combos and product.is_combo:
+            #     continue
+
+            if isinstance(percentage, (int, float)):
+                product.sell_price = product.sell_price * (1 + (percentage / 100))
+                product.last_modification = timezone.now()
+                product.save()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
 
 class ProductSearchView(APIView):
 

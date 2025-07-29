@@ -5,11 +5,12 @@ import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
 import AddProductModal from "./AddProductModal";
-import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode } from "../../services/axios.services.js";
+import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
 import { useNotifications } from '../../context/NotificationSystem';
 import SelectedProductsModal from "./SelectedProductsModal";
 import ProductInfoModal from "./ProductInfoModal";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
+import ConfirmationModal from "./ConfirmationModal"
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -29,6 +30,15 @@ export default function InventoryPage() {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [showPriceUpdateModal, setShowPriceUpdateModal] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationText, setConfirmationText] = useState('')
+    const [confirmationTitle, setConfirmationTitle] = useState('')
+
+    // States for update prices modal
+    const [updatePricePercentage, setUpdatePricePercentage] = useState(0)
+    const [includeDiscounted, setIncludeDiscounted] = useState(false);
+    const [applyToAll, setApplyToAll] = useState(false);
+    const [includeCombos, setIncludeCombos] = useState(false);
 
     const PAGE_SIZE = 10;
 
@@ -44,6 +54,8 @@ export default function InventoryPage() {
     const handleOpen = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const handleGoToSales = () => { };
+    const handleShowConfirmation = () => setShowConfirmation(true);
+    const handleHideConfirmation = () => setShowConfirmation(false);
 
     const clearSearch = () => {
         setIsSearching(false);
@@ -151,6 +163,65 @@ export default function InventoryPage() {
         setShowPriceUpdateModal(true)
     }
 
+    const applyPriceUpdate = (percentage, includeDiscounted, includeCombos, applyToAll) => {
+        setUpdatePricePercentage(percentage);
+        setIncludeDiscounted(includeDiscounted);
+        setIncludeCombos(includeCombos);
+        setApplyToAll(applyToAll);
+
+        const isIncrease = percentage > 0;
+        const isDecrease = percentage < 0;
+
+        if (applyToAll) {
+            if (isIncrease) {
+                setConfirmationText("¿Estás seguro que deseas aumentar el precio de todos los productos?");
+                setConfirmationTitle("Aumentar todos los productos");
+            } else if (isDecrease) {
+                setConfirmationText("¿Estás seguro que deseas disminuir el precio de todos los productos?");
+                setConfirmationTitle("Abaratar todos los productos");
+            }
+        } else {
+            if (isIncrease) {
+                setConfirmationText("¿Estás seguro que deseas aumentar el precio de los productos seleccionados?");
+                setConfirmationTitle("Aumentar productos seleccionados");
+            } else if (isDecrease) {
+                setConfirmationText("¿Estás seguro que deseas disminuir el precio de los productos seleccionados?");
+                setConfirmationTitle("Abaratar productos seleccionados");
+            }
+        }
+
+        handleShowConfirmation();
+    };
+
+    const handleUpdatePricesSendForm = async () => {
+        const data = {
+            percentage: updatePricePercentage,
+            includeDiscounted,
+            includeCombos,
+        };
+
+        let result;
+
+        if (applyToAll) {
+            result = await updateAllPrices(data);
+        } else {
+            result = await updateSelectedPrices(data, selectedItems);
+        }
+
+        if (result.success) {
+            addNotification("success", "Precios actualizados correctamente");
+        } else {
+            addNotification("error", result.error || "Hubo un error al actualizar los precios");
+        }
+
+        setShowConfirmation(false)
+        // need to reload the page so the user can see the results of his transaction
+        // maybe reload only the table component?
+        setTimeout(() => {
+            window.location.reload();
+        }, 200);
+    };
+
     useEffect(() => {
         setIsSomethingSelected(selectedItems.size > 0);
     }, [selectedItems]);
@@ -186,12 +257,25 @@ export default function InventoryPage() {
 
     return (
         <div className="d-flex justify-content-center mt-5">
+            <ConfirmationModal
+                show={showConfirmation}
+                onHide={handleHideConfirmation}
+                title={confirmationTitle}
+                message={confirmationText}
+                onSendForm={handleUpdatePricesSendForm}
+                handleClose={handleHideConfirmation}
+            />
             <PriceUpdateModal
                 show={showPriceUpdateModal}
                 handleClose={() => setShowPriceUpdateModal(false)}
                 selectedItems={selectedItems}
-                onApply={(percentage, includeDiscounted) => {
-                }}
+                onApply={applyPriceUpdate}
+                includeCombos={includeCombos}
+                setIncludeCombos={setIncludeCombos}
+                applyToAll={applyToAll}
+                setApplyToAll={setApplyToAll}
+                includeDiscounted={includeDiscounted}
+                setIncludeDiscounted={setIncludeDiscounted}
             />
             <ProductInfoModal
                 show={showProductInfo}

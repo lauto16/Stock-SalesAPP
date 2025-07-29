@@ -213,8 +213,7 @@ tr.selected-product td {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.add-product-send-button,
-.modify-product-send-button {
+.send-form-button {
     background-color: #6a8d73;
     border: 1px solid #6a8d73;
 }

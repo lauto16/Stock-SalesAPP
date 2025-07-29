@@ -6,7 +6,7 @@ import CustomInput from "./CustomInput";
 import { getProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 
-export default function ProductInfoModal({ show, handleClose, product, unselectAll}) {
+export default function ProductInfoModal({ show, handleClose, product, unselectAll }) {
     const {
         register,
         handleSubmit,
@@ -69,6 +69,8 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 unselectAll();
                 handleClose();
 
+                // need to reload the page so the user can see the results of his transaction
+                // maybe reload only the table component?
                 setTimeout(() => {
                     window.location.reload();
                 }, 200);
@@ -220,7 +222,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-4">
-                        <Button variante="success" className="mt-2 modify-product-send-button" type="submit">
+                        <Button variante="success" className="mt-2 send-form-button" type="submit">
                             Guardar cambios
                         </Button>
                     </div>
