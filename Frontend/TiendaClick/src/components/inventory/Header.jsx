@@ -1,3 +1,5 @@
+import { Dropdown, ButtonGroup } from "react-bootstrap";
+
 export default function Header({
   isSomethingSelected,
   userRole,
@@ -6,7 +8,10 @@ export default function Header({
   toggleSelectAll,
   selectedItems,
   onViewSelected,
-  onExtraInfo
+  onExtraInfo,
+  onPriceUpdate,
+  onTemporaryOffer,
+  onCreateCombo
 }) {
   return (
     <div className="d-flex justify-content-between align-items-center header">
@@ -48,13 +53,12 @@ export default function Header({
 
         <button
           type="button"
-          className="btn btn-primary position-relative"
+          className="btn btn-primary position-relative view-selected-products"
           title="Ver productos seleccionados"
           onClick={onViewSelected}
           disabled={!isSomethingSelected}
         >
           <i className="bi bi-eye-fill"></i>
-
           {selectedItems.size > 0 && (
             <span className="notification-badge">
               {selectedItems.size}
@@ -64,13 +68,39 @@ export default function Header({
 
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn-primary more-info"
           title="Información adicional"
           onClick={onExtraInfo}
           disabled={selectedItems.size !== 1}
         >
           <i className="bi bi-info-circle-fill"></i>
         </button>
+
+        <Dropdown className="dropdown-more-options" as={ButtonGroup}>
+          <Dropdown.Toggle
+            split
+            variant="primary"
+            disabled={!isSomethingSelected}
+            title="Más acciones"
+          >
+            <i className="bi bi-list"></i>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={onPriceUpdate}>
+              <i className="bi bi-graph-up-arrow me-2"></i>
+              Aumentar precios
+            </Dropdown.Item>
+            <Dropdown.Item onClick={onTemporaryOffer}>
+              <i className="bi bi-clock-history me-2"></i>
+              Oferta temporal
+            </Dropdown.Item>
+            <Dropdown.Item onClick={onCreateCombo}>
+              <i className="bi bi-box2-heart me-2"></i>
+              Crear combo
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </div>
   );

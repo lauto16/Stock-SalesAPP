@@ -213,7 +213,8 @@ tr.selected-product td {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.add-product-send-button {
+.add-product-send-button,
+.modify-product-send-button {
     background-color: #6a8d73;
     border: 1px solid #6a8d73;
 }
@@ -242,6 +243,21 @@ tr.selected-product td {
     text-align: center;
 }
 
+.btn-remove {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    transition: opacity 0.3s ease;
+}
+
+.btn-remove:hover {
+    opacity: 0.7;
+}
+
+.dropdown-more-options {
+    margin-top: 0;
+}
+
 @media (max-width: 620px) {
 
     .col-code,
@@ -265,15 +281,26 @@ tr.selected-product td {
     }
 }
 
-.btn-remove {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    transition: opacity 0.3s ease;
+@media (max-width: 410px) {
+    .dropdown-more-options {
+        margin-top: 10px !important;
+        width: 100%;
+    }
 }
 
-.btn-remove:hover {
-    opacity: 0.7;
+@media (max-width: 300px) {
+    .more-info {
+        margin-top: 10px !important;
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 250px){
+    .view-selected-products {
+        margin-top: 10px !important;
+        width: 100%;
+    }
 }
 
 @media (max-width: 800px) {
@@ -281,7 +308,6 @@ tr.selected-product td {
     .user-role {
         margin-left: 0;
     }
-
 
     .header {
         flex-direction: column;
@@ -296,7 +322,6 @@ tr.selected-product td {
     }
 
     .btn-group {
-        margin-top: 1rem;
         flex-wrap: wrap;
         justify-content: center;
     }

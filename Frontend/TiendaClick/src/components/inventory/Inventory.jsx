@@ -9,7 +9,7 @@ import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode
 import { useNotifications } from '../../context/NotificationSystem';
 import SelectedProductsModal from "./SelectedProductsModal";
 import ProductInfoModal from "./ProductInfoModal";
-
+import PriceUpdateModal from "./PriceUpdateModal.jsx"
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -28,7 +28,7 @@ export default function InventoryPage() {
     const [showProductInfo, setShowProductInfo] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showSelectedModal, setShowSelectedModal] = useState(false);
-
+    const [showPriceUpdateModal, setShowPriceUpdateModal] = useState(false)
 
     const PAGE_SIZE = 10;
 
@@ -147,6 +147,10 @@ export default function InventoryPage() {
         }
     }
 
+    const onPriceUpdate = () => {
+        setShowPriceUpdateModal(true)
+    }
+
     useEffect(() => {
         setIsSomethingSelected(selectedItems.size > 0);
     }, [selectedItems]);
@@ -182,6 +186,13 @@ export default function InventoryPage() {
 
     return (
         <div className="d-flex justify-content-center mt-5">
+            <PriceUpdateModal
+                show={showPriceUpdateModal}
+                handleClose={() => setShowPriceUpdateModal(false)}
+                selectedItems={selectedItems}
+                onApply={(percentage, includeDiscounted) => {
+                }}
+            />
             <ProductInfoModal
                 show={showProductInfo}
                 handleClose={() => setShowProductInfo(false)}
@@ -208,6 +219,7 @@ export default function InventoryPage() {
                     onViewSelected={() => setShowSelectedModal(true)}
                     selectedItems={selectedItems}
                     onExtraInfo={onExtraInfo}
+                    onPriceUpdate={onPriceUpdate}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">

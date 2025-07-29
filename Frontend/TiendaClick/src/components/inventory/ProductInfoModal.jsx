@@ -220,10 +220,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-4">
-                        <Button variant="secondary" onClick={handleClose} className="me-2">
-                            Cancelar
-                        </Button>
-                        <Button variant="primary" type="submit">
+                        <Button variante="success" className="mt-2 modify-product-send-button" type="submit">
                             Guardar cambios
                         </Button>
                     </div>
