@@ -66,6 +66,7 @@ async function deleteProductByCode(code) {
     throw error.response?.data || error;
   }
 };
+
 async function fetchLowStock({ setLoading, amount = 100 }) {
   // amount -> quantity of products to get, max 150
   try {
@@ -81,11 +82,41 @@ async function fetchLowStock({ setLoading, amount = 100 }) {
   }
 }
 
+async function fetchGetByCode(code) {
+  const response = await axios.get(`${apiUrl}products/get-by-code/${code}/`);
+  return response.data;
+};
+
+async function updateProduct(oldCode, updatedData) {
+  try {
+      const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData);
+      if (response.data && typeof response.data.success === "boolean") {
+          return {
+              success: response.data.success,
+              error: response.data.error || "",
+          };
+      } else {
+          return {
+              success: false,
+              error: "Respuesta inesperada del servidor",
+          };
+      }
+  } catch (error) {
+      const backendError = error.response?.data?.error || error.message || "Error desconocido";
+      return {
+          success: false,
+          error: backendError,
+      };
+  }
+}
+
 export {
   fetchSearchProducts,
   addProduct,
   getProviders,
   fetchProducts,
   fetchLowStock,
-  deleteProductByCode
+  deleteProductByCode,
+  fetchGetByCode,
+  updateProduct
 }

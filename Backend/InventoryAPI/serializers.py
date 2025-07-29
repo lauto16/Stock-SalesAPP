@@ -9,10 +9,6 @@ class ProductPagination(PageNumberPagination):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    """
-    Product serializer for API
-    """
-    
     class Meta:
         model = Product
         fields = ['code', 'name', 'stock', 'sell_price', 'buy_price',

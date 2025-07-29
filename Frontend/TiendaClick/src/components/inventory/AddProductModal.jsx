@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Form, Row, Col, TabPane } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import { getProviders, addProduct } from "../../services/axios.services";
