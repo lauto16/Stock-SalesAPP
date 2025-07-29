@@ -11,22 +11,22 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = useCallback((type, message, timeout) => {
-  const id = uuidv4();
-  const newNotification = { id, type, message };
+    const id = uuidv4();
+    const newNotification = { id, type, message };
 
-  const finalTimeout =
-    timeout !== undefined
-      ? timeout
-      : type === 'success'
-        ? 900
-        : 4000; 
+    const finalTimeout =
+      timeout !== undefined
+        ? timeout
+        : type === 'success'
+          ? 900
+          : 4000;
 
-  setNotifications(prev => [...prev, newNotification]);
+    setNotifications(prev => [...prev, newNotification]);
 
-  setTimeout(() => {
-    setNotifications(prev => prev.filter(notif => notif.id !== id));
-  }, finalTimeout);
-}, []);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(notif => notif.id !== id));
+    }, finalTimeout);
+  }, []);
 
   const removeNotification = id => {
     setNotifications(prev => prev.filter(notif => notif.id !== id));
@@ -37,13 +37,20 @@ export function NotificationProvider({ children }) {
       {children}
       <div
         className="position-fixed top-0 start-50 translate-middle-x p-3 d-flex flex-column align-items-center"
-        style={{ zIndex: 1051, maxWidth: '90%' }}
+        style={{
+          zIndex: 9999,
+          maxWidth: '90%',
+          pointerEvents: 'none'
+        }}
       >
         {notifications.map(({ id, type, message }) => (
           <div
             key={id}
             className={`alert alert-${type} alert-dismissible fade show mb-2 event-handler-${type}`}
             role="alert"
+            style={{
+              pointerEvents: 'auto'
+            }}
           >
             {message}
             <button

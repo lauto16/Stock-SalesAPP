@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
 import Product from "./Product.jsx";
-export default function Table({ items = [], loading, columns = [], selectedItems, setSelectedItems }) {
+export default function Table({ setIsSomethingSelected, items = [], loading, columns = [], selectedItems, setSelectedItems }) {
   // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
   return (
     <table className="table table-bordered align-middle">
@@ -22,7 +21,7 @@ export default function Table({ items = [], loading, columns = [], selectedItems
           </tr>
         ) : (
           items.map((item) => (
-            <Product item={item} key={item.code} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
+            <Product setIsSomethingSelected={setIsSomethingSelected} item={item} key={item.code} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
 
           ))
 

@@ -5,8 +5,11 @@ import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
 import AddProductModal from "./AddProductModal";
-import { fetchSearchProducts, fetchProducts, deleteProductByCode } from "../../services/axios.services.js";
+import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode } from "../../services/axios.services.js";
 import { useNotifications } from '../../context/NotificationSystem';
+import SelectedProductsModal from "./SelectedProductsModal";
+import ProductInfoModal from "./ProductInfoModal";
+
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -18,9 +21,14 @@ export default function InventoryPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Map());
+    const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const [allSearchResults, setAllSearchResults] = useState([]);
     const { addNotification } = useNotifications();
+    const [showProductInfo, setShowProductInfo] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showSelectedModal, setShowSelectedModal] = useState(false);
+
 
     const PAGE_SIZE = 10;
 
@@ -33,6 +41,10 @@ export default function InventoryPage() {
         { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
     ];
 
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
+    const handleGoToSales = () => { };
+
     const clearSearch = () => {
         setIsSearching(false);
         setSearchQuery("");
@@ -40,28 +52,41 @@ export default function InventoryPage() {
         setCurrentPage(1);
     };
 
-    const handleDelete = async (codes) => {
-    const newItems = [...items];
-
-    for (const code of codes) {
-        try {
-            const result = await deleteProductByCode(code);
-            if (result.success) {
-                addNotification('success', `Producto ${code} eliminado con éxito`);
-
-                const index = newItems.findIndex(item => item.code === code);
-                if (index !== -1) {
-                    newItems.splice(index, 1);
-                }
-            }
-        } catch (error) {
-            addNotification('error', `El producto ${code} no se pudo eliminar`);
+    const toggleSelectAll = () => {
+        if (isSomethingSelected) {
+            setSelectedItems(new Map());
+        } else {
+            const newSelected = new Map();
+            items.forEach(item => {
+                newSelected.set(item.code, item);
+            });
+            setSelectedItems(newSelected);
         }
-    }
+    };
 
-    setItems(newItems); // actualizamos la tabla con los nuevos datos
-    setSelectedItems(new Map()); // limpiamos selección
-};
+    const handleDelete = async (codes) => {
+        const newItems = [...items];
+
+        for (const code of codes) {
+            try {
+                const result = await deleteProductByCode(code);
+                if (result.success) {
+                    addNotification('success', `Producto ${code} eliminado con éxito`);
+
+                    const index = newItems.findIndex(item => item.code === code);
+                    if (index !== -1) {
+                        newItems.splice(index, 1);
+                    }
+                }
+            } catch (error) {
+                addNotification('error', `El producto ${code} no se pudo eliminar`);
+            }
+
+        }
+
+        setItems(newItems);
+        setSelectedItems(new Map());
+    };
 
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
@@ -74,6 +99,57 @@ export default function InventoryPage() {
             setLoading(false);
         }
     };
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const onExtraInfo = async () => {
+        const firstSelected = Array.from(selectedItems.values())[0];
+
+        if (selectedItems.size === 0) {
+            addNotification("warning", "Selecciona un producto para ver su información.");
+            return;
+        }
+
+        if (!firstSelected || !firstSelected.code) {
+            addNotification("warning", "Selecciona un producto válido para ver su información.");
+            return;
+        }
+
+        try {
+            const data = await fetchGetByCode(firstSelected.code);
+            const buy_price_iva = data.buy_price * 1.21;
+            const sell_price_iva = data.sell_price * 1.21;
+            const margin_percent = data.buy_price > 0
+                ? `${Math.round(((data.sell_price - data.buy_price) / data.buy_price) * 100)}%`
+                : "0%";
+
+            setSelectedProduct({
+                ...data,
+                buy_price_iva,
+                sell_price_iva,
+                margin_percent,
+            });
+
+            setShowProductInfo(true);
+        } catch (error) {
+            addNotification("error", "No se pudo obtener la información del producto.");
+            console.error("Error al obtener producto:", error);
+        }
+    };
+
+    const unselectAll = () => {
+        if (isSomethingSelected) {
+            setSelectedItems(new Map());
+        }
+    }
+
+    useEffect(() => {
+        setIsSomethingSelected(selectedItems.size > 0);
+    }, [selectedItems]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -104,25 +180,35 @@ export default function InventoryPage() {
         setItems(pageItems);
     }, [allSearchResults, currentPage, isSearching]);
 
-    const handlePageChange = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
-
-    const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
-    const handleGoToSales = () => { };
-
-    useEffect(() => {
-        console.log(selectedItems);
-    }, [selectedItems]);
-
     return (
         <div className="d-flex justify-content-center mt-5">
+            <ProductInfoModal
+                show={showProductInfo}
+                handleClose={() => setShowProductInfo(false)}
+                product={selectedProduct}
+                unselectAll={unselectAll}
+            />
             <AddProductModal show={showModal} handleClose={handleClose} />
+            <SelectedProductsModal
+                show={showSelectedModal}
+                handleClose={() => setShowSelectedModal(false)}
+                selectedItems={selectedItems}
+                setSelectedItems={setSelectedItems}
+                isSomethingSelected={isSomethingSelected}
+                setIsSomethingSelected={setIsSomethingSelected}
+            />
             <div className="container container-modified">
-                <Header userRole={userRole} onGoToSales={handleGoToSales} onAddProduct={handleOpen} onDeleteSelected={(e) => handleDelete(Array.from(selectedItems.keys()))}/>
+                <Header
+                    isSomethingSelected={isSomethingSelected}
+                    userRole={userRole}
+                    onGoToSales={handleGoToSales}
+                    onAddProduct={handleOpen}
+                    onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
+                    toggleSelectAll={toggleSelectAll}
+                    onViewSelected={() => setShowSelectedModal(true)}
+                    selectedItems={selectedItems}
+                    onExtraInfo={onExtraInfo}
+                />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
                         <Pagination
@@ -144,6 +230,8 @@ export default function InventoryPage() {
                         loading={loading}
                         selectedItems={selectedItems}
                         setSelectedItems={setSelectedItems}
+                        setIsSomethingSelected={setIsSomethingSelected}
+
                     />
                     <button className="btn btn-outline-secondary clear-search-results-button" onClick={clearSearch}>
                         Limpiar resultados de busqueda
