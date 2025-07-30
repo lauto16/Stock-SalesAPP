@@ -1,4 +1,4 @@
-@import "./src/css/bootstrap-icons.css";
+@import "./bootstrap-icons.css";
 
 body {
     background-color: #ffffff;
@@ -295,7 +295,7 @@ tr.selected-product td {
 
 }
 
-@media (max-width: 250px){
+@media (max-width: 250px) {
     .view-selected-products {
         margin-top: 10px !important;
         width: 100%;

@@ -26,6 +26,7 @@ function Dashboard() {
             const data = await fetchLowStock({ setLoading, amount });
             //validate data structure just in case
             if (Array.isArray(data)) {
+                console.log(data)
                 setProducts(data);
             } else {
                 console.warn("La respuesta no es un array");

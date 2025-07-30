@@ -215,7 +215,7 @@ export default function InventoryPage() {
         }
 
         setShowConfirmation(false)
-        // need to reload the page so the user can see the results of his transaction
+        // need to reload the page so the user can see the results of their transaction
         // maybe reload only the table component?
         setTimeout(() => {
             window.location.reload();
@@ -232,7 +232,6 @@ export default function InventoryPage() {
             setLoading(true);
             const data = await fetchProducts({
                 page: currentPage,
-                search: "",
                 setLoading,
             });
             setItems(data.results);
@@ -306,13 +305,15 @@ export default function InventoryPage() {
                     onPriceUpdate={onPriceUpdate}
                 />
                 <div className="table-container">
-                    <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
+                    <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
+
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
                         />
                         <div className="search-wrapper">
+
                             <Search
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
@@ -320,6 +321,7 @@ export default function InventoryPage() {
                             />
                         </div>
                     </div>
+
                     <Table
                         items={items}
                         columns={columns}

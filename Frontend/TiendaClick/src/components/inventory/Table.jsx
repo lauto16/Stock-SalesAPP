@@ -20,8 +20,8 @@ export default function Table({ setIsSomethingSelected, items = [], loading, col
             <td colSpan={columns.length}>No hay datos para mostrar.</td>
           </tr>
         ) : (
-          items.map((item) => (
-            <Product setIsSomethingSelected={setIsSomethingSelected} item={item} key={item.code} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
+          items.map((item, index) => (
+            <Product setIsSomethingSelected={setIsSomethingSelected} item={item} key={index} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
           ))
 
         )}

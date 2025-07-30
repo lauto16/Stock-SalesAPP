@@ -28,7 +28,21 @@ async function addProduct(code, name, stock, sell_price, buy_price, provider) {
     });
 }
 
-async function fetchProducts({ page = 1, search = "", setLoading }) {
+async function fetchProducts({ page = 1, setLoading }) {
+  try {
+    setLoading(true);
+    const response = await axios.get(`${apiUrl}products/?page=${page}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el inventario:", error);
+    return { results: [], count: 0 };
+  } finally {
+    setLoading(false);
+  }
+}
+
+
+async function fetchProviders({ page = 1, setLoading }) {
   try {
     setLoading(true);
     const response = await axios.get(`${apiUrl}products/?page=${page}`);
@@ -89,24 +103,24 @@ async function fetchGetByCode(code) {
 
 async function updateProduct(oldCode, updatedData) {
   try {
-      const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData);
-      if (response.data && typeof response.data.success === "boolean") {
-          return {
-              success: response.data.success,
-              error: response.data.error || "",
-          };
-      } else {
-          return {
-              success: false,
-              error: "Respuesta inesperada del servidor",
-          };
-      }
-  } catch (error) {
-      const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData);
+    if (response.data && typeof response.data.success === "boolean") {
       return {
-          success: false,
-          error: backendError,
+        success: response.data.success,
+        error: response.data.error || "",
       };
+    } else {
+      return {
+        success: false,
+        error: "Respuesta inesperada del servidor",
+      };
+    }
+  } catch (error) {
+    const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    return {
+      success: false,
+      error: backendError,
+    };
   }
 }
 
@@ -162,6 +176,8 @@ async function updateAllPrices(data) {
   }
 }
 
+
+
 export {
   fetchSearchProducts,
   addProduct,
@@ -172,5 +188,6 @@ export {
   fetchGetByCode,
   updateProduct,
   updateAllPrices,
-  updateSelectedPrices
+  updateSelectedPrices,
+  fetchProviders
 }
