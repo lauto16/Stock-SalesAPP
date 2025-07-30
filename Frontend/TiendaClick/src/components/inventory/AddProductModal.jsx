@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Form, Row, Col, TabPane } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import { getProviders, addProduct } from "../../services/axios.services";
@@ -184,7 +184,7 @@ export default function AddProductModal({ show, handleClose }) {
                         <Button
                             variant="success"
                             type="submit"
-                            className="mt-2 add-product-send-button"
+                            className="mt-2 send-form-button"
                         >
                             Agregar
                         </Button>
