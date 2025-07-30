@@ -17,116 +17,13 @@ function Providers() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
 
+    const PAGE_SIZE = 10;
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "phone", key: "phone", label: 'Teléfono' },
         { className: "email", key: "email", label: 'Mail' },
         { className: "address", key: "address", label: 'Dirección' },
     ];
-
-    // const get_providers = [{
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }, {
-    //     name: 'Juan',
-    //     phone: '1234567',
-    //     email: 'test@gmail.com',
-    //     address: '9 de julio 1234'
-    // }
-    // ]
-
-    // useEffect(() => {
-    //     setLoading(true)
-    //     setProviders(get_providers)
-    //     setLoading(false)
-    // }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -136,7 +33,9 @@ function Providers() {
                 page: currentPage,
                 setLoading,
             });
-            setProviders(data.results);
+            console.log(data);
+
+            setProviders(data);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
             setLoading(false);
         };

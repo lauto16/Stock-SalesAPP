@@ -1,6 +1,6 @@
 from django.db import models
 from ProvidersAPI.models import Provider
-    
+
 
 class Product(models.Model):
     """
@@ -12,5 +12,6 @@ class Product(models.Model):
     stock = models.IntegerField()
     sell_price = models.FloatField()
     buy_price = models.FloatField()
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, null=True, blank=True)
+    provider = models.ForeignKey(
+        Provider, on_delete=models.SET_NULL, null=True, blank=True)
     last_modification = models.DateField(auto_now_add=True)

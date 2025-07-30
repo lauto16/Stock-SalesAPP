@@ -6,7 +6,7 @@ class ProviderSerializer(serializers.ModelSerializer):
     """
     Provider serializer for API
     """
-    
+
     class Meta:
         model = Provider
-        fields = ["id", 'name']
+        fields = ["id", 'name', 'address', 'phone', 'email', ]

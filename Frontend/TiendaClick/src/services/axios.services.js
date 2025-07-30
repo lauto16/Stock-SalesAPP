@@ -45,10 +45,10 @@ async function fetchProducts({ page = 1, setLoading }) {
 async function fetchProviders({ page = 1, setLoading }) {
   try {
     setLoading(true);
-    const response = await axios.get(`${apiUrl}products/?page=${page}`);
+    const response = await axios.get(`${apiUrl}providers/?page=${page}`);
     return response.data;
   } catch (error) {
-    console.error("Error al obtener el inventario:", error);
+    console.error("Error al obtener los proveedores:", error);
     return { results: [], count: 0 };
   } finally {
     setLoading(false);
