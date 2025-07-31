@@ -42,7 +42,7 @@ async function fetchProducts({ page = 1, setLoading }) {
 }
 
 
-async function fetchProviders({ page = 1, setLoading }) {
+async function fetchProviders_by_page({ page = 1, setLoading }) {
   try {
     setLoading(true);
     const response = await axios.get(`${apiUrl}providers/?page=${page}`);
@@ -189,5 +189,5 @@ export {
   updateProduct,
   updateAllPrices,
   updateSelectedPrices,
-  fetchProviders
+  fetchProviders_by_page
 }

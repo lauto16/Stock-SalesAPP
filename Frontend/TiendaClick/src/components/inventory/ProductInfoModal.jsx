@@ -29,7 +29,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
         if (show && product) {
             getProviders()
                 .then((res) => {
-                    setProviders(res.data);
+                    setProviders(res.data.results);
                     reset({
                         code: product.code || "",
                         name: product.name || "",

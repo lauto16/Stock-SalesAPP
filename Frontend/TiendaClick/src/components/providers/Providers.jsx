@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
-import { fetchProviders } from "../../services/axios.services.js";
+import { fetchProviders_by_page } from "../../services/axios.services.js";
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +16,7 @@ function Providers() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
+
 
     const PAGE_SIZE = 10;
     const columns = [
@@ -29,13 +30,12 @@ function Providers() {
         const fetchData = async () => {
             if (isSearching) return;
             setLoading(true);
-            const data = await fetchProviders({
+            const data = await fetchProviders_by_page({
                 page: currentPage,
                 setLoading,
             });
-            console.log(data);
 
-            setProviders(data);
+            setProviders(data.results);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
             setLoading(false);
         };
@@ -51,6 +51,23 @@ function Providers() {
 
     };
 
+    const unselectAll = () => {
+        if (isSomethingSelected) {
+            setSelectedItems(new Map());
+        }
+    }
+
+    const handleSearchSubmit = async (query) => {
+        if (query.length >= 2) {
+            setIsSearching(true);
+            setSearchQuery(query);
+            setCurrentPage(1);
+            setLoading(true);
+            const results = await fetchSearchProducts(query);
+            setAllSearchResults(results);
+            setLoading(false);
+        }
+    };
     return (
         <div className="app-wrapper">
             <SideBar />
@@ -75,7 +92,14 @@ function Providers() {
                                     <Search />
                                 </div>
                             </div>
-                            <Table items={providers} columns={columns} loading={loading} setLoading={setLoading} />
+                            <Table items={providers}
+                                columns={columns}
+                                loading={loading}
+                                setLoading={setLoading}
+                                selectedItems={selectedItems}
+                                setSelectedItems={setSelectedItems}
+                                pkName={'id'}
+                                setIsSomethingSelected={setIsSomethingSelected} />
 
                         </div>
                     </div>

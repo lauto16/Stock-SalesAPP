@@ -1,6 +1,10 @@
-import Product from "./Product.jsx";
-export default function Table({ setIsSomethingSelected, items = [], loading, columns = [], selectedItems, setSelectedItems }) {
+import Item from "./Item.jsx";
+export default function Table({ setIsSomethingSelected, items = [], loading, columns = [], selectedItems, setSelectedItems, pkName }) {
   // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
+  if (!Array.isArray(items)) {
+    console.error('Items no es un array');
+    return <></>;
+  }
   return (
     <table className="table table-bordered align-middle">
       <thead>
@@ -21,7 +25,13 @@ export default function Table({ setIsSomethingSelected, items = [], loading, col
           </tr>
         ) : (
           items.map((item, index) => (
-            <Product setIsSomethingSelected={setIsSomethingSelected} item={item} key={index} columns={columns} selectedItems={selectedItems} setSelectedItems={setSelectedItems}></Product>
+            <Item setIsSomethingSelected={setIsSomethingSelected}
+              item={item}
+              key={index}
+              columns={columns}
+              selectedItems={selectedItems}
+              setSelectedItems={setSelectedItems}
+              pkName={pkName} />
           ))
 
         )}

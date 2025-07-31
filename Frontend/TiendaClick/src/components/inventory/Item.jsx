@@ -1,14 +1,15 @@
-export default function Product({ item, columns, selectedItems = new Map(), setSelectedItems, isSomethingSelected }) {
-    const isSelected = selectedItems.has(item.code);
+export default function Item({ item, columns, selectedItems = new Map(), setSelectedItems, pkName = 'code' }) {
+    const pkValue = item[pkName]
+    const isSelected = selectedItems.has(pkValue);
     const classStockNull = item.stock === 0 ? 'text-danger' : '';
 
     const toggleSelection = () => {
         const updated = new Map(selectedItems);
-        if (updated.has(item.code)) {
-            updated.delete(item.code);
+        if (updated.has(pkValue)) {
+            updated.delete(pkValue);
 
         } else {
-            updated.set(item.code, item);
+            updated.set(pkValue, item);
         }
         setSelectedItems(updated);
     };
