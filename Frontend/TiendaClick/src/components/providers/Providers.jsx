@@ -8,11 +8,11 @@ import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
 import ProvidersHeader from "./ProvidersHeader.jsx"
-import { fetchProviders_by_page } from "../../services/axios.services.js";
+import { fetchProviders_by_page, fetchGetByCode } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
-import AddProductModal from "../inventory/AddProductModal.jsx";
-import SelectedProductsModal from "../inventory/SelectedProductsModal.jsx"
-import ProductInfoModal from "../inventory/ProductInfoModal.jsx"
+import AddItemModal from "./AddItemModal.jsx";
+import SelectedItemsModal from "./SelectedItemsModal.jsx"
+import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 
@@ -137,7 +137,7 @@ function Providers() {
         }
 
         try {
-            const data = await fetchGetByCode(firstSelected.code);
+            const data = await fetchGetByCode(firstSelected.id);
             const buy_price_iva = data.buy_price * 1.21;
             const sell_price_iva = data.sell_price * 1.21;
             const margin_percent = data.buy_price > 0
@@ -191,16 +191,16 @@ function Providers() {
                             handleClose={handleHideConfirmation}
                         />
 
-                        <ProductInfoModal
+                        <ItemInfoModal
                             show={showProductInfo}
                             handleClose={() => setShowProductInfo(false)}
                             product={selectedProduct}
                             unselectAll={unselectAll}
                         />
 
-                        <AddProductModal show={showModal} handleClose={handleClose} />
+                        <AddItemModal show={showModal} handleClose={handleClose} />
 
-                        <SelectedProductsModal
+                        <SelectedItemsModal
                             show={showSelectedModal}
                             handleClose={() => setShowSelectedModal(false)}
                             selectedItems={selectedItems}

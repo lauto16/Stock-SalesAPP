@@ -2,9 +2,7 @@ import axios from 'axios';
 
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
-async function getProviders() {
-  return axios.get(`${apiUrl}providers/`);
-}
+
 
 async function addProduct(code, name, stock, sell_price, buy_price, provider) {
 
@@ -53,6 +51,10 @@ async function fetchProviders_by_page({ page = 1, setLoading }) {
   } finally {
     setLoading(false);
   }
+}
+
+async function fetchProviders() {
+  return axios.get(`${apiUrl}providers/all/`);
 }
 
 async function fetchSearchProducts(search) {
@@ -181,7 +183,7 @@ async function updateAllPrices(data) {
 export {
   fetchSearchProducts,
   addProduct,
-  getProviders,
+  fetchProviders,
   fetchProducts,
   fetchLowStock,
   deleteProductByCode,

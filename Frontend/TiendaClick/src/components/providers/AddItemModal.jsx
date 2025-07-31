@@ -6,11 +6,10 @@ import { fetchProviders, addProduct } from "../../services/axios.services";
 import Select from "react-select";
 import { useNotifications } from '../../context/NotificationSystem';
 
-export default function AddProductModal({ show, handleClose }) {
+export default function AddItemModal({ show, handleClose }) {
     const {
         register,
         handleSubmit,
-        watch,
         reset,
         control,
         formState: { errors },
@@ -22,6 +21,7 @@ export default function AddProductModal({ show, handleClose }) {
     );
     const { addNotification } = useNotifications();
     const [providers, setProviders] = useState([])
+
     const codeInputRef = useRef(null);
 
     useEffect(() => {
@@ -42,13 +42,6 @@ export default function AddProductModal({ show, handleClose }) {
         }
     }, [show]);
 
-    const purchasePrice = watch("purchasePrice") || 0;
-    const sellingPrice = watch("sellingPrice") || 0;
-
-    const calculateProfitMargin = () => {
-        if (Number(purchasePrice) === 0) return 0;
-        return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
-    };
 
     const handleBeforeClose = (type, message) => {
         handleClose()
@@ -79,7 +72,7 @@ export default function AddProductModal({ show, handleClose }) {
             backdropClassName="blurred-backdrop"
         >
             <Modal.Header style={{ backgroundColor: "#f5c193" }} closeButton>
-                <Modal.Title>Agregar Producto</Modal.Title>
+                <Modal.Title>Agregar Proveedor</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -165,11 +158,9 @@ export default function AddProductModal({ show, handleClose }) {
                                     <Form.Control
                                         type="text"
                                         placeholder="Porcentaje de ganancia %"
-                                        value={`${calculateProfitMargin()} %`}
+                                        value={"def"}
                                         disabled
-                                        style={{
-                                            color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792"
-                                        }}
+
                                     />
                                 </div>
                             </Form.Group>

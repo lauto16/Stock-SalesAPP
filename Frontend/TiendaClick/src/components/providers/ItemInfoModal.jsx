@@ -6,7 +6,7 @@ import CustomInput from "./CustomInput";
 import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 
-export default function ProductInfoModal({ show, handleClose, product, unselectAll }) {
+export default function ItemInfoModal({ show, handleClose, product, unselectAll }) {
     const {
         register,
         handleSubmit,
@@ -30,14 +30,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
             fetchProviders()
                 .then((res) => {
                     setProviders(res.data);
-                    reset({
-                        code: product.code || "",
-                        name: product.name || "",
-                        stock: product.stock || 0,
-                        purchasePrice: product.buy_price || 0,
-                        sellingPrice: product.sell_price || 0,
-                        provider: product.provider || null,
-                    });
                 })
                 .catch(() => addNotification("error", "No se pudieron cargar los proveedores"));
         }

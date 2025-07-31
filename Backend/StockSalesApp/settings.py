@@ -37,6 +37,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'StockSalesApp.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -45,7 +46,7 @@ TEMPLATES = [
             join(BASE_DIR, 'Inventory/templates'),
             join(BASE_DIR, 'Sales/templates'),
             join(BASE_DIR, 'Stats/templates'),
-            ],
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

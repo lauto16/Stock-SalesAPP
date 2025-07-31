@@ -80,6 +80,10 @@ class ProviderPagination(PageNumberPagination):
     max_page_size = 100
 
 
+class NoPagination(PageNumberPagination):
+    page_size = None
+
+
 class ProviderViewSet(viewsets.ModelViewSet):
     """
     ViewSet para operaciones CRUD sobre proveedores con paginación.
@@ -88,65 +92,11 @@ class ProviderViewSet(viewsets.ModelViewSet):
     serializer_class = ProviderSerializer
     pagination_class = ProviderPagination
 
-    @action(detail=False, methods=["get"], url_path="get-by-id/(?P<id>[^/.]+)")
-    def get_by_id(self, request, id=None):
+    @action(detail=False, methods=["get"], url_path="all")
+    def get_all(self, request):
         """
-        Returns provider by PK
+        Retorna todos los proveedores sin paginación.
         """
-
-        try:
-            provider = Provider.objects.get(pk=id)
-
-        except Provider.DoesNotExist:
-            return Response(
-                {"error": f"No se encontró el proveedor '{id}'"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = self.get_serializer(provider)
+        providers = Provider.objects.all()
+        serializer = self.get_serializer(providers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=["patch"], url_path="patch-by-id/(?P<pk>\d+)")
-    def patch_by_id(self, request, pk=None):
-        """
-        Modifica un proveedor por ID
-        """
-        validate_response = ProviderValidator.validate_data(request)
-        if not validate_response["success"]:
-            return Response(
-                {"success": False, "error": validate_response["error"]},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        provider = Provider.objects.filter(pk=pk).first()
-        if not provider:
-            return Response(
-                {"success": False, "error": "Proveedor no encontrado"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = ProviderSerializer(
-            provider, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"success": True}, status=status.HTTP_200_OK)
-        else:
-            return Response(
-                {"success": False, "error": "Datos inválidos"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    @action(detail=False, methods=["delete"], url_path="delete-by-id/(?P<pk>\d+)")
-    def delete_by_id(self, request, pk=None):
-        """
-        Elimina un proveedor por ID
-        """
-        provider = Provider.objects.filter(pk=pk).first()
-        if not provider:
-            return Response(
-                {"error": "Proveedor no encontrado"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        provider.delete()
-        return Response({"success": True}, status=status.HTTP_200_OK)
