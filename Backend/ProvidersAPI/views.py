@@ -84,21 +84,22 @@ class ProviderViewSet(viewsets.ModelViewSet):
     """
     ViewSet para operaciones CRUD sobre proveedores con paginación.
     """
-
-    queryset = Provider.objects.all().order_by("name")
+    queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
     pagination_class = ProviderPagination
 
-    @action(detail=False, methods=["get"], url_path="get-by-name/(?P<name>[^/.]+)")
-    def get_by_name(self, request, name=None):
+    @action(detail=False, methods=["get"], url_path="get-by-id/(?P<id>[^/.]+)")
+    def get_by_id(self, request, id=None):
         """
-        Devuelve un proveedor por nombre exacto (case-insensitive)
+        Returns provider by PK
         """
-        provider = Provider.objects.filter(name__iexact=name).first()
 
-        if not provider:
+        try:
+            provider = Provider.objects.get(pk=id)
+
+        except Provider.DoesNotExist:
             return Response(
-                {"error": f"No se encontró el proveedor '{name}'"},
+                {"error": f"No se encontró el proveedor '{id}'"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 

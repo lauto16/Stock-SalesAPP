@@ -7,7 +7,15 @@ import { useState, useEffect, useRef } from "react";
 import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
+import ProvidersHeader from "./ProvidersHeader.jsx"
 import { fetchProviders_by_page } from "../../services/axios.services.js";
+import { useUser } from "../../context/UserContext.jsx"
+import AddProductModal from "../inventory/AddProductModal.jsx";
+import SelectedProductsModal from "../inventory/SelectedProductsModal.jsx"
+import ProductInfoModal from "../inventory/ProductInfoModal.jsx"
+import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
+import { useNotifications } from "../../context/NotificationSystem.jsx";
+
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +24,17 @@ function Providers() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
-
+    const { user } = useUser();
+    const [showModal, setShowModal] = useState(false);
+    const [allSearchResults, setAllSearchResults] = useState([]);
+    const { addNotification } = useNotifications();
+    const [showProductInfo, setShowProductInfo] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showSelectedModal, setShowSelectedModal] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationText, setConfirmationText] = useState('')
+    const [confirmationTitle, setConfirmationTitle] = useState('')
+    const [action, setAction] = useState('')
 
     const PAGE_SIZE = 10;
     const columns = [
@@ -25,6 +43,17 @@ function Providers() {
         { className: "email", key: "email", label: 'Mail' },
         { className: "address", key: "address", label: 'Dirección' },
     ];
+    const ACTIONS = {
+        DELETE: 'DELETE',
+        UPDATE: 'UPDATE'
+    }
+    //modals
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
+    const handleGoToSales = () => { };
+    const handleShowConfirmation = () => setShowConfirmation(true);
+    const handleHideConfirmation = () => setShowConfirmation(false);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,6 +71,13 @@ function Providers() {
 
         fetchData();
     }, [currentPage, isSearching]);
+    useEffect(() => {
+        if (selectedItems.size !== 0) {
+            setIsSomethingSelected(true)
+        } else {
+            setIsSomethingSelected(false)
+        }
+    })
 
     const handlePageChange = (page) => {
 
@@ -57,6 +93,9 @@ function Providers() {
         }
     }
 
+    const onAddItem = () => {
+
+    }
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
             setIsSearching(true);
@@ -68,6 +107,57 @@ function Providers() {
             setLoading(false);
         }
     };
+    const handleCreateProvider = async (query) => {
+        console.log("provider creado")
+    }
+
+    const toggleSelectAll = () => {
+        if (isSomethingSelected) {
+            setSelectedItems(new Map());
+        } else {
+            const newSelected = new Map();
+            items.forEach(item => {
+                newSelected.set(item.id, item);
+            });
+            setSelectedItems(newSelected);
+        }
+    };
+
+    const onExtraInfo = async () => {
+        const firstSelected = Array.from(selectedItems.values())[0];
+
+        if (selectedItems.size === 0) {
+            addNotification("warning", "Selecciona un producto para ver su información.");
+            return;
+        }
+
+        if (!firstSelected || !firstSelected.code) {
+            addNotification("warning", "Selecciona un producto válido para ver su información.");
+            return;
+        }
+
+        try {
+            const data = await fetchGetByCode(firstSelected.code);
+            const buy_price_iva = data.buy_price * 1.21;
+            const sell_price_iva = data.sell_price * 1.21;
+            const margin_percent = data.buy_price > 0
+                ? `${Math.round(((data.sell_price - data.buy_price) / data.buy_price) * 100)}%`
+                : "0%";
+
+            setSelectedProduct({
+                ...data,
+                buy_price_iva,
+                sell_price_iva,
+                margin_percent,
+            });
+
+            setShowProductInfo(true);
+        } catch (error) {
+            addNotification("error", "No se pudo obtener la información del producto.");
+            console.error("Error al obtener producto:", error);
+        }
+    };
+
     return (
         <div className="app-wrapper">
             <SideBar />
@@ -75,13 +165,63 @@ function Providers() {
             <main className="flex-grow-1 p-3 content">
                 <div className="d-flex justify-content-center mt-5">
                     <div className="container">
-                        <div className="table-container-providers">
-                            <div className="d-flex justify-content-between align-items-center header">
-                                <h1>Proveedores</h1>
+                        {/* {action === ACTIONS.DELETE ? <ConfirmationModal
+                            show={showConfirmation}
+                            onHide={handleHideConfirmation}
+                            title={confirmationTitle}
+                            message={confirmationText}
+                            onSendForm={handleDeleteProvider}
+                            handleClose={handleHideConfirmation}
+                        /> :
+                            <ConfirmationModal
+                                show={showConfirmation}
+                                onHide={handleHideConfirmation}
+                                title={confirmationTitle}
+                                message={confirmationText}
+                                onSendForm={handleCreateProvider}
+                                handleClose={handleHideConfirmation}
+                            />
+                        } */}
+                        <ConfirmationModal
+                            show={showConfirmation}
+                            onHide={handleHideConfirmation}
+                            title={confirmationTitle}
+                            message={confirmationText}
+                            onSendForm={handleCreateProvider}
+                            handleClose={handleHideConfirmation}
+                        />
 
-                            </div>
+                        <ProductInfoModal
+                            show={showProductInfo}
+                            handleClose={() => setShowProductInfo(false)}
+                            product={selectedProduct}
+                            unselectAll={unselectAll}
+                        />
+
+                        <AddProductModal show={showModal} handleClose={handleClose} />
+
+                        <SelectedProductsModal
+                            show={showSelectedModal}
+                            handleClose={() => setShowSelectedModal(false)}
+                            selectedItems={selectedItems}
+                            setSelectedItems={setSelectedItems}
+                            isSomethingSelected={isSomethingSelected}
+                        />
+                        <div className="table-container-providers">
+
+                            <ProvidersHeader
+                                title={"Proveedores"}
+                                selectedItems={selectedItems}
+                                isSomethingSelected={isSomethingSelected}
+                                userRole={user.role}
+                                onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
+                                toggleSelectAll={toggleSelectAll}
+                                onViewSelected={() => setShowSelectedModal(true)}
+                                onExtraInfo={onExtraInfo}
+                            />
 
                             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+
                                 <Pagination
                                     currentPage={currentPage}
                                     totalPages={totalPages}
@@ -99,7 +239,7 @@ function Providers() {
                                 selectedItems={selectedItems}
                                 setSelectedItems={setSelectedItems}
                                 pkName={'id'}
-                                setIsSomethingSelected={setIsSomethingSelected} />
+                            />
 
                         </div>
                     </div>

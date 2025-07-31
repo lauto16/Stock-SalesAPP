@@ -33,7 +33,7 @@ export default function AddProductModal({ show, handleClose }) {
 
         if (show) {
             getProviders()
-                .then((res) => setProviders(res.data))
+                .then((res) => setProviders(res.data.results))
                 .catch((err) => handleBeforeClose('error', 'No se pudieron cargar los proveedores'));
         }
     }, [show]);

@@ -300,6 +300,7 @@ export default function InventoryPage() {
             />
             <div className="container container-modified">
                 <Header
+                    title={'INVENTARIO'}
                     isSomethingSelected={isSomethingSelected}
                     userRole={userRole}
                     onGoToSales={handleGoToSales}

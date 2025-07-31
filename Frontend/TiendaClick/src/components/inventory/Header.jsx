@@ -1,6 +1,7 @@
 import { Dropdown, ButtonGroup } from "react-bootstrap";
 
 export default function Header({
+  title,
   isSomethingSelected,
   userRole,
   onAddProduct,
@@ -16,7 +17,7 @@ export default function Header({
   return (
     <div className="d-flex justify-content-between align-items-center header">
       <div className="d-flex align-items-center">
-        <h1 className="title">INVENTARIO</h1>
+        <h1 className="title">{title}</h1>
         <div className="user-role">&lt;{userRole}&gt;</div>
       </div>
 
