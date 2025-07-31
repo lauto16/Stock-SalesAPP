@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'StatsAPI',
     'corsheaders',
     'ProvidersAPI',
+    'AuthAPI'
 ]
 
 MIDDLEWARE = [
@@ -109,6 +110,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'Auth.CustomUser'
 
 LOGIN_URL = '/auth/'
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

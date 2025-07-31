@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router'
-function SideBar({ name, url = "" }) {
+function NavLink({ name, url = "" }) {
     //if url is "", gets transformed to "/"
     return (
         <li className="nav-item">
@@ -19,4 +19,4 @@ function SideBar({ name, url = "" }) {
         </li>
     );
 }
-export default SideBar; 
+export default NavLink; 

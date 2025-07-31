@@ -1,0 +1,38 @@
+.auth-page {
+    background-color: #f0f0f0;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    border: none;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.auth-card-header {
+    background-color: rgb(245, 193, 147);
+}
+
+.auth-title {
+    margin: 0;
+    text-align: center;
+}
+
+.auth-card-body {
+    background-color: #ffffff;
+}
+
+.auth-submit-btn {
+    background-color: rgb(245, 193, 147);
+    border: none;
+}
+
+.auth-submit-btn:disabled {
+    opacity: 0.6;
+}

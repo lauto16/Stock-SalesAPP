@@ -1,23 +1,44 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { loginUser, logoutUser } from "../services/axios.services";
 
-// 1. Crear el contexto
 const UserContext = createContext(null);
 
-// 2. Componente proveedor
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState({
-        name: "Juan Pérez",
-        role: "admin",
-        avatar: "/user.svg",
-    });
+  const [user, setUser] = useState(null);
 
-    // login/logout logic 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
+  const loginUserContext = async ({ username, password, setLoading }) => {
+    const result = await loginUser({ username, password, setLoading });
+
+    if (result.success) {
+      const userData = {
+        ...result.data,
+        isAuthenticated: true,
+      };
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+    }
+
+    return result;
+  };
+
+  const logout = () => {
+    logoutUser()
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
+  return (
+    <UserContext.Provider value={{ user, setUser, loginUserContext, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => useContext(UserContext);

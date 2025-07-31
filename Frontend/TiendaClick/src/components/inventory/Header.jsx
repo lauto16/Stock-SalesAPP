@@ -12,7 +12,7 @@ export default function Header({
   onExtraInfo,
   onPriceUpdate,
   onTemporaryOffer,
-  onCreateCombo
+
 }) {
   return (
     <div className="d-flex justify-content-between align-items-center header">

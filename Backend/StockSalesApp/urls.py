@@ -2,6 +2,7 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
+from AuthAPI.views import *
 
 router_products = DefaultRouter()
 router_products.register(r'products', ProductViewSet, basename='product')
@@ -17,4 +18,7 @@ urlpatterns = [
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
+    path('api/login/', LoginView.as_view(), name='token_obtain_pair'),
+    path('api/logout/', LogoutView.as_view(), name='logout'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

@@ -2,7 +2,35 @@ import axios from 'axios';
 
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
+async function loginUser({ username, password, setLoading }) {
+  try {
+    setLoading(true);
+    const response = await axios.post(
+      `${apiUrl}login/`,
+      { username, password },
+      { withCredentials: true }
+    );
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    const message =
+      error.response?.data?.detail ||
+      error.response?.data?.error ||
+      "Error inesperado";
+    return { success: false, error: message };
+  } finally {
+    setLoading(false);
+  }
+}
 
+async function logoutUser() {
+  try {
+    await axios.post(`${apiUrl}logout/`, {}, { withCredentials: true });
+  } catch (error) {
+    console.error("Error cerrando sesión:", error);
+    throw error;
+  }
+}
 
 async function addProduct(code, name, stock, sell_price, buy_price, provider) {
 
@@ -213,5 +241,7 @@ export {
   updateAllPrices,
   updateSelectedPrices,
   fetchProviders_by_page,
-  addOffer
+  addOffer,
+  loginUser,
+  logoutUser
 }

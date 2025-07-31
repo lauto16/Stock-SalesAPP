@@ -1,26 +1,46 @@
-import { useState } from 'react'
-import './css/App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Dashboard from './components/dashboard/Dashboard.jsx'
-import Inventory from './components/inventory/Inventory.jsx'
-import Home from './components/home/Home.jsx'
-import Login from './components/auth/login.jsx'
-import Providers from './components/providers/Providers.jsx'
+import './css/App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './components/dashboard/Dashboard.jsx';
+import Inventory from './components/inventory/Inventory.jsx';
+import Home from './components/home/Home.jsx';
+import Login from './components/auth/login.jsx';
+import Providers from './components/providers/Providers.jsx';
+import PrivateRoute from './components/auth/PrivateRoute.jsx';
+
 function App() {
-
   return (
-
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/providers" element={<Providers />} />
-        <Route path="/inventory" element={<Inventory />} />
         <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router >
 
-  )
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/providers"
+          element={
+            <PrivateRoute>
+              <Providers />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <PrivateRoute>
+              <Inventory />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

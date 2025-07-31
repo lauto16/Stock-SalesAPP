@@ -1,60 +1,75 @@
-import React from "react";
-function Login() {
+import { useState } from "react";
+import { Form, Button, Alert, Card } from "react-bootstrap";
+import "../../css/auth.css";
+import { useNotifications } from '../../context/NotificationSystem';
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+
+export default function Login({ onLogin }) {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const { addNotification } = useNotifications();
+    const navigate = useNavigate();
+    const { loginUserContext } = useUser();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        setLoading(true);
+        const result = await loginUserContext({ username, password, setLoading });
+        setLoading(false);
+
+        if (result.success) {
+            onLogin?.(result.data);
+            navigate("/dashboard/");
+        } else {
+            addNotification("error", "Credenciales incorrectas");
+        }
+    };
+
     return (
-        <>
-            {/* Estilos externos */}
-            <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-                integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
-                crossOrigin="anonymous"
-                media="print"
-                onLoad="this.media='all'"
-            />
-            <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-                crossOrigin="anonymous"
-            />
-            <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-                crossOrigin="anonymous"
-            />
+        <div className="auth-page">
+            <Card className="auth-card">
+                <Card.Header className="auth-card-header">
+                    <h4 className="auth-title">Iniciar sesión</h4>
+                </Card.Header>
+                <Card.Body className="auth-card-body">
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" controlId="formUsername">
+                            <Form.Label>Nombre de usuario</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Ingresá tu nombre de usuario"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
 
-            <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-                <div className="card shadow" style={{ width: "100%", maxWidth: "380px" }}>
-                    <div className="card-body">
-                        <h2 className="text-center mb-4">
-                            <b>Tienda</b>Click
-                        </h2>
-                        <p className="text-center text-muted mb-4">Iniciar sesion para acceder al contenido!</p>
+                        <Form.Group className="mb-3" controlId="formPassword">
+                            <Form.Label>Contraseña</Form.Label>
+                            <Form.Control
+                                type="password"
+                                placeholder="Ingresá tu contraseña"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
 
-                        <form action="../index3.html" method="post">
-                            <div className="input-group mb-3">
-                                <input type="email" className="form-control" placeholder="Email" required />
-                                <span className="input-group-text">
-                                    <i className="bi bi-envelope" />
-                                </span>
-                            </div>
-
-                            <div className="input-group mb-4">
-                                <input type="password" className="form-control" placeholder="Contraseña" required />
-                                <span className="input-group-text">
-                                    <i className="bi bi-lock-fill" />
-                                </span>
-                            </div>
-
-                            <div className="d-grid">
-                                <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </>
-
-
-    )
+                        <div className="d-grid">
+                            <Button
+                                type="submit"
+                                className="mt-2 send-form-button btn btn-success"
+                                disabled={loading}
+                            >
+                                {loading ? "Cargando..." : "Iniciar sesión"}
+                            </Button>
+                        </div>
+                    </Form>
+                </Card.Body>
+            </Card>
+        </div>
+    );
 }
-export default Login

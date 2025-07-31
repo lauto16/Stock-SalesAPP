@@ -44,6 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return OfferSerializer(offers, many=True, context=self.context).data
 
 
+
 class OfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer

@@ -13,7 +13,7 @@ import '../../css/dashboard.css';
 function Dashboard() {
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
-    const [amount, setAmount] = useState(5); // show from 5 units of products with low stock
+    const [amount, setAmount] = useState(5);
     const inputRef = useRef(null);
     const columns = [
         { className: "code", key: "code", label: 'Código' },
@@ -24,7 +24,6 @@ function Dashboard() {
     useEffect(() => {
         const get_products = async () => {
             const data = await fetchLowStock({ setLoading, amount });
-            //validate data structure just in case
             if (Array.isArray(data)) {
                 console.log(data)
                 setProducts(data);
