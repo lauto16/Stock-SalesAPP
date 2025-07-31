@@ -4,37 +4,37 @@ const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
 async function loginUser(username, password) {
   try {
-      const response = await fetch(`${apiUrl}login/`, {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ username, password }),
-      });
+    const response = await fetch(`${apiUrl}login/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ username, password }),
+    });
 
-      if (response.ok) {
-          const data = await response.json();
-          return { success: true, data };
-      } else {
-          return { success: false };
-      }
-  } catch (error) {
-      console.error("Error en loginUser:", error);
+    if (response.ok) {
+      const data = await response.json();
+      return { success: true, data };
+    } else {
       return { success: false };
+    }
+  } catch (error) {
+    console.error("Error en loginUser:", error);
+    return { success: false };
   }
 }
 
 async function logoutUser() {
   try {
-      const response = await fetch(`${apiUrl}logout/`, {
-          method: "POST",
-          credentials: "include",
-      });
-      return response.ok;
+    const response = await fetch(`${apiUrl}logout/`, {
+      method: "POST",
+      credentials: "include",
+    });
+    return response.ok;
   } catch (error) {
-      console.error("Error en logoutUser:", error);
-      return false;
+    console.error("Error en logoutUser:", error);
+    return false;
   }
 }
 
@@ -110,6 +110,10 @@ async function fetchProviders_by_page({ page = 1, setLoading }) {
 
 async function fetchProviders() {
   return axios.get(`${apiUrl}providers/all/`);
+}
+
+async function fetchProvidersById(id) {
+  return axios.get(`${apiUrl}providers/${id}/`);
 }
 
 async function fetchSearchProducts(search) {
@@ -249,5 +253,6 @@ export {
   fetchProviders_by_page,
   addOffer,
   loginUser,
-  logoutUser
+  logoutUser,
+  fetchProvidersById
 }

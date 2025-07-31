@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
-import CustomInput from "./CustomInput";
 import { fetchProviders, addProduct } from "../../services/axios.services";
-import Select from "react-select";
 import { useNotifications } from '../../context/NotificationSystem';
-
-export default function AddProductModal({ show, handleClose }) {
+import Input from '../crud/Input.jsx'
+export default function AddProductModal({ show, handleClose, title, callbacksUseEfect, pk = 'id' }) {
     const {
         register,
         handleSubmit,
@@ -25,21 +23,11 @@ export default function AddProductModal({ show, handleClose }) {
     const codeInputRef = useRef(null);
 
     useEffect(() => {
-        if (show && codeInputRef.current) {
-            setTimeout(() => {
-                codeInputRef.current.focus();
-            }, 100);
-        }
+        if (show) { }
 
-        if (show) {
-            fetchProviders()
-                .then((res) => setProviders(res.data))
-                .catch((err) => {
-                    console.error(err)
-                    handleBeforeClose('error', 'No se pudieron cargar los proveedores')
-                    setProviders([])
-                });
-        }
+        fetchProviders()
+            .then((res) => setProviders(res.data))
+            .catch((err) => handleBeforeClose('error', 'No se pudieron cargar los proveedores'));
     }, [show]);
 
     const purchasePrice = watch("purchasePrice") || 0;
@@ -59,6 +47,7 @@ export default function AddProductModal({ show, handleClose }) {
     }
 
     const onSubmit = (data) => {
+
         if (!data.code || !data.name) {
             return;
         }
@@ -66,8 +55,82 @@ export default function AddProductModal({ show, handleClose }) {
         addProduct(data.code, data.name, data.stock, data.sellingPrice, data.purchasePrice, data.provider)
             .then(data => handleBeforeClose('success', 'Producto agregado con éxito'))
             .catch(err => handleBeforeClose('error', 'Error al cargar el producto'));
-
     };
+
+    title = 'Añadir nuevo Producto'
+    const TYPES = {
+        INPUT: 'input',
+        SELECT: 'select',
+        INPUT_DISABLED: 'input_disabled',
+        TEXT: 'text',
+        NUMBER: 'number'
+
+    }
+
+    const FIELDS = [
+        {
+            name: 'code',
+            label: 'Código',
+            icon: 'bi-upc',
+            placeholder: 'Código',
+            type: TYPES.TEXT,
+            required: true,
+            errorMsg: '',
+            step: '0.01',
+            valueAsNumber: true,
+            defaultValue: null,
+
+
+        }, {
+            name: 'name',
+            label: 'Nombre',
+            icon: 'bi-tag',
+            placeholder: 'Nombre',
+            type: TYPES.TEXT,
+            required: true,
+        },
+        {
+            name: 'provider',
+            label: 'Proveedor',
+            placeholder: 'Seleccionar proveedor...',
+            type: TYPES.SELECT,
+            required: true,
+            selectedOption: (value) => { providers.find(p => p.id === value) },
+            selectOptions: providers,
+            errorMsg: 'El proveedor es requerido',
+        },
+        {
+            name: 'purchasePrice',
+            label: 'Precio de compra',
+            icon: 'bi-currency-dollar',
+            type: TYPES.NUMBER,
+
+            valueAsNumber: true
+        },
+        {
+            name: 'sellingPrice',
+            label: 'Precio de venta',
+            icon: 'bi-currency-dollar',
+            type: TYPES.NUMBER,
+
+            valueAsNumber: true
+        },
+        {
+            name: 'profitMargin',
+            label: 'Porcentaje de ganancia',
+            type: TYPES.INPUT_DISABLED,
+            defaultValue: `${calculateProfitMargin()} %`,
+            style: { color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792" }
+        },
+        {
+            name: 'stock',
+            label: 'Stock',
+            icon: 'bi-box',
+            type: TYPES.NUMBER,
+            valueAsNumber: true
+        }
+
+    ]
 
     return (
         <Modal
@@ -79,110 +142,21 @@ export default function AddProductModal({ show, handleClose }) {
             backdropClassName="blurred-backdrop"
         >
             <Modal.Header style={{ backgroundColor: "#f5c193" }} closeButton>
-                <Modal.Title>Agregar Producto</Modal.Title>
+                <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Row className="g-3">
-                        <Col md={6} className="d-flex flex-column">
-                            <CustomInput
-                                label="Codigo"
-                                icon="bi-upc"
-                                type="text"
-                                placeholder="Codigo"
-                                register={{
-                                    ...register("code", { required: true }),
-                                    ref: (e) => {
-                                        register("code", { required: true }).ref(e);
-                                        codeInputRef.current = e;
-                                    },
-                                }}
+                        {FIELDS.map((field, index) => (
+                            <Input field={field}
+                                register={register}
+                                control={control}
+                                errors={errors}
+                                index={index}
+                                TYPES={TYPES}
                             />
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <CustomInput
-                                label="Nombre"
-                                icon="bi-tag"
-                                type="text"
-                                placeholder="Nombre"
-                                register={register("name", { required: true })}
-                            />
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Proveedor</Form.Label>
-                                <Controller
-                                    name="provider"
-                                    control={control}
-                                    render={({ field }) => {
-                                        const selectedOption = providers.find(p => p.id === field.value);
-
-                                        return (
-                                            <Select
-                                                {...field}
-                                                value={selectedOption ? { value: selectedOption.id, label: selectedOption.name } : null}
-                                                onChange={(option) => {
-                                                    field.onChange(option ? option.value : null);
-                                                }}
-                                                options={providers.map(p => ({ value: p.id, label: p.name }))}
-                                                isSearchable
-                                                placeholder="Seleccionar proveedor..."
-                                                noOptionsMessage={() => "No se encontraron proveedores"}
-                                            />
-                                        );
-                                    }}
-                                />
-                                {errors.provider && (
-                                    <small className="text-danger">El proveedor es requerido</small>
-                                )}
-                            </Form.Group>
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <CustomInput
-                                label="Precio de compra"
-                                icon="bi-currency-dollar"
-                                type="number"
-                                step="0.01"
-                                placeholder="Precio de compra"
-                                register={register("purchasePrice", { valueAsNumber: true })}
-                            />
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <CustomInput
-                                label="Precio de venta"
-                                icon="bi-currency-dollar"
-                                type="number"
-                                step="0.01"
-                                placeholder="Precio de venta"
-                                register={register("sellingPrice", { valueAsNumber: true })}
-                            />
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <Form.Group className="mb-3 w-100">
-                                <Form.Label>Porcentaje de ganancia</Form.Label>
-                                <div className="input-group">
-                                    <span className="input-group-text bg-white">%</span>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Porcentaje de ganancia %"
-                                        value={`${calculateProfitMargin()} %`}
-                                        disabled
-                                        style={{
-                                            color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792"
-                                        }}
-                                    />
-                                </div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6} className="d-flex flex-column">
-                            <CustomInput
-                                label="Stock"
-                                icon="bi-box"
-                                type="number"
-                                placeholder="Stock"
-                                register={register("stock", { valueAsNumber: true })}
-                            />
-                        </Col>
+                        )
+                        )}
                     </Row>
                     <div className="d-flex justify-content-end">
                         <Button
@@ -197,4 +171,4 @@ export default function AddProductModal({ show, handleClose }) {
             </Modal.Body>
         </Modal>
     );
-}
+} { }
