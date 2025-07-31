@@ -253,6 +253,25 @@ export default function InventoryPage() {
         setItems(pageItems);
     }, [allSearchResults, currentPage, isSearching]);
 
+    const EXTRABUTTONS = [{
+        action: onPriceUpdate,
+        title: 'Aumentar precios',
+        icon: 'bi bi-graph-up-arrow me-2',
+    },
+    {
+        action: setShowOfferModal,
+        SomethingSelectedNeeded: true,
+        icon: "bi bi-clock-history me-2",
+        title: 'Oferta temporal'
+    },
+    {
+        action: function CreateCombo() { },
+        SomethingSelectedNeeded: true,
+        icon: "bi bi-box2-heart me-2",
+        title: 'Crear combo'
+    }
+    ]
+
     return (
         <div className="d-flex justify-content-center mt-5">
             <CreateOfferModal
@@ -289,7 +308,7 @@ export default function InventoryPage() {
                 product={selectedProduct}
                 unselectAll={unselectAll}
             />
-            <AddProductModal show={showModal} handleClose={handleClose} />
+            {/* <AddProductModal show={showModal} handleClose={handleClose} /> */}
             <SelectedProductsModal
                 show={showSelectedModal}
                 handleClose={() => setShowSelectedModal(false)}
@@ -304,14 +323,13 @@ export default function InventoryPage() {
                     isSomethingSelected={isSomethingSelected}
                     userRole={userRole}
                     onGoToSales={handleGoToSales}
-                    onAddProduct={handleOpen}
+                    onItem={handleOpen}
                     onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
                     toggleSelectAll={toggleSelectAll}
+                    onExtraInfo={onExtraInfo}
                     onViewSelected={() => setShowSelectedModal(true)}
                     selectedItems={selectedItems}
-                    onExtraInfo={onExtraInfo}
-                    onPriceUpdate={onPriceUpdate}
-                    onTemporaryOffer={setShowOfferModal}
+                    extraButtons={EXTRABUTTONS}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

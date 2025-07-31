@@ -8,7 +8,7 @@ import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
 import ProvidersHeader from "./ProvidersHeader.jsx"
-import { fetchProviders_by_page, fetchGetByCode } from "../../services/axios.services.js";
+import { fetchProviders_by_page, fetchProvidersById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 import AddItemModal from "./AddItemModal.jsx";
 import SelectedItemsModal from "./SelectedItemsModal.jsx"
@@ -137,18 +137,9 @@ function Providers() {
         }
 
         try {
-            const data = await fetchGetByCode(firstSelected.id);
-            const buy_price_iva = data.buy_price * 1.21;
-            const sell_price_iva = data.sell_price * 1.21;
-            const margin_percent = data.buy_price > 0
-                ? `${Math.round(((data.sell_price - data.buy_price) / data.buy_price) * 100)}%`
-                : "0%";
-
+            const data = await fetchProvidersById(firstSelected.id);
             setSelectedProduct({
                 ...data,
-                buy_price_iva,
-                sell_price_iva,
-                margin_percent,
             });
 
             setShowProductInfo(true);
@@ -218,6 +209,7 @@ function Providers() {
                                 toggleSelectAll={toggleSelectAll}
                                 onViewSelected={() => setShowSelectedModal(true)}
                                 onExtraInfo={onExtraInfo}
+
                             />
 
                             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

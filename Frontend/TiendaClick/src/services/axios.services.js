@@ -57,6 +57,10 @@ async function fetchProviders() {
   return axios.get(`${apiUrl}providers/all/`);
 }
 
+async function fetchProvidersById(id) {
+  return axios.get(`${apiUrl}providers/${id}/`);
+}
+
 async function fetchSearchProducts(search) {
   const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
 
@@ -191,5 +195,6 @@ export {
   updateProduct,
   updateAllPrices,
   updateSelectedPrices,
-  fetchProviders_by_page
+  fetchProviders_by_page,
+  fetchProvidersById
 }

@@ -1,21 +1,25 @@
 import { Dropdown, ButtonGroup } from "react-bootstrap";
-
+import AddItemModal from "./AddProductModal.jsx"
+import { useState } from "react";
 export default function Header({
   title,
   isSomethingSelected,
   userRole,
-  onAddProduct,
   onDeleteSelected,
   toggleSelectAll,
   selectedItems,
   onViewSelected,
   onExtraInfo,
-  onPriceUpdate,
-  onTemporaryOffer,
-  onCreateCombo
+  extraButtons = []
 }) {
+  const [showAddItem, setShowAddItem] = useState(false)
+
   return (
+
     <div className="d-flex justify-content-between align-items-center header">
+      {/* modals */}
+      <AddItemModal show={showAddItem} handleClose={setShowAddItem} title={'Agregar Producto'} />
+
       <div className="d-flex align-items-center">
         <h1 className="title">{title}</h1>
         <div className="user-role">&lt;{userRole}&gt;</div>
@@ -26,7 +30,7 @@ export default function Header({
           type="button"
           className="btn btn-primary add-product-button"
           title="Agregar producto"
-          onClick={onAddProduct}
+          onClick={() => setShowAddItem(true)}
         >
           <i className="bi bi-plus-circle-fill"></i>
         </button>
@@ -78,34 +82,29 @@ export default function Header({
         </button>
 
         <Dropdown className="dropdown-more-options" as={ButtonGroup}>
-          <Dropdown.Toggle
-            split
-            variant="primary"
-            title="Más acciones"
-          >
-            <i className="bi bi-list"></i>
-          </Dropdown.Toggle>
+          {extraButtons.length !== 0 ?
+            <><Dropdown.Toggle
+              split
+              variant="primary"
+              title="Más acciones"
+            >
+              <i className="bi bi-list"></i>
+            </Dropdown.Toggle>
 
-          <Dropdown.Menu>
-            <Dropdown.Item onClick={onPriceUpdate}>
-              <i className="bi bi-graph-up-arrow me-2"></i>
-              Aumentar precios
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={onTemporaryOffer}
-              disabled={!isSomethingSelected}
-            >
-              <i className="bi bi-clock-history me-2"></i>
-              Oferta temporal
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={onCreateCombo}
-              disabled={!isSomethingSelected}
-            >
-              <i className="bi bi-box2-heart me-2"></i>
-              Crear combo
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              <Dropdown.Menu>
+                {extraButtons.map((button, index) => (
+                  <Dropdown.Item
+                    key={index}
+                    onClick={button.action}
+                    disabled={button.SomethingSelectedNeeded && !isSomethingSelected}
+                  >
+                    <i className={button.icon}></i>
+                    {button.title}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu></>
+            : <></>
+          }
         </Dropdown>
       </div>
     </div>

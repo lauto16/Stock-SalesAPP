@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
-import CustomInput from "./CustomInput";
+import CustomInput from "../crud/CustomInput";
 import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 
