@@ -13,7 +13,7 @@ export default function ConfirmationModal({ show, handleClose, title, message, o
         <Button variant="secondary" onClick={handleClose}>
           Cancelar
         </Button>
-        <Button variant="success" onClick={onSendForm} className="send-form-button">
+        <Button onClick={onSendForm} className="mt-2 send-form-button btn btn-success">
           Aceptar
         </Button>
       </Modal.Footer>

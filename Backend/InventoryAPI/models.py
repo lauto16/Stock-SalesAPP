@@ -15,3 +15,14 @@ class Product(models.Model):
     provider = models.ForeignKey(
         Provider, on_delete=models.SET_NULL, null=True, blank=True)
     last_modification = models.DateField(auto_now_add=True)
+
+
+class Offer(models.Model):
+    """
+    Temporal offer aplies to 'n' products
+    """
+    name = models.CharField(max_length=100)
+    percentage = models.FloatField()
+    end_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    products = models.ManyToManyField(Product, related_name="offers")

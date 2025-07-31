@@ -222,7 +222,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-4">
-                        <Button variante="success" className="mt-2 send-form-button" type="submit">
+                        <Button className="mt-2 send-form-button btn btn-success" type="submit">
                             Guardar cambios
                         </Button>
                     </div>
