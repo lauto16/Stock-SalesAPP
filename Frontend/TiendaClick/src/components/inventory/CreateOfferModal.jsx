@@ -51,12 +51,13 @@ export default function CreateOfferModal({
 
     const onSubmit = (data) => {
         const offerPayload = {
+            name: data.name,
             endDate,
             percentage: parseFloat(data.percentage),
             products: Array.from(selectedItems.keys()),
         };
         console.log("Crear oferta:", offerPayload);
-        // Aquí podrías enviar offerPayload a tu API
+        
         handleClose();
     };
 
@@ -72,6 +73,18 @@ export default function CreateOfferModal({
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
+                    <div className="mb-3">
+                        <label className="form-label">Nombre de la oferta</label>
+                        <input
+                            type="text"
+                            className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                            {...register("name", { required: "El nombre es obligatorio" })}
+                            placeholder="Ej: Oferta Día del Padre"
+                        />
+                        {errors.name && (
+                            <div className="invalid-feedback">{errors.name.message}</div>
+                        )}
+                    </div>
                     <div className="mb-3">
                         <label className="form-label">Fecha de finalización</label>
                         <DatePicker
