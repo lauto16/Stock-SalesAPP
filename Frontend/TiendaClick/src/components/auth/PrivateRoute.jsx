@@ -4,7 +4,7 @@ import { useUser } from "../../context/UserContext.jsx";
 function PrivateRoute({ children }) {
     const { user } = useUser();
 
-    if (!user?.isAuthenticated) {
+    if (!user) {
         return <Navigate to="/login/" replace />;
     }
 

@@ -2,33 +2,39 @@ import axios from 'axios';
 
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
-async function loginUser({ username, password, setLoading }) {
+async function loginUser(username, password) {
   try {
-    setLoading(true);
-    const response = await axios.post(
-      `${apiUrl}login/`,
-      { username, password },
-      { withCredentials: true }
-    );
-    return { success: true, data: response.data };
+      const response = await fetch(`${apiUrl}login/`, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          return { success: true, data };
+      } else {
+          return { success: false };
+      }
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    const message =
-      error.response?.data?.detail ||
-      error.response?.data?.error ||
-      "Error inesperado";
-    return { success: false, error: message };
-  } finally {
-    setLoading(false);
+      console.error("Error en loginUser:", error);
+      return { success: false };
   }
 }
 
 async function logoutUser() {
   try {
-    await axios.post(`${apiUrl}logout/`, {}, { withCredentials: true });
+      const response = await fetch(`${apiUrl}logout/`, {
+          method: "POST",
+          credentials: "include",
+      });
+      return response.ok;
   } catch (error) {
-    console.error("Error cerrando sesión:", error);
-    throw error;
+      console.error("Error en logoutUser:", error);
+      return false;
   }
 }
 

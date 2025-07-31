@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Form, Button, Alert, Card } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Form, Button, Card } from "react-bootstrap";
 import "../../css/auth.css";
 import { useNotifications } from '../../context/NotificationSystem';
 import { useNavigate } from "react-router-dom";
@@ -11,22 +11,25 @@ export default function Login({ onLogin }) {
     const [loading, setLoading] = useState(false);
     const { addNotification } = useNotifications();
     const navigate = useNavigate();
-    const { loginUserContext } = useUser();
+    const { login, user } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setLoading(true);
-        const result = await loginUserContext({ username, password, setLoading });
+
+        const result = await login({ username, password });
         setLoading(false);
 
-        if (result.success) {
-            onLogin?.(result.data);
-            navigate("/dashboard/");
-        } else {
+        if (!result.success) {
             addNotification("error", "Credenciales incorrectas");
         }
     };
+
+    useEffect(() => {
+        if (user) {
+            navigate("/dashboard");
+        }
+    }, [user, navigate]);
 
     return (
         <div className="auth-page">
