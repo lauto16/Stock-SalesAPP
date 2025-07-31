@@ -129,10 +129,9 @@ export default function PriceUpdateModal({
         </Modal.Body>
         <Modal.Footer style={{ backgroundColor: "#f0f0f0" }}>
           <Button
-            variant="success"
             onClick={handleApply}
             disabled={parseFloat(percentage) === 0}
-            className="mt-2 send-form-button"
+            className="mt-2 send-form-button btn btn-success"
           >
             Aplicar cambios
           </Button>

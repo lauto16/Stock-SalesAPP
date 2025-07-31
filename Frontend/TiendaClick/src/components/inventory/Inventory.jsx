@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
-import Table from "./Table.jsx";
+import Table from "./Table";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
@@ -9,8 +9,9 @@ import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode
 import { useNotifications } from '../../context/NotificationSystem';
 import SelectedProductsModal from "./SelectedProductsModal";
 import ProductInfoModal from "./ProductInfoModal";
-import PriceUpdateModal from "./PriceUpdateModal.jsx"
+import PriceUpdateModal from "./PriceUpdateModal"
 import ConfirmationModal from "./ConfirmationModal"
+import CreateOfferModal from "./CreateOfferModal";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -19,7 +20,6 @@ export default function InventoryPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
@@ -33,6 +33,7 @@ export default function InventoryPage() {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
+    const [showOfferModal, setShowOfferModal] = useState(false);
 
     // States for update prices modal
     const [updatePricePercentage, setUpdatePricePercentage] = useState(0)
@@ -59,7 +60,6 @@ export default function InventoryPage() {
 
     const clearSearch = () => {
         setIsSearching(false);
-        setSearchQuery("");
         setSearchInput("");
         setCurrentPage(1);
     };
@@ -103,7 +103,6 @@ export default function InventoryPage() {
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
             setIsSearching(true);
-            setSearchQuery(query);
             setCurrentPage(1);
             setLoading(true);
             const results = await fetchSearchProducts(query);
@@ -257,6 +256,14 @@ export default function InventoryPage() {
 
     return (
         <div className="d-flex justify-content-center mt-5">
+            <CreateOfferModal
+                show={showOfferModal}
+                handleClose={() => setShowOfferModal(false)}
+                selectedItems={selectedItems}
+                setSelectedItems={setSelectedItems}
+                setIsSomethingSelected={setIsSomethingSelected}
+                fetchGetByCode={fetchGetByCode}
+            />
             <ConfirmationModal
                 show={showConfirmation}
                 onHide={handleHideConfirmation}
@@ -304,6 +311,7 @@ export default function InventoryPage() {
                     selectedItems={selectedItems}
                     onExtraInfo={onExtraInfo}
                     onPriceUpdate={onPriceUpdate}
+                    onTemporaryOffer={setShowOfferModal}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container">
