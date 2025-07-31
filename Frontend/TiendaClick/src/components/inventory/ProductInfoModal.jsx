@@ -69,8 +69,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 unselectAll();
                 handleClose();
 
-                // need to reload the page so the user can see the results of his transaction
-                // maybe reload only the table component?
                 setTimeout(() => {
                     window.location.reload();
                 }, 200);
@@ -85,6 +83,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
             );
         }
     };
+
     return (
         <Modal show={show} onHide={handleClose} centered size="lg">
             <Modal.Header style={{ backgroundColor: "#f5c193" }} closeButton>
@@ -221,6 +220,63 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                             </Form.Group>
                         </Col>
                     </Row>
+
+                    {/* NUEVA SECCIÓN DE OFERTA */}
+                    {product?.offers_data && product.offers_data.length > 0 && (
+                        <>
+                            <hr />
+                            <h5>Oferta(s) activa(s)</h5>
+                            {product.offers_data.map((offer, idx) => {
+                                const priceWithOffer = product.sell_price * (1 + offer.percentage / 100);
+                                const priceWithOfferIVA = priceWithOffer * 1.21;
+                                const isLast = idx === product.offers_data.length - 1;
+
+                                return (
+                                    <div key={idx}>
+                                        <Row className="g-3 mb-3">
+                                            <Col md={3}>
+                                                <p className="fw-bold mb-1">{offer.name}</p>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label>Porcentaje</Form.Label>
+                                                    <Form.Control type="number" value={offer.percentage} disabled />
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={3}>
+                                                <Form.Group>
+                                                    <Form.Label>Fecha fin</Form.Label>
+                                                    <Form.Control type="date" value={offer.end_date} disabled />
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label>Precio sin IVA</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        value={`$${priceWithOffer.toFixed(2)}`}
+                                                        disabled
+                                                    />
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label>Precio con IVA</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        value={`$${priceWithOfferIVA.toFixed(2)}`}
+                                                        disabled
+                                                    />
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                        {!isLast && <hr />}
+                                    </div>
+                                );
+                            })}
+                        </>
+                    )}
+
                     <div className="d-flex justify-content-end mt-4">
                         <Button className="mt-2 send-form-button btn btn-success" type="submit">
                             Guardar cambios

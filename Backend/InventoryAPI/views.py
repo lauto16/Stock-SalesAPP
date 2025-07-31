@@ -1,13 +1,19 @@
-from .serializers import ProductSerializer, ProductPagination
+from .serializers import (
+    ProductSerializer,
+    OfferSerializer,
+    ProductPagination,
+    OfferPagination,
+)
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from django.http import HttpRequest
+from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
-from .models import Product
 
 
 class ProductValidator:
@@ -114,18 +120,18 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_by_code(self, request, code=None):
         if not code:
             return Response(
-                {"error": "Codigo invalido"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Código inválido"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         found = Product.objects.filter(code=code).first()
 
         if not found:
             return Response(
-                {"error": "El producto con este codigo no existe"},
+                {"error": "El producto con este código no existe"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = self.get_serializer(found, many=False)
+        serializer = self.get_serializer(found)
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"], url_path="low-stock/(?P<limit>\d+)")
@@ -198,16 +204,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["patch"], url_path="patch-selected-prices")
     def patch_selected(self, request):
         """
-        Updates a list of selected products by code
-        """
-        """
-        TODO: Add the functionality to take care of edge cases when user wants to apply discount/rise prices to
-        discounts(ofertas) and product combos ------> This needs to be done when the combos and discount structure and
-        DB are ready
+        Updates a list of selected products by code,
+        with optional control for whether to include discounted products (in an active offer).
         """
         percentage = request.data.get("percentage")
-        # include_discounted = request.data.get("includeDiscounted", False)
-        # include_combos = request.data.get("includeCombos", False)
+        include_discounted = request.data.get("includeDiscounted", False)
         codes = request.data.get("codes", [])
 
         if not isinstance(codes, list) or not codes:
@@ -218,6 +219,8 @@ class ProductViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        updated_products = []
 
         for code in codes:
             product = Product.objects.filter(code=code).first()
@@ -231,41 +234,42 @@ class ProductViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # if not include_discounted and product.has_discount:
-            #     continue
+            has_offer = Offer.objects.filter(
+                products=product, end_date__gte=timezone.now()
+            ).exists()
 
-            # if not include_combos and product.is_combo:
-            #     continue
+            if has_offer and not include_discounted:
+                continue
 
             if isinstance(percentage, (int, float)):
                 product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
                 product.save()
+                updated_products.append(product.code)
 
-        return Response({"success": True}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "success": True,
+                "updated": updated_products,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["patch"], url_path="patch-all-prices")
     def patch_all(self, request):
-        """
-        Updates all products
-        """
         """
         TODO: Add the functionality to take care of edge cases when user wants to apply discount/rise prices to
         discounts(ofertas) and product combos ------> This needs to be done when the combos and discount structure and
         DB are ready
         """
         percentage = request.data.get("percentage")
-        # include_discounted = request.data.get("includeDiscounted", False)
-        # include_combos = request.data.get("includeCombos", False)
+        include_discounted = request.data.get("includeDiscounted", False)
 
         products = Product.objects.all()
 
         for product in products:
-            # if not include_discounted and product.has_discount:
-            #     continue
-
-            # if not include_combos and product.is_combo:
-            #     continue
+            if product.has_discount and not include_discounted:
+                continue
 
             if isinstance(percentage, (int, float)):
                 product.sell_price = product.sell_price * (1 + (percentage / 100))
@@ -273,6 +277,73 @@ class ProductViewSet(viewsets.ModelViewSet):
                 product.save()
 
         return Response({"success": True}, status=status.HTTP_200_OK)
+
+
+class OfferViewSet(viewsets.ModelViewSet):
+    queryset = Offer.objects.all()
+    serializer_class = OfferSerializer
+    pagination_class = OfferPagination
+
+    def create(self, request, *args, **kwargs):
+        try:
+            name = request.data.get("name")
+            percentage = request.data.get("percentage")
+            end_date = request.data.get("end_date")
+            products_ids = request.data.get("products")
+
+            if not name:
+                return Response(
+                    {"success": False, "error": "El nombre es obligatorio."}, status=400
+                )
+
+            if Offer.objects.filter(name=name).exists():
+                return Response(
+                    {"success": False, "error": "Ya existe una oferta con ese nombre."},
+                    status=400,
+                )
+
+            if percentage is None:
+                return Response(
+                    {"success": False, "error": "El porcentaje es obligatorio."},
+                    status=400,
+                )
+
+            if end_date is None:
+                return Response(
+                    {
+                        "success": False,
+                        "error": "La fecha de finalización es obligatoria.",
+                    },
+                    status=400,
+                )
+
+            if not products_ids or not isinstance(products_ids, list):
+                return Response(
+                    {
+                        "success": False,
+                        "error": "Debe proporcionar una lista de productos.",
+                    },
+                    status=400,
+                )
+
+            products = Product.objects.filter(pk__in=products_ids)
+            if products.count() != len(products_ids):
+                return Response(
+                    {"success": False, "error": "Uno o más productos no existen."},
+                    status=400,
+                )
+
+            offer = Offer.objects.create(
+                name=name,
+                percentage=percentage,
+                end_date=end_date,
+            )
+            offer.products.set(products)
+
+            return Response({"success": True, "error": ""}, status=201)
+
+        except Exception as e:
+            return Response({"success": False, "error": str(e)}, status=500)
 
 
 class ProductSearchView(APIView):

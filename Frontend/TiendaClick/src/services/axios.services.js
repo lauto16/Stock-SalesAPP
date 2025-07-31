@@ -26,6 +26,27 @@ async function addProduct(code, name, stock, sell_price, buy_price, provider) {
     });
 }
 
+async function addOffer(name, endDate, percentage, products) {
+  const offerData = {
+    name: name,
+    end_date: endDate,
+    percentage: percentage,
+    products: products,
+  };
+
+  try {
+    const response = await axios.post(`${apiUrl}offers/`, offerData);
+    console.log('Offer created:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear la oferta:', error);
+    const message =
+      error.response?.data?.error ||
+      'Error desconocido al crear la oferta';
+    throw new Error(message);
+  }
+}
+
 async function fetchProducts({ page = 1, setLoading }) {
   try {
     setLoading(true);
@@ -191,5 +212,6 @@ export {
   updateProduct,
   updateAllPrices,
   updateSelectedPrices,
-  fetchProviders_by_page
+  fetchProviders_by_page,
+  addOffer
 }

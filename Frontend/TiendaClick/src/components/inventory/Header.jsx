@@ -98,13 +98,6 @@ export default function Header({
               <i className="bi bi-clock-history me-2"></i>
               Oferta temporal
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={onCreateCombo}
-              disabled={!isSomethingSelected}
-            >
-              <i className="bi bi-box2-heart me-2"></i>
-              Crear combo
-            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>

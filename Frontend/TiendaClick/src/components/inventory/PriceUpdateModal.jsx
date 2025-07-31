@@ -96,13 +96,6 @@ export default function PriceUpdateModal({
               onChange={() => setIncludeDiscounted(!includeDiscounted)}
               className="mb-2"
             />
-            <Form.Check
-              type="checkbox"
-              label="Aplicar también a combos de productos"
-              checked={includeCombos}
-              onChange={() => setIncludeCombos(!includeCombos)}
-              className="mb-2"
-            />
             {preview.length > 0 && (
               <div className="table-responsive" style={{ maxHeight: "300px", overflowY: "auto" }}>
                 <Table bordered hover>
