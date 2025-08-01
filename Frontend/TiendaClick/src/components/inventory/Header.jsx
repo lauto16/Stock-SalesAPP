@@ -1,5 +1,5 @@
 import { Dropdown, ButtonGroup } from "react-bootstrap";
-import AddItemModal from "./AddProductModal.jsx"
+import AddItemModal from "../crud/AddItemModal.jsx"
 import { useState } from "react";
 export default function Header({
   title,
@@ -11,17 +11,18 @@ export default function Header({
   onViewSelected,
   onExtraInfo,
   extraButtons = [],
+  callbacksAddItem,
   onPriceUpdate,
   onTemporaryOffer,
-
+  addFormConfig
 }) {
   const [showAddItem, setShowAddItem] = useState(false)
-
   return (
 
     <div className="d-flex justify-content-between align-items-center header">
       {/* modals */}
-      <AddItemModal show={showAddItem} handleClose={setShowAddItem} title={'Agregar Producto'} />
+
+      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
 
       <div className="d-flex align-items-center">
         <h1 className="title">{title}</h1>

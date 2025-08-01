@@ -4,9 +4,9 @@ import Select from "react-select";
 import { Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 
-export default function Input({ field, register, control, errors, index, TYPES }) {
+export default function Input({ field, register, control, errors, index }) {
     switch (field.type) {
-        case TYPES.SELECT:
+        case 'select':
             return (
                 <Col md={6} key={index} className="d-flex flex-column">
                     <Form.Group className="mb-3">
@@ -49,7 +49,7 @@ export default function Input({ field, register, control, errors, index, TYPES }
                 </Col>
             );
 
-        case TYPES.INPUT_DISABLED:
+        case 'input_disabled':
             return (
                 <Col md={6} key={index} className="d-flex flex-column">
                     <Form.Group className="mb-3 w-100">
@@ -73,7 +73,6 @@ export default function Input({ field, register, control, errors, index, TYPES }
                         label={field.label}
                         icon={field.icon}
                         type={field.type}
-                        step={field.step}
                         value={field.defaultValue}
                         placeholder={field.placeholder}
                         register={register(field.name, {

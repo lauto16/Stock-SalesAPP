@@ -4,15 +4,14 @@ import Table from "./Table";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
-import AddProductModal from "./AddProductModal";
-import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
+import { fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
 import { useNotifications } from '../../context/NotificationSystem';
 import SelectedProductsModal from "./SelectedProductsModal";
 import ProductInfoModal from "./ProductInfoModal";
 import PriceUpdateModal from "./PriceUpdateModal"
 import ConfirmationModal from "./ConfirmationModal"
 import CreateOfferModal from "./CreateOfferModal";
-
+import addFormConfig from "./forms/useAddItemsConfig.jsx";
 export default function InventoryPage() {
     const userRole = "admin";
     const [items, setItems] = useState([]);
@@ -40,9 +39,15 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
+    //addItems
 
+
+    const addItemConfig = {
+        config: addFormConfig,
+        handleSubmit: addProduct
+    }
     const PAGE_SIZE = 10;
-
+    //table columns
     const columns = [
         { className: "code", key: "code", label: 'Código' },
         { className: "name", key: "name", label: 'Nombre' },
@@ -53,7 +58,6 @@ export default function InventoryPage() {
     ];
 
     const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
     const handleGoToSales = () => { };
     const handleShowConfirmation = () => setShowConfirmation(true);
     const handleHideConfirmation = () => setShowConfirmation(false);
@@ -324,6 +328,7 @@ export default function InventoryPage() {
                     onViewSelected={() => setShowSelectedModal(true)}
                     selectedItems={selectedItems}
                     extraButtons={EXTRABUTTONS}
+                    addFormConfig={addItemConfig}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

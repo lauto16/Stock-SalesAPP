@@ -38,7 +38,7 @@ async function logoutUser() {
   }
 }
 
-async function addProduct(code, name, stock, sell_price, buy_price, provider) {
+async function addProduct({ code, name, stock, sell_price, buy_price, provider }) {
 
   const productData = {
     code,
