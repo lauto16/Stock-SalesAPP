@@ -1,9 +1,11 @@
 import { addProduct } from "../../../services/axios.services.js";
 import { useEffect, useState } from "react";
 import { useProviders } from "../../providers/hooks/useProviders.js";
-
+import { useUser } from "../../../context/UserContext.jsx";
 const addItemConfig = (watch) => {
-    const { providers } = useProviders()
+    const { user } = useUser();
+    const token = user?.token;
+    const { providers } = useProviders(token)
 
     const purchasePrice = watch?.("buy_price") || 0;
     const sellingPrice = watch?.("sell_price") || 0;
