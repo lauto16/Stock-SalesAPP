@@ -7,7 +7,6 @@ export default function PriceUpdateModal({
     selectedItems,
     onApply,
     includeCombos,
-    setIncludeCombos,
     applyToAll,
     setApplyToAll,
     includeDiscounted,
@@ -94,13 +93,6 @@ export default function PriceUpdateModal({
               label="Aplicar también a productos en oferta"
               checked={includeDiscounted}
               onChange={() => setIncludeDiscounted(!includeDiscounted)}
-              className="mb-2"
-            />
-            <Form.Check
-              type="checkbox"
-              label="Aplicar también a combos de productos"
-              checked={includeCombos}
-              onChange={() => setIncludeCombos(!includeCombos)}
               className="mb-2"
             />
             {preview.length > 0 && (

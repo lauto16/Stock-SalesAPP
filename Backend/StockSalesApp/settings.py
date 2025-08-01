@@ -19,9 +19,11 @@ INSTALLED_APPS = [
     'InventoryAPI',
     'SalesAPI',
     'rest_framework',
+    'rest_framework.authtoken',
     'StatsAPI',
     'corsheaders',
     'ProvidersAPI',
+    'AuthAPI'
 ]
 
 MIDDLEWARE = [
@@ -110,8 +112,22 @@ AUTH_USER_MODEL = 'Auth.CustomUser'
 
 LOGIN_URL = '/auth/'
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://192.168.100.156:8000",
     "http://192.168.100.156:5173",
+    "http://192.168.100.98:5173",
+    "http://192.168.100.98:8000"
+
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

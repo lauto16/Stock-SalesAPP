@@ -10,7 +10,7 @@ export default function ConfirmationModal({ show, handleClose, title, message, o
         <p>{message}</p>
       </Modal.Body>
       <Modal.Footer style={{ backgroundColor: "#f0f0f0" }}>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button className="mt-2 btn-secondary" onClick={handleClose}>
           Cancelar
         </Button>
         <Button onClick={onSendForm} className="mt-2 send-form-button btn btn-success">

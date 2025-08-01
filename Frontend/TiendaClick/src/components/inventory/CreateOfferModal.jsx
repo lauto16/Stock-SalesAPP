@@ -3,6 +3,9 @@ import { Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { addOffer } from "../../services/axios.services";
+import { useNotifications } from '../../context/NotificationSystem';
+import { useUser } from "../../context/UserContext";
 
 export default function CreateOfferModal({
     show,
@@ -11,30 +14,30 @@ export default function CreateOfferModal({
     setSelectedItems,
     setIsSomethingSelected,
     fetchGetByCode,
+
 }) {
     const {
         register,
-        watch,
         handleSubmit,
         setValue,
+        watch,
+        reset,
         formState: { errors },
     } = useForm();
 
+    const { addNotification } = useNotifications();
     const [products, setProducts] = useState([]);
     const [endDate, setEndDate] = useState(null);
     const percentage = watch("percentage", 0);
+    const { user } = useUser();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const result = [];
-            for (const code of selectedItems.keys()) {
-                const data = await fetchGetByCode(code);
-                result.push(data);
-            }
-            setProducts(result);
-        };
-        fetchProducts();
-    }, [selectedItems]);
+    const handleBeforeClose = (type, message) => {
+        handleClose();
+        if (type === 'success') {
+            reset();
+        }
+        addNotification(type, message);
+    };
 
     const handleRemove = (code) => {
         const newSelected = new Map(selectedItems);
@@ -49,17 +52,48 @@ export default function CreateOfferModal({
     const getColorClass = () =>
         percentage > 0 ? "text-success" : percentage < 0 ? "text-danger" : "text-dark";
 
-    const onSubmit = (data) => {
-        const offerPayload = {
-            name: data.name,
-            endDate,
-            percentage: parseFloat(data.percentage),
+    const formatDateToISO = (date) => {
+        if (!date) return null;
+        return date.toISOString().split("T")[0];
+    };
+
+    const onSubmit = (offer_data) => {
+        const data = {
+            name: offer_data.name,
+            endDate: formatDateToISO(offer_data.endDate),
+            percentage: parseFloat(offer_data.percentage),
             products: Array.from(selectedItems.keys()),
         };
-        console.log("Crear oferta:", offerPayload);
-        
+    
+        console.log("Enviando oferta:", data);
+    
+        addOffer(data.name, data.endDate, data.percentage, data.products, user.token)
+            .then(() => handleBeforeClose('success', 'Oferta agregada con éxito'))
+            .catch((err) => handleBeforeClose('error', err.message));
+    
         handleClose();
     };
+    
+    useEffect(() => {
+        if (!show) return;
+    
+        const fetchProducts = async () => {
+            const result = [];
+            for (const code of selectedItems.keys()) {
+                const data = await fetchGetByCode(code, user.token);
+                result.push(data);
+            }
+            setProducts(result);
+        };
+    
+        fetchProducts();
+    }, [show, selectedItems, user.token]);
+
+    useEffect(() => {
+        if (selectedItems.size === 0) {
+          handleClose();
+        }
+      }, [selectedItems, handleClose]);
 
     return (
         <Modal show={show} onHide={handleClose} centered size="lg">
@@ -89,9 +123,12 @@ export default function CreateOfferModal({
                         <label className="form-label">Fecha de finalización</label>
                         <DatePicker
                             selected={endDate}
-                            onChange={(date) => setEndDate(date)}
+                            onChange={(date) => {
+                                setEndDate(date);
+                                setValue("endDate", date);
+                            }}
                             className="form-control date-picker"
-                            dateFormat="dd/MM/yyyy"
+                            dateFormat="yyyy-MM-dd"
                             placeholderText="Seleccioná una fecha"
                             required
                         />

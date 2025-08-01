@@ -4,14 +4,15 @@ import Table from "./Table";
 import Pagination from "./Pagination";
 import "../../css/inventory.css";
 import Search from "./Search";
-import AddProductModal from "./AddProductModal";
-import { fetchSearchProducts, fetchProducts, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
+import { fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
 import { useNotifications } from '../../context/NotificationSystem';
 import SelectedProductsModal from "./SelectedProductsModal";
 import ProductInfoModal from "./ProductInfoModal";
 import PriceUpdateModal from "./PriceUpdateModal"
 import ConfirmationModal from "./ConfirmationModal"
 import CreateOfferModal from "./CreateOfferModal";
+import addFormConfig from "./forms/useAddItemsConfig.jsx";
+import { useUser } from "../../context/UserContext";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -40,9 +41,17 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
+    //addItems
+
+
+    const addItemConfig = {
+        config: addFormConfig,
+        handleSubmit: addProduct
+    }
+    const { user } = useUser();
 
     const PAGE_SIZE = 10;
-
+    //table columns
     const columns = [
         { className: "code", key: "code", label: 'Código' },
         { className: "name", key: "name", label: 'Nombre' },
@@ -53,7 +62,6 @@ export default function InventoryPage() {
     ];
 
     const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
     const handleGoToSales = () => { };
     const handleShowConfirmation = () => setShowConfirmation(true);
     const handleHideConfirmation = () => setShowConfirmation(false);
@@ -81,7 +89,7 @@ export default function InventoryPage() {
 
         for (const code of codes) {
             try {
-                const result = await deleteProductByCode(code);
+                const result = await deleteProductByCode(code, user.token);  // <-- token aquí
                 if (result.success) {
                     addNotification('success', `Producto ${code} eliminado con éxito`);
 
@@ -93,7 +101,6 @@ export default function InventoryPage() {
             } catch (error) {
                 addNotification('error', `El producto ${code} no se pudo eliminar`);
             }
-
         }
 
         setItems(newItems);
@@ -105,7 +112,9 @@ export default function InventoryPage() {
             setIsSearching(true);
             setCurrentPage(1);
             setLoading(true);
-            const results = await fetchSearchProducts(query);
+
+            const results = await fetchSearchProducts(query, user.token);
+
             setAllSearchResults(results);
             setLoading(false);
         }
@@ -131,7 +140,7 @@ export default function InventoryPage() {
         }
 
         try {
-            const data = await fetchGetByCode(firstSelected.code);
+            const data = await fetchGetByCode(firstSelected.code, user.token);  // <-- token aquí
             const buy_price_iva = data.buy_price * 1.21;
             const sell_price_iva = data.sell_price * 1.21;
             const margin_percent = data.buy_price > 0
@@ -228,10 +237,15 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchData = async () => {
             if (isSearching) return;
+            console.log(user.token);
+
+            if (!user?.token) return;
+
             setLoading(true);
             const data = await fetchProducts({
                 page: currentPage,
                 setLoading,
+                token: user.token,
             });
             setItems(data.results);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
@@ -239,7 +253,7 @@ export default function InventoryPage() {
         };
 
         fetchData();
-    }, [currentPage, isSearching]);
+    }, [currentPage, isSearching, user]);
 
     useEffect(() => {
         if (!isSearching) return;
@@ -263,12 +277,6 @@ export default function InventoryPage() {
         SomethingSelectedNeeded: true,
         icon: "bi bi-clock-history me-2",
         title: 'Oferta temporal'
-    },
-    {
-        action: function CreateCombo() { },
-        SomethingSelectedNeeded: true,
-        icon: "bi bi-box2-heart me-2",
-        title: 'Crear combo'
     }
     ]
 
@@ -330,6 +338,7 @@ export default function InventoryPage() {
                     onViewSelected={() => setShowSelectedModal(true)}
                     selectedItems={selectedItems}
                     extraButtons={EXTRABUTTONS}
+                    addFormConfig={addItemConfig}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
