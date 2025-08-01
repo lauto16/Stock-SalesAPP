@@ -5,7 +5,7 @@ export function useProviders(dependencies) {
     useEffect(() => {
         fetchProviders()
             .then((res) => setProviders(res.data))
-            .catch((err) => handleBeforeClose('error', 'No se pudieron cargar los datos'))
+            .catch((err) => console.error('Error, no se pudieron cargar los datos: ', err))
     }, dependencies)
     return {
         providers,

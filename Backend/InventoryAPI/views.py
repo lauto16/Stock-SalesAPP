@@ -4,11 +4,12 @@ from .serializers import (
     ProductPagination,
     OfferPagination,
 )
-from rest_framework.exceptions import ValidationError
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
 from rest_framework.views import APIView
+from rest_framework import permissions
 from rest_framework import viewsets
 from django.http import HttpRequest
 from .models import Product, Offer
@@ -113,8 +114,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = ProductPagination
-    # authentication_classes = [SessionAuthentication, TokenAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["get"], url_path=r"get-by-code/(?P<code>[\w-]+)")
     def get_by_code(self, request, code=None):

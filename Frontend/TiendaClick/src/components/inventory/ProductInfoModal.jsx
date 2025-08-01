@@ -5,6 +5,7 @@ import Select from "react-select";
 import CustomInput from "../crud/CustomInput";
 import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
+import { useUser } from "../../context/UserContext";
 
 export default function ProductInfoModal({ show, handleClose, product, unselectAll }) {
     const {
@@ -23,11 +24,11 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
 
     const { addNotification } = useNotifications();
     const [providers, setProviders] = useState([]);
-    const codeInputRef = useRef(null);
+    const { user } = useUser();
 
     useEffect(() => {
         if (show && product) {
-            fetchProviders()
+            fetchProviders(user.token)
                 .then((res) => {
                     setProviders(res.data);
                     reset({
@@ -41,7 +42,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 })
                 .catch(() => addNotification("error", "No se pudieron cargar los proveedores"));
         }
-    }, [show, product]);
+    }, [show, product, user.token]);
 
     const purchasePrice = watch("purchasePrice") || 0;
     const sellingPrice = watch("sellingPrice") || 0;
@@ -55,24 +56,27 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
 
     const onSubmit = async (data) => {
         try {
-            const { success, error } = await updateProduct(product.code, {
-                code: data.code,
-                name: data.name,
-                stock: data.stock,
-                buy_price: data.purchasePrice,
-                sell_price: data.sellingPrice,
-                provider: data.provider,
-            });
-
+            const { success, error } = await updateProduct(
+                product.code,
+                {
+                    code: data.code,
+                    name: data.name,
+                    stock: data.stock,
+                    buy_price: data.purchasePrice,
+                    sell_price: data.sellingPrice,
+                    provider: data.provider,
+                },
+                user.token
+            );
+    
             if (success) {
                 addNotification("success", "Producto actualizado con éxito");
                 unselectAll();
                 handleClose();
-
+    
                 setTimeout(() => {
                     window.location.reload();
                 }, 200);
-
             } else {
                 addNotification("error", error || "Error al actualizar el producto");
             }

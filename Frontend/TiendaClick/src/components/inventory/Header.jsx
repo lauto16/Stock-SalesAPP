@@ -1,6 +1,8 @@
 import { Dropdown, ButtonGroup } from "react-bootstrap";
 import AddItemModal from "../crud/AddItemModal.jsx"
 import { useState } from "react";
+import TitleDropdown from "../global/TitleDropdown.jsx";
+
 export default function Header({
   title,
   isSomethingSelected,
@@ -16,16 +18,16 @@ export default function Header({
   onTemporaryOffer,
   addFormConfig
 }) {
-  const [showAddItem, setShowAddItem] = useState(false)
-  return (
+  const [showAddItem, setShowAddItem] = useState(false);
 
+  return (
     <div className="d-flex justify-content-between align-items-center header">
       {/* modals */}
 
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
 
       <div className="d-flex align-items-center">
-        <h1 className="title">{title}</h1>
+        <TitleDropdown currentTitle={title} />
         <div className="user-role">&lt;{userRole}&gt;</div>
       </div>
 
@@ -52,12 +54,16 @@ export default function Header({
         <button
           type="button"
           className="btn btn-primary"
-          title={isSomethingSelected ? "Deseleccionar todos" : "Seleccionar todos"}
+          title={
+            isSomethingSelected ? "Deseleccionar todos" : "Seleccionar todos"
+          }
           onClick={toggleSelectAll}
         >
-          {isSomethingSelected
-            ? <i className="bi bi-check-square-fill"></i>
-            : <i className="bi bi-square-fill"></i>}
+          {isSomethingSelected ? (
+            <i className="bi bi-check-square-fill"></i>
+          ) : (
+            <i className="bi bi-square-fill"></i>
+          )}
         </button>
 
         <button
@@ -69,9 +75,7 @@ export default function Header({
         >
           <i className="bi bi-eye-fill"></i>
           {selectedItems.size > 0 && (
-            <span className="notification-badge">
-              {selectedItems.size}
-            </span>
+            <span className="notification-badge">{selectedItems.size}</span>
           )}
         </button>
 
@@ -86,29 +90,30 @@ export default function Header({
         </button>
 
         <Dropdown className="dropdown-more-options" as={ButtonGroup}>
-          {extraButtons.length !== 0 ?
-            <><Dropdown.Toggle
-              split
-              variant="primary"
-              title="Más acciones"
-            >
-              <i className="bi bi-list"></i>
-            </Dropdown.Toggle>
+          {extraButtons.length !== 0 ? (
+            <>
+              <Dropdown.Toggle split variant="primary" title="Más acciones">
+                <i className="bi bi-list"></i>
+              </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 {extraButtons.map((button, index) => (
                   <Dropdown.Item
                     key={index}
                     onClick={button.action}
-                    disabled={button.SomethingSelectedNeeded && !isSomethingSelected}
+                    disabled={
+                      button.SomethingSelectedNeeded && !isSomethingSelected
+                    }
                   >
                     <i className={button.icon}></i>
                     {button.title}
                   </Dropdown.Item>
                 ))}
-              </Dropdown.Menu></>
-            : <></>
-          }
+              </Dropdown.Menu>
+            </>
+          ) : (
+            <></>
+          )}
         </Dropdown>
       </div>
     </div>

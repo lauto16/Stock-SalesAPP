@@ -1,3 +1,4 @@
+from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from InventoryAPI.views import *
@@ -18,7 +19,7 @@ urlpatterns = [
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
-    path('api/login/', LoginView.as_view(), name='token_obtain_pair'),
+    path("api/login/", obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

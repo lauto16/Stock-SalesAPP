@@ -12,6 +12,8 @@ import PriceUpdateModal from "./PriceUpdateModal"
 import ConfirmationModal from "./ConfirmationModal"
 import CreateOfferModal from "./CreateOfferModal";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
+import { useUser } from "../../context/UserContext";
+
 export default function InventoryPage() {
     const userRole = "admin";
     const [items, setItems] = useState([]);
@@ -46,6 +48,8 @@ export default function InventoryPage() {
         config: addFormConfig,
         handleSubmit: addProduct
     }
+    const { user } = useUser();
+
     const PAGE_SIZE = 10;
     //table columns
     const columns = [
@@ -85,7 +89,7 @@ export default function InventoryPage() {
 
         for (const code of codes) {
             try {
-                const result = await deleteProductByCode(code);
+                const result = await deleteProductByCode(code, user.token);  // <-- token aquí
                 if (result.success) {
                     addNotification('success', `Producto ${code} eliminado con éxito`);
 
@@ -97,7 +101,6 @@ export default function InventoryPage() {
             } catch (error) {
                 addNotification('error', `El producto ${code} no se pudo eliminar`);
             }
-
         }
 
         setItems(newItems);
@@ -109,7 +112,9 @@ export default function InventoryPage() {
             setIsSearching(true);
             setCurrentPage(1);
             setLoading(true);
-            const results = await fetchSearchProducts(query);
+
+            const results = await fetchSearchProducts(query, user.token);
+
             setAllSearchResults(results);
             setLoading(false);
         }
@@ -135,7 +140,7 @@ export default function InventoryPage() {
         }
 
         try {
-            const data = await fetchGetByCode(firstSelected.code);
+            const data = await fetchGetByCode(firstSelected.code, user.token);  // <-- token aquí
             const buy_price_iva = data.buy_price * 1.21;
             const sell_price_iva = data.sell_price * 1.21;
             const margin_percent = data.buy_price > 0
@@ -232,10 +237,15 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchData = async () => {
             if (isSearching) return;
+            console.log(user.token);
+
+            if (!user?.token) return;
+
             setLoading(true);
             const data = await fetchProducts({
                 page: currentPage,
                 setLoading,
+                token: user.token,
             });
             setItems(data.results);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
@@ -243,7 +253,7 @@ export default function InventoryPage() {
         };
 
         fetchData();
-    }, [currentPage, isSearching]);
+    }, [currentPage, isSearching, user]);
 
     useEffect(() => {
         if (!isSearching) return;

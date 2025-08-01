@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addOffer } from "../../services/axios.services";
 import { useNotifications } from '../../context/NotificationSystem';
-
+import { useUser } from "../../context/UserContext";
 
 export default function CreateOfferModal({
     show,
@@ -29,6 +29,7 @@ export default function CreateOfferModal({
     const [products, setProducts] = useState([]);
     const [endDate, setEndDate] = useState(null);
     const percentage = watch("percentage", 0);
+    const { user } = useUser();
 
     const handleBeforeClose = (type, message) => {
         handleClose();
@@ -63,30 +64,30 @@ export default function CreateOfferModal({
             percentage: parseFloat(offer_data.percentage),
             products: Array.from(selectedItems.keys()),
         };
-
+    
         console.log("Enviando oferta:", data);
-
-        addOffer(data.name, data.endDate, data.percentage, data.products)
+    
+        addOffer(data.name, data.endDate, data.percentage, data.products, user.token)
             .then(() => handleBeforeClose('success', 'Oferta agregada con éxito'))
             .catch((err) => handleBeforeClose('error', err.message));
-
+    
         handleClose();
     };
-
+    
     useEffect(() => {
         if (!show) return;
     
         const fetchProducts = async () => {
             const result = [];
             for (const code of selectedItems.keys()) {
-                const data = await fetchGetByCode(code);
+                const data = await fetchGetByCode(code, user.token);
                 result.push(data);
             }
             setProducts(result);
         };
     
         fetchProducts();
-    }, [show, selectedItems]);
+    }, [show, selectedItems, user.token]);
 
     useEffect(() => {
         if (selectedItems.size === 0) {
