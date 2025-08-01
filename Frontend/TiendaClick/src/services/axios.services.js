@@ -9,12 +9,11 @@ async function loginUser(username, password) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       body: JSON.stringify({ username, password }),
     });
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json(); // { token: 'abc123' }
       return { success: true, data };
     } else {
       return { success: false };
@@ -25,66 +24,44 @@ async function loginUser(username, password) {
   }
 }
 
-async function logoutUser() {
-  try {
-    const response = await fetch(`${apiUrl}logout/`, {
-      method: "POST",
-      credentials: "include",
-    });
-    return response.ok;
-  } catch (error) {
-    console.error("Error en logoutUser:", error);
-    return false;
-  }
+function logoutUser() {
+  // No hace falta hacer una llamada al backend, simplemente se borra el token del frontend
+  return true;
 }
 
-async function addProduct(code, name, stock, sell_price, buy_price, provider) {
-
-  const productData = {
-    code,
-    name,
-    stock,
-    sell_price,
-    buy_price,
-    provider
+function authHeader(token) {
+  return {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
   };
+}
 
-  return axios.post(`${apiUrl}products/`, productData)
-    .then(response => {
-      console.log('Product created:', response.data);
-      return response.data;
-    })
+async function addProduct(code, name, stock, sell_price, buy_price, provider, token) {
+  const productData = { code, name, stock, sell_price, buy_price, provider };
+  return axios.post(`${apiUrl}products/`, productData, authHeader(token))
+    .then(response => response.data)
     .catch(error => {
       console.error('Error al crear el producto:', error);
       throw error;
     });
 }
 
-async function addOffer(name, endDate, percentage, products) {
-  const offerData = {
-    name: name,
-    end_date: endDate,
-    percentage: percentage,
-    products: products,
-  };
-
+async function addOffer(name, endDate, percentage, products, token) {
+  const offerData = { name, end_date: endDate, percentage, products };
   try {
-    const response = await axios.post(`${apiUrl}offers/`, offerData);
-    console.log('Offer created:', response.data);
+    const response = await axios.post(`${apiUrl}offers/`, offerData, authHeader(token));
     return response.data;
   } catch (error) {
-    console.error('Error al crear la oferta:', error);
-    const message =
-      error.response?.data?.error ||
-      'Error desconocido al crear la oferta';
+    const message = error.response?.data?.error || 'Error desconocido al crear la oferta';
     throw new Error(message);
   }
 }
 
-async function fetchProducts({ page = 1, setLoading }) {
+async function fetchProducts({ page = 1, setLoading, token }) {
   try {
     setLoading(true);
-    const response = await axios.get(`${apiUrl}products/?page=${page}`);
+    const response = await axios.get(`${apiUrl}products/?page=${page}`, authHeader(token));
     return response.data;
   } catch (error) {
     console.error("Error al obtener el inventario:", error);
@@ -94,11 +71,10 @@ async function fetchProducts({ page = 1, setLoading }) {
   }
 }
 
-
-async function fetchProviders_by_page({ page = 1, setLoading }) {
+async function fetchProviders_by_page({ page = 1, setLoading, token }) {
   try {
     setLoading(true);
-    const response = await axios.get(`${apiUrl}providers/?page=${page}`);
+    const response = await axios.get(`${apiUrl}providers/?page=${page}`, authHeader(token));
     return response.data;
   } catch (error) {
     console.error("Error al obtener los proveedores:", error);
@@ -108,47 +84,45 @@ async function fetchProviders_by_page({ page = 1, setLoading }) {
   }
 }
 
-async function fetchProviders() {
-  return axios.get(`${apiUrl}providers/all/`);
+async function fetchProviders(token) {
+  return axios.get(`${apiUrl}providers/all/`, authHeader(token));
 }
 
-async function fetchProvidersById(id) {
-  return axios.get(`${apiUrl}providers/${id}/`);
+async function fetchProvidersById(id, token) {
+  return axios.get(`${apiUrl}providers/${id}/`, authHeader(token));
 }
 
-async function fetchSearchProducts(search) {
+async function fetchSearchProducts(search, token) {
   const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
-
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Search request failed with status: ${response.status}`);
-    }
-    const products = await response.json();
-    return products;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
+    return await response.json();
   } catch (error) {
     console.error("Error fetching products:", error);
     return null;
   }
 }
 
-async function deleteProductByCode(code) {
+async function deleteProductByCode(code, token) {
   try {
-    const response = await axios.delete(`${apiUrl}products/delete-by-code/${code}/`);
+    const response = await axios.delete(`${apiUrl}products/delete-by-code/${code}/`, authHeader(token));
     return response.data;
   } catch (error) {
     console.error("Error al eliminar el producto:", error.response?.data || error.message);
     throw error.response?.data || error;
   }
-};
+}
 
-async function fetchLowStock({ setLoading, amount = 100 }) {
-  // amount -> quantity of products to get, max 150
+async function fetchLowStock({ setLoading, amount = 100, token }) {
   try {
     setLoading(true);
-    const response = await axios.get(`${apiUrl}products/low-stock/${amount}/`);
+    const response = await axios.get(`${apiUrl}products/low-stock/${amount}/`, authHeader(token));
     return response.data;
-
   } catch (error) {
     console.error("Error al obtener el inventario:", error);
     return [];
@@ -157,87 +131,51 @@ async function fetchLowStock({ setLoading, amount = 100 }) {
   }
 }
 
-async function fetchGetByCode(code) {
-  const response = await axios.get(`${apiUrl}products/get-by-code/${code}/`);
+async function fetchGetByCode(code, token) {
+  const response = await axios.get(`${apiUrl}products/get-by-code/${code}/`, authHeader(token));
   return response.data;
-};
+}
 
-async function updateProduct(oldCode, updatedData) {
+async function updateProduct(oldCode, updatedData, token) {
   try {
-    const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData);
-    if (response.data && typeof response.data.success === "boolean") {
-      return {
-        success: response.data.success,
-        error: response.data.error || "",
-      };
-    } else {
-      return {
-        success: false,
-        error: "Respuesta inesperada del servidor",
-      };
-    }
+    const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData, authHeader(token));
+    return {
+      success: response.data?.success ?? false,
+      error: response.data?.error || "",
+    };
   } catch (error) {
     const backendError = error.response?.data?.error || error.message || "Error desconocido";
-    return {
-      success: false,
-      error: backendError,
-    };
+    return { success: false, error: backendError };
   }
 }
 
-async function updateSelectedPrices(data, selectedItems) {
+async function updateSelectedPrices(data, selectedItems, token) {
   try {
     const codes = Array.from(selectedItems.keys());
-    const payload = {
-      ...data,
-      codes,
+    const payload = { ...data, codes };
+    const response = await axios.patch(`${apiUrl}products/patch-selected-prices/`, payload, authHeader(token));
+    return {
+      success: response.data?.success ?? false,
+      error: response.data?.error || "",
     };
-
-    const response = await axios.patch(`${apiUrl}products/patch-selected-prices/`, payload);
-    if (response.data && typeof response.data.success === "boolean") {
-      return {
-        success: response.data.success,
-        error: response.data.error || "",
-      };
-    } else {
-      return {
-        success: false,
-        error: "Respuesta inesperada del servidor",
-      };
-    }
   } catch (error) {
     const backendError = error.response?.data?.error || error.message || "Error desconocido";
-    return {
-      success: false,
-      error: backendError,
-    };
+    return { success: false, error: backendError };
   }
 }
 
-async function updateAllPrices(data) {
+async function updateAllPrices(data, token) {
   try {
-    const response = await axios.patch(`${apiUrl}products/patch-all-prices/`, data);
-    if (response.data && typeof response.data.success === "boolean") {
-      return {
-        success: response.data.success,
-        error: response.data.error || "",
-      };
-    } else {
-      return {
-        success: false,
-        error: "Respuesta inesperada del servidor",
-      };
-    }
+    const response = await axios.patch(`${apiUrl}products/patch-all-prices/`, data, authHeader(token));
+    return {
+      success: response.data?.success ?? false,
+      error: response.data?.error || "",
+    };
   } catch (error) {
     const backendError = error.response?.data?.error || error.message || "Error desconocido";
-    return {
-      success: false,
-      error: backendError,
-    };
+    return { success: false, error: backendError };
   }
 }
-
-
 
 export {
   fetchSearchProducts,
@@ -255,4 +193,4 @@ export {
   loginUser,
   logoutUser,
   fetchProvidersById
-}
+};

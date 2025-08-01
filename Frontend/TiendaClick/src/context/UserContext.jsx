@@ -5,8 +5,8 @@ const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
-        const storedUser = localStorage.getItem("user");
-        return storedUser ? JSON.parse(storedUser) : null;
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) : null;
     });
 
     useEffect(() => {
@@ -18,18 +18,12 @@ export const UserProvider = ({ children }) => {
     }, [user]);
 
     const login = async ({ username, password }) => {
-        try {
-            const response = await loginUser(username, password);
-            if (response.success) {
-                setUser(response.data);
-                return { success: true, data: response.data };
-            } else {
-                return { success: false };
-            }
-        } catch (error) {
-            console.error("Error al hacer login:", error);
+        const response = await loginUser(username, password);
+        if (response.success) {
+            setUser({ username, token: response.data.token });
+            return { success: true };
+        } else {
             return { success: false };
-        } finally {
         }
     };
 

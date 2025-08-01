@@ -4,6 +4,9 @@ import { useForm, Controller } from "react-hook-form";
 import { fetchProviders, addProduct } from "../../services/axios.services";
 import { useNotifications } from '../../context/NotificationSystem';
 import Input from '../crud/Input.jsx'
+import { useUser } from "../../context/UserContext";
+
+
 export default function AddProductModal({ show, handleClose, title, callbacksUseEfect, pk = 'id' }) {
     const {
         register,
@@ -18,17 +21,20 @@ export default function AddProductModal({ show, handleClose, title, callbacksUse
         },
     }
     );
+
+    const { user } = useUser();
     const { addNotification } = useNotifications();
     const [providers, setProviders] = useState([])
     const codeInputRef = useRef(null);
 
-    useEffect(() => {
-        if (show) { }
 
-        fetchProviders()
-            .then((res) => setProviders(res.data))
-            .catch((err) => handleBeforeClose('error', 'No se pudieron cargar los proveedores'));
-    }, [show]);
+    useEffect(() => {
+        if (show) {
+            fetchProviders(user.token)
+                .then((res) => setProviders(res.data))
+                .catch(() => handleBeforeClose('error', 'No se pudieron cargar los proveedores'));
+        }
+    }, [show, user.token]);
 
     const purchasePrice = watch("purchasePrice") || 0;
     const sellingPrice = watch("sellingPrice") || 0;
@@ -47,14 +53,21 @@ export default function AddProductModal({ show, handleClose, title, callbacksUse
     }
 
     const onSubmit = (data) => {
-
         if (!data.code || !data.name) {
             return;
         }
-
-        addProduct(data.code, data.name, data.stock, data.sellingPrice, data.purchasePrice, data.provider)
-            .then(data => handleBeforeClose('success', 'Producto agregado con éxito'))
-            .catch(err => handleBeforeClose('error', 'Error al cargar el producto'));
+    
+        addProduct(
+            data.code,
+            data.name,
+            data.stock,
+            data.sellingPrice,
+            data.purchasePrice,
+            data.provider,
+            user.token
+        )
+            .then(() => handleBeforeClose('success', 'Producto agregado con éxito'))
+            .catch(() => handleBeforeClose('error', 'Error al cargar el producto'));
     };
 
     title = 'Añadir nuevo Producto'

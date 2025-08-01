@@ -7,7 +7,6 @@ export default function PriceUpdateModal({
     selectedItems,
     onApply,
     includeCombos,
-    setIncludeCombos,
     applyToAll,
     setApplyToAll,
     includeDiscounted,

@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext.jsx";
 
 const options = [
   { label: "Inventario", path: "/inventory/" },
@@ -8,14 +9,21 @@ const options = [
   { label: "Dashboard", path: "/dashboard/" },
   { label: "Proveedores", path: "/providers/" },
   { label: "Ofertas", path: "/offers/" },
+  { label: "Cerrar sesión", path: null }
 ];
 
 export default function TitleDropdown({ currentTitle, setTitle }) {
   const navigate = useNavigate();
+  const { logout } = useUser();
 
   const handleSelect = (label, path) => {
-    if (setTitle) setTitle(label);
-    navigate(path);
+    if (label === "Cerrar sesión") {
+      logout();
+      navigate("/login", { replace: true });
+    } else {
+      if (setTitle) setTitle(label);
+      navigate(path);
+    }
   };
 
   return (
@@ -31,8 +39,9 @@ export default function TitleDropdown({ currentTitle, setTitle }) {
       <Dropdown.Menu>
         {options.map((opt) => (
           <Dropdown.Item
-            key={opt.path}
+            key={opt.label}
             onClick={() => handleSelect(opt.label, opt.path)}
+            className={opt.label === "Cerrar sesión" ? "text-danger" : ""}
           >
             {opt.label}
           </Dropdown.Item>

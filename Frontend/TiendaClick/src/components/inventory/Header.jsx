@@ -12,15 +12,13 @@ export default function Header({
   onViewSelected,
   onExtraInfo,
   extraButtons = [],
-  onPriceUpdate,
-  onTemporaryOffer,
+
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const [title, setTitle] = useState("Inventario");
 
   return (
     <div className="d-flex justify-content-between align-items-center header">
-      {/* modals */}
       <AddItemModal
         show={showAddItem}
         handleClose={setShowAddItem}

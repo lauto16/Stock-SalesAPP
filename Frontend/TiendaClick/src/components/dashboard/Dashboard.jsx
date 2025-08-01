@@ -26,7 +26,6 @@ function Dashboard() {
     const get_products = async () => {
       const data = await fetchLowStock({ setLoading, amount });
       if (Array.isArray(data)) {
-        console.log(data);
         setProducts(data);
       } else {
         console.warn("La respuesta no es un array");

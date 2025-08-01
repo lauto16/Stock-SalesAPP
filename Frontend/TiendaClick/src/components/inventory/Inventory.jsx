@@ -12,6 +12,7 @@ import ProductInfoModal from "./ProductInfoModal";
 import PriceUpdateModal from "./PriceUpdateModal"
 import ConfirmationModal from "./ConfirmationModal"
 import CreateOfferModal from "./CreateOfferModal";
+import { useUser } from "../../context/UserContext";
 
 export default function InventoryPage() {
     const userRole = "admin";
@@ -40,7 +41,8 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
-
+    const { user } = useUser();
+    
     const PAGE_SIZE = 10;
 
     const columns = [
@@ -78,13 +80,13 @@ export default function InventoryPage() {
 
     const handleDelete = async (codes) => {
         const newItems = [...items];
-
+    
         for (const code of codes) {
             try {
-                const result = await deleteProductByCode(code);
+                const result = await deleteProductByCode(code, user.token);  // <-- token aquí
                 if (result.success) {
                     addNotification('success', `Producto ${code} eliminado con éxito`);
-
+    
                     const index = newItems.findIndex(item => item.code === code);
                     if (index !== -1) {
                         newItems.splice(index, 1);
@@ -93,9 +95,8 @@ export default function InventoryPage() {
             } catch (error) {
                 addNotification('error', `El producto ${code} no se pudo eliminar`);
             }
-
         }
-
+    
         setItems(newItems);
         setSelectedItems(new Map());
     };
@@ -105,12 +106,14 @@ export default function InventoryPage() {
             setIsSearching(true);
             setCurrentPage(1);
             setLoading(true);
-            const results = await fetchSearchProducts(query);
+    
+            const results = await fetchSearchProducts(query, user.token);
+    
             setAllSearchResults(results);
             setLoading(false);
         }
     };
-
+    
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
@@ -119,32 +122,32 @@ export default function InventoryPage() {
 
     const onExtraInfo = async () => {
         const firstSelected = Array.from(selectedItems.values())[0];
-
+    
         if (selectedItems.size === 0) {
             addNotification("warning", "Selecciona un producto para ver su información.");
             return;
         }
-
+    
         if (!firstSelected || !firstSelected.code) {
             addNotification("warning", "Selecciona un producto válido para ver su información.");
             return;
         }
-
+    
         try {
-            const data = await fetchGetByCode(firstSelected.code);
+            const data = await fetchGetByCode(firstSelected.code, user.token);  // <-- token aquí
             const buy_price_iva = data.buy_price * 1.21;
             const sell_price_iva = data.sell_price * 1.21;
             const margin_percent = data.buy_price > 0
                 ? `${Math.round(((data.sell_price - data.buy_price) / data.buy_price) * 100)}%`
                 : "0%";
-
+    
             setSelectedProduct({
                 ...data,
                 buy_price_iva,
                 sell_price_iva,
                 margin_percent,
             });
-
+    
             setShowProductInfo(true);
         } catch (error) {
             addNotification("error", "No se pudo obtener la información del producto.");
@@ -228,18 +231,23 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchData = async () => {
             if (isSearching) return;
+            console.log(user.token);
+            
+            if (!user?.token) return;
+    
             setLoading(true);
             const data = await fetchProducts({
                 page: currentPage,
                 setLoading,
+                token: user.token,
             });
             setItems(data.results);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
             setLoading(false);
         };
-
+    
         fetchData();
-    }, [currentPage, isSearching]);
+    }, [currentPage, isSearching, user]);
 
     useEffect(() => {
         if (!isSearching) return;
