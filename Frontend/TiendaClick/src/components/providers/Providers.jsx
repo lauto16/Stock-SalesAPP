@@ -79,6 +79,7 @@ function Providers() {
 
         fetchData();
     }, [currentPage, isSearching]);
+    
     useEffect(() => {
         if (selectedItems.size !== 0) {
             setIsSomethingSelected(true)

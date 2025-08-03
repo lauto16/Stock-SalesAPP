@@ -1,7 +1,7 @@
 import React from "react";
 import { Form } from "react-bootstrap";
 
-export default function CustomInput({ label, icon, type, placeholder, register }) {
+export default function CustomInput({ label, icon, type, placeholder, register, step }) {
   return (
     <Form.Group className="mb-1">
       <Form.Label>{label}</Form.Label>
@@ -15,6 +15,7 @@ export default function CustomInput({ label, icon, type, placeholder, register }
           type={type}
           placeholder={placeholder}
           {...register}
+          step={step}
         />
       </div>
     </Form.Group>

@@ -79,6 +79,7 @@ export default function Input({ field, register, control, errors, index }) {
                             required: field.required,
                             valueAsNumber: field.valueAsNumber,
                         })}
+                        step={field.step}
                     />
                 </Col>
             );

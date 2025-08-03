@@ -141,7 +141,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         Return up to 150 products with stock less than or equal to `limit`, sorted by stock ascending
         """
         try:
-            limit = int(limit)
+            limit = float(limit)
         except ValueError:
             return Response(
                 {"error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
@@ -235,11 +235,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            has_offer = Offer.objects.filter(
-                products=product, end_date__gte=timezone.now()
-            ).exists()
-
-            if has_offer and not include_discounted:
+            if product.has_discount() and not include_discounted:
                 continue
 
             if isinstance(percentage, (int, float)):
@@ -269,7 +265,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         products = Product.objects.all()
 
         for product in products:
-            if product.has_discount and not include_discounted:
+            if product.has_discount() and not include_discounted:
                 continue
 
             if isinstance(percentage, (int, float)):
