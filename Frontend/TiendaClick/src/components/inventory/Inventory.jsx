@@ -326,6 +326,9 @@ export default function InventoryPage() {
                 setIsSomethingSelected={setIsSomethingSelected}
             />
             <div className="container container-modified">
+                {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
+                provided having two arguments: 1° the config dictionary containing constants, title and inputs; 
+                2° the onSubmit function that runs when the form is submited   */}
                 <Header
                     title={'INVENTARIO'}
                     isSomethingSelected={isSomethingSelected}

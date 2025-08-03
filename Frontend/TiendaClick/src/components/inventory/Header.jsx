@@ -13,9 +13,6 @@ export default function Header({
   onViewSelected,
   onExtraInfo,
   extraButtons = [],
-  callbacksAddItem,
-  onPriceUpdate,
-  onTemporaryOffer,
   addFormConfig
 }) {
   const [showAddItem, setShowAddItem] = useState(false);

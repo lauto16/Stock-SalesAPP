@@ -12,17 +12,6 @@ from ProvidersAPI.serializers import ProviderSerializer
 from django.utils import timezone
 
 
-class ProviderViewSet(viewsets.ModelViewSet):
-    """
-    Set of django views for each API request
-    """
-
-    queryset = Provider.objects.all()
-    serializer_class = ProviderSerializer
-    # authentication_classes = [SessionAuthentication, TokenAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
-
-
 class ProviderValidator:
     """
     Validador para datos de PATCH de un Proveedor
@@ -91,6 +80,8 @@ class ProviderViewSet(viewsets.ModelViewSet):
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
     pagination_class = ProviderPagination
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["get"], url_path="all")
     def get_all(self, request):

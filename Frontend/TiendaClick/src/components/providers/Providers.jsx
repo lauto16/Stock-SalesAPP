@@ -7,20 +7,21 @@ import { useState, useEffect, useRef } from "react";
 import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
-import ProvidersHeader from "./ProvidersHeader.jsx"
-import { fetchProviders_by_page, fetchProvidersById } from "../../services/axios.services.js";
+import Header from "../inventory/Header.jsx"
+import { fetchProviders_by_page, fetchProvidersById, addProvider } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
-import AddItemModal from "./AddItemModal.jsx";
 import SelectedItemsModal from "./SelectedItemsModal.jsx"
-import ItemInfoModal from "./ItemInfoModal.jsx"
+// import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
+import { useProviders } from "./hooks/useProviders.js";
+import addProviderConfig from "./forms/AddProviderConfig.js";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [providers, setProviders] = useState([])
+    const { providers, setProviders } = useProviders()
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
@@ -35,6 +36,12 @@ function Providers() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const [action, setAction] = useState('')
+    //AddProvider
+    const addItemConfig = {
+        config: addProviderConfig,
+        onAddItem: addProvider
+    }
+
 
     const PAGE_SIZE = 10;
     const columns = [
@@ -62,6 +69,7 @@ function Providers() {
             const data = await fetchProviders_by_page({
                 page: currentPage,
                 setLoading,
+                token: user.token
             });
 
             setProviders(data.results);
@@ -156,23 +164,7 @@ function Providers() {
             <main className="flex-grow-1 p-3 content">
                 <div className="d-flex justify-content-center mt-5">
                     <div className="container">
-                        {/* {action === ACTIONS.DELETE ? <ConfirmationModal
-                            show={showConfirmation}
-                            onHide={handleHideConfirmation}
-                            title={confirmationTitle}
-                            message={confirmationText}
-                            onSendForm={handleDeleteProvider}
-                            handleClose={handleHideConfirmation}
-                        /> :
-                            <ConfirmationModal
-                                show={showConfirmation}
-                                onHide={handleHideConfirmation}
-                                title={confirmationTitle}
-                                message={confirmationText}
-                                onSendForm={handleCreateProvider}
-                                handleClose={handleHideConfirmation}
-                            />
-                        } */}
+
                         <ConfirmationModal
                             show={showConfirmation}
                             onHide={handleHideConfirmation}
@@ -182,14 +174,13 @@ function Providers() {
                             handleClose={handleHideConfirmation}
                         />
 
-                        <ItemInfoModal
+                        {/* <ItemInfoModal
                             show={showProductInfo}
                             handleClose={() => setShowProductInfo(false)}
                             product={selectedProduct}
                             unselectAll={unselectAll}
-                        />
+                        /> */}
 
-                        <AddItemModal show={showModal} handleClose={handleClose} />
 
                         <SelectedItemsModal
                             show={showSelectedModal}
@@ -200,7 +191,7 @@ function Providers() {
                         />
                         <div className="table-container-providers">
 
-                            <ProvidersHeader
+                            <Header
                                 title={"Proveedores"}
                                 selectedItems={selectedItems}
                                 isSomethingSelected={isSomethingSelected}
@@ -209,7 +200,7 @@ function Providers() {
                                 toggleSelectAll={toggleSelectAll}
                                 onViewSelected={() => setShowSelectedModal(true)}
                                 onExtraInfo={onExtraInfo}
-
+                                addFormConfig={addItemConfig}
                             />
 
                             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

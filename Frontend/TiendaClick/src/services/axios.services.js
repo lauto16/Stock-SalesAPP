@@ -37,9 +37,18 @@ function authHeader(token) {
   };
 }
 
-async function addProduct(code, name, stock, sell_price, buy_price, provider, token) {
-  const productData = { code, name, stock, sell_price, buy_price, provider };
-  return axios.post(`${apiUrl}products/`, productData, authHeader(token))
+async function addProduct(product, token) {
+
+  return axios.post(`${apiUrl}products/`, product, authHeader(token))
+    .then(response => response.data)
+    .catch(error => {
+      console.error('Error al crear el producto:', error);
+      throw error;
+    });
+}
+
+async function addProvider(provider, token) {
+  return axios.post(`${apiUrl}providers/`, provider, authHeader(token))
     .then(response => response.data)
     .catch(error => {
       console.error('Error al crear el producto:', error);
@@ -177,9 +186,11 @@ async function updateAllPrices(data, token) {
   }
 }
 
+
 export {
   fetchSearchProducts,
   addProduct,
+  addProvider,
   fetchProviders,
   fetchProducts,
   fetchLowStock,

@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useNotifications } from "../../../context/NotificationSystem";
-
+import { useUser } from "../../../context/UserContext";
 export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defaultValues = {}, onUseEffect, useEffectDependencies }) {
-
+    const { user } = useUser();
+    const token = user?.token;
     const {
         register,
         handleSubmit,
@@ -29,7 +30,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defau
         if (!identifier || !data.name) return;
 
         try {
-            await onSubmitHandler(data);
+            await onSubmitHandler(data, token);
             handleBeforeClose("success", "Item agregado con éxito", handleClose);
         } catch (err) {
             console.log(err)
