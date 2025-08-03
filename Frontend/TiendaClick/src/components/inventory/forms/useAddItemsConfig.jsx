@@ -19,7 +19,7 @@ const addItemConfig = (watch) => {
         SELECT: 'select',
         INPUT_DISABLED: 'input_disabled',
         TEXT: 'text',
-        NUMBER: 'number',
+        NUMBER: 'number'
     }
 
 
@@ -29,12 +29,12 @@ const addItemConfig = (watch) => {
             name: 'code',
             label: 'Código',
             icon: 'bi-upc',
-            placeholder: 'Código',
+            placeholder: 'Codigo',
             type: TYPES.TEXT,
             required: true,
             errorMsg: '',
-        },
-        {
+
+        }, {
             name: 'name',
             label: 'Nombre',
             icon: 'bi-tag',
@@ -48,7 +48,7 @@ const addItemConfig = (watch) => {
             placeholder: 'Seleccionar proveedor...',
             type: TYPES.SELECT,
             required: true,
-            selectedOption: (value) => providers.find(p => p.id === value),
+            selectedOption: (value) => { providers.find(p => p.id === value) },
             selectOptions: providers,
             errorMsg: 'El proveedor es requerido',
         },
@@ -56,38 +56,34 @@ const addItemConfig = (watch) => {
             name: 'buy_price',
             label: 'Precio de compra',
             icon: 'bi-currency-dollar',
-            placeholder: 'Precio de compra',
             type: TYPES.NUMBER,
-            step: "any",
-            valueAsNumber: true,
+
+            valueAsNumber: true
         },
         {
             name: 'sell_price',
             label: 'Precio de venta',
             icon: 'bi-currency-dollar',
-            placeholder: 'Precio de venta',
             type: TYPES.NUMBER,
-            step: "any",
-            valueAsNumber: true,
+
+            valueAsNumber: true
         },
         {
             name: 'profitMargin',
             label: 'Porcentaje de ganancia',
-            placeholder: 'Porcentaje de ganancia',
             type: TYPES.INPUT_DISABLED,
             defaultValue: `${calculateProfitMargin(watch)} %`,
-            style: { color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792" },
+            style: { color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792" }
         },
         {
             name: 'stock',
             label: 'Stock',
             icon: 'bi-box',
-            placeholder: 'Stock',
             type: TYPES.NUMBER,
-            valueAsNumber: true,
-            step: "any",
+            valueAsNumber: true
         }
-    ];
+
+    ]
 
     return {
         title,
