@@ -201,30 +201,30 @@ export default function InventoryPage() {
         handleShowConfirmation();
     };
 
+
     const handleUpdatePricesSendForm = async () => {
         const data = {
             percentage: updatePricePercentage,
             includeDiscounted,
             includeCombos,
         };
-
+    
         let result;
-
+    
         if (applyToAll) {
-            result = await updateAllPrices(data);
+            result = await updateAllPrices(data, user.token);
         } else {
-            result = await updateSelectedPrices(data, selectedItems);
+            result = await updateSelectedPrices(data, selectedItems, user.token);
         }
-
+    
         if (result.success) {
             addNotification("success", "Precios actualizados correctamente");
         } else {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
         }
-
-        setShowConfirmation(false)
-        // need to reload the page so the user can see the results of their transaction
-        // maybe reload only the table component?
+    
+        setShowConfirmation(false);
+        
         setTimeout(() => {
             window.location.reload();
         }, 200);

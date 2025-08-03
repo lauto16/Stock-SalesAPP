@@ -16,6 +16,7 @@ export default function CustomInput({ label, icon, type, placeholder, register, 
           step={step}
           placeholder={placeholder}
           {...register}
+          step={step}
         />
       </div>
     </Form.Group>
