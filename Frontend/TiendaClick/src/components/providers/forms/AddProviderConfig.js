@@ -19,15 +19,6 @@ const addItemConfig = (watch) => {
     const title = 'Añadir Nuevo Proveedor'
     const FIELDS = [
         {
-            name: 'code',
-            label: 'Código',
-            icon: 'bi-upc',
-            placeholder: 'Codigo',
-            type: TYPES.TEXT,
-            required: true,
-            errorMsg: '',
-
-        }, {
             name: 'name',
             label: 'Nombre',
             icon: 'bi-tag',
@@ -36,14 +27,29 @@ const addItemConfig = (watch) => {
             required: true,
         },
         {
-            name: 'provider',
-            label: 'Proveedor',
-            placeholder: 'Seleccionar proveedor...',
-            type: TYPES.SELECT,
-            required: true,
-            selectedOption: (value) => { providers.find(p => p.id === value) },
-            selectOptions: providers,
-            errorMsg: 'El proveedor es requerido',
+            name: 'phone',
+            label: 'Teléfono',
+            icon: 'bi-upc',
+            placeholder: 'Télefono',
+            type: TYPES.TEXT,
+            errorMsg: '',
+
+        },
+        {
+            name: 'email',
+            label: 'Mail',
+            placeholder: 'Ingrese Email...',
+            type: TYPES.TEXT,
+            required: false,
+            errorMsg: '',
+        },
+        {
+            name: 'Dirección',
+            label: 'address',
+            placeholder: 'Ingrese Dirección...',
+            type: TYPES.TEXT,
+            required: false,
+            errorMsg: '',
         }
     ]
 

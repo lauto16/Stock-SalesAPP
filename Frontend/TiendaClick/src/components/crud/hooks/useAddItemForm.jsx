@@ -26,8 +26,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defau
     };
 
     const onSubmit = async (data) => {
-        const identifier = data.id ?? data.code;
-        if (!identifier || !data.name) return;
+        if (!data) return;
 
         try {
             await onSubmitHandler(data, token);

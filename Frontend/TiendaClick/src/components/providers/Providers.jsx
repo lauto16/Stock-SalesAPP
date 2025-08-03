@@ -14,14 +14,13 @@ import SelectedItemsModal from "./SelectedItemsModal.jsx"
 // import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
-import { useProviders } from "./hooks/useProviders.js";
 import addProviderConfig from "./forms/AddProviderConfig.js";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
-    const { providers, setProviders } = useProviders()
+    const [providers, setProviders] = useState([])
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
@@ -39,7 +38,7 @@ function Providers() {
     //AddProvider
     const addItemConfig = {
         config: addProviderConfig,
-        onAddItem: addProvider
+        handleSubmit: addProvider
     }
 
 
