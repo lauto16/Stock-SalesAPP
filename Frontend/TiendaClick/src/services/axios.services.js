@@ -186,6 +186,15 @@ async function updateAllPrices(data, token) {
   }
 }
 
+async function fetchUserRoleNameSp(token) {
+  try {
+    const response = await axios.get(`${apiUrl}login/me/`, authHeader(token));
+    return response.data.role_name_sp || null;
+  } catch (error) {
+    console.error("Error al obtener el rol del usuario:", error);
+    return null;
+  }
+}
 
 export {
   fetchSearchProducts,
@@ -203,5 +212,6 @@ export {
   addOffer,
   loginUser,
   logoutUser,
-  fetchProvidersById
+  fetchProvidersById,
+  fetchUserRoleNameSp
 };

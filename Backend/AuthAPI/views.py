@@ -1,12 +1,13 @@
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework import status
 from django.conf import settings
-from datetime import timedelta
 
 
 class LoginView(TokenObtainPairView):
@@ -40,3 +41,14 @@ class LogoutView(APIView):
         res.delete_cookie("access")
         res.delete_cookie("refresh", path="/api/token/refresh/")
         return res
+    
+    
+class LoginViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        user = request.user
+        if user and hasattr(user, "role") and user.role:
+            return Response({"role_name_sp": user.role.name_sp})
+        return Response({"detail": "No se encontró el rol del usuario."}, status=404)

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginUser, logoutUser } from "../services/axios.services";
+import { loginUser, logoutUser, fetchUserRoleNameSp } from "../services/axios.services";
 
 const UserContext = createContext(null);
 
@@ -16,6 +16,19 @@ export const UserProvider = ({ children }) => {
             localStorage.removeItem("user");
         }
     }, [user]);
+
+    useEffect(() => {
+        const getRoleName = async () => {
+            if (user?.token && !user.role) {
+                const role = await fetchUserRoleNameSp(user.token);
+                if (role) {
+                    setUser((prev) => ({ ...prev, role }));
+                }
+            }
+        };
+
+        getRoleName();
+    }, [user?.token]);
 
     const login = async ({ username, password }) => {
         const response = await loginUser(username, password);
