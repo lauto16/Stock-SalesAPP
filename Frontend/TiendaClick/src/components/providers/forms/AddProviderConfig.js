@@ -21,7 +21,7 @@ const addItemConfig = (watch) => {
         {
             name: 'name',
             label: 'Nombre',
-            icon: 'bi-tag',
+            icon: 'bi-person',
             placeholder: 'Nombre',
             type: TYPES.TEXT,
             required: true,
@@ -29,23 +29,24 @@ const addItemConfig = (watch) => {
         {
             name: 'phone',
             label: 'Teléfono',
-            icon: 'bi-upc',
-            placeholder: 'Télefono',
+            icon: 'bi-telephone',
+            placeholder: 'Teléfono',
             type: TYPES.TEXT,
             errorMsg: '',
-
         },
         {
             name: 'email',
             label: 'Mail',
+            icon: 'bi-envelope',
             placeholder: 'Ingrese Email...',
             type: TYPES.TEXT,
             required: false,
             errorMsg: '',
         },
         {
-            name: 'Dirección',
-            label: 'address',
+            name: 'address',
+            label: 'Dirección',
+            icon: 'bi-geo-alt',
             placeholder: 'Ingrese Dirección...',
             type: TYPES.TEXT,
             required: false,

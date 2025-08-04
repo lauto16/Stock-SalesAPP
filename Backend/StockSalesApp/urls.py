@@ -14,12 +14,15 @@ router_providers.register(r'providers', ProviderViewSet, basename='provider')
 router_offers = DefaultRouter()
 router_offers.register(r'offers', OfferViewSet, basename='offer')
 
+router_users = DefaultRouter()
+router_users.register(r'login', LoginViewSet, basename='users')
+
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'), 
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
+    path('api/', include(router_users.urls)),
     path("api/login/", obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

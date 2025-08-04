@@ -15,7 +15,7 @@ import addFormConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext";
 
 export default function InventoryPage() {
-    const userRole = "admin";
+
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
@@ -332,7 +332,7 @@ export default function InventoryPage() {
                 <Header
                     title={'INVENTARIO'}
                     isSomethingSelected={isSomethingSelected}
-                    userRole={userRole}
+                    userRole={user.role}
                     onGoToSales={handleGoToSales}
                     onItem={handleOpen}
                     onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
