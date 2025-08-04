@@ -57,7 +57,6 @@ const addItemConfig = (watch) => {
             label: 'Precio de compra',
             icon: 'bi-currency-dollar',
             type: TYPES.NUMBER,
-
             valueAsNumber: true
         },
         {
@@ -65,7 +64,6 @@ const addItemConfig = (watch) => {
             label: 'Precio de venta',
             icon: 'bi-currency-dollar',
             type: TYPES.NUMBER,
-
             valueAsNumber: true
         },
         {
