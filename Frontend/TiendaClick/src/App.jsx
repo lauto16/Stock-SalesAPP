@@ -6,6 +6,7 @@ import Home from './components/home/Home.jsx';
 import Login from './components/auth/login.jsx';
 import Providers from './components/providers/Providers.jsx';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
+import ProductBlame from './components/blame/ProductBlame.jsx'
 
 function App() {
   return (
@@ -37,6 +38,14 @@ function App() {
               <Inventory />
             </PrivateRoute>
           }
+        />
+        <Route
+        path="/product-blame/"
+        element={
+          <PrivateRoute>
+            <ProductBlame/>
+          </PrivateRoute>
+        }
         />
       </Routes>
     </Router>

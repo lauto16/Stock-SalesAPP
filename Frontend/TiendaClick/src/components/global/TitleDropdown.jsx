@@ -5,11 +5,12 @@ import { useUser } from "../../context/UserContext.jsx";
 
 const options = [
   { label: "Inventario", path: "/inventory/" },
+  { label: "Registro de cambios", path: "/product-blame/"},
   { label: "Ventas", path: "/sales/" },
   { label: "Dashboard", path: "/dashboard/" },
   { label: "Proveedores", path: "/providers/" },
   { label: "Ofertas", path: "/offers/" },
-  { label: "Cerrar sesión", path: null }
+  { label: "Cerrar sesión", path: null },
 ];
 
 export default function TitleDropdown({ currentTitle, setTitle }) {

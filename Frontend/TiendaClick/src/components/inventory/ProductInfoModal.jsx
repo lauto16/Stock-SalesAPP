@@ -159,7 +159,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 label="Precio de compra"
                                 icon="bi-currency-dollar"
                                 type="number"
-                                step="0.01"
+                                step="any"
                                 placeholder="Precio de compra"
                                 register={register("purchasePrice", { valueAsNumber: true })}
                             />
@@ -169,7 +169,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 label="Precio de venta"
                                 icon="bi-currency-dollar"
                                 type="number"
-                                step="0.01"
+                                step="any"
                                 placeholder="Precio de venta"
                                 register={register("sellingPrice", { valueAsNumber: true })}
                             />
