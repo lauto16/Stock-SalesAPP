@@ -13,7 +13,7 @@ async function loginUser(username, password) {
     });
 
     if (response.ok) {
-      const data = await response.json(); // { token: 'abc123' }
+      const data = await response.json();
       return { success: true, data };
     } else {
       return { success: false };

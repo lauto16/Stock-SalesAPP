@@ -3,6 +3,9 @@ from django.db import models
 
 
 class CustomUserManager(BaseUserManager):
+    """
+    Manager for creating CustomUser instances
+    """
     def create_user(self, username, password=None, role_name='salesperson', **extra_fields):
         if not username:
             raise ValueError('El usuario debe tener un nombre de usuario')
@@ -25,6 +28,9 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    """
+    Represents a system's user 
+    """
     username = models.CharField(max_length=150, unique=True)
     role = models.ForeignKey('Role', on_delete=models.PROTECT)
     pin = models.CharField(max_length=5)
@@ -41,6 +47,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Role(models.Model):
+    """
+    Most escalable solution for giving each user a role
+    """
     ROLE_CHOICES = [
         ('salesperson', 'Vendedor'),
         ('stocker', 'Repositor'),
