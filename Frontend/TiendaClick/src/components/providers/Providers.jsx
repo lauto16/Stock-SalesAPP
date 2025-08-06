@@ -11,7 +11,6 @@ import Header from "../inventory/Header.jsx"
 import { fetchProviders_by_page, fetchProvidersById, addProvider } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 import SelectedItemsModal from "./SelectedItemsModal.jsx"
-// import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
@@ -35,6 +34,7 @@ function Providers() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const [action, setAction] = useState('')
+
     //AddProvider
     const addItemConfig = {
         config: addProviderConfig,
@@ -78,7 +78,7 @@ function Providers() {
 
         fetchData();
     }, [currentPage, isSearching]);
-    
+
     useEffect(() => {
         if (selectedItems.size !== 0) {
             setIsSomethingSelected(true)
@@ -158,23 +158,20 @@ function Providers() {
     };
 
     return (
-        <div className="app-wrapper">
-            <SideBar />
-            <Nav />
-            <main className="flex-grow-1 p-3 content">
-                <div className="d-flex justify-content-center mt-5">
-                    <div className="container">
+        <main className="flex-grow-1 p-3 content">
+            <div className="d-flex justify-content-center mt-5">
+                <div className="container">
 
-                        <ConfirmationModal
-                            show={showConfirmation}
-                            onHide={handleHideConfirmation}
-                            title={confirmationTitle}
-                            message={confirmationText}
-                            onSendForm={handleCreateProvider}
-                            handleClose={handleHideConfirmation}
-                        />
+                    <ConfirmationModal
+                        show={showConfirmation}
+                        onHide={handleHideConfirmation}
+                        title={confirmationTitle}
+                        message={confirmationText}
+                        onSendForm={handleCreateProvider}
+                        handleClose={handleHideConfirmation}
+                    />
 
-                        {/* <ItemInfoModal
+                    {/* <ItemInfoModal
                             show={showProductInfo}
                             handleClose={() => setShowProductInfo(false)}
                             product={selectedProduct}
@@ -182,54 +179,52 @@ function Providers() {
                         /> */}
 
 
-                        <SelectedItemsModal
-                            show={showSelectedModal}
-                            handleClose={() => setShowSelectedModal(false)}
+                    <SelectedItemsModal
+                        show={showSelectedModal}
+                        handleClose={() => setShowSelectedModal(false)}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        isSomethingSelected={isSomethingSelected}
+                    />
+                    <div className="table-container-providers">
+
+                        <Header
+                            title={"Proveedores"}
+                            selectedItems={selectedItems}
+                            isSomethingSelected={isSomethingSelected}
+                            userRole={user.role}
+                            onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
+                            toggleSelectAll={toggleSelectAll}
+                            onViewSelected={() => setShowSelectedModal(true)}
+                            onExtraInfo={onExtraInfo}
+                            addFormConfig={addItemConfig}
+                        />
+
+                        <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+
+                            <div className="search-wrapper">
+                                <Search />
+                            </div>
+                        </div>
+                        <Table items={providers}
+                            columns={columns}
+                            loading={loading}
+                            setLoading={setLoading}
                             selectedItems={selectedItems}
                             setSelectedItems={setSelectedItems}
-                            isSomethingSelected={isSomethingSelected}
+                            pkName={'id'}
                         />
-                        <div className="table-container-providers">
 
-                            <Header
-                                title={"Proveedores"}
-                                selectedItems={selectedItems}
-                                isSomethingSelected={isSomethingSelected}
-                                userRole={user.role}
-                                onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
-                                toggleSelectAll={toggleSelectAll}
-                                onViewSelected={() => setShowSelectedModal(true)}
-                                onExtraInfo={onExtraInfo}
-                                addFormConfig={addItemConfig}
-                            />
-
-                            <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
-
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                />
-
-                                <div className="search-wrapper">
-                                    <Search />
-                                </div>
-                            </div>
-                            <Table items={providers}
-                                columns={columns}
-                                loading={loading}
-                                setLoading={setLoading}
-                                selectedItems={selectedItems}
-                                setSelectedItems={setSelectedItems}
-                                pkName={'id'}
-                            />
-
-                        </div>
                     </div>
                 </div>
-            </main>
-            <Footer />
-        </div>
+            </div>
+        </main>
     );
 }
 export default Providers;

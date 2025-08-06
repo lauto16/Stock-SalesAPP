@@ -34,7 +34,7 @@ export default function TitleDropdown({ currentTitle, setTitle }) {
         id="dropdown-title"
         className="fs-3 fw-bold border-0 bg-transparent text-dark"
       >
-        {currentTitle}
+        {currentTitle.toUpperCase()}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>

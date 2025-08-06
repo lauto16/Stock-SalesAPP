@@ -103,6 +103,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 type="text"
                                 placeholder="Código"
                                 register={register("code", { required: true })}
+                                disabled={true}
                             />
                         </Col>
                         <Col md={6}>

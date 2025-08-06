@@ -1,3 +1,4 @@
+from InventoryAPI.models import Provider
 from rest_framework import serializers
 from .models import ChangeLog
 
@@ -33,4 +34,17 @@ class ChangeLogSerializer(serializers.ModelSerializer):
         return {
             "code": getattr(content, "code", None),
             "name": getattr(content, "name", None),
+            "provider_name": getattr(getattr(content, "provider", None), "name", None)
         }
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+
+        if instance.field_name == "provider":
+            old_provider = Provider.objects.filter(id=instance.old_value).first()
+            new_provider = Provider.objects.filter(id=instance.new_value).first()
+
+            rep["old_value"] = old_provider.name if old_provider else instance.old_value
+            rep["new_value"] = new_provider.name if new_provider else instance.new_value
+
+        return rep

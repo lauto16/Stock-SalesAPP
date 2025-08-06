@@ -292,7 +292,6 @@ export default function InventoryPage() {
             />
             <ConfirmationModal
                 show={showConfirmation}
-                onHide={handleHideConfirmation}
                 title={confirmationTitle}
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}
