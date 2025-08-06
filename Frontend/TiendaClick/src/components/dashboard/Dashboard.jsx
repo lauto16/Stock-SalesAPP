@@ -6,7 +6,7 @@ import DashboardHeader from "./DashboardHeader.jsx";
 import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx";
 import Nav from "../sideNav/Nav.jsx";
-import Table from "../inventory/Table.jsx";
+import Table from "../crud/Table.jsx";
 import { fetchLowStock } from "../../services/axios.services.js";
 import "../../css/dashboard.css";
 

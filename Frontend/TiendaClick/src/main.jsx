@@ -8,9 +8,9 @@ import { NotificationProvider } from './context/NotificationSystem';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <NotificationProvider>
-    <UserProvider>
-      <App />
-    </UserProvider>
+      <UserProvider>
+        <App />
+      </UserProvider>
     </NotificationProvider>
-  </StrictMode>,
+  </StrictMode>
 )

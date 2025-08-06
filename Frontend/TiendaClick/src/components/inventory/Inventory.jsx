@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import Header from "./Header";
-import Table from "./Table";
-import Pagination from "./Pagination";
+import Header from "../crud/Header.jsx";
+import Table from "../crud/Table.jsx";
+import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
-import Search from "./Search";
+import Search from "./Search.jsx";
 import { fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
-import { useNotifications } from '../../context/NotificationSystem';
-import SelectedProductsModal from "./SelectedProductsModal";
-import ProductInfoModal from "./ProductInfoModal";
-import PriceUpdateModal from "./PriceUpdateModal"
-import ConfirmationModal from "./ConfirmationModal"
-import CreateOfferModal from "./CreateOfferModal";
+import SelectedProductsModal from "./SelectedProductsModal.jsx";
+import ProductInfoModal from "./ProductInfoModal.jsx";
+import PriceUpdateModal from "./PriceUpdateModal.jsx"
+import ConfirmationModal from "../crud/ConfirmationModal.jsx"
+import CreateOfferModal from "./CreateOfferModal.jsx";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
-import { useUser } from "../../context/UserContext";
+import { useUser } from "../../context/UserContext.jsx";
 
 export default function InventoryPage() {
 
@@ -26,7 +25,6 @@ export default function InventoryPage() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const [allSearchResults, setAllSearchResults] = useState([]);
-    const { addNotification } = useNotifications();
     const [showProductInfo, setShowProductInfo] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showSelectedModal, setShowSelectedModal] = useState(false);
@@ -72,40 +70,6 @@ export default function InventoryPage() {
         setCurrentPage(1);
     };
 
-    const toggleSelectAll = () => {
-        if (isSomethingSelected) {
-            setSelectedItems(new Map());
-        } else {
-            const newSelected = new Map();
-            items.forEach(item => {
-                newSelected.set(item.code, item);
-            });
-            setSelectedItems(newSelected);
-        }
-    };
-
-    const handleDelete = async (codes) => {
-        const newItems = [...items];
-
-        for (const code of codes) {
-            try {
-                const result = await deleteProductByCode(code, user.token);  // <-- token aquí
-                if (result.success) {
-                    addNotification('success', `Producto ${code} eliminado con éxito`);
-
-                    const index = newItems.findIndex(item => item.code === code);
-                    if (index !== -1) {
-                        newItems.splice(index, 1);
-                    }
-                }
-            } catch (error) {
-                addNotification('error', `El producto ${code} no se pudo eliminar`);
-            }
-        }
-
-        setItems(newItems);
-        setSelectedItems(new Map());
-    };
 
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
@@ -208,23 +172,23 @@ export default function InventoryPage() {
             includeDiscounted,
             includeCombos,
         };
-    
+
         let result;
-    
+
         if (applyToAll) {
             result = await updateAllPrices(data, user.token);
         } else {
             result = await updateSelectedPrices(data, selectedItems, user.token);
         }
-    
+
         if (result.success) {
             addNotification("success", "Precios actualizados correctamente");
         } else {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
         }
-    
+
         setShowConfirmation(false);
-        
+
         setTimeout(() => {
             window.location.reload();
         }, 200);
@@ -247,6 +211,9 @@ export default function InventoryPage() {
                 setLoading,
                 token: user.token,
             });
+            if (data.results === 404) {
+                window.location.reload()
+            }
             setItems(data.results);
             setTotalPages(Math.ceil(data.count / PAGE_SIZE));
             setLoading(false);
@@ -332,16 +299,16 @@ export default function InventoryPage() {
                 <Header
                     title={'INVENTARIO'}
                     isSomethingSelected={isSomethingSelected}
-                    userRole={user.role}
-                    onGoToSales={handleGoToSales}
-                    onItem={handleOpen}
-                    onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
-                    toggleSelectAll={toggleSelectAll}
+                    selectedItems={selectedItems}
+                    setSelectedItems={setSelectedItems}
+                    items={items}
+                    setItems={setItems}
+                    user={user}
                     onExtraInfo={onExtraInfo}
                     onViewSelected={() => setShowSelectedModal(true)}
-                    selectedItems={selectedItems}
                     extraButtons={EXTRABUTTONS}
                     addFormConfig={addItemConfig}
+                    deleteItem={deleteProductByCode}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

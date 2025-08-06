@@ -2,30 +2,94 @@ import { Dropdown, ButtonGroup } from "react-bootstrap";
 import AddItemModal from "../crud/AddItemModal.jsx"
 import { useState } from "react";
 import TitleDropdown from "../global/TitleDropdown.jsx";
-
+import { useNotifications } from '../../context/NotificationSystem.jsx';
+import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 export default function Header({
   title,
   isSomethingSelected,
-  userRole,
-  onDeleteSelected,
-  toggleSelectAll,
   selectedItems,
+  setSelectedItems,
+  items,
+  user,
   onViewSelected,
   onExtraInfo,
   extraButtons = [],
-  addFormConfig
+  addFormConfig,
+  deleteItem
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
+  const { addNotification } = useNotifications();
+
+  const [titleDelete, setTitleDelete] = useState("");
+  const [messageDelete, setMessageDelete] = useState("");
+  const [showDelModal, setShowDelModal] = useState(false);
+
+  //delete logic
+  const prepareDelete = () => {
+    if (selectedItems.size === 0) return;
+    //because selectedItems items its a Map 
+    const previewList = Array.from(selectedItems.values())
+      .slice(0, 5)
+      .map(item => `• ${item.name}(${item.code ?? item.id})`)
+      .join('\n');
+    const extraCount = selectedItems.length - 5;
+
+    const message = extraCount > 0
+      ? `${previewList}\n...y ${extraCount} más.`
+      : previewList;
+
+    setTitleDelete("Eliminar Productos...");
+    setMessageDelete(message);
+    setShowDelModal(true);
+  };
+
+  const handleDelete = async () => {
+
+    const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
+      name: item.name,
+      id: item.code ?? item.id
+    }));
+    for (const { id, name } of itemsToDelete) {
+      try {
+        const result = await deleteItem(id, user.token);
+        if (result?.success) {
+          addNotification("success", `"${name}" eliminado con éxito`);
+          setTimeout(() => {
+            window.location.reload();
+          }, 200);
+        } else {
+          addNotification("error", `"${name}" no se pudo eliminar`);
+        }
+      } catch (error) {
+        console.error(error);
+        addNotification("error", `Error al eliminar "${name}"`);
+      }
+    }
+    setSelectedItems(new Map());
+    setShowDelModal(false);
+  };
+
+
+  const toggleSelectAll = () => {
+    if (isSomethingSelected) {
+      setSelectedItems(new Map());
+    } else {
+      const newSelected = new Map();
+      items.forEach(item => {
+        newSelected.set(item.code, item);
+      });
+      setSelectedItems(newSelected);
+    }
+  };
 
   return (
     <div className="d-flex justify-content-between align-items-center header">
       {/* modals */}
 
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
-
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
-        <div className="user-role">&lt;{userRole}&gt;</div>
+        <div className="user-role">&lt;{user?.role}&gt;</div>
       </div>
 
       <div className="btn-group">
@@ -42,12 +106,20 @@ export default function Header({
           type="button"
           className="btn btn-danger remove-products-button"
           title="Eliminar productos seleccionados"
-          onClick={onDeleteSelected}
+          onClick={prepareDelete}
           disabled={!isSomethingSelected}
         >
           <i className="bi bi-trash-fill"></i>
-        </button>
 
+        </button>
+        {/* delete */}
+        <ConfirmationModal
+          show={showDelModal}
+          handleClose={() => setShowDelModal(false)}
+          title={titleDelete}
+          message={messageDelete}
+          onSendForm={handleDelete}
+        />
         <button
           type="button"
           className="btn btn-primary"

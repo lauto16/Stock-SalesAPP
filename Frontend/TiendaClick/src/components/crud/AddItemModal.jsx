@@ -1,6 +1,6 @@
 import { Modal, Button, Form, Row } from "react-bootstrap";
 import Input from './Input.jsx'
-import { useAddItemForm } from './hooks/useAddItemForm.jsx'
+import { useAddItemForm } from './hooks/useAddItemForm.js'
 
 
 export default function AddItemModal({ show, handleClose, formConfig, onUseEffect, onSubmitHandler }) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SideBarBrand from './SideBarBrand.jsx';
-import ConfirmationModal from '../inventory/ConfirmationModal.jsx'
+import ConfirmationModal from '../crud/ConfirmationModal.jsx'
 import NavLink from './NavLink'
 
 function SideBar({ onLogout }) {

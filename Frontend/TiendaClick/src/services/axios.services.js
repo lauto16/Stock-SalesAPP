@@ -101,6 +101,17 @@ async function fetchProvidersById(id, token) {
   return axios.get(`${apiUrl}providers/${id}/`, authHeader(token));
 }
 
+async function deleteProviderById(id, token) {
+  try {
+    const response = await axios.delete(`${apiUrl}providers/${id}/`, authHeader(token));
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar el proveedor:", error.response?.data || error.message);
+    throw error.response?.data || error;
+  }
+}
+
+
 async function fetchSearchProducts(search, token) {
   const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
   try {
@@ -213,5 +224,6 @@ export {
   loginUser,
   logoutUser,
   fetchProvidersById,
-  fetchUserRoleNameSp
+  fetchUserRoleNameSp,
+  deleteProviderById
 };

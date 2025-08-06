@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext.jsx';
-import ConfirmationModal from '../inventory/ConfirmationModal.jsx';
+import ConfirmationModal from '../crud/ConfirmationModal.jsx';
 import { logoutUser } from '../../services/axios.services.js';
 
 function Profile() {

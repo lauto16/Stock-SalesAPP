@@ -1,18 +1,18 @@
 import React from "react";
 import Pagination from "../inventory/Pagination.jsx";
 import Search from "../inventory/Search.jsx";
-import Table from "../inventory/Table.jsx";
+import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
 import { useState, useEffect, useRef } from "react";
 import SideBar from "../sideNav/SideBar.jsx";
 import Footer from "../footer/Footer.jsx"
 import Nav from "../sideNav/Nav.jsx"
-import Header from "../inventory/Header.jsx"
-import { fetchProviders_by_page, fetchProvidersById, addProvider } from "../../services/axios.services.js";
+import Header from "../crud/Header.jsx"
+import { fetchProviders_by_page, fetchProvidersById, addProvider, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 import SelectedItemsModal from "./SelectedItemsModal.jsx"
 // import ItemInfoModal from "./ItemInfoModal.jsx"
-import ConfirmationModal from "../inventory/ConfirmationModal.jsx"
+import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
 
@@ -78,7 +78,7 @@ function Providers() {
 
         fetchData();
     }, [currentPage, isSearching]);
-    
+
     useEffect(() => {
         if (selectedItems.size !== 0) {
             setIsSomethingSelected(true)
@@ -194,13 +194,15 @@ function Providers() {
                             <Header
                                 title={"Proveedores"}
                                 selectedItems={selectedItems}
+                                setSelectedItems={setSelectedItems}
+
                                 isSomethingSelected={isSomethingSelected}
-                                userRole={user.role}
-                                onDeleteSelected={() => handleDelete(Array.from(selectedItems.keys()))}
-                                toggleSelectAll={toggleSelectAll}
-                                onViewSelected={() => setShowSelectedModal(true)}
+                                user={user}
+                                items={providers}
                                 onExtraInfo={onExtraInfo}
+                                onViewSelected={() => setShowSelectedModal(true)}
                                 addFormConfig={addItemConfig}
+                                deleteItem={deleteProviderById}
                             />
 
                             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
