@@ -116,7 +116,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-
+    
     @action(detail=False, methods=["get"], url_path=r"get-by-code/(?P<code>[\w-]+)")
     def get_by_code(self, request, code=None):
         if not code:
