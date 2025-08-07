@@ -5,7 +5,6 @@ import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "./Search.jsx";
 import { fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
-import SelectedProductsModal from "./SelectedProductsModal.jsx";
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
@@ -59,6 +58,12 @@ export default function InventoryPage() {
         { className: "last-modification", key: "last_modification", label: 'Última Modificación' },
     ];
 
+    //selectedItemsColums
+    const importantColumns = [
+        { className: "code", key: "code", label: 'Código' },
+        { className: "name", key: "name", label: 'Nombre' },
+        { className: "stock", key: "stock", label: 'Stock' },
+    ];
     const handleOpen = () => setShowModal(true);
     const handleGoToSales = () => { };
     const handleShowConfirmation = () => setShowConfirmation(true);
@@ -282,15 +287,7 @@ export default function InventoryPage() {
                 product={selectedProduct}
                 unselectAll={unselectAll}
             />
-            {/* <AddProductModal show={showModal} handleClose={handleClose} /> */}
-            <SelectedProductsModal
-                show={showSelectedModal}
-                handleClose={() => setShowSelectedModal(false)}
-                selectedItems={selectedItems}
-                setSelectedItems={setSelectedItems}
-                isSomethingSelected={isSomethingSelected}
-                setIsSomethingSelected={setIsSomethingSelected}
-            />
+
             <div className="container container-modified">
                 {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
                 provided having two arguments: 1° the config dictionary containing constants, title and inputs; 
@@ -301,13 +298,13 @@ export default function InventoryPage() {
                     selectedItems={selectedItems}
                     setSelectedItems={setSelectedItems}
                     items={items}
-                    setItems={setItems}
                     user={user}
                     onExtraInfo={onExtraInfo}
                     onViewSelected={() => setShowSelectedModal(true)}
                     extraButtons={EXTRABUTTONS}
                     addFormConfig={addItemConfig}
                     deleteItem={deleteProductByCode}
+                    selectedItemsColumns={importantColumns}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

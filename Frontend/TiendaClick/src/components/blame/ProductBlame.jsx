@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Pagination from "../inventory/Pagination";
 import Search from "../inventory/Search";
-import Table from "../inventory/Table";
+import Table from "../crud/Table";
 import { fetchBlames, fetchSearchBlames } from '../../services/axios.services'
 import { useUser } from "../../context/UserContext";
 import SimpleHeader from "../inventory/SimpleHeader"

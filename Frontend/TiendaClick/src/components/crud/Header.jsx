@@ -4,6 +4,8 @@ import { useState } from "react";
 import TitleDropdown from "../global/TitleDropdown.jsx";
 import { useNotifications } from '../../context/NotificationSystem.jsx';
 import ConfirmationModal from "../crud/ConfirmationModal.jsx";
+import { useModal } from "./hooks/useModal.js";
+import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
 export default function Header({
   title,
   isSomethingSelected,
@@ -11,18 +13,30 @@ export default function Header({
   setSelectedItems,
   items,
   user,
-  onViewSelected,
   onExtraInfo,
   extraButtons = [],
   addFormConfig,
-  deleteItem
+  deleteItem,
+  selectedItemsColumns = [{}]
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
+  //Delete modal
+  const {
+    title: titleDelete,
+    message: messageDelete,
+    show: showDelModal,
+    openModal: openDelModal,
+    closeModal: closeDelModal,
+  } = useModal()
+  //Select Items Modal
+  const {
+    title: titleSelect,
+    show: showSelect,
+    openModal: openSelect,
+    closeModal: closeSelect,
+  } = useModal()
 
-  const [titleDelete, setTitleDelete] = useState("");
-  const [messageDelete, setMessageDelete] = useState("");
-  const [showDelModal, setShowDelModal] = useState(false);
 
   //delete logic
   const prepareDelete = () => {
@@ -37,10 +51,7 @@ export default function Header({
     const message = extraCount > 0
       ? `${previewList}\n...y ${extraCount} más.`
       : previewList;
-
-    setTitleDelete("Eliminar Productos...");
-    setMessageDelete(message);
-    setShowDelModal(true);
+    openDelModal("Eliminar Productos...", message)
   };
 
   const handleDelete = async () => {
@@ -66,10 +77,10 @@ export default function Header({
       }
     }
     setSelectedItems(new Map());
-    setShowDelModal(false);
+    closeDelModal()
   };
 
-
+  //Select All button
   const toggleSelectAll = () => {
     if (isSomethingSelected) {
       setSelectedItems(new Map());
@@ -82,11 +93,29 @@ export default function Header({
     }
   };
 
+  //Show all the items selected Modal
+
   return (
     <div className="d-flex justify-content-between align-items-center header">
       {/* modals */}
-
+      {/* shows selected products */}
+      <SelectedItemsModal
+        show={showSelect}
+        handleClose={closeSelect}
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
+        columns={selectedItemsColumns}
+      />
+      {/* opens a form to add an Item */}
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
+      {/* enables to delete a set of Items */}
+      <ConfirmationModal
+        show={showDelModal}
+        handleClose={closeDelModal}
+        title={titleDelete}
+        message={messageDelete}
+        onSendForm={handleDelete}
+      />
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
         <div className="user-role">&lt;{user?.role}&gt;</div>
@@ -112,14 +141,7 @@ export default function Header({
           <i className="bi bi-trash-fill"></i>
 
         </button>
-        {/* delete */}
-        <ConfirmationModal
-          show={showDelModal}
-          handleClose={() => setShowDelModal(false)}
-          title={titleDelete}
-          message={messageDelete}
-          onSendForm={handleDelete}
-        />
+
         <button
           type="button"
           className="btn btn-primary"
@@ -139,7 +161,7 @@ export default function Header({
           type="button"
           className="btn btn-primary position-relative view-selected-products"
           title="Ver productos seleccionados"
-          onClick={onViewSelected}
+          onClick={openSelect}
           disabled={!isSomethingSelected}
         >
           <i className="bi bi-eye-fill"></i>
