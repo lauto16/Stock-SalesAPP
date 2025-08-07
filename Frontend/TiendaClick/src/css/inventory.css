@@ -267,14 +267,14 @@ tr.selected-product td {
     margin-left: 20px !important;
 }
 
-@media (max-width: 620px) {
+@media (max-width: 780px) {
 
     .col-code,
     .col-buy-price,
     .col-last-modification {
         display: none;
     }
-
+ 
     .table-container table th,
     .table-container table td {
         font-size: 0.75rem;
@@ -304,6 +304,10 @@ tr.selected-product td {
         margin-top: 10px !important;
         width: 100%;
     }
+    
+    .dropdown-title{
+        font-size: 0.60rem !important;
+    }
 }
 
 @media (max-width: 300px) {
@@ -322,6 +326,10 @@ tr.selected-product td {
 }
 
 @media (max-width: 800px) {
+
+    .btn-group button{
+        margin-top: 10px;
+    }
 
     .user-role {
         margin-left: 0;

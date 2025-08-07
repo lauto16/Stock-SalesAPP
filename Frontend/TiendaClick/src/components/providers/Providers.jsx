@@ -160,7 +160,6 @@ function Providers() {
     };
 
     return (
-        <main className="flex-grow-1 p-3 content">
             <div className="d-flex justify-content-center mt-5">
                 <div className="container">
 
@@ -214,7 +213,6 @@ function Providers() {
                     </div>
                 </div>
             </div>
-        </main>
     );
 }
 export default Providers;

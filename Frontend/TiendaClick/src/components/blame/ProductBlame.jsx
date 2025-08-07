@@ -5,6 +5,7 @@ import Table from "../crud/Table";
 import { fetchBlames, fetchSearchBlames } from '../../services/axios.services'
 import { useUser } from "../../context/UserContext";
 import SimpleHeader from "../inventory/SimpleHeader"
+import '../../css/blame.css'
 
 const FIELD_TRANSLATIONS = {
   object_code: "Código del producto",
@@ -28,7 +29,7 @@ const keysToShow = [
 
 const columns = keysToShow.map(key => ({
   key,
-  className: "2",
+  className: key,
   label: FIELD_TRANSLATIONS[key] || key,
 }));
 
