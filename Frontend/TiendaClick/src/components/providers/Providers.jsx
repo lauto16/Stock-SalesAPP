@@ -22,16 +22,10 @@ function Providers() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const { user } = useUser();
-    const [showModal, setShowModal] = useState(false);
-    const [allSearchResults, setAllSearchResults] = useState([]);
     const { addNotification } = useNotifications();
-    const [showProductInfo, setShowProductInfo] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
-    const [action, setAction] = useState('')
 
     //AddProvider
     const addItemConfig = {
