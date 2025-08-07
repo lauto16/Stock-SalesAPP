@@ -11,7 +11,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
-
+import { useModal } from "../crud/hooks/useModal.js";
 export default function InventoryPage() {
 
     const [items, setItems] = useState([]);
@@ -19,19 +19,24 @@ export default function InventoryPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
-    const [showModal, setShowModal] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const [allSearchResults, setAllSearchResults] = useState([]);
     const [showProductInfo, setShowProductInfo] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [showPriceUpdateModal, setShowPriceUpdateModal] = useState(false)
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [confirmationText, setConfirmationText] = useState('')
-    const [confirmationTitle, setConfirmationTitle] = useState('')
     const [showOfferModal, setShowOfferModal] = useState(false);
+
+    //Confirmation Modal
+    const {
+        title: confirmationTitle,
+        message: confirmationText,
+        show: showConfirmation,
+        openModal: openConfirmation,
+        closeModal: closeConfirmation,
+    } = useModal()
+
     const { user } = useUser();
 
     // States for update prices modal
@@ -66,8 +71,7 @@ export default function InventoryPage() {
     ];
     const handleOpen = () => setShowModal(true);
     const handleGoToSales = () => { };
-    const handleShowConfirmation = () => setShowConfirmation(true);
-    const handleHideConfirmation = () => setShowConfirmation(false);
+
 
     const clearSearch = () => {
         setIsSearching(false);
@@ -151,19 +155,22 @@ export default function InventoryPage() {
 
         if (applyToAll) {
             if (isIncrease) {
-                setConfirmationText("¿Estás seguro que deseas aumentar el precio de todos los productos?");
-                setConfirmationTitle("Aumentar todos los productos");
+                openConfirmation("Aumentar todos los productos",
+                    "¿Estás seguro que deseas aumentar el precio de todos los productos?");
             } else if (isDecrease) {
-                setConfirmationText("¿Estás seguro que deseas disminuir el precio de todos los productos?");
-                setConfirmationTitle("Abaratar todos los productos");
+                openConfirmation(
+                    "Abaratar todos los productos",
+                    "¿Estás seguro que deseas disminuir el precio de todos los productos?");
             }
         } else {
             if (isIncrease) {
-                setConfirmationText("¿Estás seguro que deseas aumentar el precio de los productos seleccionados?");
-                setConfirmationTitle("Aumentar productos seleccionados");
+                openConfirmation(
+                    "Aumentar productos seleccionados",
+                    "¿Estás seguro que deseas aumentar el precio de los productos seleccionados?");
             } else if (isDecrease) {
-                setConfirmationText("¿Estás seguro que deseas disminuir el precio de los productos seleccionados?");
-                setConfirmationTitle("Abaratar productos seleccionados");
+                openConfirmation(
+                    "Abaratar productos seleccionados",
+                    "¿Estás seguro que deseas disminuir el precio de los productos seleccionados?");
             }
         }
 
@@ -192,7 +199,7 @@ export default function InventoryPage() {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
         }
 
-        setShowConfirmation(false);
+        closeConfirmation()
 
         setTimeout(() => {
             window.location.reload();
@@ -267,7 +274,7 @@ export default function InventoryPage() {
                 title={confirmationTitle}
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}
-                handleClose={handleHideConfirmation}
+                handleClose={closeConfirmation}
             />
             <PriceUpdateModal
                 show={showPriceUpdateModal}

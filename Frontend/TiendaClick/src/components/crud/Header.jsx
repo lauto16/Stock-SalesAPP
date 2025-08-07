@@ -6,6 +6,7 @@ import { useNotifications } from '../../context/NotificationSystem.jsx';
 import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
+import ProductInfoModal from "../inventory/ProductInfoModal.jsx";
 export default function Header({
   title,
   isSomethingSelected,
@@ -51,7 +52,7 @@ export default function Header({
     const message = extraCount > 0
       ? `${previewList}\n...y ${extraCount} más.`
       : previewList;
-    openDelModal("Eliminar Productos...", message)
+    openDelModal("Eliminar items seleccionados...", message)
   };
 
   const handleDelete = async () => {
