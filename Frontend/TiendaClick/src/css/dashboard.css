@@ -43,3 +43,10 @@ main {
 .card-stock {
     max-width: 500px;
 }
+
+.small-box {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

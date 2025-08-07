@@ -28,7 +28,7 @@ export default function TitleDropdown({ currentTitle, setTitle }) {
   };
 
   return (
-    <Dropdown>
+    <Dropdown style={{ display: "inline-block", width: "auto" }}>
       <Dropdown.Toggle
         variant="light"
         id="dropdown-title"
