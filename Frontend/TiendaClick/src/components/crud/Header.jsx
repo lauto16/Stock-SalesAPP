@@ -6,7 +6,6 @@ import { useNotifications } from '../../context/NotificationSystem.jsx';
 import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
-import ProductInfoModal from "../inventory/ProductInfoModal.jsx";
 export default function Header({
   title,
   isSomethingSelected,
@@ -18,7 +17,8 @@ export default function Header({
   extraButtons = [],
   addFormConfig,
   deleteItem,
-  selectedItemsColumns = [{}]
+  selectedItemsColumns = [{}],
+  infoFormConfig
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -36,6 +36,14 @@ export default function Header({
     show: showSelect,
     openModal: openSelect,
     closeModal: closeSelect,
+  } = useModal()
+
+  //Select Items Modal
+  const {
+    title: titleInfo,
+    show: showInfo,
+    openModal: openInfo,
+    closeModal: closeInfo,
   } = useModal()
 
 
@@ -117,6 +125,9 @@ export default function Header({
         message={messageDelete}
         onSendForm={handleDelete}
       />
+      {/* Items Info Modal */}
+      <AddItemModal show={showInfo} handleClose={closeInfo} formConfig={infoFormConfig.config} onSubmitHandler={infoFormConfig.handleSubmit} />
+
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
         <div className="user-role">&lt;{user?.role}&gt;</div>
@@ -175,7 +186,7 @@ export default function Header({
           type="button"
           className="btn btn-primary more-info"
           title="Información adicional"
-          onClick={onExtraInfo}
+          onClick={openInfo}
           disabled={selectedItems.size !== 1}
         >
           <i className="bi bi-info-circle-fill"></i>

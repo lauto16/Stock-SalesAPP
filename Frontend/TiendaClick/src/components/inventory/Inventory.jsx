@@ -11,7 +11,8 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
-import { useModal } from "../crud/hooks/useModal.js";
+import itemInfoConfig from "./forms/useItemInfo.js"
+
 export default function InventoryPage() {
 
     const [items, setItems] = useState([]);
@@ -26,17 +27,10 @@ export default function InventoryPage() {
     const [showProductInfo, setShowProductInfo] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showPriceUpdateModal, setShowPriceUpdateModal] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationText, setConfirmationText] = useState('')
+    const [confirmationTitle, setConfirmationTitle] = useState('')
     const [showOfferModal, setShowOfferModal] = useState(false);
-
-    //Confirmation Modal
-    const {
-        title: confirmationTitle,
-        message: confirmationText,
-        show: showConfirmation,
-        openModal: openConfirmation,
-        closeModal: closeConfirmation,
-    } = useModal()
-
     const { user } = useUser();
 
     // States for update prices modal
@@ -44,11 +38,16 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
-    //addItems
 
-
-    const addItemConfig = {
+    //addItems Modal
+    const addItemFormConfig = {
         config: addFormConfig,
+        handleSubmit: addProduct
+    }
+
+    //InfoItems Modal
+    const infoFormConfig = {
+        config: itemInfoConfig,
         handleSubmit: addProduct
     }
 
@@ -69,9 +68,8 @@ export default function InventoryPage() {
         { className: "name", key: "name", label: 'Nombre' },
         { className: "stock", key: "stock", label: 'Stock' },
     ];
-    const handleOpen = () => setShowModal(true);
-    const handleGoToSales = () => { };
-
+    const handleShowConfirmation = () => setShowConfirmation(true);
+    const handleHideConfirmation = () => setShowConfirmation(false);
 
     const clearSearch = () => {
         setIsSearching(false);
@@ -155,22 +153,19 @@ export default function InventoryPage() {
 
         if (applyToAll) {
             if (isIncrease) {
-                openConfirmation("Aumentar todos los productos",
-                    "¿Estás seguro que deseas aumentar el precio de todos los productos?");
+                setConfirmationText("¿Estás seguro que deseas aumentar el precio de todos los productos?");
+                setConfirmationTitle("Aumentar todos los productos");
             } else if (isDecrease) {
-                openConfirmation(
-                    "Abaratar todos los productos",
-                    "¿Estás seguro que deseas disminuir el precio de todos los productos?");
+                setConfirmationText("¿Estás seguro que deseas disminuir el precio de todos los productos?");
+                setConfirmationTitle("Abaratar todos los productos");
             }
         } else {
             if (isIncrease) {
-                openConfirmation(
-                    "Aumentar productos seleccionados",
-                    "¿Estás seguro que deseas aumentar el precio de los productos seleccionados?");
+                setConfirmationText("¿Estás seguro que deseas aumentar el precio de los productos seleccionados?");
+                setConfirmationTitle("Aumentar productos seleccionados");
             } else if (isDecrease) {
-                openConfirmation(
-                    "Abaratar productos seleccionados",
-                    "¿Estás seguro que deseas disminuir el precio de los productos seleccionados?");
+                setConfirmationText("¿Estás seguro que deseas disminuir el precio de los productos seleccionados?");
+                setConfirmationTitle("Abaratar productos seleccionados");
             }
         }
 
@@ -199,7 +194,7 @@ export default function InventoryPage() {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
         }
 
-        closeConfirmation()
+        setShowConfirmation(false);
 
         setTimeout(() => {
             window.location.reload();
@@ -274,7 +269,7 @@ export default function InventoryPage() {
                 title={confirmationTitle}
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}
-                handleClose={closeConfirmation}
+                handleClose={handleHideConfirmation}
             />
             <PriceUpdateModal
                 show={showPriceUpdateModal}
@@ -288,12 +283,12 @@ export default function InventoryPage() {
                 includeDiscounted={includeDiscounted}
                 setIncludeDiscounted={setIncludeDiscounted}
             />
-            <ProductInfoModal
+            {/* <ProductInfoModal
                 show={showProductInfo}
                 handleClose={() => setShowProductInfo(false)}
                 product={selectedProduct}
                 unselectAll={unselectAll}
-            />
+            /> */}
 
             <div className="container container-modified">
                 {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
@@ -307,11 +302,11 @@ export default function InventoryPage() {
                     items={items}
                     user={user}
                     onExtraInfo={onExtraInfo}
-                    onViewSelected={() => setShowSelectedModal(true)}
                     extraButtons={EXTRABUTTONS}
-                    addFormConfig={addItemConfig}
+                    addFormConfig={addItemFormConfig}
                     deleteItem={deleteProductByCode}
                     selectedItemsColumns={importantColumns}
+                    infoFormConfig={infoFormConfig}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
