@@ -1,5 +1,11 @@
 import Item from "./Item.jsx";
-export default function Table({ setIsSomethingSelected, items = [], loading, columns = [], selectedItems, setSelectedItems, pkName }) {
+export default function Table({ setIsSomethingSelected,
+  items = [],
+  loading,
+  columns = [],
+  selectedItems,
+  setSelectedItems,
+  pkName }) {
   // columns should be an array of objects with keys: className (css class), key(for finding the element), label(header label)
   if (!Array.isArray(items)) {
     console.error('Items no es un array');

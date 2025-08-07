@@ -4,13 +4,10 @@ import Search from "../inventory/Search.jsx";
 import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
 import { useState, useEffect, useRef } from "react";
-import SideBar from "../sideNav/SideBar.jsx";
-import Footer from "../footer/Footer.jsx"
-import Nav from "../sideNav/Nav.jsx"
 import Header from "../crud/Header.jsx"
 import { fetchProviders_by_page, fetchProvidersById, addProvider, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
-import SelectedItemsModal from "./SelectedItemsModal.jsx"
+
 // import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
@@ -50,15 +47,19 @@ function Providers() {
         { className: "email", key: "email", label: 'Mail' },
         { className: "address", key: "address", label: 'Dirección' },
     ];
+
+    //selectedItemsColums
+    const importantColumns = [
+        { className: "name", key: "name", label: 'Nombre' },
+        { className: "phone", key: "phone", label: 'Teléfono' },
+    ];
+
     const ACTIONS = {
         DELETE: 'DELETE',
         UPDATE: 'UPDATE'
     }
     //modals
-    const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
-    const handleGoToSales = () => { };
-    const handleShowConfirmation = () => setShowConfirmation(true);
+
     const handleHideConfirmation = () => setShowConfirmation(false);
 
 
@@ -172,35 +173,21 @@ function Providers() {
                         handleClose={handleHideConfirmation}
                     />
 
-                    {/* <ItemInfoModal
-                            show={showProductInfo}
-                            handleClose={() => setShowProductInfo(false)}
-                            product={selectedProduct}
-                            unselectAll={unselectAll}
-                        /> */}
-
-
-                    <SelectedItemsModal
-                        show={showSelectedModal}
-                        handleClose={() => setShowSelectedModal(false)}
-                        selectedItems={selectedItems}
-                        setSelectedItems={setSelectedItems}
-                        isSomethingSelected={isSomethingSelected}
-                    />
                     <div className="table-container-providers">
 
                         <Header
-                            title={"Proveedores"}
+                            title={"PROVEEDORES"}
                             selectedItems={selectedItems}
+                            isSomethingSelected={isSomethingSelected}
                             setSelectedItems={setSelectedItems}
 
-                            isSomethingSelected={isSomethingSelected}
                             user={user}
                             items={providers}
                             onExtraInfo={onExtraInfo}
                             onViewSelected={() => setShowSelectedModal(true)}
                             addFormConfig={addItemConfig}
                             deleteItem={deleteProviderById}
+                            selectedItemsColumns={importantColumns}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
