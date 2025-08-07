@@ -151,6 +151,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 label="Stock"
                                 icon="bi-box"
                                 type="number"
+                                step='any'
                                 placeholder="Stock"
                                 register={register("stock", { valueAsNumber: true })}
                             />

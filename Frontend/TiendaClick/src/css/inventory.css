@@ -1,5 +1,17 @@
 @import "./bootstrap-icons.css";
 
+/*remove little arrows when input type is number*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 body {
     background-color: #ffffff;
     font-family: "Segoe UI", sans-serif;
@@ -20,9 +32,8 @@ body {
 }
 
 .user-role {
-    font-style: italic;
-    color: #6a8d73;
-    font-size: 0.9rem;
+    color: #8e8e8e;
+    font-size: 0.85rem;
     margin-left: 20px;
 }
 
@@ -75,7 +86,7 @@ td {
 .page-item .page-link {
     background-color: #f9f9f9;
     color: #494949;
-    border: 1px solid #6a8d73;
+    border: 1px solid #aeaeae;
 }
 
 
@@ -127,7 +138,7 @@ td {
 
 .search-input {
     max-width: 200px;
-    border: 1px solid #6a8d73;
+    border: 1px solid #aeaeae;
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 0.9rem;
@@ -333,6 +344,7 @@ tr.selected-product td {
 
     .user-role {
         margin-left: 0;
+        margin-top: 10px;
     }
 
     .header {

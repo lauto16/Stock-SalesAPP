@@ -18,6 +18,7 @@ function Dashboard() {
   const inputRef = useRef(null);
   const { user } = useUser()
   const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 850);
+  const [lowStockText, setLowStockText] = useState('Stock menor que')
 
   const columns = [
     { className: "code", key: "code", label: "Código" },
@@ -29,6 +30,13 @@ function Dashboard() {
   useEffect(() => {
     const handleResize = () => {
       setShowSidebar(window.innerWidth >= 850);
+      if (window.innerWidth <= 500 ) {
+        setLowStockText('Stock <')
+      }
+      else{
+        setLowStockText('Stock menor que')
+
+      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -58,7 +66,7 @@ function Dashboard() {
   return (
     <>
       <div className="app-wrapper">
-        <Nav />
+        {showSidebar && <Nav/>}
         {showSidebar && <SideBar />}
         <main className="flex-grow-1 p-3 content">
           <DashboardHeader />
@@ -111,19 +119,18 @@ function Dashboard() {
               <div className="col-xxl-6 col-12 mb-3">
                 <div className="card h-100 card-stock">
                   <div className="card-header stock-header">
-                  </div>
-                  <div className="scrollable-card-body">
-                    <div className="card-header stock-header">
-                      <Link
+                  <Link
                         to={"/inventory/"}
                         className="text-decoration-none text-dark"
                       >
                         <h5>Stock Faltante</h5>
                       </Link>
-
+                  </div>
+                  <div className="scrollable-card-body">
+                    <div className="card-header stock-header">
                       <div className="input-group w-auto">
                         <span className="input-group-text user-select-none">
-                          Stock menor que
+                          {lowStockText}
                         </span>
                         <input
                           type="number"
@@ -131,6 +138,7 @@ function Dashboard() {
                           defaultValue={amount}
                           className="form-control"
                           ref={inputRef}
+                          style={{padding: 0, textAlign: "center", textJustify: "center"}}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") handleButtonClick();
                           }}

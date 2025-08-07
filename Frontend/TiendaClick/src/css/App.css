@@ -14844,7 +14844,6 @@ fieldset:disabled .btn {
   overflow: hidden;
   font-size: 1.25rem;
   white-space: nowrap;
-  border-bottom: 1px solid var(--bs-border-color);
   transition: width 0.3s ease-in-out;
 }
 
