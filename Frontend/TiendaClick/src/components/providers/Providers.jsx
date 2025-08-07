@@ -3,15 +3,11 @@ import Pagination from "../inventory/Pagination.jsx";
 import Search from "../inventory/Search.jsx";
 import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
-import { useState, useEffect, useRef } from "react";
-import SideBar from "../sideNav/SideBar.jsx";
-import Footer from "../footer/Footer.jsx"
-import Nav from "../sideNav/Nav.jsx"
+import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
 import { fetchProviders_by_page, fetchProvidersById, addProvider, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 import SelectedItemsModal from "./SelectedItemsModal.jsx"
-// import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
@@ -159,7 +155,6 @@ function Providers() {
     };
 
     return (
-        <main className="flex-grow-1 p-3 content">
             <div className="d-flex justify-content-center mt-5">
                 <div className="container">
 
@@ -227,7 +222,6 @@ function Providers() {
                     </div>
                 </div>
             </div>
-        </main>
     );
 }
 export default Providers;
