@@ -33,6 +33,7 @@ export default function InventoryPage() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const [showOfferModal, setShowOfferModal] = useState(false);
+    const { user } = useUser();
 
     // States for update prices modal
     const [updatePricePercentage, setUpdatePricePercentage] = useState(0)
@@ -46,7 +47,6 @@ export default function InventoryPage() {
         config: addFormConfig,
         handleSubmit: addProduct
     }
-    const { user } = useUser();
 
     const PAGE_SIZE = 10;
     //table columns
@@ -259,7 +259,6 @@ export default function InventoryPage() {
             />
             <ConfirmationModal
                 show={showConfirmation}
-                onHide={handleHideConfirmation}
                 title={confirmationTitle}
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}

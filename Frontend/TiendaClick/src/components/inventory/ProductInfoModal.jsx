@@ -103,6 +103,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 type="text"
                                 placeholder="Código"
                                 register={register("code", { required: true })}
+                                disabled={true}
                             />
                         </Col>
                         <Col md={6}>
@@ -159,7 +160,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 label="Precio de compra"
                                 icon="bi-currency-dollar"
                                 type="number"
-                                step="0.01"
+                                step="any"
                                 placeholder="Precio de compra"
                                 register={register("purchasePrice", { valueAsNumber: true })}
                             />
@@ -169,7 +170,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 label="Precio de venta"
                                 icon="bi-currency-dollar"
                                 type="number"
-                                step="0.01"
+                                step="any"
                                 placeholder="Precio de venta"
                                 register={register("sellingPrice", { valueAsNumber: true })}
                             />

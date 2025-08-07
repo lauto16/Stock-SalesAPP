@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'StatsAPI',
     'corsheaders',
     'ProvidersAPI',
-    'AuthAPI'
+    'AuthAPI',
+    'BlameAPI',
 ]
 
 MIDDLEWARE = [
@@ -35,6 +36,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'Auth.middleware.JWTAuthCookieMiddleware',
 ]
 
 ROOT_URLCONF = 'StockSalesApp.urls'

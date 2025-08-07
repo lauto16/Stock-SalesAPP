@@ -35,6 +35,7 @@ function Providers() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const [action, setAction] = useState('')
+
     //AddProvider
     const addItemConfig = {
         config: addProviderConfig,
@@ -158,23 +159,20 @@ function Providers() {
     };
 
     return (
-        <div className="app-wrapper">
-            <SideBar />
-            <Nav />
-            <main className="flex-grow-1 p-3 content">
-                <div className="d-flex justify-content-center mt-5">
-                    <div className="container">
+        <main className="flex-grow-1 p-3 content">
+            <div className="d-flex justify-content-center mt-5">
+                <div className="container">
 
-                        <ConfirmationModal
-                            show={showConfirmation}
-                            onHide={handleHideConfirmation}
-                            title={confirmationTitle}
-                            message={confirmationText}
-                            onSendForm={handleCreateProvider}
-                            handleClose={handleHideConfirmation}
-                        />
+                    <ConfirmationModal
+                        show={showConfirmation}
+                        onHide={handleHideConfirmation}
+                        title={confirmationTitle}
+                        message={confirmationText}
+                        onSendForm={handleCreateProvider}
+                        handleClose={handleHideConfirmation}
+                    />
 
-                        {/* <ItemInfoModal
+                    {/* <ItemInfoModal
                             show={showProductInfo}
                             handleClose={() => setShowProductInfo(false)}
                             product={selectedProduct}
@@ -182,56 +180,54 @@ function Providers() {
                         /> */}
 
 
-                        <SelectedItemsModal
-                            show={showSelectedModal}
-                            handleClose={() => setShowSelectedModal(false)}
+                    <SelectedItemsModal
+                        show={showSelectedModal}
+                        handleClose={() => setShowSelectedModal(false)}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        isSomethingSelected={isSomethingSelected}
+                    />
+                    <div className="table-container-providers">
+
+                        <Header
+                            title={"Proveedores"}
                             selectedItems={selectedItems}
                             setSelectedItems={setSelectedItems}
+
                             isSomethingSelected={isSomethingSelected}
+                            user={user}
+                            items={providers}
+                            onExtraInfo={onExtraInfo}
+                            onViewSelected={() => setShowSelectedModal(true)}
+                            addFormConfig={addItemConfig}
+                            deleteItem={deleteProviderById}
                         />
-                        <div className="table-container-providers">
 
-                            <Header
-                                title={"Proveedores"}
-                                selectedItems={selectedItems}
-                                setSelectedItems={setSelectedItems}
+                        <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
 
-                                isSomethingSelected={isSomethingSelected}
-                                user={user}
-                                items={providers}
-                                onExtraInfo={onExtraInfo}
-                                onViewSelected={() => setShowSelectedModal(true)}
-                                addFormConfig={addItemConfig}
-                                deleteItem={deleteProviderById}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
                             />
 
-                            <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
-
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                />
-
-                                <div className="search-wrapper">
-                                    <Search />
-                                </div>
+                            <div className="search-wrapper">
+                                <Search />
                             </div>
-                            <Table items={providers}
-                                columns={columns}
-                                loading={loading}
-                                setLoading={setLoading}
-                                selectedItems={selectedItems}
-                                setSelectedItems={setSelectedItems}
-                                pkName={'id'}
-                            />
-
                         </div>
+                        <Table items={providers}
+                            columns={columns}
+                            loading={loading}
+                            setLoading={setLoading}
+                            selectedItems={selectedItems}
+                            setSelectedItems={setSelectedItems}
+                            pkName={'id'}
+                        />
+
                     </div>
                 </div>
-            </main>
-            <Footer />
-        </div>
+            </div>
+        </main>
     );
 }
 export default Providers;

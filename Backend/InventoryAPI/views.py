@@ -116,7 +116,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-
+    
     @action(detail=False, methods=["get"], url_path=r"get-by-code/(?P<code>[\w-]+)")
     def get_by_code(self, request, code=None):
         if not code:
@@ -192,11 +192,16 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ProductSerializer(product, data=request.data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
+            for attr, value in serializer.validated_data.items():
+                setattr(product, attr, value)
+
             product.last_modification = timezone.now()
-            product.save()
+            product.save(user=request.user)
+
             return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
+            
         else:
+            print(serializer.errors)
             return Response(
                 {"success": False, "error": "El codigo ya existe para otro producto"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -211,7 +216,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         percentage = request.data.get("percentage")
         include_discounted = request.data.get("includeDiscounted", False)
         codes = request.data.get("codes", [])
-
+        
         if not isinstance(codes, list) or not codes:
             return Response(
                 {
@@ -241,7 +246,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             if isinstance(percentage, (int, float)):
                 product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
-                product.save()
+                product.save(user=request.user)
                 updated_products.append(product.code)
 
         return Response(
@@ -271,7 +276,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             if isinstance(percentage, (int, float)):
                 product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
-                product.save()
+                product.save(user=request.user)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
 

@@ -2,6 +2,19 @@ import axios from 'axios';
 
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
+async function fetchBlames(page = 1, setLoading, token) {
+  try {
+    setLoading(true);
+    const response = await axios.get(`${apiUrl}blames/?page=${page}`, authHeader(token));
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los registros de cambio:", error);
+    return { results: [], count: 0 };
+  } finally {
+    setLoading(false);
+  }
+}
+
 async function loginUser(username, password) {
   try {
     const response = await fetch(`${apiUrl}login/`, {
@@ -13,7 +26,7 @@ async function loginUser(username, password) {
     });
 
     if (response.ok) {
-      const data = await response.json(); // { token: 'abc123' }
+      const data = await response.json();
       return { success: true, data };
     } else {
       return { success: false };
@@ -99,7 +112,25 @@ async function fetchProviders(token) {
 
 async function fetchProvidersById(id, token) {
   return axios.get(`${apiUrl}providers/${id}/`, authHeader(token));
+
 }
+
+async function fetchSearchBlames(query, token) {
+  const url = `${apiUrl}blames/search/?q=${encodeURIComponent(query)}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching blames:", error);
+    return null;
+  }
+}
+
 
 async function deleteProviderById(id, token) {
   try {
@@ -225,5 +256,7 @@ export {
   logoutUser,
   fetchProvidersById,
   fetchUserRoleNameSp,
-  deleteProviderById
+  deleteProviderById,
+  fetchSearchBlames,
+  fetchBlames
 };

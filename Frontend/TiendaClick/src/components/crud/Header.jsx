@@ -76,7 +76,7 @@ export default function Header({
     } else {
       const newSelected = new Map();
       items.forEach(item => {
-        newSelected.set(item.code, item);
+        newSelected.set(item.code ?? item.id, item);
       });
       setSelectedItems(newSelected);
     }

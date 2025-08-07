@@ -47,7 +47,7 @@ const addItemConfig = (watch) => {
             label: 'Proveedor',
             placeholder: 'Seleccionar proveedor...',
             type: TYPES.SELECT,
-            required: true,
+            required: false,
             selectedOption: (value) => { providers.find(p => p.id === value) },
             selectOptions: providers,
             errorMsg: 'El proveedor es requerido',
