@@ -4,28 +4,35 @@ import Chart from 'react-apexcharts';
 const SalesChart = () => {
     const options = {
         chart: {
-            type: 'line'
+            type: 'line',
+            toolbar: { show: false },
         },
         stroke: {
             curve: 'smooth',
         },
         xaxis: {
             categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
-        }
+        },
+        responsive: [
+            {
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 }
+                }
+            }
+        ]
     };
 
     const series = [
         {
-            type: 'line',
-            curve: 'smooth',
             name: 'Ventas',
             data: [30, 40, 35, 50, 49, 60]
         }
     ];
 
     return (
-        <div className="chart">
-            <Chart options={options} series={series} width="500" />
+        <div className="chart-wrapper" style={{ width: '100%', maxWidth: '500px' }}>
+            <Chart options={options} series={series} type="line" width="100%" height={300} />
         </div>
     );
 };

@@ -7,7 +7,7 @@ const ActionBox = ({ name, number, url, svgName, cardClass, linkTxt }) => {
     const containerClass = `${"small-box " + cardClass}`;
     const image_path = `/${svgName}.svg`;
     return (
-        <div className="col-lg-3 col-6">
+        <div className="col-lg-3 col-md-6 col-12">
             <div className={containerClass}>
                 <div className="inner">
                     <h3>{number}</h3>

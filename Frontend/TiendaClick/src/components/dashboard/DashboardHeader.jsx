@@ -7,18 +7,8 @@ function DashboardHeader() {
   return (
     <header className="app-content-header">
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-6 mb-3">
+        <div className="row mb-3">
             <TitleDropdown currentTitle={title} setTitle={setTitle} />
-          </div>
-          <div className="col-sm-6">
-            <ol className="breadcrumb float-sm-end">
-              <li className="breadcrumb-item">
-                <a href="#">Home</a>
-              </li>
-              <li className="breadcrumb-item active">Dashboard</li>
-            </ol>
-          </div>
         </div>
       </div>
     </header>

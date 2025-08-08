@@ -42,6 +42,7 @@ function Profile() {
                         <button
                             className="btn btn-danger btn-flat"
                             onClick={handleOpen}
+                            style={{marginLeft:"50px"}}
                         >
                             Cerrar sesión
                         </button>

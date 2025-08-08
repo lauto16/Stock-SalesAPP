@@ -4,8 +4,9 @@ import "../../css/auth.css";
 import { useNotifications } from '../../context/NotificationSystem';
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import SideBarBrand from "../sideNav/SideBarBrand"
 
-export default function Login({ onLogin }) {
+export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ export default function Login({ onLogin }) {
         <div className="auth-page">
             <Card className="auth-card">
                 <Card.Header className="auth-card-header">
-                    <h4 className="auth-title">Iniciar sesión</h4>
+                <SideBarBrand />
                 </Card.Header>
                 <Card.Body className="auth-card-body">
                     <Form onSubmit={handleSubmit}>

@@ -130,7 +130,7 @@ export default function Header({
 
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
-        <div className="user-role">&lt;{user?.role}&gt;</div>
+        <div className="user-role"><strong>{user?.role}</strong></div>
       </div>
 
       <div className="btn-group">

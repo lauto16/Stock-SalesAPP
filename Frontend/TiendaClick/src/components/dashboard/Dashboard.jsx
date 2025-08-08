@@ -9,12 +9,16 @@ import Nav from "../sideNav/Nav.jsx";
 import Table from "../crud/Table.jsx";
 import { fetchLowStock } from "../../services/axios.services.js";
 import "../../css/dashboard.css";
+import { useUser } from '../../context/UserContext.jsx'
 
 function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [amount, setAmount] = useState(5);
   const inputRef = useRef(null);
+  const { user } = useUser()
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 850);
+  const [lowStockText, setLowStockText] = useState('Stock menor que')
 
   const columns = [
     { className: "code", key: "code", label: "Código" },
@@ -22,9 +26,26 @@ function Dashboard() {
     { className: "sell-price", key: "sell_price", label: "Precio Venta" },
     { className: "stock", key: "stock", label: "Stock" },
   ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSidebar(window.innerWidth >= 850);
+      if (window.innerWidth <= 500 ) {
+        setLowStockText('Stock <')
+      }
+      else{
+        setLowStockText('Stock menor que')
+
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const get_products = async () => {
-      const data = await fetchLowStock({ setLoading, amount });
+      const data = await fetchLowStock({ setLoading, amount }, user.token);
       if (Array.isArray(data)) {
         setProducts(data);
       } else {
@@ -33,7 +54,7 @@ function Dashboard() {
       }
     };
     get_products();
-  }, [amount]);
+  }, [amount, user]);
 
   const handleButtonClick = () => {
     const value_input = inputRef.current?.value;
@@ -45,10 +66,8 @@ function Dashboard() {
   return (
     <>
       <div className="app-wrapper">
-        <Nav />
-
-        <SideBar />
-
+        {showSidebar && <Nav/>}
+        {showSidebar && <SideBar />}
         <main className="flex-grow-1 p-3 content">
           <DashboardHeader />
 
@@ -88,54 +107,58 @@ function Dashboard() {
               />
             </div>
             <div className="row">
-              <div className="card">
-                <div className="card-header">
-                  {" "}
-                  <h4> Ventas</h4>
-                </div>
-                <SalesChart />
-              </div>
-              <div className="card card-stock">
-                <div className="card-header stock-header">
-                  <Link
-                    to={"/inventory/"}
-                    className="text-decoration-none text-dark"
-                  >
-                    <h5>Stock Faltante</h5>
-                  </Link>
-
-                  <div className="input-group w-auto">
-                    <span className="input-group-text user-select-none">
-                      Stock menor que
-                    </span>
-                    <input
-                      type="number"
-                      min="0"
-                      defaultValue={amount}
-                      className="form-control"
-                      ref={inputRef}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleButtonClick();
-                      }}
-                    />
-                    <button
-                      className="btn btn-outline-success"
-                      onClick={handleButtonClick}
-                      type="button"
-                    >
-                      <i className="bi bi-search"></i>
-                    </button>
+              <div className="col-xxl-6 col-12 mb-3">
+                <div className="card h-100">
+                  <div className="card-header">
+                    <h4>Ventas</h4>
                   </div>
+                  <SalesChart />
                 </div>
-                <div className="scrollable-card-body">
-                  <Table items={products} loading={loading} columns={columns} />
+              </div>
+
+              <div className="col-xxl-6 col-12 mb-3">
+                <div className="card h-100 card-stock">
+                  <div className="card-header stock-header">
+                  <Link
+                        to={"/inventory/"}
+                        className="text-decoration-none text-dark"
+                      >
+                        <h5>Stock Faltante</h5>
+                      </Link>
+                  </div>
+                  <div className="scrollable-card-body">
+                    <div className="card-header stock-header">
+                      <div className="input-group w-auto">
+                        <span className="input-group-text user-select-none">
+                          {lowStockText}
+                        </span>
+                        <input
+                          type="number"
+                          min="0"
+                          defaultValue={amount}
+                          className="form-control"
+                          ref={inputRef}
+                          style={{padding: 0, textAlign: "center", textJustify: "center"}}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleButtonClick();
+                          }}
+                        />
+                        <button
+                          className="btn btn-outline-success"
+                          onClick={handleButtonClick}
+                          type="button"
+                        >
+                          <i className="bi bi-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <Table items={products} loading={loading} columns={columns} />
+                  </div>
                 </div>
               </div>
             </div>
           </section>
         </main>
-
-        <Footer />
       </div>
     </>
   );

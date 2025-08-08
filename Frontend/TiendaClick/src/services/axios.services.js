@@ -169,7 +169,7 @@ async function deleteProductByCode(code, token) {
   }
 }
 
-async function fetchLowStock({ setLoading, amount = 100, token }) {
+async function fetchLowStock({ setLoading, amount = 100 }, token) {
   try {
     setLoading(true);
     const response = await axios.get(`${apiUrl}products/low-stock/${amount}/`, authHeader(token));

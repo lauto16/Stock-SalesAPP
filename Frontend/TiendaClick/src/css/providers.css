@@ -1,5 +1,4 @@
 .providers-header {
-    /* d-flex justify-content-center align-items-center mb-3 flex-wrap search-pag-container */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,4 +17,34 @@
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 780px) {
+
+    .col-address {
+        display: none;
+    }
+
+    .table-container-providers table th,
+    .table-container-providers table td {
+        font-size: 0.6rem;
+    }
+
+    .page-link {
+        font-size: 0.75rem;
+        padding: 0.10rem 0.2rem;
+        min-width: 20px;
+        height: 20px;
+        line-height: 1.2;
+        border-radius: 4px;
+    }
+}
+
+@media (max-width: 450px){
+    .col-email{
+        display: none;
+    }
+    .responsive-hide {
+        display: none !important;
+    }
 }
