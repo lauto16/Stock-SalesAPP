@@ -11,6 +11,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
+import { useNotifications } from '../../context/NotificationSystem';
 
 export default function InventoryPage() {
 
@@ -32,6 +33,8 @@ export default function InventoryPage() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const [showOfferModal, setShowOfferModal] = useState(false);
+    const { addNotification } = useNotifications();
+
     const { user } = useUser();
 
     // States for update prices modal
@@ -188,16 +191,23 @@ export default function InventoryPage() {
 
         if (result.success) {
             addNotification("success", "Precios actualizados correctamente");
+            setShowConfirmation(false);
+            reloadPageOne()
         } else {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
+            setShowConfirmation(false);
         }
-
-        setShowConfirmation(false);
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 200);
-    };
+    }
+    const reloadPageOne = () => {
+        if (currentPage === 1) {
+            setCurrentPage(2);
+            setTimeout(() => setCurrentPage(1), 50);
+        } else {
+            setCurrentPage(1);
+        }
+        setLoading(true);
+        setTimeout(() => setLoading(false), 0);
+    }
 
     useEffect(() => {
         setIsSomethingSelected(selectedItems.size > 0);
@@ -286,6 +296,7 @@ export default function InventoryPage() {
                 handleClose={() => setShowProductInfo(false)}
                 product={selectedProduct}
                 unselectAll={unselectAll}
+                reloadPageOne={reloadPageOne}
             />
 
             <div className="container container-modified">

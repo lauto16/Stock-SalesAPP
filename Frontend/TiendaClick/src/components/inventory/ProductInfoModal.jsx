@@ -7,7 +7,7 @@ import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 import { useUser } from "../../context/UserContext";
 
-export default function ProductInfoModal({ show, handleClose, product, unselectAll }) {
+export default function ProductInfoModal({ show, handleClose, product, unselectAll, reloadPageOne }) {
     const {
         register,
         handleSubmit,
@@ -73,10 +73,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 addNotification("success", "Producto actualizado con éxito");
                 unselectAll();
                 handleClose();
-    
-                setTimeout(() => {
-                    window.location.reload();
-                }, 200);
+                reloadPageOne()
             } else {
                 addNotification("error", error || "Error al actualizar el producto");
             }

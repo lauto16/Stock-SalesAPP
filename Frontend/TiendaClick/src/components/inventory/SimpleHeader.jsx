@@ -8,7 +8,7 @@ export default function SimpleHeader({
     <div className="d-flex justify-content-between align-items-center header">
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
-        <div className="user-role">&lt;{userRole}&gt;</div>
+        <div className="user-role"><strong>{userRole}</strong></div>
       </div>
     </div>
   );

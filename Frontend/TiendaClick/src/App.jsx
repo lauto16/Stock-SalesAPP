@@ -7,6 +7,7 @@ import Login from './components/auth/login.jsx';
 import Providers from './components/providers/Providers.jsx';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import ProductBlame from './components/blame/ProductBlame.jsx'
+import PinManager from './components/pin_manager/PinManager.jsx';
 
 function App() {
   return (
@@ -40,12 +41,18 @@ function App() {
           }
         />
         <Route
-        path="/product-blame/"
-        element={
-          <PrivateRoute>
-            <ProductBlame/>
-          </PrivateRoute>
-        }
+          path="/product-blame/"
+          element={
+            <PrivateRoute>
+              <ProductBlame />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/pin-manager/"
+          element={
+              <PinManager />
+          }
         />
       </Routes>
     </Router>

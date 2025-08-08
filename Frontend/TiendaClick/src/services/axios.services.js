@@ -2,6 +2,24 @@ import axios from 'axios';
 
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
+async function verifyPin(pin, token) {
+  /*try {
+    const response = await axios.post("https://tuapi.com/verificar-pin", {
+      pin,
+    });
+
+    if (response.status === 200 && response.data.success) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error verificando PIN:", error);
+    return false;
+  }*/
+ 
+ if(pin === '1234'){ return {success: true}}else{return {success: false}} 
+}
+
 async function fetchBlames(page = 1, setLoading, token) {
   try {
     setLoading(true);
@@ -258,5 +276,6 @@ export {
   fetchUserRoleNameSp,
   deleteProviderById,
   fetchSearchBlames,
-  fetchBlames
+  fetchBlames,
+  verifyPin
 };
