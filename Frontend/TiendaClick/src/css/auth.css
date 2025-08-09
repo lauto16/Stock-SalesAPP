@@ -12,7 +12,7 @@
     width: 100%;
     max-width: 400px;
     border: none;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .auth-card-header {
@@ -36,3 +36,22 @@
 .auth-submit-btn:disabled {
     opacity: 0.6;
 }
+
+
+.no-sidebar {
+    display: block !important;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header-container {
+    width: 100%;
+    background: transparent;
+}
+
+.app-content {
+    min-height: calc(100vh - 80px);
+    padding-top: 40px;
+    padding-bottom: 20px;
+  }

@@ -3,9 +3,9 @@ import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext.jsx";
 
-const options = [
+const options_other = [
   { label: "Inventario", path: "/inventory/" },
-  { label: "Registro de cambios", path: "/product-blame/"},
+  { label: "Registro de cambios", path: "/product-blame/" },
   { label: "Ventas", path: "/sales/" },
   { label: "Dashboard", path: "/dashboard/" },
   { label: "Proveedores", path: "/providers/" },
@@ -13,9 +13,23 @@ const options = [
   { label: "Cerrar sesión", path: null },
 ];
 
-export default function TitleDropdown({ currentTitle, setTitle }) {
+const options_dashboard = [
+  { label: "Inventario", path: "/inventory/" },
+  { label: "Registro de cambios", path: "/product-blame/" },
+  { label: "Ventas", path: "/sales/" },
+  { label: "Dashboard", path: "/dashboard/" },
+  { label: "Proveedores", path: "/providers/" },
+  { label: "Ofertas", path: "/offers/" },
+  { label: "Crear nuevo usuario", path: '/sign-up/' },
+  { label: "Cerrar sesión", path: null },
+]
+
+export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
   const navigate = useNavigate();
   const { logout } = useUser();
+
+  const options = isDashboard ? options_dashboard : options_other
+
 
   const handleSelect = (label, path) => {
     if (label === "Cerrar sesión") {

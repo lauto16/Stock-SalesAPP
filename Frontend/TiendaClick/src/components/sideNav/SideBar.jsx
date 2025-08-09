@@ -32,9 +32,11 @@ function SideBar({ onLogout }) {
                                 <li className="nav-header">MENÚ PRINCIPAL</li>
                                 <NavLink name="Proveedores" url="/providers" />
                                 <NavLink name="Inventario" url="/inventory" />
-                                <NavLink name="Cambios en productos" url="/product-blame/" />
+                                <NavLink name="Cambios en productos" url="/product-blame" />
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                                 <NavLink name="Informe de Ventas" />
+                                <li className="nav-header">USUARIOS</li>
+                                <NavLink name="Crear nuevo usuario" url="/sign-up" />
                             </ul>
                         </nav>
                     </div>

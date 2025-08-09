@@ -69,10 +69,10 @@ function Dashboard() {
         {showSidebar && <Nav/>}
         {showSidebar && <SideBar />}
         <main className="flex-grow-1 p-3 content">
-          <DashboardHeader />
+          <DashboardHeader title={"DASHBOARD"} isDashboard={true}/>
 
           <section className="app-content container-fluid  mb-4">
-            <div className="row">
+            <div className="row mt-2">
               <ActionBox
                 name="Ventas"
                 number="150"

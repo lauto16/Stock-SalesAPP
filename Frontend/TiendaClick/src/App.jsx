@@ -8,6 +8,7 @@ import Providers from './components/providers/Providers.jsx';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import ProductBlame from './components/blame/ProductBlame.jsx'
 import PinManager from './components/pin_manager/PinManager.jsx';
+import SignUp from './components/auth/SignUp.jsx';
 
 function App() {
   return (
@@ -51,7 +52,15 @@ function App() {
         <Route
           path="/pin-manager/"
           element={
-              <PinManager />
+            <PinManager />
+          }
+        />
+        <Route
+          path='/sign-up/'
+          element={
+            <PrivateRoute>
+              <SignUp />
+            </PrivateRoute>
           }
         />
       </Routes>

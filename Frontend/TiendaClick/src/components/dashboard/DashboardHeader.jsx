@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import TitleDropdown from "../global/TitleDropdown";
 
-function DashboardHeader() {
-  const [title, setTitle] = useState("Dashboard");
-
+function DashboardHeader({ title, isDashboard }) {
+  const [title_in, setTitleIn] = useState(title)
   return (
     <header className="app-content-header">
       <div className="container-fluid">
-        <div className="row mb-3">
-            <TitleDropdown currentTitle={title} setTitle={setTitle} />
+        <div className="row">
+          <TitleDropdown currentTitle={title_in} setTitle={setTitleIn} isDashboard={isDashboard} />
         </div>
       </div>
     </header>
