@@ -11,7 +11,6 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
 import addFormConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
-import itemInfoConfig from "./forms/useItemInfo.js"
 
 export default function InventoryPage() {
 
@@ -42,12 +41,6 @@ export default function InventoryPage() {
     //addItems Modal
     const addItemFormConfig = {
         config: addFormConfig,
-        handleSubmit: addProduct
-    }
-
-    //InfoItems Modal
-    const infoFormConfig = {
-        config: itemInfoConfig,
         handleSubmit: addProduct
     }
 
@@ -283,12 +276,12 @@ export default function InventoryPage() {
                 includeDiscounted={includeDiscounted}
                 setIncludeDiscounted={setIncludeDiscounted}
             />
-            {/* <ProductInfoModal
+            <ProductInfoModal
                 show={showProductInfo}
                 handleClose={() => setShowProductInfo(false)}
                 product={selectedProduct}
                 unselectAll={unselectAll}
-            /> */}
+            />
 
             <div className="container container-modified">
                 {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
@@ -306,7 +299,6 @@ export default function InventoryPage() {
                     addFormConfig={addItemFormConfig}
                     deleteItem={deleteProductByCode}
                     selectedItemsColumns={importantColumns}
-                    infoFormConfig={infoFormConfig}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

@@ -125,9 +125,14 @@ export default function Header({
         message={messageDelete}
         onSendForm={handleDelete}
       />
-      {/* Items Info Modal */}
-      <AddItemModal show={showInfo} handleClose={closeInfo} formConfig={infoFormConfig.config} onSubmitHandler={infoFormConfig.handleSubmit} />
+      {/* Items Info Modal if onExtraInfo is not defined*/}
 
+      {!onExtraInfo ? <AddItemModal show={showInfo}
+        handleClose={closeInfo}
+        formConfig={infoFormConfig?.config}
+        onSubmitHandler={infoFormConfig?.handleSubmit}
+        selectedItems={selectedItems} /> : <></>
+      }
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
         <div className="user-role"><strong>{user?.role}</strong></div>
@@ -186,7 +191,10 @@ export default function Header({
           type="button"
           className="btn btn-primary more-info"
           title="Información adicional"
-          onClick={openInfo}
+          //if onExtraInfo Prop is defined, use a specific modal 
+          //defined on the parent component, otherwise openInfo Modal
+          //with the provided configFile 
+          onClick={onExtraInfo ?? openInfo}
           disabled={selectedItems.size !== 1}
         >
           <i className="bi bi-info-circle-fill"></i>

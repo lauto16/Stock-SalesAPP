@@ -3,7 +3,12 @@ import Input from './Input.jsx'
 import { useAddItemForm } from './hooks/useAddItemForm.js'
 
 
-export default function AddItemModal({ show, handleClose, formConfig, onUseEffect, onSubmitHandler }) {
+export default function AddItemModal({ show,
+    handleClose,
+    formConfig,
+    onUseEffect,
+    onSubmitHandler,
+    selectedItems }) {
 
     const {
         register,
@@ -12,9 +17,10 @@ export default function AddItemModal({ show, handleClose, formConfig, onUseEffec
         watch,
         errors,
         onSubmit,
+        reset
     } = useAddItemForm({ onSubmitHandler, handleClose, onUseEffect });
-    const { FIELDS, title } = formConfig(watch)
-
+    const { FIELDS, title } = formConfig(watch, selectedItems ?? undefined);
+    // reset(FIELDS.map((field) => { field.name })
     return (
         <Modal
             show={show}
@@ -34,6 +40,7 @@ export default function AddItemModal({ show, handleClose, formConfig, onUseEffec
 
                         {FIELDS.map((field, index) => (
                             <Input field={field}
+                                reset={reset}
                                 register={register}
                                 control={control}
                                 errors={errors}
