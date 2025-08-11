@@ -16,8 +16,8 @@ async function verifyPin(pin, token) {
     console.error("Error verificando PIN:", error);
     return false;
   }*/
- 
- if(pin === '1234'){ return {success: true}}else{return {success: false}} 
+
+  if (pin === '1234') { return { success: true } } else { return { success: false } }
 }
 
 async function fetchBlames(page = 1, setLoading, token) {
@@ -217,6 +217,18 @@ async function updateProduct(oldCode, updatedData, token) {
     return { success: false, error: backendError };
   }
 }
+async function updateProvider(oldCode, updatedData, token) {
+  try {
+    const response = await axios.patch(`${apiUrl}providers/patch-by-code/${oldCode}/`, updatedData, authHeader(token));
+    return {
+      success: response.data?.success ?? false,
+      error: response.data?.error || "",
+    };
+  } catch (error) {
+    const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    return { success: false, error: backendError };
+  }
+}
 
 async function updateSelectedPrices(data, selectedItems, token) {
   try {
@@ -302,5 +314,6 @@ export {
   fetchSearchBlames,
   fetchBlames,
   verifyPin,
+  updateProvider,
   signupUser
 };

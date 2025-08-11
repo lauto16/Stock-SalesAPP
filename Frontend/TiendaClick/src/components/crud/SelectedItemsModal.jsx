@@ -20,38 +20,11 @@ export default function SelectedItemsModal({
     return (
         <Modal show={show} onHide={handleClose} centered size="lg">
             <div style={{ backgroundColor: "rgb(245, 193, 147)", padding: "10px 20px" }}>
-                <h5 className="m-0">Productos Seleccionados</h5>
+                <h5 className="m-0">Items seleccionados</h5>
             </div>
 
             <Modal.Body style={{ backgroundColor: "#f0f0f0", maxHeight: "400px", overflowY: "auto" }}>
 
-                {/* <table className="table table-bordered align-middle">
-                    <thead>
-                        <tr>
-                            {selectedItmesColumns.map((col, index) => (
-                                <th key={index} className={`col-${col.className}`}>{col.label}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {selectedArray.map((item) => (
-                            <tr key={item.code}>
-                                <td>{item.code}</td>
-                                <td>{item.name}</td>
-                                <td>{item.stock}</td>
-                                <td className="text-center">
-                                    <button
-                                        className="btn btn-sm btn-remove"
-                                        onClick={() => handleRemove(item.code)}
-                                        title="Deseleccionar"
-                                    >
-                                        <i className="bi bi-x-lg"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table> */}
                 <table className="table table-bordered align-middle">
                     <thead>
                         <tr>

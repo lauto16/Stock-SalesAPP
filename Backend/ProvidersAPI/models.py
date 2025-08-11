@@ -9,26 +9,34 @@ class Provider(models.Model):
     """
     Represents a single provider
     """
-    name = models.CharField(max_length=100, default='Sin nombre')
-    phone = models.CharField(max_length=20, null=True, blank=True, default='00000')
-    address = models.CharField(max_length=200, blank=True, null=True, default="Sin dirección")
+    name = models.CharField(max_length=100, default='')
+    phone = models.CharField(max_length=20, blank=True,
+                             null=True, default='')
+    address = models.CharField(
+        max_length=200, blank=True, null=True,  default="")
 
-    email = models.EmailField(max_length=200, blank=True, null=True, default="")
+    email = models.EmailField(
+        max_length=200, blank=True, null=True, default="")
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    
-    def save(self, *args, **kwargs) -> None:
-        """
-        Reeimplented Model.save method for creating a BlameAPI.ChangeLog register everytime
-        a Provider is modified.
-        
-        Args:
-        user: (CustomUser)
-        """
+    def save(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        if self.pk:
+
+        if not self.pk:  
+            # Caso: creación
+            if not self.name:  
+                self.name = self._meta.get_field('name').default
+            if not self.phone:
+                self.phone = self._meta.get_field('phone').default
+            if not self.address:
+                self.address = self._meta.get_field('address').default
+            if not self.email:
+                self.email = self._meta.get_field('email').default
+
+        else:
+            # Caso: actualización
             try:
                 old = Provider.objects.get(pk=self.pk)
                 tracked_fields = ['name', 'phone', 'address', 'email']

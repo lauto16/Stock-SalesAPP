@@ -72,7 +72,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 },
                 user.token
             );
-    
+
             if (success) {
                 addNotification("success", "Producto actualizado con éxito");
                 unselectAll();
