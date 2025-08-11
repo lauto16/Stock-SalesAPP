@@ -6,10 +6,9 @@ import { useAddItemForm } from './hooks/useAddItemForm.js'
 export default function AddItemModal({ show,
     handleClose,
     formConfig,
-    onUseEffect,
-    onSubmitHandler,
     selectedItems }) {
-
+    if (!formConfig) return
+    const { onUseEffect, onSubmitHandler } = formConfig();
     const {
         register,
         handleSubmit,

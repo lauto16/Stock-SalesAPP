@@ -92,7 +92,7 @@ const addItemConfig = (watch) => {
     return {
         title,
         FIELDS,
-        addItem: addProduct,
+        onSubmitHandler: addProduct,
     }
 }
 export default addItemConfig

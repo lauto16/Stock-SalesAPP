@@ -27,7 +27,6 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defau
 
     const onSubmit = async (data) => {
         if (!data) return;
-
         try {
             await onSubmitHandler(data, token);
             handleBeforeClose("success", "Item agregado con éxito", handleClose);

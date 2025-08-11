@@ -116,7 +116,7 @@ export default function Header({
         columns={selectedItemsColumns}
       />
       {/* opens a form to add an Item */}
-      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
+      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig} />
       {/* enables to delete a set of Items */}
       <ConfirmationModal
         show={showDelModal}
@@ -129,8 +129,7 @@ export default function Header({
 
       {!onExtraInfo ? <AddItemModal show={showInfo}
         handleClose={closeInfo}
-        formConfig={infoFormConfig?.config}
-        onSubmitHandler={infoFormConfig?.handleSubmit}
+        formConfig={infoFormConfig}
         selectedItems={selectedItems} /> : <></>
       }
       <div className="d-flex align-items-center">

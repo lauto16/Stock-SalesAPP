@@ -5,7 +5,7 @@ import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
 import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
-import { fetchProviders_by_page, addProvider, deleteProviderById } from "../../services/axios.services.js";
+import { fetchProviders_by_page, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 
 // import ItemInfoModal from "./ItemInfoModal.jsx"
@@ -27,16 +27,6 @@ function Providers() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
 
-    //AddProvider
-    const addItemConfig = {
-        config: addProviderConfig,
-        handleSubmit: addProvider
-    }
-    //AddProvider
-    const onExtraInfoConfig = {
-        config: itemInfo,
-        handleSubmit: addProvider
-    }
 
 
     const PAGE_SIZE = 10;
@@ -156,10 +146,10 @@ function Providers() {
                         user={user}
                         items={providers}
                         onViewSelected={() => setShowSelectedModal(true)}
-                        addFormConfig={addItemConfig}
+                        addFormConfig={addProviderConfig}
                         deleteItem={deleteProviderById}
                         selectedItemsColumns={importantColumns}
-                        infoFormConfig={onExtraInfoConfig}
+                        infoFormConfig={itemInfo}
                     />
 
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

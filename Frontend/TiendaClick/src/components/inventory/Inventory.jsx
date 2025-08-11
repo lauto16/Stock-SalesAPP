@@ -9,7 +9,7 @@ import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
-import addFormConfig from "./forms/useAddItemsConfig.jsx";
+import addItemConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 
 export default function InventoryPage() {
@@ -37,12 +37,6 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
-
-    //addItems Modal
-    const addItemFormConfig = {
-        config: addFormConfig,
-        handleSubmit: addProduct
-    }
 
     const PAGE_SIZE = 10;
     //table columns
@@ -296,7 +290,7 @@ export default function InventoryPage() {
                     user={user}
                     onExtraInfo={onExtraInfo}
                     extraButtons={EXTRABUTTONS}
-                    addFormConfig={addItemFormConfig}
+                    addFormConfig={addItemConfig}
                     deleteItem={deleteProductByCode}
                     selectedItemsColumns={importantColumns}
                 />

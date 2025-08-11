@@ -1,6 +1,8 @@
-import { addProduct } from "../../../services/axios.services.js";
+import { updateProvider } from "../../../services/axios.services.js";
 const itemInfo = (watch, providersSeleceted) => {
-
+    //gets the 'provider selected' used to show the values(extra Info), 
+    // getting the first value from the map of selected items, i.e: provider={name:name, phone:1234, ...}
+    if (!providersSeleceted) return { title: '', FIELDS: [{}], backendCallback: null }
     const provider = providersSeleceted.entries().next().value?.[1]
     const TYPES = {
         INPUT: 'input',
@@ -11,7 +13,7 @@ const itemInfo = (watch, providersSeleceted) => {
     }
 
 
-    const title = 'Informacion del producto'
+    const title = 'Informacion del producto (editar)'
     const FIELDS = [
         {
             name: 'name',
@@ -52,7 +54,7 @@ const itemInfo = (watch, providersSeleceted) => {
     return {
         title,
         FIELDS,
-        addItem: addProduct,
+        onSubmitHandler: updateProvider,
     }
 }
 export default itemInfo

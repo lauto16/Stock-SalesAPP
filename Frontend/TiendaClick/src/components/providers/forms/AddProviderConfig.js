@@ -3,10 +3,6 @@ import { useProviders } from "../../providers/hooks/useProviders.js";
 import { useUser } from "../../../context/UserContext.jsx";
 import { addProvider } from "../../../services/axios.services.js";
 const addItemConfig = (watch) => {
-    const { user } = useUser();
-    const token = user?.token;
-    const { providers } = useProviders(token)
-
 
     const TYPES = {
         INPUT: 'input',
@@ -33,6 +29,8 @@ const addItemConfig = (watch) => {
             placeholder: 'Teléfono',
             type: TYPES.TEXT,
             errorMsg: '',
+            required: true,
+
         },
         {
             name: 'email',
@@ -57,7 +55,7 @@ const addItemConfig = (watch) => {
     return {
         title,
         FIELDS,
-        addItem: addProvider,
+        onSubmitHandler: addProvider,
     }
 }
 export default addItemConfig
