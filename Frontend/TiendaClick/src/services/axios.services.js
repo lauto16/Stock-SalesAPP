@@ -3,21 +3,13 @@ import axios from 'axios';
 const apiUrl = `http://${window.location.hostname}:8000/api/`;
 
 async function verifyPin(pin, token) {
-  /*try {
-    const response = await axios.post("https://tuapi.com/verificar-pin", {
-      pin,
-    });
-
-    if (response.status === 200 && response.data.success) {
-      return true;
-    }
-    return false;
+  try {
+    const response = await axios.get(`${apiUrl}login/verify-user-pin/${pin}/`, authHeader(token));
+    return {success: response.data?.success === true}
   } catch (error) {
-    console.error("Error verificando PIN:", error);
-    return false;
-  }*/
-
-  if (pin === '1234') { return { success: true } } else { return { success: false } }
+    console.error("Error verificando el PIN:", error);
+    return {success: false};
+  }
 }
 
 async function fetchBlames(page = 1, setLoading, token) {
@@ -56,7 +48,6 @@ async function loginUser(username, password) {
 }
 
 function logoutUser() {
-  // No hace falta hacer una llamada al backend, simplemente se borra el token del frontend
   return true;
 }
 

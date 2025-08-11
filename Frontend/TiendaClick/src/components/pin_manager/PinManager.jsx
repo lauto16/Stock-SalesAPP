@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { usePin } from "../../context/PinContext";
+import { useNotifications } from '../../context/NotificationSystem';
 
 export default function PinManager() {
   const [pin, setPin] = useState(["", "", "", ""]);
@@ -9,6 +10,7 @@ export default function PinManager() {
   const { verifyAndSavePin } = usePin();
   const navigate = useNavigate();
   const {user} = useUser()
+  const { addNotification } = useNotifications();
 
   const getRedirectPathByRole = (role) => {
     switch (role) {
@@ -19,6 +21,9 @@ export default function PinManager() {
       case "Vendedor":
         //CAMBIAR A sales CUANDO EXISTA
         return "/inventory";
+      case "Vendedor y Repositor":
+        //CAMBIAR A sales CUANDO EXISTA
+        return "/inventory"
       default:
         return "/";
     }
@@ -29,7 +34,9 @@ export default function PinManager() {
     if (success) {
       const redirectTo = getRedirectPathByRole(user.role);
       navigate(redirectTo);
+      return
     }
+    addNotification("error", "Pin incorrecto.");
   };
 
   const handleChange = (value, index) => {
