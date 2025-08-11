@@ -17,7 +17,8 @@ export default function Header({
   extraButtons = [],
   addFormConfig,
   deleteItem,
-  selectedItemsColumns = [{}]
+  selectedItemsColumns = [{}],
+  infoFormConfig
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -37,6 +38,14 @@ export default function Header({
     closeModal: closeSelect,
   } = useModal()
 
+  //Select Items Modal
+  const {
+    title: titleInfo,
+    show: showInfo,
+    openModal: openInfo,
+    closeModal: closeInfo,
+  } = useModal()
+
 
   //delete logic
   const prepareDelete = () => {
@@ -51,7 +60,7 @@ export default function Header({
     const message = extraCount > 0
       ? `${previewList}\n...y ${extraCount} más.`
       : previewList;
-    openDelModal("Eliminar Productos...", message)
+    openDelModal("Eliminar items seleccionados...", message)
   };
 
   const handleDelete = async () => {
@@ -107,7 +116,7 @@ export default function Header({
         columns={selectedItemsColumns}
       />
       {/* opens a form to add an Item */}
-      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig.config} onSubmitHandler={addFormConfig.handleSubmit} />
+      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig} />
       {/* enables to delete a set of Items */}
       <ConfirmationModal
         show={showDelModal}
@@ -116,6 +125,13 @@ export default function Header({
         message={messageDelete}
         onSendForm={handleDelete}
       />
+      {/* Items Info Modal if onExtraInfo is not defined*/}
+
+      {!onExtraInfo ? <AddItemModal show={showInfo}
+        handleClose={closeInfo}
+        formConfig={infoFormConfig}
+        selectedItems={selectedItems} /> : <></>
+      }
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />
         <div className="user-role"><strong>{user?.role}</strong></div>
@@ -174,7 +190,10 @@ export default function Header({
           type="button"
           className="btn btn-primary more-info"
           title="Información adicional"
-          onClick={onExtraInfo}
+          //if onExtraInfo Prop is defined, use a specific modal 
+          //defined on the parent component, otherwise openInfo Modal
+          //with the provided configFile 
+          onClick={onExtraInfo ?? openInfo}
           disabled={selectedItems.size !== 1}
         >
           <i className="bi bi-info-circle-fill"></i>

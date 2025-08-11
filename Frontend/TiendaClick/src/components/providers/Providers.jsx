@@ -3,15 +3,16 @@ import Pagination from "../inventory/Pagination.jsx";
 import Search from "../inventory/Search.jsx";
 import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
-import { fetchProviders_by_page, fetchProvidersById, addProvider, deleteProviderById } from "../../services/axios.services.js";
+import { fetchProviders_by_page, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
 
 // import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
+import itemInfo from "./forms/providerExtraInfoConfig.js";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
@@ -22,22 +23,10 @@ function Providers() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const { user } = useUser();
-    const [showModal, setShowModal] = useState(false);
-    const [allSearchResults, setAllSearchResults] = useState([]);
-    const { addNotification } = useNotifications();
-    const [showProductInfo, setShowProductInfo] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
-    const [action, setAction] = useState('')
 
-    //AddProvider
-    const addItemConfig = {
-        config: addProviderConfig,
-        handleSubmit: addProvider
-    }
 
 
     const PAGE_SIZE = 10;
@@ -133,86 +122,60 @@ function Providers() {
         }
     };
 
-    const onExtraInfo = async () => {
-        const firstSelected = Array.from(selectedItems.values())[0];
-
-        if (selectedItems.size === 0) {
-            addNotification("warning", "Selecciona un producto para ver su información.");
-            return;
-        }
-
-        if (!firstSelected || !firstSelected.code) {
-            addNotification("warning", "Selecciona un producto válido para ver su información.");
-            return;
-        }
-
-        try {
-            const data = await fetchProvidersById(firstSelected.id);
-            setSelectedProduct({
-                ...data,
-            });
-
-            setShowProductInfo(true);
-        } catch (error) {
-            addNotification("error", "No se pudo obtener la información del producto.");
-            console.error("Error al obtener producto:", error);
-        }
-    };
-
     return (
-            <div className="d-flex justify-content-center mt-5">
-                <div className="container">
+        <div className="d-flex justify-content-center mt-5">
+            <div className="container">
 
-                    <ConfirmationModal
-                        show={showConfirmation}
-                        onHide={handleHideConfirmation}
-                        title={confirmationTitle}
-                        message={confirmationText}
-                        onSendForm={handleCreateProvider}
-                        handleClose={handleHideConfirmation}
+                <ConfirmationModal
+                    show={showConfirmation}
+                    onHide={handleHideConfirmation}
+                    title={confirmationTitle}
+                    message={confirmationText}
+                    onSendForm={handleCreateProvider}
+                    handleClose={handleHideConfirmation}
+                />
+
+                <div className="table-container-providers">
+
+                    <Header
+                        title={"PROVEEDORES"}
+                        selectedItems={selectedItems}
+                        isSomethingSelected={isSomethingSelected}
+                        setSelectedItems={setSelectedItems}
+
+                        user={user}
+                        items={providers}
+                        onViewSelected={() => setShowSelectedModal(true)}
+                        addFormConfig={addProviderConfig}
+                        deleteItem={deleteProviderById}
+                        selectedItemsColumns={importantColumns}
+                        infoFormConfig={itemInfo}
                     />
 
-                    <div className="table-container-providers">
+                    <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
 
-                        <Header
-                            title={"PROVEEDORES"}
-                            selectedItems={selectedItems}
-                            isSomethingSelected={isSomethingSelected}
-                            setSelectedItems={setSelectedItems}
-
-                            user={user}
-                            items={providers}
-                            onExtraInfo={onExtraInfo}
-                            onViewSelected={() => setShowSelectedModal(true)}
-                            addFormConfig={addItemConfig}
-                            deleteItem={deleteProviderById}
-                            selectedItemsColumns={importantColumns}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
                         />
 
-                        <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
-
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                            />
-
-                            <div className="search-wrapper">
-                                <Search />
-                            </div>
+                        <div className="search-wrapper">
+                            <Search />
                         </div>
-                        <Table items={providers}
-                            columns={columns}
-                            loading={loading}
-                            setLoading={setLoading}
-                            selectedItems={selectedItems}
-                            setSelectedItems={setSelectedItems}
-                            pkName={'id'}
-                        />
-
                     </div>
+                    <Table items={providers}
+                        columns={columns}
+                        loading={loading}
+                        setLoading={setLoading}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        pkName={'id'}
+                    />
+
                 </div>
             </div>
+        </div>
     );
 }
 export default Providers;

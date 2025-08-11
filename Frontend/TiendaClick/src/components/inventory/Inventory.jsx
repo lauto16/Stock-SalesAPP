@@ -9,7 +9,7 @@ import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
-import addFormConfig from "./forms/useAddItemsConfig.jsx";
+import addItemConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 
@@ -20,14 +20,12 @@ export default function InventoryPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
-    const [showModal, setShowModal] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const [isSearching, setIsSearching] = useState(false);
     const [allSearchResults, setAllSearchResults] = useState([]);
     const [showProductInfo, setShowProductInfo] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [showPriceUpdateModal, setShowPriceUpdateModal] = useState(false)
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationText, setConfirmationText] = useState('')
@@ -42,13 +40,6 @@ export default function InventoryPage() {
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
     const [includeCombos, setIncludeCombos] = useState(false);
-    //addItems
-
-
-    const addItemConfig = {
-        config: addFormConfig,
-        handleSubmit: addProduct
-    }
 
     const PAGE_SIZE = 10;
     //table columns
@@ -67,8 +58,6 @@ export default function InventoryPage() {
         { className: "name", key: "name", label: 'Nombre' },
         { className: "stock", key: "stock", label: 'Stock' },
     ];
-    const handleOpen = () => setShowModal(true);
-    const handleGoToSales = () => { };
     const handleShowConfirmation = () => setShowConfirmation(true);
     const handleHideConfirmation = () => setShowConfirmation(false);
 
@@ -311,7 +300,6 @@ export default function InventoryPage() {
                     items={items}
                     user={user}
                     onExtraInfo={onExtraInfo}
-                    onViewSelected={() => setShowSelectedModal(true)}
                     extraButtons={EXTRABUTTONS}
                     addFormConfig={addItemConfig}
                     deleteItem={deleteProductByCode}

@@ -75,7 +75,7 @@ const addItemConfig = (watch) => {
             label: 'Porcentaje de ganancia',
             placeholder: 'Porcentaje de ganancia',
             type: TYPES.INPUT_DISABLED,
-            defaultValue: `${calculateProfitMargin(watch)} %`,
+            defaultValue: `${calculateProfitMargin()} %`,
             style: { color: Number(calculateProfitMargin()) <= 0 ? "#dc3545" : "#28a792" },
         },
         {
@@ -92,7 +92,7 @@ const addItemConfig = (watch) => {
     return {
         title,
         FIELDS,
-        addItem: addProduct,
+        onSubmitHandler: addProduct,
     }
 }
 export default addItemConfig

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useProviders } from "../../providers/hooks/useProviders.js";
-import { useUser } from "../../../context/UserContext.jsx";
-import { addProvider } from "../../../services/axios.services.js";
-const addItemConfig = (watch) => {
-
+import { updateProvider } from "../../../services/axios.services.js";
+const itemInfo = (watch, providersSeleceted) => {
+    //gets the 'provider selected' used to show the values(extra Info), 
+    // getting the first value from the map of selected items, i.e: provider={name:name, phone:1234, ...}
+    if (!providersSeleceted) return { title: '', FIELDS: [{}], backendCallback: null }
+    const provider = providersSeleceted.entries().next().value?.[1]
     const TYPES = {
         INPUT: 'input',
         SELECT: 'select',
@@ -12,31 +12,31 @@ const addItemConfig = (watch) => {
         NUMBER: 'number'
     }
 
-    const title = 'Añadir Nuevo Proveedor'
+
+    const title = 'Informacion del producto (editar)'
     const FIELDS = [
         {
             name: 'name',
             label: 'Nombre',
             icon: 'bi-person',
-            placeholder: 'Nombre',
             type: TYPES.TEXT,
+            defaultValue: provider?.name,
             required: true,
         },
         {
             name: 'phone',
             label: 'Teléfono',
             icon: 'bi-telephone',
-            placeholder: 'Teléfono',
+            defaultValue: provider?.phone,
             type: TYPES.TEXT,
             errorMsg: '',
-            required: true,
-
         },
         {
             name: 'email',
             label: 'Mail',
             icon: 'bi-envelope',
-            placeholder: 'Ingrese Email...',
+            defaultValue: provider?.email,
+
             type: TYPES.TEXT,
             required: false,
             errorMsg: '',
@@ -45,17 +45,16 @@ const addItemConfig = (watch) => {
             name: 'address',
             label: 'Dirección',
             icon: 'bi-geo-alt',
-            placeholder: 'Ingrese Dirección...',
+            defaultValue: provider?.address,
             type: TYPES.TEXT,
             required: false,
             errorMsg: '',
         }
     ]
-
     return {
         title,
         FIELDS,
-        onSubmitHandler: addProvider,
+        onSubmitHandler: updateProvider,
     }
 }
-export default addItemConfig
+export default itemInfo

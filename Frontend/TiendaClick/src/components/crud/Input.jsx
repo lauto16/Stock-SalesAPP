@@ -1,15 +1,25 @@
-import React from "react";
+import { useEffect } from "react";
 import { Col, Form } from "react-bootstrap";
 import Select from "react-select";
 import { Controller } from "react-hook-form";
 import CustomInput from "./CustomInput";
 
-export default function Input({ field, register, control, errors, index }) {
+export default function Input({ field, register, control, errors, index, reset }) {
+
+    useEffect(() => {
+        if (field.defaultValue !== undefined && field.defaultValue !== null) {
+            reset(prev => ({
+                ...prev,
+                [field.name]: field.defaultValue
+            }));
+        }
+    }, [field.defaultValue, field.name, reset]);
+
     switch (field.type) {
         case 'select':
             return (
                 <Col md={6} key={index} className="d-flex flex-column">
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-1">
                         <Form.Label>{field.label}</Form.Label>
                         <Controller
                             name={field.name}
@@ -52,7 +62,7 @@ export default function Input({ field, register, control, errors, index }) {
         case 'input_disabled':
             return (
                 <Col md={6} key={index} className="d-flex flex-column">
-                    <Form.Group className="mb-3 w-100">
+                    <Form.Group className="mb-1">
                         <Form.Label>{field.label}</Form.Label>
                         <div className="input-group">
                             <span className="input-group-text bg-white">%</span>
@@ -73,11 +83,11 @@ export default function Input({ field, register, control, errors, index }) {
                         label={field.label}
                         icon={field.icon}
                         type={field.type}
-                        value={field.defaultValue}
+
                         placeholder={field.placeholder}
                         register={register(field.name, {
                             required: field.required,
-                            valueAsNumber: field.valueAsNumber,
+                            valueAsNumber: field.valueAsNumber
                         })}
                         step={field.step}
                     />
