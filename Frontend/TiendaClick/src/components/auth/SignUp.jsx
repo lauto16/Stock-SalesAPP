@@ -7,9 +7,11 @@ import { useUser } from "../../context/UserContext";
 import SideBar from "../sideNav/SideBar";
 import SideBarBrand from "../sideNav/SideBarBrand";
 import DashboardHeader from "../dashboard/DashboardHeader"
+import { signupUser } from "../../services/axios.services"
+
 
 export default function SignUp() {
-    const [nombre, setNombre] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [pin, setPin] = useState("");
     const [rol, setRol] = useState("Vendedor");
@@ -21,7 +23,14 @@ export default function SignUp() {
 
     const { addNotification } = useNotifications();
     const navigate = useNavigate();
-    const { registerUser } = useUser();
+    const { user } = useUser();
+
+    const roleMap = {
+        "Administrador": "administrator",
+        "Repositor": "stocker",
+        "Vendedor": "salesperson",
+        "Vendedor y Repositor": "salesperson_stocker"
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,7 +41,17 @@ export default function SignUp() {
         }
 
         setLoading(true);
-        const result = await registerUser({ nombre, password, pin, rol });
+
+        const result = await signupUser(
+            {
+                username: username,
+                password: password,
+                pin: pin,
+                role: roleMap[rol]
+            },
+            user.token
+        );
+
         setLoading(false);
 
         if (!result.success) {
@@ -56,7 +75,7 @@ export default function SignUp() {
         <div className={`app-wrapper ${!showSidebar ? "no-sidebar" : ""}`}>
             {/* Contenedor del header */}
             <div className="header-container text-center mt-2">
-                <DashboardHeader title={"CREAR NUEVO USUARIO"} isDashboard={false}/>
+                <DashboardHeader title={"CREAR NUEVO USUARIO"} isDashboard={false} />
             </div>
 
             {showSidebar && <SideBar />}
@@ -75,8 +94,8 @@ export default function SignUp() {
                                     <Form.Control
                                         type="text"
                                         placeholder="Ingresá el nombre"
-                                        value={nombre}
-                                        onChange={(e) => setNombre(e.target.value)}
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                         required
                                     />
                                 </Form.Group>

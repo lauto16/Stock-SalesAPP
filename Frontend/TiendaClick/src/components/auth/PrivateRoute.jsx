@@ -9,7 +9,7 @@ export default function PrivateRoute({ children }) {
 
   if (!user) return <Navigate to="/login/" replace />;
 
-  if (checking) return null; // o <Loader />
+  if (checking) return null;
 
   const allowWithoutPin = ["/pin-manager"];
 

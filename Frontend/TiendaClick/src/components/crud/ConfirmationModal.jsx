@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-export default function ConfirmationModal({ show, handleClose, title, message, onSendForm }) {
+export default function ConfirmationModal({ show, handleClose, title, message, onSendForm, isSending }) {
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -15,7 +14,7 @@ export default function ConfirmationModal({ show, handleClose, title, message, o
         <Button className="mt-2 btn-secondary" onClick={handleClose}>
           Cancelar
         </Button>
-        <Button onClick={onSendForm} className="mt-2 send-form-button btn btn-success">
+        <Button onClick={onSendForm} disabled={isSending} className="mt-2 send-form-button btn btn-success">
           Aceptar
         </Button>
       </Modal.Footer>

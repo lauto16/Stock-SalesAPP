@@ -25,6 +25,7 @@ export default function CreateOfferModal({
         formState: { errors },
     } = useForm();
 
+    const [isSending, setIsSending] = useState(false)
     const { addNotification } = useNotifications();
     const [products, setProducts] = useState([]);
     const [endDate, setEndDate] = useState(null);
@@ -35,6 +36,8 @@ export default function CreateOfferModal({
         handleClose();
         if (type === 'success') {
             reset();
+            setEndDate(null);
+            setValue("endDate", null);
         }
         addNotification(type, message);
     };
@@ -65,12 +68,12 @@ export default function CreateOfferModal({
             products: Array.from(selectedItems.keys()),
         };
     
-        console.log("Enviando oferta:", data);
-    
+        setIsSending(true)
         addOffer(data.name, data.endDate, data.percentage, data.products, user.token)
             .then(() => handleBeforeClose('success', 'Oferta agregada con éxito'))
             .catch((err) => handleBeforeClose('error', err.message));
-    
+        
+        setIsSending(false)
         handleClose();
     };
     
@@ -206,7 +209,7 @@ export default function CreateOfferModal({
                 </Modal.Body>
 
                 <Modal.Footer style={{ backgroundColor: "#f0f0f0" }}>
-                    <button type="submit" className="mt-2 send-form-button btn btn-success">
+                    <button disabled={isSending} type="submit" className="mt-2 send-form-button btn btn-success">
                         Crear oferta
                     </button>
                 </Modal.Footer>

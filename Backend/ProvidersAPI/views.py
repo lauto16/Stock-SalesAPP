@@ -77,6 +77,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
     """
     ViewSet para operaciones CRUD sobre proveedores con paginación.
     """
+
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
     pagination_class = ProviderPagination
@@ -91,3 +92,41 @@ class ProviderViewSet(viewsets.ModelViewSet):
         providers = Provider.objects.all()
         serializer = self.get_serializer(providers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["patch"], url_path="patch-by-id/(?P<id>[^/.]+)")
+    def patch_by_id(self, request, id=None):
+        """
+        Modifies a certain provider
+        """
+        validate_response = ProviderValidator.validate_data(request)
+        if validate_response["success"] is False:
+            return Response(
+                {"success": False, "error": validate_response["error"] or ""},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        provider = Provider.objects.filter(id=id).first()
+
+        if not provider:
+            return Response(
+                {"success": False, "error": "No se encontro el proveedor a modificar"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ProviderSerializer(provider, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            for attr, value in serializer.validated_data.items():
+                setattr(provider, attr, value)
+
+            provider.updated_at = timezone.now()
+            provider.save(user=request.user)
+
+            return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
+
+        else:
+            print(serializer.errors)
+            return Response(
+                {"success": False, "error": "Error en el servidor"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

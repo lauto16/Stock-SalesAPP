@@ -256,6 +256,30 @@ async function fetchUserRoleNameSp(token) {
   }
 }
 
+async function signupUser({ username, password, role, pin }, token) {
+  try {
+    const response = await axios.post(`${apiUrl}signup/`, {
+      username,
+      password,
+      role,
+      pin
+    }, authHeader(token));
+    
+    return { success: true }
+
+  } catch (error) {
+    if (error.response) {
+      return {
+        success: false,
+        message: error.response.data.error || "Error al crear el usuario"
+      };
+    }
+    console.log(error);
+    
+    return { success: false, message: "Error de red" };
+  }
+}
+
 export {
   fetchSearchProducts,
   addProduct,
@@ -277,5 +301,6 @@ export {
   deleteProviderById,
   fetchSearchBlames,
   fetchBlames,
-  verifyPin
+  verifyPin,
+  signupUser
 };

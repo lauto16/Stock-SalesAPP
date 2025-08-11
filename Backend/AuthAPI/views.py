@@ -1,13 +1,17 @@
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework import viewsets, status, permissions
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .serializers import SignupSerializer
 from rest_framework.views import APIView
-from rest_framework import viewsets
-from rest_framework import status
 from django.conf import settings
+from Auth.models import Role
 
 
 class LoginView(TokenObtainPairView):
@@ -76,5 +80,49 @@ class LoginViewSet(viewsets.ViewSet):
         else:
             return Response(
                 {"success": False},
-                tatus=status.HTTP_401_UNAUTHORIZED
+                status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+CustomUser = get_user_model()
+
+
+class SignupViewSet(viewsets.ViewSet):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        serializer = SignupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        pin = serializer.validated_data['pin']
+        role_name = serializer.validated_data['role']
+
+        try:
+            role = Role.objects.get(name=role_name)
+        except Role.DoesNotExist:
+            return Response(
+                {"error": f"El rol '{role_name}' no existe"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = CustomUser.objects.create_user(
+            username=username,
+            password=password,
+            role_name=role_name,
+            pin=pin
+        )
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response(
+            {
+                "id": user.id,
+                "username": user.username,
+                "role": role.name,
+                "token": token.key
+            },
+            status=status.HTTP_201_CREATED
+        )

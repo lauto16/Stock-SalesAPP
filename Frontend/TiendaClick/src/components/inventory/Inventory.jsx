@@ -37,6 +37,8 @@ export default function InventoryPage() {
 
     const { user } = useUser();
 
+    const [isSending, setIsSending] = useState(false)
+
     // States for update prices modal
     const [updatePricePercentage, setUpdatePricePercentage] = useState(0)
     const [includeDiscounted, setIncludeDiscounted] = useState(false);
@@ -67,6 +69,7 @@ export default function InventoryPage() {
         { className: "name", key: "name", label: 'Nombre' },
         { className: "stock", key: "stock", label: 'Stock' },
     ];
+    
     const handleOpen = () => setShowModal(true);
     const handleGoToSales = () => { };
     const handleShowConfirmation = () => setShowConfirmation(true);
@@ -183,6 +186,7 @@ export default function InventoryPage() {
 
         let result;
 
+        setIsSending(true)
         if (applyToAll) {
             result = await updateAllPrices(data, user.token);
         } else {
@@ -197,6 +201,8 @@ export default function InventoryPage() {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
             setShowConfirmation(false);
         }
+        setIsSending(false)
+
     }
     const reloadPageOne = () => {
         if (currentPage === 1) {
@@ -278,6 +284,7 @@ export default function InventoryPage() {
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}
                 handleClose={handleHideConfirmation}
+                isSending={isSending}
             />
             <PriceUpdateModal
                 show={showPriceUpdateModal}

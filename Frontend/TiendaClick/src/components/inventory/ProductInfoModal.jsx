@@ -25,9 +25,12 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const { addNotification } = useNotifications();
     const [providers, setProviders] = useState([]);
     const { user } = useUser();
+    const [isSending, setIsSending] = useState(false)
 
     useEffect(() => {
+        
         if (show && product) {
+            setIsSending(true)
             fetchProviders(user.token)
                 .then((res) => {
                     setProviders(res.data);
@@ -42,6 +45,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 })
                 .catch(() => addNotification("error", "No se pudieron cargar los proveedores"));
         }
+        setIsSending(false)
     }, [show, product, user.token]);
 
     const purchasePrice = watch("purchasePrice") || 0;
@@ -281,7 +285,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                     )}
 
                     <div className="d-flex justify-content-end mt-4">
-                        <Button className="mt-2 send-form-button btn btn-success" type="submit">
+                        <Button disabled={isSending} className="mt-2 send-form-button btn btn-success" type="submit">
                             Guardar cambios
                         </Button>
                     </div>

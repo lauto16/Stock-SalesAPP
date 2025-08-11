@@ -28,7 +28,6 @@ class Product(models.Model):
         user: (CustomUser)
         """
         user = kwargs.pop('user', None)
-        print(f'User: {user}')
         if self.pk:
             try:
                 old = Product.objects.get(pk=self.pk)

@@ -21,6 +21,9 @@ router_offers.register(r'offers', OfferViewSet, basename='offer')
 router_users = DefaultRouter()
 router_users.register(r'login', LoginViewSet, basename='users')
 
+router_signup = DefaultRouter()
+router_signup.register(r'signup', SignupViewSet, basename='signup')
+
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
@@ -29,6 +32,7 @@ urlpatterns = [
     path('api/', include(router_offers.urls)),
     path('api/', include(router_users.urls)),
     path('api/', include(router_blame.urls)),
+    path('api/', include(router_signup.urls)),
     path("api/login/", obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
 ]
