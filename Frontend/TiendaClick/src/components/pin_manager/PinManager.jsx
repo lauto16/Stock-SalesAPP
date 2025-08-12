@@ -29,6 +29,8 @@ export default function PinManager() {
     }
   };
 
+//TODO: AGREGAR UN BOTON DE VOLVER 
+
   const handleVerify = async (fullPin) => {
     const success = await verifyAndSavePin(fullPin);
     if (success) {
