@@ -70,13 +70,12 @@ export default function Header({
       id: item.code ?? item.id
     }));
     for (const { id, name } of itemsToDelete) {
+
       try {
         const result = await deleteItem(id, user.token);
         if (result?.success) {
           addNotification("success", `"${name}" eliminado con éxito`);
-          setTimeout(() => {
-            window.location.reload();
-          }, 200);
+
         } else {
           addNotification("error", `"${name}" no se pudo eliminar`);
         }
@@ -85,6 +84,9 @@ export default function Header({
         addNotification("error", `Error al eliminar "${name}"`);
       }
     }
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
     setSelectedItems(new Map());
     closeDelModal()
   };
@@ -103,7 +105,6 @@ export default function Header({
   };
 
   //Show all the items selected Modal
-
   return (
     <div className="d-flex justify-content-between align-items-center header">
       {/* modals */}

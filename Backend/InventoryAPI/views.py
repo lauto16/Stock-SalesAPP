@@ -15,6 +15,11 @@ from django.http import HttpRequest
 from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
+import os
+from openpyxl import Workbook
+from django.http import FileResponse
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Alignment, Font, PatternFill
 
 
 class ProductValidator:
@@ -116,7 +121,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    
+
     @action(detail=False, methods=["get"], url_path=r"get-by-code/(?P<code>[\w-]+)")
     def get_by_code(self, request, code=None):
         if not code:
@@ -147,7 +152,8 @@ class ProductViewSet(viewsets.ModelViewSet):
                 {"error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        products = Product.objects.filter(stock__lte=limit).order_by("stock")[:150]
+        products = Product.objects.filter(
+            stock__lte=limit).order_by("stock")[:150]
 
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
@@ -189,7 +195,8 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = ProductSerializer(product, data=request.data, partial=True)
+        serializer = ProductSerializer(
+            product, data=request.data, partial=True)
 
         if serializer.is_valid():
             for attr, value in serializer.validated_data.items():
@@ -199,7 +206,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             product.save(user=request.user)
 
             return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
-            
+
         else:
             print(serializer.errors)
             return Response(
@@ -216,7 +223,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         percentage = request.data.get("percentage")
         include_discounted = request.data.get("includeDiscounted", False)
         codes = request.data.get("codes", [])
-        
+
         if not isinstance(codes, list) or not codes:
             return Response(
                 {
@@ -244,7 +251,8 @@ class ProductViewSet(viewsets.ModelViewSet):
                 continue
 
             if isinstance(percentage, (int, float)):
-                product.sell_price = product.sell_price * (1 + (percentage / 100))
+                product.sell_price = product.sell_price * \
+                    (1 + (percentage / 100))
                 product.last_modification = timezone.now()
                 product.save(user=request.user)
                 updated_products.append(product.code)
@@ -274,11 +282,100 @@ class ProductViewSet(viewsets.ModelViewSet):
                 continue
 
             if isinstance(percentage, (int, float)):
-                product.sell_price = product.sell_price * (1 + (percentage / 100))
+                product.sell_price = product.sell_price * \
+                    (1 + (percentage / 100))
                 product.last_modification = timezone.now()
                 product.save(user=request.user)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
+    # EXPORT TO EXCEL
+
+    @action(detail=False, methods=["get"], url_path="downloadExcel")
+    def generate_excel(self, request):
+        try:
+            base_dir = os.path.dirname(os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__))))
+            forms_dir = os.path.join(base_dir, "formularios")
+            os.makedirs(forms_dir, exist_ok=True)
+            file_name = "inventario.xlsx"
+            file_path = os.path.join(forms_dir, file_name)
+
+            # Obtener datos
+            data = []
+            max_len = {
+                "Código": len("Código"),
+                "Nombre": len("Nombre"),
+                "Stock": len("Stock"),
+                "Precio de venta": len("Precio de venta"),
+                "Precio de compra": len("Precio de compra"),
+                "Proveedor": len("Proveedor")
+            }
+            for product in Product.objects.all():
+                provider_name = 'No Registrado'
+                if product.provider:
+                    provider_name = product.provider.name
+                item = {
+                    "Código": product.code,
+                    "Nombre": product.name,
+                    "Stock": product.stock,
+                    "Precio de venta": product.sell_price,
+                    "Precio de compra": product.buy_price,
+                    "Proveedor": provider_name,
+                }
+                data.append(item)
+                # Seting the max lenght of the column, to aply styles
+                for key, value in item.items():
+                    if len(str(value)) > max_len[key]:
+                        max_len[key] = len(str(value))
+
+            # Crear archivo con openpyxl y estilo striped
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Inventario"
+
+            headers = list(data[0].keys()) if data else []
+            ws.append(headers)
+            # width fit content
+            for i, header in enumerate(headers, start=1):
+                col_letter = get_column_letter(i)
+                ws.column_dimensions[col_letter].width = max_len[header] + 2
+
+            fill = PatternFill(start_color="f1f1f1",
+                               end_color="f1f1f1", fill_type="solid")
+
+            for col in range(1, len(headers) + 1):
+                cell = ws.cell(row=1, column=col)
+                cell.alignment = Alignment(
+                    horizontal='center', vertical='center')
+                cell.font = Font(bold=True)
+
+            for idx, item in enumerate(data, start=1):
+                row = [item[h] for h in headers]
+                ws.append(row)
+                if (idx + 1) % 2 == 0:
+                    for col in range(1, len(headers) + 1):
+                        cell = ws.cell(row=idx + 1, column=col)
+                        cell.fill = fill
+                        cell.alignment = Alignment(
+                            horizontal='center', vertical='center')
+                else:
+                    # Para filas impares también centrar
+                    for col in range(1, len(headers) + 1):
+                        cell = ws.cell(row=idx + 1, column=col)
+                        cell.alignment = Alignment(
+                            horizontal='center', vertical='center')
+
+            wb.save(file_path)
+
+            return FileResponse(
+                open(file_path, "rb"),
+                as_attachment=True,
+                filename=file_name,
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 
 class OfferViewSet(viewsets.ModelViewSet):

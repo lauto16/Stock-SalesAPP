@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useNotifications } from "../../../context/NotificationSystem";
 import { useUser } from "../../../context/UserContext";
-export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defaultValues = {}, onUseEffect, useEffectDependencies }) {
+export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, onUseEffect, useEffectDependencies }) {
     const { user } = useUser();
     const token = user?.token;
     const {
@@ -12,7 +12,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, defau
         control,
         watch,
         formState: { errors },
-    } = useForm({ defaultValues });
+    } = useForm();
 
     useEffect(() => {
         onUseEffect?.()

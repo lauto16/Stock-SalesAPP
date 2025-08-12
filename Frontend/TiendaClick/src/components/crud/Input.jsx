@@ -83,7 +83,7 @@ export default function Input({ field, register, control, errors, index, reset }
                         label={field.label}
                         icon={field.icon}
                         type={field.type}
-
+                        inputStyle={field.style}
                         placeholder={field.placeholder}
                         register={register(field.name, {
                             required: field.required,

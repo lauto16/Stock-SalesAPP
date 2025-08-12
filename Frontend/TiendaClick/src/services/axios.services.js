@@ -5,10 +5,10 @@ const apiUrl = `http://${window.location.hostname}:8000/api/`;
 async function verifyPin(pin, token) {
   try {
     const response = await axios.get(`${apiUrl}login/verify-user-pin/${pin}/`, authHeader(token));
-    return {success: response.data?.success === true}
+    return { success: response.data?.success === true }
   } catch (error) {
     console.error("Error verificando el PIN:", error);
-    return {success: false};
+    return { success: false };
   }
 }
 
@@ -208,9 +208,12 @@ async function updateProduct(oldCode, updatedData, token) {
     return { success: false, error: backendError };
   }
 }
-async function updateProvider(oldCode, updatedData, token) {
+async function updateProvider(updatedData, token) {
   try {
-    const response = await axios.patch(`${apiUrl}providers/patch-by-code/${oldCode}/`, updatedData, authHeader(token));
+    console.log(updatedData)
+    const id = updatedData.id
+    const response = await axios.patch(`${apiUrl}providers/patch-by-id/${id}/`, updatedData, authHeader(token));
+
     return {
       success: response.data?.success ?? false,
       error: response.data?.error || "",
@@ -267,7 +270,7 @@ async function signupUser({ username, password, role, pin }, token) {
       role,
       pin
     }, authHeader(token));
-    
+
     return { success: true }
 
   } catch (error) {
@@ -278,11 +281,19 @@ async function signupUser({ username, password, role, pin }, token) {
       };
     }
     console.log(error);
-    
+
     return { success: false, message: "Error de red" };
   }
 }
-
+async function fetchDownloadExcelFile(token) {
+  try {
+    const response = await axios.get(`${apiUrl}products/downloadExcel/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al descargar el archivo Excel:", error);
+    return null;
+  }
+}
 export {
   fetchSearchProducts,
   addProduct,
@@ -306,5 +317,6 @@ export {
   fetchBlames,
   verifyPin,
   updateProvider,
-  signupUser
+  signupUser,
+  fetchDownloadExcelFile
 };

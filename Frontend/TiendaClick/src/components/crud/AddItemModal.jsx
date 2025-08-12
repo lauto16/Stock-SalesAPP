@@ -8,6 +8,7 @@ export default function AddItemModal({ show,
     formConfig,
     selectedItems }) {
     if (!formConfig) return
+    //when we need to execute a function inside useEffect, not implemented yet
     const { onUseEffect, onSubmitHandler } = formConfig();
     const {
         register,

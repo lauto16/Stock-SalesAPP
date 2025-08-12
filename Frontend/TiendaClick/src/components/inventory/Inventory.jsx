@@ -4,7 +4,10 @@ import Table from "../crud/Table.jsx";
 import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "./Search.jsx";
-import { fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode, fetchGetByCode, updateSelectedPrices, updateAllPrices } from "../../services/axios.services.js";
+import {
+    fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode,
+    fetchGetByCode, updateSelectedPrices, updateAllPrices, fetchDownloadExcelFile
+} from "../../services/axios.services.js";
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
@@ -12,7 +15,8 @@ import CreateOfferModal from "./CreateOfferModal.jsx";
 import addItemConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
-
+import { useModal } from "../crud/hooks/useModal.js";
+import { set } from "react-hook-form";
 export default function InventoryPage() {
 
     const [items, setItems] = useState([]);
@@ -36,6 +40,13 @@ export default function InventoryPage() {
     const { user } = useUser();
 
     const [isSending, setIsSending] = useState(false)
+    const {
+        title: titleDownload,
+        message: messageDownload,
+        show: showDownload,
+        openModal: openDownload,
+        closeModal: closeDownload,
+    } = useModal()
 
     // States for update prices modal
     const [updatePricePercentage, setUpdatePricePercentage] = useState(0)
@@ -60,7 +71,7 @@ export default function InventoryPage() {
         { className: "name", key: "name", label: 'Nombre' },
         { className: "stock", key: "stock", label: 'Stock' },
     ];
-    
+
     const handleShowConfirmation = () => setShowConfirmation(true);
     const handleHideConfirmation = () => setShowConfirmation(false);
 
@@ -257,6 +268,21 @@ export default function InventoryPage() {
     }
     ]
 
+    const downloadExcelFile = () => {
+        openDownload('Descargar Excel', '¿Estas seguro de que quieres descargar el Excel con todos los productos del inventario? puede ser pesado')
+    }
+    const handleDownload = async () => {
+        setIsSending(true)
+        try {
+            const response = await fetchDownloadExcelFile(user.token);
+            console.log(response)
+        } catch (error) {
+            addNotification("error", "No se pudo obtener la información del producto.");
+            console.error("Error al obtener producto:", error);
+        }
+        setIsSending(false)
+
+    }
     return (
         <div className="d-flex justify-content-center mt-5">
             <CreateOfferModal
@@ -273,6 +299,15 @@ export default function InventoryPage() {
                 message={confirmationText}
                 onSendForm={handleUpdatePricesSendForm}
                 handleClose={handleHideConfirmation}
+                isSending={isSending}
+            />
+            {/* download excel */}
+            <ConfirmationModal
+                show={showDownload}
+                title={titleDownload}
+                message={messageDownload}
+                onSendForm={handleDownload}
+                handleClose={closeDownload}
                 isSending={isSending}
             />
             <PriceUpdateModal
@@ -339,11 +374,16 @@ export default function InventoryPage() {
                         setIsSomethingSelected={setIsSomethingSelected}
 
                     />
-                    <button className="btn btn-outline-secondary clear-search-results-button" onClick={clearSearch}>
-                        Limpiar resultados de busqueda
-                    </button>
-
+                    <div className="table-footer-group footer-inventory">
+                        <button className="btn btn-outline-secondary" onClick={clearSearch}>
+                            Limpiar resultados de busqueda
+                        </button>
+                        <button className="btn btn-outline-success" onClick={downloadExcelFile}>
+                            Exportar inventario a Excel <i className="bi bi-file-earmark-arrow-down"></i>
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     );
