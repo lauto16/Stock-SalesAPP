@@ -67,12 +67,19 @@ export default function ProductBlame({ productCode }) {
 
   useEffect(() => {
     fetchBlames(1, setLoading, user.token).then((data) => {
+      const formatIfFloat = (value) => {
+        const num = parseFloat(value);
+        return !isNaN(num) ? num.toFixed(2) : value;
+      };
+
       const formattedResults = data.results.map(item => ({
         ...item,
         changed_at: item.changed_at ? formatDate(item.changed_at) : "",
         object_code: item.object_data?.code || "",
         object_name: item.object_data?.name || "",
         field_name: FIELD_NAME_TRANSLATIONS[item.field_name] || item.field_name,
+        old_value: formatIfFloat(item.old_value),
+        new_value: formatIfFloat(item.new_value),
       }));
 
       setItems(formattedResults);
@@ -83,12 +90,19 @@ export default function ProductBlame({ productCode }) {
 
   const handlePageChange = (newPage) => {
     fetchBlames(newPage, setLoading, user.token).then((data) => {
+      const formatIfFloat = (value) => {
+        const num = parseFloat(value);
+        return !isNaN(num) ? num.toFixed(2) : value;
+      };
+
       const formattedResults = data.results.map(item => ({
         ...item,
         changed_at: item.changed_at ? formatDate(item.changed_at) : "",
         object_code: item.object_data?.code || "",
         object_name: item.object_data?.name || "",
         field_name: FIELD_NAME_TRANSLATIONS[item.field_name] || item.field_name,
+        old_value: formatIfFloat(item.old_value),
+        new_value: formatIfFloat(item.new_value),
       }));
 
       setItems(formattedResults);
@@ -105,6 +119,11 @@ export default function ProductBlame({ productCode }) {
 
       const data = await fetchSearchBlames(query, user.token);
 
+      const formatIfFloat = (value) => {
+        const num = parseFloat(value);
+        return !isNaN(num) ? num.toFixed(2) : value;
+      };
+
       if (data) {
         const formatted = data.results.map(item => ({
           ...item,
@@ -112,6 +131,8 @@ export default function ProductBlame({ productCode }) {
           object_code: item.object_data?.code || "",
           object_name: item.object_data?.name || "",
           field_name: FIELD_NAME_TRANSLATIONS[item.field_name] || item.field_name,
+          old_value: formatIfFloat(item.old_value),
+          new_value: formatIfFloat(item.new_value),
         }));
         setAllSearchResults(formatted);
         setSearchTotalPages(Math.ceil(data.count / 10));

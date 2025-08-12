@@ -47,8 +47,8 @@ async function loginUser(username, password) {
   }
 }
 
-function logoutUser() {
-  return true;
+function logoutUser(token) {
+  return true
 }
 
 function authHeader(token) {
@@ -60,7 +60,6 @@ function authHeader(token) {
 }
 
 async function addProduct(product, token) {
-
   return axios.post(`${apiUrl}products/`, product, authHeader(token))
     .then(response => response.data)
     .catch(error => {
@@ -140,7 +139,6 @@ async function fetchSearchBlames(query, token) {
   }
 }
 
-
 async function deleteProviderById(id, token) {
   try {
     const response = await axios.delete(`${apiUrl}providers/${id}/`, authHeader(token));
@@ -150,7 +148,6 @@ async function deleteProviderById(id, token) {
     throw error.response?.data || error;
   }
 }
-
 
 async function fetchSearchProducts(search, token) {
   const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
@@ -210,7 +207,6 @@ async function updateProduct(oldCode, updatedData, token) {
 }
 async function updateProvider(updatedData, token) {
   try {
-    console.log(updatedData)
     const id = updatedData.id
     const response = await axios.patch(`${apiUrl}providers/patch-by-id/${id}/`, updatedData, authHeader(token));
 
