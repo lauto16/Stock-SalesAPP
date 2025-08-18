@@ -9,6 +9,7 @@ import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import ProductBlame from './components/blame/ProductBlame.jsx'
 import PinManager from './components/pin_manager/PinManager.jsx';
 import SignUp from './components/auth/SignUp.jsx';
+import Sales from './components/sales/Sales.jsx'
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
           element={
             <PrivateRoute>
               <Inventory />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <PrivateRoute>
+              <Sales />
             </PrivateRoute>
           }
         />

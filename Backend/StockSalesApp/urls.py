@@ -4,6 +4,7 @@ from django.urls import path, include
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from BlameAPI.views import *
+from SalesAPI.views import *
 from AuthAPI.views import *
 
 router_blame = DefaultRouter()
@@ -24,6 +25,9 @@ router_users.register(r'login', LoginViewSet, basename='users')
 router_signup = DefaultRouter()
 router_signup.register(r'signup', SignupViewSet, basename='signup')
 
+router_sales = DefaultRouter()
+router_sales.register(r'sales', SaleViewSet, basename='sale')
+
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
@@ -33,6 +37,7 @@ urlpatterns = [
     path('api/', include(router_users.urls)),
     path('api/', include(router_blame.urls)),
     path('api/', include(router_signup.urls)),
+    path('api/', include(router_sales.urls)),
     path("api/login/", obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
 ]
