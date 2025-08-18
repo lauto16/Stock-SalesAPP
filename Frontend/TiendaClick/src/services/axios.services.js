@@ -281,6 +281,36 @@ async function signupUser({ username, password, role, pin }, token) {
     return { success: false, message: "Error de red" };
   }
 }
+
+async function fetchSales({ page = 1, setLoading, token }) {
+  try {
+    setLoading(true);
+    const response = await axios.get(`${apiUrl}sales/?page=${page}`, authHeader(token));
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching sales:", error);
+    return { results: [], count: 0 };
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function fetchSearchSales(search, token) {
+  const url = `${apiUrl}sales/search/?q=${encodeURIComponent(search)}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error searching sales:", error);
+    return null;
+  }
+}
+
 async function fetchDownloadExcelFile(token) {
   try {
     const response = await axios.get(`${apiUrl}products/downloadExcel/`, authHeader(token));
@@ -290,7 +320,10 @@ async function fetchDownloadExcelFile(token) {
     return null;
   }
 }
+
 export {
+  fetchSearchSales,
+  fetchSales,
   fetchSearchProducts,
   addProduct,
   addProvider,
