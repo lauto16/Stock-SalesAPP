@@ -4,28 +4,32 @@ from InventoryAPI.models import Product
 
 
 class Sale(models.Model):
-    """
-    Represents a Sale receipt header.
-    """
-    # a discount / raise can be made when selling due to payment methods (should be a input in the modal) 
     applied_discount_percentage = models.FloatField(default=0)
     discount_reason = models.CharField(max_length=200, blank=True)
-    total_price = models.FloatField()
-    total_price_iva = models.FloatField()
+    initial_price = models.FloatField(default=0)
+    # Total price when applied 'applied_discount_percentage' and 'tax_percentage'
+    total_price = models.FloatField(default=0)
     tax_percentage = models.FloatField(default=21)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def update_totals(self):
+        initial = sum(item.subtotal for item in self.items.all())
+        discounted = initial * (1 - self.applied_discount_percentage / 100)
+        taxed = discounted * (1 + self.tax_percentage / 100)
+
+        self.initial_price = initial
+        self.total_price = taxed
+        self.save()
+
     def finalize_sale(self, user=None):
-        """
-        Deduct stock for all items in this sale and log the change.
-        """
         with transaction.atomic():
             for item in self.items.select_related("product"):
                 product = item.product
                 old_stock = product.stock
                 product.stock = max(0, old_stock - item.quantity)
                 product.save(user=user)
+            self.update_totals()
 
 
 class SaleItem(models.Model):

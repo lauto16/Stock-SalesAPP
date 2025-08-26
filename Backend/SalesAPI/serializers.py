@@ -18,7 +18,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-            'id', 'applied_discount_percentage', 'discount_reason', 'total_price', 'total_price_iva',
+            'id', 'applied_discount_percentage', 'discount_reason', 'initial_price', 'total_price',
             'tax_percentage', 'created_at', 'created_by', 'items'
         ]
 
@@ -28,7 +28,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-            'applied_discount_percentage', 'discount_reason', 'total_price', 'total_price_iva',
+            'applied_discount_percentage', 'discount_reason', 'initial_price', 'total_price',
             'tax_percentage', 'items'
         ]
 

@@ -28,9 +28,9 @@ export default function Sales() {
   const PAGE_SIZE = 10;
 
   const columns = [
-    { className: "total", key: "total_price", label: "Total" },
-    { className: "final", key: "final_price", label: "Total Final" },
-    { className: "discount_reason", key: "discount_reason", label: "Descuento añadido" },
+    { className: "initial", key: "initial_price", label: "Precio inicial" },
+    { className: "total", key: "total_price", label: "Precio final" },
+    { className: "discount_reason", key: "discount_reason", label: "Descuento / Aumento añadido" },
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
     { className: "date", key: "created_at", label: "Fecha" },
   ];
@@ -41,14 +41,27 @@ export default function Sales() {
   };
   
   const formatSalesData = (data) => {
-    return data.map((sale) => ({
-      ...sale,
-      created_at: sale.created_at ? formatDate(sale.created_at) : "",
-      total_price: sale.total_price?.toFixed(2) ?? "0.00",
-      final_price: sale.final_price?.toFixed(2) ?? "0.00",
-      discount_reason: sale.discount_reason || "",
-      product_count: sale.product_count ?? 0,
-    }));
+    return data.map((sale) => {
+      const percentage = sale.applied_discount_percentage ?? 0;
+      const percentageElement = (
+        <span style={{ color: percentage >= 0 ? "green" : "red" }}>
+          {percentage}%
+        </span>
+      );
+  
+      return {
+        ...sale,
+        created_at: sale.created_at ? formatDate(sale.created_at) : "",
+        total_price: sale.total_price?.toFixed(2) ?? "0.00",
+        final_price: sale.final_price?.toFixed(2) ?? "0.00",
+        discount_reason: (
+          <>
+            {sale.discount_reason} ({percentageElement})
+          </>
+        ),
+        product_count: sale.items.length ?? 0,
+      };
+    });
   };
   
   useEffect(() => {
@@ -58,6 +71,8 @@ export default function Sales() {
       setLoading(true);
       try {
         const data = await fetchSales({ page: currentPage, setLoading: setLoading, token: user.token });
+        console.log(data);
+        
         setItems(formatSalesData(data.results));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
@@ -133,7 +148,6 @@ export default function Sales() {
     <div className="d-flex justify-content-center mt-5">
       <div className="container container-modified">
 
-        {/* Sale Detail Modal */}
         {showSaleDetailModal && selectedSale && (
           <SaleDetailModal
             show={showSaleDetailModal}
