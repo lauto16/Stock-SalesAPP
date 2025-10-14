@@ -46,6 +46,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.username} ({self.role})"
 
 
+class CustomPermission(models.Model):
+    code_name = models.CharField(max_length=200, unique=True, null=False, blank=False)
+    description = models.CharField(max_length=500, unique=False, null=True, blank=True)
+
+
 class Role(models.Model):
     """
     Most escalable solution for giving each user a role
@@ -57,7 +62,12 @@ class Role(models.Model):
     ]
 
     name = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True)
-    name_sp = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True)
+    name_sp = models.CharField(max_length=20, unique=True)
+    permissions = models.ManyToManyField(
+        CustomPermission,
+        related_name='roles',
+        blank=True
+    )
 
     def __str__(self):
         return dict(self.ROLE_CHOICES).get(self.name, self.name)
