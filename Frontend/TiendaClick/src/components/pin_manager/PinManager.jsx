@@ -19,11 +19,9 @@ export default function PinManager() {
       case "Administrador":
         return "/dashboard";
       case "Vendedor":
-        //CAMBIAR A sales CUANDO EXISTA
-        return "/inventory";
+        return "/sales";
       case "Vendedor y Repositor":
-        //CAMBIAR A sales CUANDO EXISTA
-        return "/inventory"
+        return "/sales"
       default:
         return "/";
     }
@@ -31,15 +29,18 @@ export default function PinManager() {
 
 //TODO: AGREGAR UN BOTON DE VOLVER 
 
-  const handleVerify = async (fullPin) => {
-    const success = await verifyAndSavePin(fullPin);
-    if (success) {
-      const redirectTo = getRedirectPathByRole(user.role);
-      navigate(redirectTo);
-      return
-    }
-    addNotification("error", "Pin incorrecto.");
-  };
+const handleVerify = async (fullPin) => {
+  const success = await verifyAndSavePin(fullPin);
+  if (success) {
+    const redirectTo = getRedirectPathByRole(user.role);
+    navigate(redirectTo);
+    return;
+  }
+  addNotification("error", "Pin incorrecto.");
+
+  setPin(["", "", "", ""]);
+  inputsRef.current[0]?.focus();
+};
 
   const handleChange = (value, index) => {
     if (!/^\d?$/.test(value)) return;

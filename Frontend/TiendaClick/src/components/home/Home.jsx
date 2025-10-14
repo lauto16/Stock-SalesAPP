@@ -1,8 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/UserContext.jsx'
 
 function Home() {
+    const { user } = useUser()
+    const navigate = useNavigate()
+    const getRedirectPathByRole = (role) => {
+        switch (role) {
+          case "Repositor":
+            return "/inventory";
+          case "Administrador":
+            return "/dashboard";
+          case "Vendedor":
+            return "/sales";
+          case "Vendedor y Repositor":
+            return "/sales"
+          default:
+            return "/";
+        }
+      };
+
+    useEffect(()=>{
+        navigate(getRedirectPathByRole(user?.role))
+    }, [])
     return (
+        
         <div className="container py-5">
             <h1 className="mb-4">Bienvenido a la Home</h1>
             <p className="lead">Esta es la página principal de tu aplicación.</p>
