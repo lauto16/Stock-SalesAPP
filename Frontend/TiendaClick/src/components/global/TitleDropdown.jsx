@@ -2,36 +2,45 @@ import React from "react";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext.jsx";
+import { FaLock } from "react-icons/fa";
 
 const options_other = [
-  { label: "Inventario", path: "/inventory/" },
-  { label: "Registro de cambios", path: "/product-blame/" },
-  { label: "Ventas", path: "/sales/" },
-  { label: "Dashboard", path: "/dashboard/" },
-  { label: "Proveedores", path: "/providers/" },
-  { label: "Ofertas", path: "/offers/" },
+  { label: "Inventario", path: "/inventory/", permission: "access_inventory" },
+  { label: "Registro de cambios", path: "/product-blame/", permission: "access_blame" },
+  { label: "Ventas", path: "/sales/", permission: "access_sales" },
+  { label: "Dashboard", path: "/dashboard/", permission: "access_dashboard" },
+  { label: "Proveedores", path: "/providers/", permission: "access_providers" },
+  { label: "Ofertas", path: "/offers/", permission: "access_offers" },
   { label: "Cerrar sesión", path: null },
 ];
 
 const options_dashboard = [
-  { label: "Inventario", path: "/inventory/" },
-  { label: "Registro de cambios", path: "/product-blame/" },
-  { label: "Ventas", path: "/sales/" },
-  { label: "Dashboard", path: "/dashboard/" },
-  { label: "Proveedores", path: "/providers/" },
-  { label: "Ofertas", path: "/offers/" },
-  { label: "Crear nuevo usuario", path: '/sign-up/' },
-  { label: "Cerrar sesión", path: null },
-]
+  ...options_other.filter(opt => opt.label !== "Cerrar sesión"),
+  { label: "Crear nuevo usuario", path: "/sign-up/", permission: null },
+  options_other.find(opt => opt.label === "Cerrar sesión")
+];
 
 export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
   const navigate = useNavigate();
-  const { logout } = useUser();
+  const { user, logout } = useUser();
 
-  const options = isDashboard ? options_dashboard : options_other
+  const options = isDashboard ? options_dashboard : options_other;
 
+  // Separar "Cerrar sesión" y ordenar el resto
+  const logoutOption = options.find(opt => opt.label === "Cerrar sesión");
+  const otherOptions = options.filter(opt => opt.label !== "Cerrar sesión");
 
-  const handleSelect = (label, path) => {
+  const sortedOptions = [...otherOptions].sort((a, b) => {
+    const aDisabled = a.permission && !user?.permissions?.includes(a.permission);
+    const bDisabled = b.permission && !user?.permissions?.includes(b.permission);
+    return aDisabled === bDisabled ? 0 : aDisabled ? -1 : 1;
+  });
+
+  // Poner logout al final
+  if (logoutOption) sortedOptions.push(logoutOption);
+
+  const handleSelect = (label, path, disabled) => {
+    if (disabled) return;
     if (label === "Cerrar sesión") {
       logout();
       navigate("/login", { replace: true });
@@ -52,15 +61,23 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        {options.map((opt) => (
-          <Dropdown.Item
-            key={opt.label}
-            onClick={() => handleSelect(opt.label, opt.path)}
-            className={opt.label === "Cerrar sesión" ? "text-danger" : ""}
-          >
-            {opt.label}
-          </Dropdown.Item>
-        ))}
+        {sortedOptions.map((opt) => {
+          const disabled =
+            opt.permission && !user?.permissions?.includes(opt.permission);
+          return (
+            <Dropdown.Item
+              key={opt.label}
+              onClick={() => handleSelect(opt.label, opt.path, disabled)}
+              className={`${disabled ? "text-secondary" : ""} ${
+                opt.label === "Cerrar sesión" ? "text-danger" : ""
+              }`}
+              style={{ color: disabled ? "#6c757d" : undefined, backgroundColor: disabled ? "#d9d9d9" : undefined }} 
+              disabled={disabled}
+            >
+              {opt.label} {disabled && <FaLock className="ms-2" />}
+            </Dropdown.Item>
+          );
+        })}
       </Dropdown.Menu>
     </Dropdown>
   );
