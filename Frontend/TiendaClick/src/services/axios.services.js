@@ -34,9 +34,12 @@ async function loginUser(username, password) {
       },
       body: JSON.stringify({ username, password }),
     });
+    
 
     if (response.ok) {
       const data = await response.json();
+      console.log(data);
+
       return { success: true, data };
     } else {
       return { success: false };
@@ -251,10 +254,12 @@ async function updateAllPrices(data, token) {
   }
 }
 
-async function fetchUserRoleNameSp(token) {
+async function fetchUserData(token) {
   try {
     const response = await axios.get(`${apiUrl}login/me/`, authHeader(token));
-    return response.data.role_name_sp || null;
+    console.log(response.data);
+    
+    return response.data || null;
   } catch (error) {
     console.error("Error al obtener el rol del usuario:", error);
     return null;
@@ -343,7 +348,7 @@ export {
   loginUser,
   logoutUser,
   fetchProvidersById,
-  fetchUserRoleNameSp,
+  fetchUserData,
   deleteProviderById,
   fetchSearchBlames,
   fetchBlames,

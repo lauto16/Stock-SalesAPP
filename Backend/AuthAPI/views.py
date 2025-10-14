@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from django.conf import settings
 from Auth.models import Role
 
-
 class LoginView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
@@ -21,8 +20,17 @@ class LoginView(TokenObtainPairView):
             access_token = response.data["access"]
             refresh_token = response.data["refresh"]
 
-            res = Response({"message": "Login successful"},
-                           status=status.HTTP_200_OK)
+            user = self.user
+
+            user_permissions = []
+            if hasattr(user, "role") and user.role:
+                user_permissions = list(user.role.permissions.values_list("code_name", flat=True))
+
+            res = Response({
+                "message": "Login successful",
+                "permissions": user_permissions,
+            }, status=status.HTTP_200_OK)
+
             cookie_settings = {
                 "httponly": True,
                 "secure": not settings.DEBUG,
@@ -56,12 +64,15 @@ class LoginViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["get"])
     def me(self, request):
         user = request.user
-        if not user:
-            return Response({"detail": "El usuario debe estar logueado"}, status=403)
+        if not user or not hasattr(user, "role") or not user.role:
+            return Response({"detail": "No se encontró el rol del usuario."}, status=404)
 
-        if user and hasattr(user, "role") and user.role:
-            return Response({"role_name_sp": user.role.name_sp})
-        return Response({"detail": "No se encontró el rol del usuario."}, status=404)
+        permissions = list(user.role.permissions.values_list("code_name", flat=True))
+
+        return Response({
+            "role_name_sp": user.role.name_sp,
+            "permissions": permissions
+        })
 
     @action(detail=False, methods=["get"], url_path=r"verify-user-pin/(?P<pin>[\w-]+)")
     def verify_user_pin(self, request, pin=None):
