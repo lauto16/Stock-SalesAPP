@@ -167,11 +167,14 @@ async function fetchSearchProducts(search, token) {
 
 async function deleteProductByCode(code, token) {
   try {
-    const response = await axios.delete(`${apiUrl}products/delete-by-code/${code}/`, authHeader(token));
+    const response = await axios.delete(
+      `${apiUrl}products/delete-by-code/${code}/`,
+      authHeader(token)
+    );
     return response.data;
   } catch (error) {
-    console.error("Error al eliminar el producto:", error.response?.data || error.message);
-    throw error.response?.data || error;
+    const backendError = error.response?.data?.error || "Error al eliminar el producto.";
+    return { success: false, error: backendError };
   }
 }
 

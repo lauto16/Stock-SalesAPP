@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'ProvidersAPI',
     'AuthAPI',
     'BlameAPI',
-    'ToDoAPI'
 ]
 
 MIDDLEWARE = [

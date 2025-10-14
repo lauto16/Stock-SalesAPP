@@ -346,6 +346,7 @@ export default function InventoryPage() {
                     addFormConfig={addItemConfig}
                     deleteItem={deleteProductByCode}
                     selectedItemsColumns={importantColumns}
+                    reloadPageOne={reloadPageOne}
                 />
                 <div className="table-container">
                     <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

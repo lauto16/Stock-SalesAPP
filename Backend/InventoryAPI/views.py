@@ -5,21 +5,24 @@ from .serializers import (
     OfferPagination,
 )
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
 from rest_framework.views import APIView
 from rest_framework import permissions
+from SalesAPI.models import SaleItem
+from django.http import FileResponse
 from rest_framework import viewsets
 from django.http import HttpRequest
 from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
-import os
 from openpyxl import Workbook
-from django.http import FileResponse
-from openpyxl.utils import get_column_letter
-from openpyxl.styles import Alignment, Font, PatternFill
+import os
+
+
 
 
 class ProductValidator:
@@ -159,22 +162,36 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(
-        detail=False, methods=["delete"], url_path="delete-by-code/(?P<code>[^/.]+)"
+        detail=False,
+        methods=["delete"],
+        url_path="delete-by-code/(?P<code>[^/.]+)"
     )
     def destroy_by_code(self, request, code=None):
         """
-        Removes a certain product from DB
+        Deletes a product from the DB only if there's no sales associated with the product
         """
-        product = Product.objects.filter(code=code)
-        if not product.exists():
+        product = Product.objects.filter(code=code).first()
+        if not product:
             return Response(
-                {"error": f'No se pudo eliminar el producto "{code}"'},
+                {
+                    "success": False,
+                    "error": f'No se encontró el producto con código "{code}".'
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if SaleItem.objects.filter(product=product).exists():
+            return Response(
+                {
+                    "success": False,
+                    "error": "El producto tiene ventas asignadas, no puede ser eliminado."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         product.delete()
-        return Response({"success": True})
-
+        return Response({"success": True}, status=status.HTTP_200_OK)
+    
     @action(detail=False, methods=["patch"], url_path="patch-by-code/(?P<code>[^/.]+)")
     def patch_by_code(self, request, code=None):
         """

@@ -18,7 +18,8 @@ export default function Header({
   addFormConfig,
   deleteItem,
   selectedItemsColumns = [{}],
-  infoFormConfig
+  infoFormConfig,
+  reloadPageOne
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -64,31 +65,25 @@ export default function Header({
   };
 
   const handleDelete = async () => {
-
     const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
       name: item.name,
       id: item.code ?? item.id
     }));
+  
     for (const { id, name } of itemsToDelete) {
-
-      try {
-        const result = await deleteItem(id, user.token);
-        if (result?.success) {
-          addNotification("success", `"${name}" eliminado con éxito`);
-
-        } else {
-          addNotification("error", `"${name}" no se pudo eliminar`);
-        }
-      } catch (error) {
-        console.error(error);
-        addNotification("error", `Error al eliminar "${name}"`);
+      const result = await deleteItem(id, user.token);
+  
+      if (result?.success) {
+        addNotification("success", `"${name}" eliminado con éxito`);
+      } else {
+        const message = result?.error || `"${name}" no se pudo eliminar`;
+        addNotification("error", message);
       }
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
+  
     setSelectedItems(new Map());
-    closeDelModal()
+    closeDelModal();
+    reloadPageOne();
   };
 
   //Select All button
