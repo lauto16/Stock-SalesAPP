@@ -6,6 +6,8 @@ import { fetchBlames, fetchSearchBlames } from '../../services/axios.services'
 import { useUser } from "../../context/UserContext";
 import SimpleHeader from "../inventory/SimpleHeader"
 import '../../css/blame.css'
+import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
+
 
 const FIELD_TRANSLATIONS = {
   object_code: "Código del producto",
@@ -164,6 +166,7 @@ export default function ProductBlame({ productCode }) {
   };
 
   return (
+    <RequirePermission permission="access_blame">
     <div className="d-flex justify-content-center mt-5">
       <div className="container container-modified">
 
@@ -207,5 +210,6 @@ export default function ProductBlame({ productCode }) {
         </div>
       </div>
     </div>
+    </RequirePermission>
   );
 }

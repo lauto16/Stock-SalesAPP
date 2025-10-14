@@ -5,7 +5,7 @@ import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "./Search.jsx";
 import {
-    fetchSearchProducts, fetchProducts, addProduct, deleteProductByCode,
+    fetchSearchProducts, fetchProducts, deleteProductByCode,
     fetchGetByCode, updateSelectedPrices, updateAllPrices, fetchDownloadExcelFile
 } from "../../services/axios.services.js";
 import ProductInfoModal from "./ProductInfoModal.jsx";
@@ -16,7 +16,8 @@ import addItemConfig from "./forms/useAddItemsConfig.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 import { useModal } from "../crud/hooks/useModal.js";
-import { set } from "react-hook-form";
+import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
+
 export default function InventoryPage() {
 
     const [items, setItems] = useState([]);
@@ -284,6 +285,7 @@ export default function InventoryPage() {
 
     }
     return (
+        <RequirePermission permission="access_inventory">
         <div className="d-flex justify-content-center mt-5">
             <CreateOfferModal
                 show={showOfferModal}
@@ -387,5 +389,6 @@ export default function InventoryPage() {
 
             </div>
         </div>
+        </RequirePermission>
     );
 }

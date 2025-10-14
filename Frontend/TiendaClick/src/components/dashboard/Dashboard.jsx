@@ -10,6 +10,8 @@ import Table from "../crud/Table.jsx";
 import { fetchLowStock } from "../../services/axios.services.js";
 import "../../css/dashboard.css";
 import { useUser } from '../../context/UserContext.jsx'
+import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
+
 
 function Dashboard() {
   const [loading, setLoading] = useState(false);
@@ -64,6 +66,7 @@ function Dashboard() {
     }
   };
   return (
+    <RequirePermission permission="access_dashboard">
     <>
       <div className="app-wrapper">
         {showSidebar && <Nav/>}
@@ -161,6 +164,7 @@ function Dashboard() {
         </main>
       </div>
     </>
+    </RequirePermission>
   );
 }
 

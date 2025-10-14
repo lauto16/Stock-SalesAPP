@@ -13,6 +13,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
 import itemInfo from "./forms/providerExtraInfoConfig.js";
+import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
@@ -123,6 +124,7 @@ function Providers() {
     };
 
     return (
+        <RequirePermission permission="access_providers">
         <div className="d-flex justify-content-center mt-5">
             <div className="container">
 
@@ -176,6 +178,7 @@ function Providers() {
                 </div>
             </div>
         </div>
+        </RequirePermission>
     );
 }
 export default Providers;

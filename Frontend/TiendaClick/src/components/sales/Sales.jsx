@@ -8,6 +8,7 @@ import SaleDetailModal from "./SaleDetailModal.jsx";
 import { fetchSales, fetchSearchSales } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
+import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 
 export default function Sales() {
   const [items, setItems] = useState([]);
@@ -145,6 +146,7 @@ export default function Sales() {
   }, [allSearchResults, currentPage, isSearching]);
 
   return (
+    <RequirePermission permission="access_sales">
     <div className="d-flex justify-content-center mt-5">
       <div className="container container-modified">
 
@@ -208,5 +210,6 @@ export default function Sales() {
         </div>
       </div>
     </div>
+    </RequirePermission>
   );
 }

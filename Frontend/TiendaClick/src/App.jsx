@@ -10,6 +10,7 @@ import ProductBlame from './components/blame/ProductBlame.jsx'
 import PinManager from './components/pin_manager/PinManager.jsx';
 import SignUp from './components/auth/SignUp.jsx';
 import Sales from './components/sales/Sales.jsx'
+import Offers from './components/offers/Offers.jsx';
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
           element={
             <PrivateRoute>
               <SignUp />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/offers/'
+          element={
+            <PrivateRoute>
+              <Offers />
             </PrivateRoute>
           }
         />
