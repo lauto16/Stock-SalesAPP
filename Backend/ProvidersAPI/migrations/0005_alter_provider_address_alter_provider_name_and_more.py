@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='provider',
             name='address',
-            field=models.CharField(blank=True, default='', max_length=200, null=True),
+            field=models.CharField(
+                blank=True, default='', max_length=200, null=True),
         ),
         migrations.AlterField(
             model_name='provider',
@@ -23,6 +24,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='provider',
             name='phone',
-            field=models.CharField(blank=True, default='', max_length=20, null=True),
+            field=models.CharField(
+                blank=True, default='', max_length=20, null=True),
         ),
     ]
