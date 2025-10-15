@@ -329,7 +329,39 @@ async function fetchDownloadExcelFile(token) {
   }
 }
 
+async function fetchSalesStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}stats/sales-data/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de las ventas:", error);
+    return null;
+  }
+}
+
+async function fetchEmployeesStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}stats/employees-stats/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de los empleados:", error);
+    return null;
+  }
+}
+
+async function fetchProductsStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}stats/products-data/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de los productos:", error);
+    return null;
+  }
+}
+
 export {
+  fetchEmployeesStats,
+  fetchProductsStats,
   fetchSearchSales,
   fetchSales,
   fetchSearchProducts,
@@ -355,5 +387,6 @@ export {
   verifyPin,
   updateProvider,
   signupUser,
-  fetchDownloadExcelFile
+  fetchDownloadExcelFile,
+  fetchSalesStats
 };

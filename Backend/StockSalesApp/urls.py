@@ -5,6 +5,7 @@ from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from BlameAPI.views import *
 from SalesAPI.views import *
+from StatsAPI.views import *
 from AuthAPI.views import *
 
 router_blame = DefaultRouter()
@@ -20,13 +21,16 @@ router_offers = DefaultRouter()
 router_offers.register(r'offers', OfferViewSet, basename='offer')
 
 router_users = DefaultRouter()
-router_users.register(r'login', LoginViewSet, basename='users')
+router_users.register(r'login', LoginViewSet, basename='user')
 
 router_signup = DefaultRouter()
 router_signup.register(r'signup', SignupViewSet, basename='signup')
 
 router_sales = DefaultRouter()
 router_sales.register(r'sales', SaleViewSet, basename='sale')
+
+router_stats = DefaultRouter()
+router_stats.register(r'stats', StatsViewSet, basename='stat')
 
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
@@ -38,6 +42,7 @@ urlpatterns = [
     path('api/', include(router_blame.urls)),
     path('api/', include(router_signup.urls)),
     path('api/', include(router_sales.urls)),
+    path('api/', include(router_stats.urls)),
     path("api/login/", obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
 ]
