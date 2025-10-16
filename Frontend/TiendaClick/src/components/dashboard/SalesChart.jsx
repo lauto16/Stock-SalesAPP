@@ -1,5 +1,5 @@
-import React from 'react';
-import Chart from 'react-apexcharts';
+import React from 'react'
+import Chart from 'react-apexcharts'
 
 const SalesChart = ({ sales }) => {
     const options = {
@@ -19,11 +19,11 @@ const SalesChart = ({ sales }) => {
             {
                 breakpoint: 768,
                 options: {
-                    chart: { height: 300 }
-                }
-            }
-        ]
-    };
+                    chart: { height: 300 },
+                },
+            },
+        ],
+    }
 
     const series = [
         {
@@ -35,10 +35,19 @@ const SalesChart = ({ sales }) => {
     ];
 
     return (
-        <div className="chart-wrapper" style={{ width: '100%', maxWidth: '500px' }}>
-            <Chart options={options} series={series} type="line" width="100%" height={300} />
+        <div
+            className="chart-wrapper"
+            style={{ width: '100%', maxWidth: '500px' }}
+        >
+            <Chart
+                options={options}
+                series={series}
+                type="bar"
+                width="100%"
+                height={300}
+            />
         </div>
-    );
-};
+    )
+}
 
-export default SalesChart;
+export default SalesChart
