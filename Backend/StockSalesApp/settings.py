@@ -117,7 +117,10 @@ LOGIN_URL = '/auth/'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "http://192.168.0.107:8000",
+    "http://192.168.0.107:5173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
     "http://192.168.100.156:8000",
     "http://192.168.100.156:5173",
     "http://192.168.100.98:5173",
