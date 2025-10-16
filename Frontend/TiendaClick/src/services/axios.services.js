@@ -34,7 +34,7 @@ async function loginUser(username, password) {
       },
       body: JSON.stringify({ username, password }),
     });
-    
+
 
     if (response.ok) {
       const data = await response.json();
@@ -256,9 +256,10 @@ async function updateAllPrices(data, token) {
 
 async function fetchUserData(token) {
   try {
+
     const response = await axios.get(`${apiUrl}login/me/`, authHeader(token));
     console.log(response.data);
-    
+    console.log(authHeader(token))
     return response.data || null;
   } catch (error) {
     console.error("Error al obtener el rol del usuario:", error);

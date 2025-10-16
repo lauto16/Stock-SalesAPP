@@ -77,13 +77,12 @@ class StatsViewSet(viewsets.ViewSet):
             all_months = [
                 {"month": month, "sales": month_sales.get(month, 0)} for month in range(1, 13)
             ]
-            
-            all_months_sorted = sorted(all_months, key=lambda x: x["sales"], reverse=True)
 
-            return {"most_selling_months_historically": all_months_sorted}
+            return {"total_sells_by_month": all_months}
 
         with ThreadPoolExecutor(max_workers=2) as executor:
-            results = list(executor.map(lambda fn: fn(), [calc_totals, calc_sales_per_month]))
+            results = list(executor.map(lambda fn: fn(), [
+                           calc_totals, calc_sales_per_month]))
 
         data = {}
         for r in results:
@@ -105,7 +104,8 @@ class StatsViewSet(viewsets.ViewSet):
         )
 
         def best_seller(queryset):
-            counter = Counter(queryset.values_list("created_by__username", flat=True))
+            counter = Counter(queryset.values_list(
+                "created_by__username", flat=True))
             return counter.most_common(1)[0][0] if counter else None
 
         data = {
@@ -130,13 +130,15 @@ class StatsViewSet(viewsets.ViewSet):
         )
 
         aggregated = qs.aggregate(
-            total_margin=Coalesce(Sum("margin", output_field=FloatField()), 0.0),
+            total_margin=Coalesce(
+                Sum("margin", output_field=FloatField()), 0.0),
         )
 
         product_count = qs.count()
         total_margin = aggregated["total_margin"]
 
-        average_margin = round(total_margin / product_count, 2) if product_count > 0 else 0.0
+        average_margin = round(total_margin / product_count,
+                               2) if product_count > 0 else 0.0
 
         data = {"average_gain_margin_per_product": average_margin}
 

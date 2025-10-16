@@ -1,7 +1,7 @@
 import React from 'react';
 import Chart from 'react-apexcharts';
 
-const SalesChart = () => {
+const SalesChart = ({ sales }) => {
     const options = {
         chart: {
             type: 'line',
@@ -11,7 +11,9 @@ const SalesChart = () => {
             curve: 'smooth',
         },
         xaxis: {
-            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
+            categories: sales.map((sale) => {
+                return sale.month
+            })
         },
         responsive: [
             {
@@ -26,7 +28,9 @@ const SalesChart = () => {
     const series = [
         {
             name: 'Ventas',
-            data: [30, 40, 35, 50, 49, 60]
+            data: sales.map((sale) => {
+                return sale.sales
+            })
         }
     ];
 
