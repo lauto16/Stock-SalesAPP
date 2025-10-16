@@ -73,8 +73,10 @@ function Dashboard() {
 
     const get_employees_data_stats = async () => {
       const employees_data_stats = await fetchEmployeesStats(user.token)
+      console.log(employees_data_stats);
+      
       if (employees_data_stats) {
-        setEmployeeStats(employees_data_stats.employees_data)
+        setEmployeeStats(employees_data_stats.employees_stats)
       } else {
         setEmployeeStats({})
       }
@@ -112,7 +114,7 @@ function Dashboard() {
             <DashboardHeader title={'DASHBOARD'} isDashboard={true} />
 
             <section className="app-content container-fluid  mb-4">
-              <div className="row mt-2">
+              <div className="row row-action-box mt-2">
                 <ActionBox
                   name="Ventas hoy"
                   number={`${saleStats.total_sales_this_day}`}
@@ -121,6 +123,8 @@ function Dashboard() {
                       ? 'text-bg-success'
                       : 'text-bg-secondary'
                   }
+                  subtext="Dinero recaudado"
+                  subtext_value={saleStats.total_money_sales_this_day}
                   svgName="cart"
                 />
                 <ActionBox
@@ -131,6 +135,8 @@ function Dashboard() {
                       ? 'text-bg-success'
                       : 'text-bg-secondary'
                   }
+                  subtext="Dinero recaudado"
+                  subtext_value={saleStats.total_money_sales_this_month}
                   svgName="cart"
                 />
                 <ActionBox
@@ -142,6 +148,8 @@ function Dashboard() {
                       : 'text-bg-secondary'
                   }
                   svgName="cart"
+                  subtext="Dinero recaudado"
+                  subtext_value={saleStats.total_money_sales_this_year}
                 />
                 <ActionBox
                   name="Margen de ganancia promedio"
@@ -153,14 +161,39 @@ function Dashboard() {
                   }
                   svgName="percentage"
                 />
+                <ActionBox
+                  name="Empleado con mas ventas hoy"
+                    number={`${employeeStats.most_selling_employee_this_day ? employeeStats.most_selling_employee_this_day : 'Nadie'}`}
+                    cardClass='text-bg-secondary'
+                    svgName="new-person"
+                />
+                  <ActionBox
+                  name="Empleado con mas ventas este mes"
+                    number={`${employeeStats.most_selling_employee_this_month}`}
+                    cardClass='text-bg-secondary'
+                    svgName="new-person"
+                />
+                  <ActionBox
+                  name="Empleado con mas ventas este año"
+                    number={`${employeeStats.most_selling_employee_this_year}`}
+                    cardClass='text-bg-secondary'
+                    svgName="new-person"
+                />
+                  <ActionBox
+                  name="Empleado con mas ventas historicamente"
+                    number={`${employeeStats.most_selling_employee_historically}`}
+                    cardClass='text-bg-primary'
+                    svgName="new-person"
+                />
               </div>
+
               <div className="row">
                 <div className="col-xxl-6 col-12 mb-3">
                   <div className="card h-100">
                     <div className="card-header">
                       <h4>Ventas</h4>
                     </div>
-                    <SalesChart />
+                    <SalesChart sales={saleStats.total_sells_by_month}/>
                   </div>
                 </div>
 
