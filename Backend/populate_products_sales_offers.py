@@ -52,14 +52,24 @@ def create_sales(n=400, extra_products=None):
         products.extend(extra_products)
     users = list(CustomUser.objects.all())
 
+    current_year = datetime.now().year
+
     for _ in range(n):
         discount_percentage = round(random.uniform(0, 20), 2)
         discount_reason = fake.sentence(nb_words=4) if discount_percentage > 0 else ""
         tax_percentage = 21.0
         created_by = random.choice(users) if users else None
-        created_at = datetime.now() - timedelta(days=random.randint(0, 365))
 
-        # Creamos la venta sin calcular totales todavía
+        # ✅ Fecha distribuida a lo largo del año actual
+        month = random.randint(1, 12)
+        day = random.randint(1, 28)
+        created_at = datetime(
+            current_year, month, day,
+            random.randint(0, 23),
+            random.randint(0, 59),
+            random.randint(0, 59)
+        )
+
         sale = Sale.objects.create(
             applied_discount_percentage=discount_percentage,
             discount_reason=discount_reason,
@@ -68,7 +78,7 @@ def create_sales(n=400, extra_products=None):
             created_at=created_at
         )
 
-        # Creamos los items asociados
+        # ✅ Items asociados
         items_count = random.randint(1, 5)
         selected_products = random.sample(products, items_count)
 
@@ -85,11 +95,10 @@ def create_sales(n=400, extra_products=None):
                 discount_percentage=item_discount
             )
 
-        # ✅ Aquí ya no calculamos manualmente, delegamos al modelo
         sale.finalize_sale(user=created_by)
 
-    print(f"✅ {n} ventas con items creadas.")
-    
+    print(f"✅ {n} ventas distribuidas en todos los meses del año creadas.")
+
 def create_offers(n=50):
     products = list(Product.objects.all())
     offers = []
@@ -104,20 +113,25 @@ def create_offers(n=50):
         offer.save()
     print(f"✅ {n} ofertas creadas.")
 
+
 if __name__ == "__main__":
-    new_products = []
+    # ✅ Crear proveedores si no hay suficientes
     if Provider.objects.count() < 100:
         create_providers(100)
     else:
         print("🔁 Ya hay 100 o más proveedores, no se crean nuevos.")
+
+    # ✅ Crear productos si faltan
+    new_products = []
     if Product.objects.count() < 200:
         new_products = create_products(200)
     else:
         print("🔁 Ya hay 200 o más productos, no se crean nuevos.")
-    if Sale.objects.count() < 400:
-        create_sales(400, extra_products=new_products)
-    else:
-        print("🔁 Ya hay 400 o más ventas, no se crean nuevas.")
+
+    # ⚡ SIEMPRE CREA MÁS VENTAS (aunque ya haya muchas)
+    create_sales(400, extra_products=new_products)
+
+    # ✅ Crear ofertas si faltan
     if Offer.objects.count() < 50:
         create_offers(50)
     else:
