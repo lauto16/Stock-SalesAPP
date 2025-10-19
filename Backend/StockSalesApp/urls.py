@@ -32,6 +32,9 @@ router_sales.register(r'sales', SaleViewSet, basename='sale')
 router_stats = DefaultRouter()
 router_stats.register(r'stats', StatsViewSet, basename='stat')
 
+router_users_admin_functions = DefaultRouter()
+router_users_admin_functions.register(r'admin-user-functions', UserViewSet, basename='admin-user-function')
+
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
@@ -43,6 +46,7 @@ urlpatterns = [
     path('api/', include(router_signup.urls)),
     path('api/', include(router_sales.urls)),
     path('api/', include(router_stats.urls)),
-    path("api/login/", obtain_auth_token),
+    path('api/', include(router_users_admin_functions.urls)),
+    path('api/login/', obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
 ]

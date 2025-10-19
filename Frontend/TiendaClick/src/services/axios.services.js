@@ -360,7 +360,51 @@ async function fetchProductsStats(token) {
   }
 }
 
+async function getAllUsers(token) {
+  try {
+    const response = await axios.get(`${apiUrl}admin-user-functions/list/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los usuarios:", error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Error al obtener los usuarios",
+    };
+  }
+}
+
+async function deleteUser(userId, token) {
+  try {
+    const response = await axios.delete(`${apiUrl}admin-user-functions/${userId}/delete/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar usuario:", error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Error al eliminar el usuario",
+    };
+  }
+}
+
 export {
+  deleteUser,
+  getAllUsers,
   fetchEmployeesStats,
   fetchProductsStats,
   fetchSearchSales,

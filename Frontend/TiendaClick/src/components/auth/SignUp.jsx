@@ -8,6 +8,7 @@ import SideBar from "../sideNav/SideBar";
 import SideBarBrand from "../sideNav/SideBarBrand";
 import DashboardHeader from "../dashboard/DashboardHeader"
 import { signupUser } from "../../services/axios.services"
+import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 
 
 export default function SignUp() {
@@ -72,15 +73,14 @@ export default function SignUp() {
     }, []);
 
     return (
+        <RequirePermission permission="access_dashboard">
         <div className={`app-wrapper ${!showSidebar ? "no-sidebar" : ""}`}>
-            {/* Contenedor del header */}
             <div className="header-container text-center mt-2">
                 <DashboardHeader title={"CREAR NUEVO USUARIO"} isDashboard={false} />
             </div>
 
             {showSidebar && <SideBar />}
 
-            {/* Contenido */}
             <main className="flex-grow-1 content">
                 <section className="app-content container-fluid d-flex justify-content-center align-items-center flex-column">
                     <Card className="auth-card" style={{ maxWidth: "450px", width: "100%" }}>
@@ -166,5 +166,6 @@ export default function SignUp() {
                 </section>
             </main>
         </div>
+        </RequirePermission>
     );
 }
