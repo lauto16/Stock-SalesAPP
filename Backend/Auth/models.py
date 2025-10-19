@@ -59,6 +59,7 @@ class Role(models.Model):
         ('salesperson', 'Vendedor'),
         ('stocker', 'Repositor'),
         ('administrator', 'Administrador'),
+        ('salesperson_stocker', 'Vendedor y repositor')
     ]
 
     name = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True)

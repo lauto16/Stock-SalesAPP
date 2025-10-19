@@ -38,6 +38,7 @@ function SideBar({ onLogout }) {
                                 <NavLink name="Informe de Ventas" />
                                 <li className="nav-header">USUARIOS</li>
                                 <NavLink name="Crear nuevo usuario" url="/sign-up" />
+                                <NavLink name="Eliminar usuarios" url="/delete-user" />
                             </ul>
                         </nav>
                     </div>

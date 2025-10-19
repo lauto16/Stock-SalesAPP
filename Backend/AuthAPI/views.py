@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 from Auth.models import Role
 
+
 class LoginView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
@@ -24,12 +25,17 @@ class LoginView(TokenObtainPairView):
 
             user_permissions = []
             if hasattr(user, "role") and user.role:
-                user_permissions = list(user.role.permissions.values_list("code_name", flat=True))
+                user_permissions = list(
+                    user.role.permissions.values_list("code_name", flat=True)
+                )
 
-            res = Response({
-                "message": "Login successful",
-                "permissions": user_permissions,
-            }, status=status.HTTP_200_OK)
+            res = Response(
+                {
+                    "message": "Login successful",
+                    "permissions": user_permissions,
+                },
+                status=status.HTTP_200_OK,
+            )
 
             cookie_settings = {
                 "httponly": True,
@@ -38,21 +44,20 @@ class LoginView(TokenObtainPairView):
                 "max_age": 3600,
             }
             res.set_cookie("access", access_token, **cookie_settings)
-            res.set_cookie("refresh", refresh_token,
-                           path="/api/token/refresh/", **cookie_settings)
+            res.set_cookie(
+                "refresh", refresh_token, path="/api/token/refresh/", **cookie_settings
+            )
             return res
 
         except (InvalidToken, AuthenticationFailed):
             return Response(
-                {"error": "Credenciales inválidas"},
-                status=status.HTTP_401_UNAUTHORIZED
+                {"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
 
 class LogoutView(APIView):
     def post(self, request):
-        res = Response({"message": "Logout successful"},
-                       status=status.HTTP_200_OK)
+        res = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
         res.delete_cookie("access")
         res.delete_cookie("refresh", path="/api/token/refresh/")
         return res
@@ -65,14 +70,13 @@ class LoginViewSet(viewsets.ViewSet):
     def me(self, request):
         user = request.user
         if not user or not hasattr(user, "role") or not user.role:
-            return Response({"detail": "No se encontró el rol del usuario."}, status=404)
+            return Response(
+                {"detail": "No se encontró el rol del usuario."}, status=404
+            )
 
         permissions = list(user.role.permissions.values_list("code_name", flat=True))
 
-        return Response({
-            "role_name_sp": user.role.name_sp,
-            "permissions": permissions
-        })
+        return Response({"role_name_sp": user.role.name_sp, "permissions": permissions})
 
     @action(detail=False, methods=["get"], url_path=r"verify-user-pin/(?P<pin>[\w-]+)")
     def verify_user_pin(self, request, pin=None):
@@ -84,15 +88,9 @@ class LoginViewSet(viewsets.ViewSet):
             return Response({"detail": "El usuario debe estar logueado"}, status=403)
 
         if user.pin == pin:
-            return Response(
-                {"success": True},
-                status=status.HTTP_200_OK
-            )
+            return Response({"success": True}, status=status.HTTP_200_OK)
         else:
-            return Response(
-                {"success": False},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 CustomUser = get_user_model()
@@ -106,24 +104,21 @@ class SignupViewSet(viewsets.ViewSet):
         serializer = SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        username = serializer.validated_data['username']
-        password = serializer.validated_data['password']
-        pin = serializer.validated_data['pin']
-        role_name = serializer.validated_data['role']
+        username = serializer.validated_data["username"]
+        password = serializer.validated_data["password"]
+        pin = serializer.validated_data["pin"]
+        role_name = serializer.validated_data["role"]
 
         try:
             role = Role.objects.get(name=role_name)
         except Role.DoesNotExist:
             return Response(
                 {"error": f"El rol '{role_name}' no existe"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user = CustomUser.objects.create_user(
-            username=username,
-            password=password,
-            role_name=role_name,
-            pin=pin
+            username=username, password=password, role_name=role_name, pin=pin
         )
 
         token, _ = Token.objects.get_or_create(user=user)
@@ -133,7 +128,72 @@ class SignupViewSet(viewsets.ViewSet):
                 "id": user.id,
                 "username": user.username,
                 "role": role.name,
-                "token": token.key
+                "token": token.key,
             },
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class UserViewSet(viewsets.ViewSet):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=["get"], url_path="list")
+    def list_users(self, request):
+        user = request.user
+
+        if not hasattr(user, "role") or user.role.name != "administrator":
+            return Response(
+                {"detail": "No tenés permisos para ver los usuarios."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        users = CustomUser.objects.all().select_related("role").order_by("username")
+
+        users_data = [
+            {
+                "id": u.id,
+                "username": u.username,
+                "role": u.role.name_sp if u.role else None,
+            }
+            for u in users
+        ]
+
+        return Response(
+            {"success": True, "data": users_data}, status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["delete"], url_path="delete")
+    def delete_user(self, request, pk=None):
+        user = request.user
+
+        if not hasattr(user, "role") or user.role.name != "administrator":
+            return Response(
+                {"detail": "No tenés permisos para eliminar usuarios."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        try:
+            user_to_delete = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"success": False, "message": "El usuario no existe."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user_to_delete.id == user.id:
+            return Response(
+                {"success": False, "message": "No podés eliminarte a vos mismo."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        username_deleted = user_to_delete.username
+        user_to_delete.delete()
+
+        return Response(
+            {
+                "success": True,
+                "message": f"Usuario '{username_deleted}' eliminado correctamente.",
+            },
+            status=status.HTTP_200_OK,
         )
