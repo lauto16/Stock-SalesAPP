@@ -7,6 +7,8 @@ export default function PrivateRoute({ children }) {
   const { pinVerified, checking } = usePin();
   const location = useLocation();
 
+  if (import.meta.env.VITE_DEBUG === "true") return children
+
   if (!user) return <Navigate to="/login/" replace />;
 
   if (checking) return null;

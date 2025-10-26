@@ -47,6 +47,7 @@ export function PinProvider({ children }) {
     pinVerified,
     checking,
     verifyAndSavePin,
+    setPinVerified
   };
 
   return <PinContext.Provider value={value}>{children}</PinContext.Provider>;
