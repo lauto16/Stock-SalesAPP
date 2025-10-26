@@ -11,6 +11,7 @@ import PinManager from './components/pin_manager/PinManager.jsx';
 import SignUp from './components/auth/SignUp.jsx';
 import Sales from './components/sales/Sales.jsx'
 import Offers from './components/offers/Offers.jsx';
+import DeleteUser from './components/auth/DeleteUser.jsx'
 
 function App() {
   return (
@@ -72,6 +73,12 @@ function App() {
               <SignUp />
             </PrivateRoute>
           }
+        />
+        <Route
+          path='delete-user'
+          element={<PrivateRoute>
+            <DeleteUser />
+          </PrivateRoute>}
         />
         <Route
           path='/offers/'

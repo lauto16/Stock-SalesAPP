@@ -1,7 +1,8 @@
-import React from 'react';
-import Chart from 'react-apexcharts';
+import React from 'react'
+import Chart from 'react-apexcharts'
 
-const SalesChart = () => {
+const SalesChart = ({ sales }) => {
+    const months = ['Ene', "Feb", 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     const options = {
         chart: {
             type: 'line',
@@ -11,30 +12,43 @@ const SalesChart = () => {
             curve: 'smooth',
         },
         xaxis: {
-            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
+            categories: sales?.map((sale) => {
+                return months[sale.month - 1]
+            })
         },
         responsive: [
             {
                 breakpoint: 768,
                 options: {
-                    chart: { height: 300 }
-                }
-            }
-        ]
-    };
+                    chart: { height: 300 },
+                },
+            },
+        ],
+    }
 
     const series = [
         {
             name: 'Ventas',
-            data: [30, 40, 35, 50, 49, 60]
+            data: sales?.map((sale) => {
+                return sale.sales
+            })
         }
     ];
 
     return (
-        <div className="chart-wrapper" style={{ width: '100%', maxWidth: '500px' }}>
-            <Chart options={options} series={series} type="line" width="100%" height={300} />
+        <div
+            className="chart-wrapper"
+            style={{ width: '100%', maxWidth: '500px' }}
+        >
+            <Chart
+                options={options}
+                series={series}
+                type="bar"
+                width="100%"
+                height={300}
+            />
         </div>
-    );
-};
+    )
+}
 
-export default SalesChart;
+export default SalesChart
