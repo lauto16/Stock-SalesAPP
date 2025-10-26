@@ -78,7 +78,7 @@ class StatsViewSet(viewsets.ViewSet):
                 {"month": month, "sales": month_sales.get(month, 0)} for month in range(1, 13)
             ]
 
-            return {"total_sells_by_month": all_months}
+            return {"total_sales_by_month": all_months}
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(executor.map(lambda fn: fn(), [
