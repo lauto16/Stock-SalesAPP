@@ -36,3 +36,4 @@ dist/
 .env.*
 docker-compose.override.yml
 populate_db.py
+db_sqlite3
