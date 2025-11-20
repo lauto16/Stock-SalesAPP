@@ -169,19 +169,19 @@ function Dashboard() {
                 />
                   <ActionBox
                   name="Empleado con mas ventas este mes"
-                    number={`${employeeStats.most_selling_employee_this_month}`}
+                    number={`${employeeStats.most_selling_employee_this_month ? employeeStats.most_selling_employee_this_month : 'Nadie'}`}
                     cardClass='text-bg-secondary'
                     svgName="new-person"
                 />
                   <ActionBox
                   name="Empleado con mas ventas este año"
-                    number={`${employeeStats.most_selling_employee_this_year}`}
+                    number={`${employeeStats.most_selling_employee_this_year ? employeeStats.most_selling_employee_this_year: 'Nadie'}`}
                     cardClass='text-bg-secondary'
                     svgName="new-person"
                 />
                   <ActionBox
                   name="Empleado con mas ventas historicamente"
-                    number={`${employeeStats.most_selling_employee_historically}`}
+                    number={`${employeeStats.most_selling_employee_historically ? employeeStats.most_selling_employee_historically: 'Nadie'}`}
                     cardClass='text-bg-primary'
                     svgName="new-person"
                 />
