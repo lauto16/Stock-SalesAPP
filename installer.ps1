@@ -115,6 +115,10 @@ Log "Actualizando PIN del usuario administrador..."
 
 & $PythonCmd update_pin.py $Pin
 
+# aca habria que poner la ip con ifconfig o algo
+$contenido = "[InternetShortcut]`nURL=http://192.168.100.156:5173/"
+Set-Content -Path "$BasePath/TiendaClick.url" -Value $contenido
+
 Log " INSTALACIÓN COMPLETADA "
 
 Pause
