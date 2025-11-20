@@ -27,7 +27,7 @@ function Home() {
         
         <div className="container py-5">
             <h1 className="mb-4">Bienvenido a la Home</h1>
-            <p className="lead">Esta es la página principal de tu aplicación.</p>
+            <p className="lead">Esta es la página principal de tu negocio.</p>
 
             <div className="mt-4">
                 <Link to="/dashboard" className="btn btn-primary">

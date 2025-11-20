@@ -3,13 +3,15 @@ import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { usePin } from "../../context/PinContext";
 import { useNotifications } from '../../context/NotificationSystem';
+import { Card } from "react-bootstrap";
+import SideBarBrand from "../sideNav/SideBarBrand"
 
 export default function PinManager() {
   const [pin, setPin] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const { verifyAndSavePin } = usePin();
   const navigate = useNavigate();
-  const {user} = useUser()
+  const { user, logout } = useUser();
   const { addNotification } = useNotifications();
 
   const getRedirectPathByRole = (role) => {
@@ -27,20 +29,25 @@ export default function PinManager() {
     }
   };
 
-//TODO: AGREGAR UN BOTON DE VOLVER 
+  const roleAvatar = {
+    "Administrador": "bi-person-circle text-primary",
+    "Repositor": "bi-box-seam text-warning",
+    "Vendedor": "bi-cash-stack text-success",
+    "Vendedor y Repositor": "bi-cash-coin text-success",
+  };
 
-const handleVerify = async (fullPin) => {
-  const success = await verifyAndSavePin(fullPin);
-  if (success) {
-    const redirectTo = getRedirectPathByRole(user.role);
-    navigate(redirectTo);
-    return;
-  }
-  addNotification("error", "Pin incorrecto.");
+  const handleVerify = async (fullPin) => {
+    const success = await verifyAndSavePin(fullPin);
+    if (success) {
+      const redirectTo = getRedirectPathByRole(user.role);
+      navigate(redirectTo);
+      return;
+    }
+    addNotification("error", "Pin incorrecto.");
 
-  setPin(["", "", "", ""]);
-  inputsRef.current[0]?.focus();
-};
+    setPin(["", "", "", ""]);
+    inputsRef.current[0]?.focus();
+  };
 
   const handleChange = (value, index) => {
     if (!/^\d?$/.test(value)) return;
@@ -65,48 +72,77 @@ const handleVerify = async (fullPin) => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  }
+
   useEffect(() => {
-  inputsRef.current[0]?.focus();
-}, []);
+    inputsRef.current[0]?.focus();
+  }, []);
 
   return (
-    <div style={styles.container}>
-      <img src="/7979300.webp" alt="Avatar" style={styles.avatar} />
-      <h2 style={styles.name}>PIN</h2>
-      <p style={styles.text}>Ingresa tu PIN</p>
-      <div style={styles.inputContainer}>
-        {pin.map((digit, i) => (
-          <input
-            key={i}
-            ref={(el) => (inputsRef.current[i] = el)}
-            type="password"
-            inputMode="numeric"
-            maxLength="1"
-            value={digit}
-            onChange={(e) => handleChange(e.target.value, i)}
-            onKeyDown={(e) => handleKeyDown(e, i)}
+    <div className="auth-page">
+      <Card className="auth-card" style={{ minHeight: "340px" }}>
+        <Card.Header className="auth-card-header">
+          <button
+            onClick={handleLogout}
+            className="btn"
             style={{
-              ...styles.input,
-              borderColor: digit ? "#f5c193" : "#d4d4d4",
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              padding: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "10px",
+              lineHeight: 1,
+              color: 'red'
             }}
-          />
-        ))}
-      </div>
+          >
+            <i className="bi bi-x" style={{ fontSize: "18px" }}></i>
+          </button>
+          <SideBarBrand />
+        </Card.Header>
+        <Card.Body className="auth-card-body" style={{ textAlign: "center", position: "relative" }}>
+          <i
+            className={`bi ${roleAvatar[user.role] || "bi-person"} fs-1`}
+            style={{
+              fontSize: "64px",
+              marginBottom: "10px",
+            }}
+          ></i>
+          <h2 style={styles.name}>{user.username}</h2>
+          <p style={styles.text}>Ingresa tu PIN</p>
+          <div style={styles.inputContainer}>
+            {pin.map((digit, i) => (
+              <input
+                key={i}
+                ref={(el) => (inputsRef.current[i] = el)}
+                type="password"
+                inputMode="numeric"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(e.target.value, i)}
+                onKeyDown={(e) => handleKeyDown(e, i)}
+                style={{
+                  ...styles.input,
+                  borderColor: digit ? "#f5c193" : "#d4d4d4",
+                }}
+              />
+            ))}
+          </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
 
 const styles = {
-  container: {
-    backgroundColor: "#ffffff",
-    color: "#1c1c1c",
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "sans-serif",
-  },
   avatar: {
     width: 50,
     height: 50,
@@ -119,13 +155,14 @@ const styles = {
     color: "#1c1c1c",
   },
   text: {
-    fontSize: 18,
+    fontSize: 12,
     color: "#9b9b9bff",
     marginBottom: 20,
   },
   inputContainer: {
     display: "flex",
     gap: 10,
+    justifyContent: "center",
   },
   input: {
     width: 50,

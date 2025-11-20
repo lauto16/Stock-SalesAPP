@@ -17,6 +17,7 @@ const options_other = [
 const options_dashboard = [
   ...options_other.filter(opt => opt.label !== "Cerrar sesión"),
   { label: "Crear nuevo usuario", path: "/sign-up/", permission: null },
+  { label: "Eliminar usuario", path: "/delete-user/", permission: null },
   options_other.find(opt => opt.label === "Cerrar sesión")
 ];
 

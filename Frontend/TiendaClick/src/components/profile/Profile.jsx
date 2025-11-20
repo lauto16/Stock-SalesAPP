@@ -2,47 +2,72 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext.jsx';
 import ConfirmationModal from '../crud/ConfirmationModal.jsx';
-import { logoutUser } from '../../services/axios.services.js';
 
 function Profile() {
-    const { user } = useUser();
-    const avatar = "/7979300.webp";
+    const { user, logout } = useUser();
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
+    const roleAvatar = {
+        "Administrador": "bi-person-circle text-primary",
+        "Repositor": "bi-box-seam text-warning",
+        "Vendedor": "bi-cash-stack text-success",
+        "Vendedor y Repositor": "bi-cash-coin text-success",
+    };
+
     const handleClose = () => setShowModal(false);
     const handleOpen = () => setShowModal(true);
-    const { logout } = useUser();
 
     const confirmLogout = async () => {
         setShowModal(false);
         try {
             logout();
             navigate("/login", { replace: true });
-        } catch (error) {
-            console.warn("Error cerrando sesión en backend", error);
-        }
+        } catch (error) { }
     };
 
     return (
         <>
             <li className="nav-item dropdown user-menu">
                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                    <img src={avatar} className="user-image rounded-circle shadow" alt="User" />
+                    <i
+                        className={`bi ${roleAvatar[user.role] || "bi-person"} fs-4 me-2`}
+                        style={{ fontSize: "22px" }}
+                    ></i>
                     <span className="d-none d-md-inline">{user.name}</span>
                 </a>
 
                 <ul className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                    <li className="user-header text-bg-primary">
-                        <img src={avatar} className="rounded-circle shadow" alt="User" />
-                        <p>{user.name} - {user.role}</p>
+                    <li
+                        className="user-header text-center py-4"
+                        style={{ backgroundColor: "#ffffff" }}
+                    >
+                        <i
+                            className={`bi ${roleAvatar[user.role] || "bi-person"} fs-1`}
+                            style={{ fontSize: "64px" }}
+                        ></i>
+
+                        <p className="mt-2 mb-0 text-dark" style={{ fontWeight: "700" }}>
+                            {user.name}
+                        </p>
+
+                        <p className="mb-0" style={{ fontSize: "0.9rem", color: "#6c757d" }}>
+                            {user.role}
+                        </p>
+
+                        <p className="mb-0" style={{ fontSize: "0.85rem", color: "#8a8a8a" }}>
+                            @{user.username}
+                        </p>
                     </li>
-                    <li className="user-body px-3 pb-3 d-flex justify-content-between">
-                        <a href="#" className="btn btn-default btn-flat">Profile</a>
+
+                    <li className="user-body px-3 pb-3 d-flex flex-column gap-2">
                         <button
-                            className="btn btn-danger btn-flat"
+                            className="btn btn-danger w-100"
                             onClick={handleOpen}
-                            style={{marginLeft:"50px"}}
+                            style={{
+                                fontSize: "0.85rem",
+                                padding: "6px 8px",
+                            }}
                         >
                             Cerrar sesión
                         </button>

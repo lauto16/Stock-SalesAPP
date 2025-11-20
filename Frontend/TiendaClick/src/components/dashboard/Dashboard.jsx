@@ -193,7 +193,7 @@ function Dashboard() {
                     <div className="card-header">
                       <h4>Ventas</h4>
                     </div>
-                    <SalesChart sales={saleStats.total_sells_by_month}/>
+                    <SalesChart sales={saleStats.total_sales_by_month}/>
                   </div>
                 </div>
 

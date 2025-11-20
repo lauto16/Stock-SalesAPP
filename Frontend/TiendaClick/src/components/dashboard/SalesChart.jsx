@@ -1,7 +1,9 @@
 import React from 'react'
 import Chart from 'react-apexcharts'
+import { useEffect } from 'react'
 
 const SalesChart = ({ sales }) => {
+    
     const months = ['Ene', "Feb", 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     const options = {
         chart: {
@@ -34,6 +36,11 @@ const SalesChart = ({ sales }) => {
             })
         }
     ];
+
+    useEffect(() => {
+        console.log(sales);
+        
+    }, [sales])
 
     return (
         <div
