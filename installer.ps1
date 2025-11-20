@@ -1,11 +1,5 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-# ===============================
-# INSTALLER SIN GUI
-# ===============================
-
 $RepoURL = "https://github.com/lauto16/Stock-SalesAPP.git"
-
-# Ruta donde está el script
 $BasePath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $TargetDir = Join-Path $BasePath "TiendaClick"
 
@@ -13,29 +7,19 @@ function Log($msg) {
     Write-Host "[+] $msg"
 }
 
-# --------------------------------------
-# 1) BORRAR CARPETA SI EXISTE
-# --------------------------------------
 if (Test-Path $TargetDir) {
     Log "Eliminando carpeta existente TiendaClick..."
     Remove-Item -Recurse -Force $TargetDir
 }
 
-# --------------------------------------
-# 2) CLONAR REPO
-# --------------------------------------
 Log "Clonando repositorio..."
 git clone $RepoURL $TargetDir
-if ($LASTEXITCODE -ne 0) { Log "ERROR: git clone falló"; exit }
+if ($LASTEXITCODE -ne 0) { Log "ERROR: git clone fallÃ³"; exit }
 
 Log "Repositorio clonado correctamente."
 
 Set-Location $TargetDir
 
-
-# --------------------------------------
-# 3) VERIFICAR NODE.JS
-# --------------------------------------
 Log "Verificando Node.js..."
 if (!(Get-Command node.exe -ErrorAction SilentlyContinue)) {
     Log "Node no encontrado. Instalando Node.js..."
@@ -46,12 +30,8 @@ if (!(Get-Command node.exe -ErrorAction SilentlyContinue)) {
 
     Log "Node instalado."
 } else {
-    Log "Node.js ya está instalado."
+    Log "Node.js ya estÃ¡ instalado."
 }
-
-# --------------------------------------
-# 4) NPM INSTALL EN Frontend/TiendaClick
-# --------------------------------------
 $FrontendApp = Join-Path $TargetDir "Frontend\TiendaClick"
 
 if (Test-Path $FrontendApp) {
@@ -60,13 +40,9 @@ if (Test-Path $FrontendApp) {
     npm install
     Log "npm install completado."
 } else {
-    Log "ERROR: No se encontró la app frontend."
+    Log "ERROR: No se encontrÃ³ la app frontend."
 }
 
-
-# --------------------------------------
-# 5) VERIFICAR PYTHON
-# --------------------------------------
 Set-Location $TargetDir
 
 function Detect-Python {
@@ -96,10 +72,6 @@ if (-not $PythonCmd) {
 
 Log "Python detectado como comando: $PythonCmd"
 
-
-# --------------------------------------
-# 6) CREAR VENV
-# --------------------------------------
 Set-Location "$TargetDir\Backend"
 
 Log "Instalando virtualenv..."
@@ -112,63 +84,37 @@ Log "Activando entorno virtual..."
 $Activate = ".\venv\Scripts\activate.ps1"
 . $Activate
 
-
-# --------------------------------------
-# 7) INSTALAR REQUIREMENTS
-# --------------------------------------
 Log "Instalando requirements.txt..."
 pip install -r requirements.txt
 
-
-# --------------------------------------
-# 8) CREAR DB SQLITE
-# --------------------------------------
 Log "Creando archivo db.sqlite3..."
 New-Item -ItemType File -Path "db.sqlite3" -Force | Out-Null
 
-
-# --------------------------------------
-# 9) MIGRACIONES
-# --------------------------------------
 Log "Ejecutando makemigrations..."
 & $PythonCmd manage.py makemigrations
 
 Log "Ejecutando migrate..."
 & $PythonCmd manage.py migrate
 
-# --------------------------------------
-# 9.5) EJECUTAR populate_role_permissions_manager.py
-# --------------------------------------
 Log "Ejecutando populate_role_permissions_manager.py..."
 & $PythonCmd populate_role_permissions_manager.py
 
 # --------------------------------------
 # 10) CREAR SUPERUSER (manual)
 # --------------------------------------
-Log "Creación de superusuario:"
+Log "CreaciÃ³n de superusuario:"
 & $PythonCmd manage.py createsuperuser
 
-# --------------------------------------
-# 9.6) PEDIR PIN
-# --------------------------------------
 do {
-    $Pin = Read-Host "Ingrese un PIN de 4 dígitos para el usuario administrador"
+    $Pin = Read-Host "Ingrese un PIN de 4 dÃ­gitos para el usuario administrador"
 } until ($Pin -match '^\d{4}$')
 
 Log "PIN aceptado."
 
-# --------------------------------------
-# 9.7) ACTUALIZAR PIN DEL USUARIO
-# --------------------------------------
 Log "Actualizando PIN del usuario administrador..."
 
 & $PythonCmd update_pin.py $Pin
 
-# --------------------------------------
-# FIN
-# --------------------------------------
-Log "===================================="
-Log " INSTALACIÓN COMPLETADA "
-Log "===================================="
+Log " INSTALACIÃ“N COMPLETADA "
 
 Pause
