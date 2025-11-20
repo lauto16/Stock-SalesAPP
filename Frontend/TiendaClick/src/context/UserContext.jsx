@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
     const login = async ({ username, password }) => {
         const response = await loginUser(username, password);
         if (response.success) {
-            setUser({ username, token: response.data.token});
+            setUser({ username, token: response.data.token });
             return { success: true };
         } else {
             return { success: false };

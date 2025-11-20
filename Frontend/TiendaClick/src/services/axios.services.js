@@ -27,25 +27,10 @@ async function fetchBlames(page = 1, setLoading, token) {
 
 async function loginUser(username, password) {
   try {
-    const response = await fetch(`${apiUrl}login/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-
-      return { success: true, data };
-    } else {
-      return { success: false };
-    }
+    const response = await axios.post(`${apiUrl}login/`, { username, password });
+    return { success: true, data: response.data };
   } catch (error) {
-    console.error("Error en loginUser:", error);
+    console.error('Error al obtener el usuario:', error);
     return { success: false };
   }
 }
