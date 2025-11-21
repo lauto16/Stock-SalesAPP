@@ -48,13 +48,15 @@ Set-Location $TargetDir
 function Detect-Python {
     foreach ($cmd in @("python", "python3", "py")) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
+            Log $cmd
             return $cmd
+        
         }
     }
     return $null
 }
 
-$PythonCmd = Detect-Python
+$PythonCmd = "py"
 
 if (-not $PythonCmd) {
     Log "Python no encontrado. Instalando Python..."
@@ -81,7 +83,7 @@ Log "Creando entorno virtual..."
 & $PythonCmd -m virtualenv venv
 
 Log "Activando entorno virtual..."
-$Activate = ".\venv\Scripts\activate.ps1"
+$Activate = ".\venv\Scripts\activate"
 . $Activate
 
 Log "Instalando requirements.txt..."
@@ -118,7 +120,5 @@ Log "Actualizando PIN del usuario administrador..."
 # aca habria que poner la ip con ifconfig o algo
 $contenido = "[InternetShortcut]`nURL=http://192.168.100.156:5173/"
 Set-Content -Path "$BasePath/TiendaClick.url" -Value $contenido
-
-Log " INSTALACIÓN COMPLETADA "
 
 Pause
