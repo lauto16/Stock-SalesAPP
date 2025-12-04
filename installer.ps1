@@ -83,13 +83,15 @@ Set-Location $TargetDir
 function Detect-Python {
     foreach ($cmd in @("python", "python3", "py")) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
+            Log $cmd
             return $cmd
+        
         }
     }
     return $null
 }
 
-$PythonCmd = Detect-Python
+$PythonCmd = "py"
 
 if (-not $PythonCmd) {
     Log "Python no encontrado. Instalando Python..."

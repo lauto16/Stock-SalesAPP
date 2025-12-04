@@ -1,0 +1,7 @@
+.env
+populate_db.py
+unpopulate_db.py
+populate_roles.py 
+populate_role_permissions.py
+populate_role_permissions_manager.py
+populate_products_sales_offers.py
