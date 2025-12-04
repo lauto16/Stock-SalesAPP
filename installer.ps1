@@ -36,6 +36,31 @@ if (Test-Path $TargetDir) {
     Remove-Item -Recurse -Force $TargetDir
 }
 
+# ============================
+# Instalar Git si no existe
+# ============================
+Log "Verificando instalación de Git..."
+
+if (!(Get-Command git.exe -ErrorAction SilentlyContinue)) {
+    Log "Git no encontrado. Instalando Git..."
+
+    $GitURL = "https://github.com/git-for-windows/git/releases/latest/download/Git-2.45.1-64-bit.exe"
+    $GitInstaller = "$env:TEMP\git_installer.exe"
+
+    Invoke-WebRequest $GitURL -OutFile $GitInstaller
+
+    Start-Process $GitInstaller -Wait -ArgumentList "/VERYSILENT", "/NORESTART"
+
+    if (!(Get-Command git.exe -ErrorAction SilentlyContinue)) {
+        Log "ERROR: Git no pudo instalarse."
+        exit
+    }
+
+    Log "Git instalado correctamente."
+} else {
+    Log "Git ya está instalado."
+}
+
 # Clonar repo
 Log "Clonando repositorio..."
 git clone $RepoURL $TargetDir
@@ -85,7 +110,6 @@ function Detect-Python {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
             Log $cmd
             return $cmd
-        
         }
     }
     return $null
@@ -153,10 +177,51 @@ Log "PIN aceptado."
 Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
-# ============================
-# Crear acceso directo URL
-# ============================
-$shortcutContent = "[InternetShortcut]`nURL=$ShortcutURL"
-Set-Content -Path "$BasePath/$ProjectFolder.url" -Value $shortcutContent
 
-Pause
+
+# ======================================================
+# === Crear tarea programada: ejecutar run_app.py al inicio ===
+# ======================================================
+
+Log "Creando tarea programada RunApp..."
+
+$PythonVenv = Join-Path $TargetDir "Backend/venv/Scripts/python.exe"
+$RunAppPy  = Join-Path $TargetDir "run_app.py"
+
+if (!(Test-Path $PythonVenv)) {
+    Log "ERROR: No se encontró el Python del venv en $PythonVenv"
+    exit
+}
+
+if (!(Test-Path $RunAppPy)) {
+    Log "ERROR: No se encontró run_app.py en $RunAppPy"
+    exit
+}
+
+# Acción: ejecutar python.exe run_app.py
+$Action = New-ScheduledTaskAction -Execute $PythonVenv -Argument $RunAppPy
+$Trigger = New-ScheduledTaskTrigger -AtLogOn
+
+Register-ScheduledTask `
+    -TaskName "RunAppOnLogin" `
+    -Action $Action `
+    -Trigger $Trigger `
+    -Description "Ejecuta run_app.py al iniciar sesión" `
+    -Force
+
+Log "Tarea programada creada: RunAppOnLogin para run_app.py"
+
+
+# ======================================================
+# === Copiar TiendaClick.url al escritorio actual =========
+# ======================================================
+
+$URLFile = Join-Path $TargetDir "TiendaClick.url"
+$DesktopShortcut = Join-Path $BasePath "TiendaClick.url"
+
+if (!(Test-Path $URLFile)) {
+    Log "ERROR: No se encontró TiendaClick.url dentro del repo clonado."
+} else {
+    Copy-Item $URLFile $DesktopShortcut -Force
+    Log "TiendaClick.url copiado al escritorio: $DesktopShortcut"
+}
