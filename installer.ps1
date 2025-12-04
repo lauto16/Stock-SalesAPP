@@ -1,17 +1,42 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-$RepoURL = "https://github.com/lauto16/Stock-SalesAPP.git"
+
+# ============================
+# Cargar configuración desde JSON
+# ============================
 $BasePath = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$TargetDir = Join-Path $BasePath "TiendaClick"
+$configPath = Join-Path $BasePath "config.json"
+
+if (!(Test-Path $configPath)) {
+    Write-Host "[ERROR] No se encontró config.json en $BasePath"
+    exit
+}
+
+$config = Get-Content $configPath | ConvertFrom-Json
+
+# Variables desde JSON
+$RepoURL        = $config.repoURL
+$NodeURL        = $config.node.url
+$NodeInstaller  = $config.node.installerName
+$PythonURL      = $config.python.url
+$PythonInstaller = $config.python.installerName
+$FrontendPath   = $config.paths.frontend
+$BackendPath    = $config.paths.backend
+$ShortcutURL    = $config.shortcutURL
+$ProjectFolder  = $config.projectFolder
+
+$TargetDir = Join-Path $BasePath $ProjectFolder
 
 function Log($msg) {
     Write-Host "[+] $msg"
 }
 
+# Eliminar carpeta si existe
 if (Test-Path $TargetDir) {
-    Log "Eliminando carpeta existente TiendaClick..."
+    Log "Eliminando carpeta existente $ProjectFolder..."
     Remove-Item -Recurse -Force $TargetDir
 }
 
+# Clonar repo
 Log "Clonando repositorio..."
 git clone $RepoURL $TargetDir
 if ($LASTEXITCODE -ne 0) { Log "ERROR: git clone falló"; exit }
@@ -20,19 +45,26 @@ Log "Repositorio clonado correctamente."
 
 Set-Location $TargetDir
 
+# ============================
+# Instalar Node si es necesario
+# ============================
 Log "Verificando Node.js..."
 if (!(Get-Command node.exe -ErrorAction SilentlyContinue)) {
     Log "Node no encontrado. Instalando Node.js..."
 
-    $nodeInstaller = "$env:TEMP/node-installer.msi"
-    Invoke-WebRequest "https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi" -OutFile $nodeInstaller
-    Start-Process msiexec.exe -Wait -ArgumentList "/i `"$nodeInstaller`" /qn"
+    $nodeInstallerPath = "$env:TEMP/$NodeInstaller"
+    Invoke-WebRequest $NodeURL -OutFile $nodeInstallerPath
+    Start-Process msiexec.exe -Wait -ArgumentList "/i `"$nodeInstallerPath`" /qn"
 
     Log "Node instalado."
 } else {
     Log "Node.js ya está instalado."
 }
-$FrontendApp = Join-Path $TargetDir "Frontend\TiendaClick"
+
+# ============================
+# Frontend
+# ============================
+$FrontendApp = Join-Path $TargetDir $FrontendPath
 
 if (Test-Path $FrontendApp) {
     Log "Instalando dependencias del Frontend..."
@@ -45,6 +77,9 @@ if (Test-Path $FrontendApp) {
 
 Set-Location $TargetDir
 
+# ============================
+# Detectar Python o instalarlo
+# ============================
 function Detect-Python {
     foreach ($cmd in @("python", "python3", "py")) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
@@ -59,9 +94,9 @@ $PythonCmd = Detect-Python
 if (-not $PythonCmd) {
     Log "Python no encontrado. Instalando Python..."
 
-    $pyInstaller = "$env:TEMP/python-installer.exe"
-    Invoke-WebRequest "https://www.python.org/ftp/python/3.12.1/python-3.12.1-amd64.exe" -OutFile $pyInstaller
-    Start-Process $pyInstaller -Wait -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1"
+    $pythonInstallerPath = "$env:TEMP/$PythonInstaller"
+    Invoke-WebRequest $PythonURL -OutFile $pythonInstallerPath
+    Start-Process $pythonInstallerPath -Wait -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1"
 
     $PythonCmd = Detect-Python
     if (-not $PythonCmd) {
@@ -72,7 +107,10 @@ if (-not $PythonCmd) {
 
 Log "Python detectado como comando: $PythonCmd"
 
-Set-Location "$TargetDir\Backend"
+# ============================
+# Backend
+# ============================
+Set-Location (Join-Path $TargetDir $BackendPath)
 
 Log "Instalando virtualenv..."
 & $PythonCmd -m pip install virtualenv
@@ -81,8 +119,7 @@ Log "Creando entorno virtual..."
 & $PythonCmd -m virtualenv venv
 
 Log "Activando entorno virtual..."
-$Activate = ".\venv\Scripts\activate.ps1"
-. $Activate
+. ".\venv\Scripts\activate.ps1"
 
 Log "Instalando requirements.txt..."
 pip install -r requirements.txt
@@ -99,9 +136,9 @@ Log "Ejecutando migrate..."
 Log "Ejecutando populate_role_permissions_manager.py..."
 & $PythonCmd populate_role_permissions_manager.py
 
-# --------------------------------------
-# 10) CREAR SUPERUSER (manual)
-# --------------------------------------
+# ============================
+# Crear superusuario
+# ============================
 Log "Creación de superusuario:"
 & $PythonCmd manage.py createsuperuser
 
@@ -111,14 +148,13 @@ do {
 
 Log "PIN aceptado."
 
-Log "Actualizando PIN del usuario administrador..."
-
+Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
-# aca habria que poner la ip con ifconfig o algo
-$contenido = "[InternetShortcut]`nURL=http://192.168.100.156:5173/"
-Set-Content -Path "$BasePath/TiendaClick.url" -Value $contenido
-
-Log " INSTALACIÓN COMPLETADA "
+# ============================
+# Crear acceso directo URL
+# ============================
+$shortcutContent = "[InternetShortcut]`nURL=$ShortcutURL"
+Set-Content -Path "$BasePath/$ProjectFolder.url" -Value $shortcutContent
 
 Pause
