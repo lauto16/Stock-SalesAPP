@@ -13,6 +13,7 @@ COPY ./TiendaClick .
 # Ejecutar el build de vite (correcto)
 RUN npm run build
 
+#test COMMENT
 
 # -------- 2) Imagen final con Nginx --------
 FROM nginx:alpine
@@ -27,3 +28,4 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
+
