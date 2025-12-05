@@ -84,7 +84,7 @@ export default function Sales() {
     };
 
     if (user?.token) fetchData();
-  }, [currentPage, isSearching, user, items]);
+  }, [currentPage, isSearching, user]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
