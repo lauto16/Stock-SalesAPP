@@ -178,7 +178,6 @@ Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
 
-
 # ======================================================
 # === Crear tarea programada: ejecutar run_app.py al inicio ===
 # ======================================================
@@ -212,8 +211,43 @@ Register-ScheduledTask `
 Log "Tarea programada creada: RunAppOnLogin para run_app.py"
 
 
+Log "Ejecutando set_local_ip.py para obtener IP local..."
+
+$SetIPScript = Join-Path $TargetDir "set_local_ip.py"
+
+if (!(Test-Path $SetIPScript)) {
+    Log "ERROR: No se encontró set_local_ip.py en el repositorio."
+    exit
+}
+
+# Ejecutar Python para generar config.json
+& $PythonCmd $SetIPScript -d $TargetDir
+
+Log "Python generó/actualizó config.json con la IP local."
+
 # ======================================================
-# === Copiar TiendaClick.url al escritorio actual =========
+# === Leer nuevamente config.json con la IP actual =====
+# ======================================================
+
+$ConfigFile = Join-Path $TargetDir "config.json"
+
+if (!(Test-Path $ConfigFile)) {
+    Log "ERROR: config.json no existe después de ejecutar set_local_ip.py"
+    exit
+}
+
+try {
+    $configUpdated = Get-Content $ConfigFile -Raw | ConvertFrom-Json
+    $LocalIP = $configUpdated.local_ip
+    Log "IP detectada: $LocalIP"
+}
+catch {
+    Log "ERROR leyendo config.json actualizado: $_"
+    $LocalIP = "localhost"
+}
+
+# ======================================================
+# === Actualizar TiendaClick.url con la IP real =========
 # ======================================================
 
 $URLFile = Join-Path $TargetDir "TiendaClick.url"
@@ -222,6 +256,13 @@ $DesktopShortcut = Join-Path $BasePath "TiendaClick.url"
 if (!(Test-Path $URLFile)) {
     Log "ERROR: No se encontró TiendaClick.url dentro del repo clonado."
 } else {
+
+    $urlContent = Get-Content $URLFile -Raw
+    $newUrl = $urlContent.Replace("__IP__", $LocalIP)
+    Set-Content -Path $URLFile -Value $newUrl -Encoding UTF8
     Copy-Item $URLFile $DesktopShortcut -Force
-    Log "TiendaClick.url copiado al escritorio: $DesktopShortcut"
+
+    Log "TiendaClick.url actualizado con IP $LocalIP y copiado al escritorio."
 }
+
+Log "Proceso de configuración de accesos finalizado correctamente."
