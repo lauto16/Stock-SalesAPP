@@ -22,10 +22,6 @@ MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
 BACKEND_LOG = os.path.join(BACKEND_PATH, "backend.log")
 FRONTEND_LOG = os.path.join(FRONTEND_PATH, "frontend.log")
 
-# ---------------------------------------------------------
-# --------- GIT PULL AUTOMÁTICO DESDE EL REPOSITORIO -------
-# ---------------------------------------------------------
-
 def run_git_pull():
     """Ejecuta git pull en BASE_PATH. Si no es repo, intenta git clone."""
     print("Actualizando proyecto desde git...")
@@ -51,11 +47,6 @@ def run_git_pull():
         ).wait()
 
     print("Repositorio actualizado.")
-
-
-# ---------------------------------------------------------
-# ------------------ FUNCIONES EXISTENTES ----------------
-# ---------------------------------------------------------
 
 def port_in_use(host, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -95,11 +86,6 @@ def start_react():
             creationflags=subprocess.CREATE_NO_WINDOW
         )
 
-
-# ---------------------------------------------------------
-# ------------------------ MAIN ---------------------------
-# ---------------------------------------------------------
-
 if __name__ == "__main__":
     print("Ejecutando git pull antes de iniciar servicios...")
     run_git_pull()
@@ -112,7 +98,6 @@ if __name__ == "__main__":
     django_process = None
     react_process = None
 
-    # Django
     if django_running:
         print("Django YA está ejecutándose en 0.0.0.0:8000. No se iniciará una nueva instancia.")
     else:
@@ -120,8 +105,7 @@ if __name__ == "__main__":
         django_process = start_django()
 
     time.sleep(1)
-
-    # React
+    
     if react_running:
         print("Vite/React YA está ejecutándose en el puerto 5173. No se iniciará otra instancia.")
     else:
