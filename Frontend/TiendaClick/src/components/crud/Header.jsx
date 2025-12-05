@@ -19,7 +19,7 @@ export default function Header({
   deleteItem,
   selectedItemsColumns = [{}],
   infoFormConfig,
-  reloadPageOne
+  reloadPageOne = () => { }
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -69,18 +69,19 @@ export default function Header({
       name: item.name,
       id: item.code ?? item.id
     }));
-  
+
     for (const { id, name } of itemsToDelete) {
       const result = await deleteItem(id, user.token);
-  
+      console.log(result)
       if (result?.success) {
         addNotification("success", `"${name}" eliminado con éxito`);
+
       } else {
         const message = result?.error || `"${name}" no se pudo eliminar`;
         addNotification("error", message);
       }
     }
-  
+
     setSelectedItems(new Map());
     closeDelModal();
     reloadPageOne();

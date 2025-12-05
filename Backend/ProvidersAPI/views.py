@@ -98,6 +98,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
         """
         Modifies a certain provider
         """
+        print(request)
         validate_response = ProviderValidator.validate_data(request)
         if validate_response["success"] is False:
             return Response(
@@ -113,7 +114,8 @@ class ProviderViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = ProviderSerializer(provider, data=request.data, partial=True)
+        serializer = ProviderSerializer(
+            provider, data=request.data, partial=True)
 
         if serializer.is_valid():
             for attr, value in serializer.validated_data.items():
@@ -130,3 +132,25 @@ class ProviderViewSet(viewsets.ModelViewSet):
                 {"success": False, "error": "Error en el servidor"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    @action(
+        detail=False,
+        methods=["delete"],
+        url_path="delete-by-id/(?P<id>[^/.]+)"
+    )
+    def destroy_by_id(self, request, id=None):
+        """
+        Deletes a product from the DB only if there's no sales associated with the product
+        """
+        provider = Provider.objects.filter(id=id).first()
+        if not provider:
+            return Response(
+                {
+                    "success": False,
+                    "error": f'No se encontró el producto con código "{id}".'
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        provider.delete()
+        return Response({"success": True}, status=status.HTTP_200_OK)

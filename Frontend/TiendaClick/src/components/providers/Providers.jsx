@@ -31,6 +31,7 @@ function Providers() {
 
 
     const PAGE_SIZE = 10;
+
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "phone", key: "phone", label: 'Teléfono' },
@@ -80,22 +81,13 @@ function Providers() {
     })
 
     const handlePageChange = (page) => {
-
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
 
     };
 
-    const unselectAll = () => {
-        if (isSomethingSelected) {
-            setSelectedItems(new Map());
-        }
-    }
 
-    const onAddItem = () => {
-
-    }
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
             setIsSearching(true);
@@ -122,62 +114,73 @@ function Providers() {
             setSelectedItems(newSelected);
         }
     };
+    const reloadPageOne = () => {
+        if (currentPage === 1) {
+            setCurrentPage(2);
+            setTimeout(() => setCurrentPage(1), 50);
+        } else {
+            setCurrentPage(1);
+        }
+        setLoading(true);
+        setTimeout(() => setLoading(false), 0);
+    }
 
     return (
         <RequirePermission permission="access_providers">
-        <div className="d-flex justify-content-center mt-5">
-            <div className="container">
+            <div className="d-flex justify-content-center mt-5">
+                <div className="container">
 
-                <ConfirmationModal
-                    show={showConfirmation}
-                    onHide={handleHideConfirmation}
-                    title={confirmationTitle}
-                    message={confirmationText}
-                    onSendForm={handleCreateProvider}
-                    handleClose={handleHideConfirmation}
-                />
-
-                <div className="table-container-providers">
-
-                    <Header
-                        title={"PROVEEDORES"}
-                        selectedItems={selectedItems}
-                        isSomethingSelected={isSomethingSelected}
-                        setSelectedItems={setSelectedItems}
-
-                        user={user}
-                        items={providers}
-                        onViewSelected={() => setShowSelectedModal(true)}
-                        addFormConfig={addProviderConfig}
-                        deleteItem={deleteProviderById}
-                        selectedItemsColumns={importantColumns}
-                        infoFormConfig={itemInfo}
+                    <ConfirmationModal
+                        show={showConfirmation}
+                        onHide={handleHideConfirmation}
+                        title={confirmationTitle}
+                        message={confirmationText}
+                        onSendForm={handleCreateProvider}
+                        handleClose={handleHideConfirmation}
                     />
 
-                    <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+                    <div className="table-container-providers">
 
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={handlePageChange}
+                        <Header
+                            title={"PROVEEDORES"}
+                            selectedItems={selectedItems}
+                            isSomethingSelected={isSomethingSelected}
+                            setSelectedItems={setSelectedItems}
+
+                            user={user}
+                            items={providers}
+                            onViewSelected={() => setShowSelectedModal(true)}
+                            addFormConfig={addProviderConfig}
+                            deleteItem={deleteProviderById}
+                            selectedItemsColumns={importantColumns}
+                            infoFormConfig={itemInfo}
+                            reloadPageOne={reloadPageOne}
                         />
 
-                        <div className="search-wrapper">
-                            <Search />
-                        </div>
-                    </div>
-                    <Table items={providers}
-                        columns={columns}
-                        loading={loading}
-                        setLoading={setLoading}
-                        selectedItems={selectedItems}
-                        setSelectedItems={setSelectedItems}
-                        pkName={'id'}
-                    />
+                        <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
 
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+
+                            <div className="search-wrapper">
+                                <Search />
+                            </div>
+                        </div>
+                        <Table items={providers}
+                            columns={columns}
+                            loading={loading}
+                            setLoading={setLoading}
+                            selectedItems={selectedItems}
+                            setSelectedItems={setSelectedItems}
+                            pkName={'id'}
+                        />
+
+                    </div>
                 </div>
             </div>
-        </div>
         </RequirePermission>
     );
 }

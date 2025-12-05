@@ -7,12 +7,11 @@ export default function PrivateRoute({ children }) {
   const { pinVerified, checking } = usePin();
   const location = useLocation();
 
-  if (import.meta.env.VITE_DEBUG === "true") return children
-
   if (!user) return <Navigate to="/login/" replace />;
 
   if (checking) return null;
 
+  //Views that can be visited without pin
   const allowWithoutPin = ["/pin-manager"];
 
   if (!pinVerified && !allowWithoutPin.includes(location.pathname)) {

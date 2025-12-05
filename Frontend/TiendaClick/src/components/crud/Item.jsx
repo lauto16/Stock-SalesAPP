@@ -2,7 +2,6 @@ export default function Item({ item, columns, selectedItems = new Map(), setSele
     const pkValue = item[pkName]
     const isSelected = selectedItems.has(pkValue);
     const classStockNull = item.stock === 0 ? 'text-danger' : '';
-
     const toggleSelection = () => {
         const updated = new Map(selectedItems);
         if (updated.has(pkValue)) {

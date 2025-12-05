@@ -3,10 +3,7 @@ import Input from './Input.jsx'
 import { useAddItemForm } from './hooks/useAddItemForm.js'
 
 
-export default function AddItemModal({ show,
-    handleClose,
-    formConfig,
-    selectedItems }) {
+export default function AddItemModal({ show, handleClose, formConfig, selectedItems }) {
     if (!formConfig) return
     //when we need to execute a function inside useEffect, not implemented yet
     const { onUseEffect, onSubmitHandler } = formConfig();

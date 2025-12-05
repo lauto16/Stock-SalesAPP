@@ -129,7 +129,7 @@ async function fetchSearchBlames(query, token) {
 
 async function deleteProviderById(id, token) {
   try {
-    const response = await axios.delete(`${apiUrl}providers/${id}/`, authHeader(token));
+    const response = await axios.delete(`${apiUrl}providers/delete-by-id/${id}/`, authHeader(token));
     return response.data;
   } catch (error) {
     console.error("Error al eliminar el proveedor:", error.response?.data || error.message);
@@ -199,6 +199,7 @@ async function updateProduct(oldCode, updatedData, token) {
 async function updateProvider(updatedData, token) {
   try {
     const id = updatedData.id
+    console.log(updatedData)
     const response = await axios.patch(`${apiUrl}providers/patch-by-id/${id}/`, updatedData, authHeader(token));
 
     return {
