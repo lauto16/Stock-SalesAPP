@@ -184,11 +184,11 @@ Log "Actualizando PIN..."
 
 Log "Creando tarea programada RunApp..."
 
-$PythonVenv = Join-Path $TargetDir "Backend/venv/Scripts/python.exe"
+$PythonW = Join-Path $TargetDir "Backend/venv/Scripts/pythonw.exe"
 $RunAppPy  = Join-Path $TargetDir "run_app.py"
 
-if (!(Test-Path $PythonVenv)) {
-    Log "ERROR: No se encontró el Python del venv en $PythonVenv"
+if (!(Test-Path $PythonW)) {
+    Log "ERROR: No se encontró pythonw.exe del venv en $PythonW"
     exit
 }
 
@@ -197,31 +197,31 @@ if (!(Test-Path $RunAppPy)) {
     exit
 }
 
-# Acción: ejecutar python.exe run_app.py
-$Action = New-ScheduledTaskAction -Execute $PythonVenv -Argument $RunAppPy
+$Action = New-ScheduledTaskAction -Execute $PythonW -Argument "`"$RunAppPy`""
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
 
 Register-ScheduledTask `
     -TaskName "RunAppOnLogin" `
     -Action $Action `
     -Trigger $Trigger `
-    -Description "Ejecuta run_app.py al iniciar sesión" `
+    -Description "Ejecuta run_app.py al iniciar sesión sin consola" `
     -Force
 
-Log "Tarea programada creada: RunAppOnLogin para run_app.py"
+Log "Tarea programada creada."
 
 
 Log "Ejecutando set_local_ip.py para obtener IP local..."
 
-$SetIPScript = Join-Path $TargetDir "set_local_ip.py"
+$SetIPScript = Join-Path $BasePath "set_local_ip.py"
 
 if (!(Test-Path $SetIPScript)) {
     Log "ERROR: No se encontró set_local_ip.py en el repositorio."
+    Log $SetIPScript
     exit
 }
 
 # Ejecutar Python para generar config.json
-& $PythonCmd $SetIPScript -d $TargetDir
+& $PythonCmd $SetIPScript -d $BasePath
 
 Log "Python generó/actualizó config.json con la IP local."
 
@@ -229,7 +229,7 @@ Log "Python generó/actualizó config.json con la IP local."
 # === Leer nuevamente config.json con la IP actual =====
 # ======================================================
 
-$ConfigFile = Join-Path $TargetDir "config.json"
+$ConfigFile = Join-Path $BasePath "config.json"
 
 if (!(Test-Path $ConfigFile)) {
     Log "ERROR: config.json no existe después de ejecutar set_local_ip.py"
