@@ -2,20 +2,62 @@ import subprocess
 import os
 import time
 import socket
+import json
 
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-BACKEND_PATH = os.path.join(BASE_PATH, "Backend")
+
+# ----- Leer config.json -----
+CONFIG_PATH = os.path.join(BASE_PATH, "config.json")
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+REPO_URL = config["repoURL"]
+
+BACKEND_PATH = os.path.join(BASE_PATH, config["paths"]["backend"])
+FRONTEND_PATH = os.path.join(BASE_PATH, config["paths"]["frontend"])
+
 VENV_PYTHON = os.path.join(BACKEND_PATH, "venv", "Scripts", "python.exe")
 MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
 BACKEND_LOG = os.path.join(BACKEND_PATH, "backend.log")
-
-FRONTEND_PATH = os.path.join(BASE_PATH, "Frontend", "TiendaClick")
 FRONTEND_LOG = os.path.join(FRONTEND_PATH, "frontend.log")
 
+# ---------------------------------------------------------
+# --------- GIT PULL AUTOMÁTICO DESDE EL REPOSITORIO -------
+# ---------------------------------------------------------
+
+def run_git_pull():
+    """Ejecuta git pull en BASE_PATH. Si no es repo, intenta git clone."""
+    print("Actualizando proyecto desde git...")
+
+    git_dir = os.path.join(BASE_PATH, ".git")
+
+    if os.path.isdir(git_dir):
+        print("Repositorio detectado. Ejecutando git pull...")
+        subprocess.Popen(
+            ["git", "pull"],
+            cwd=BASE_PATH,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW
+        ).wait()
+    else:
+        print("No es un repo git. Clonando repositorio...")
+        subprocess.Popen(
+            ["git", "clone", REPO_URL, BASE_PATH],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW
+        ).wait()
+
+    print("Repositorio actualizado.")
+
+
+# ---------------------------------------------------------
+# ------------------ FUNCIONES EXISTENTES ----------------
+# ---------------------------------------------------------
 
 def port_in_use(host, port):
-    """Devuelve True si el puerto está ocupado, False si está libre."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(0.5)
         return s.connect_ex((host, port)) == 0
@@ -54,7 +96,14 @@ def start_react():
         )
 
 
+# ---------------------------------------------------------
+# ------------------------ MAIN ---------------------------
+# ---------------------------------------------------------
+
 if __name__ == "__main__":
+    print("Ejecutando git pull antes de iniciar servicios...")
+    run_git_pull()
+
     print("Verificando si los servicios ya están ejecutándose...")
 
     django_running = port_in_use("0.0.0.0", 8000)
@@ -85,7 +134,6 @@ if __name__ == "__main__":
         while True:
             time.sleep(5)
 
-            # Reinicio automático SI y SOLO SI este script lo inició
             if django_process is not None and django_process.poll() is not None:
                 print("Django murió, reiniciando...")
                 django_process = start_django()
