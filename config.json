@@ -1,0 +1,8 @@
+{
+    "repoURL": "https://github.com/lauto16/Stock-SalesAPP.git",
+    "paths": {
+      "frontend": "Frontend/TiendaClick",
+      "backend": "Backend"
+    },
+    "projectFolder": "TiendaClick"
+  }
