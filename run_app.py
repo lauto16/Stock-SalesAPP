@@ -25,28 +25,31 @@ FRONTEND_LOG = os.path.join(FRONTEND_PATH, "frontend.log")
 def run_git_pull():
     """Ejecuta git pull en BASE_PATH. Si no es repo, intenta git clone."""
     print("Actualizando proyecto desde git...")
+    try:
+        git_dir = os.path.join(BASE_PATH, ".git")
 
-    git_dir = os.path.join(BASE_PATH, ".git")
+        if os.path.isdir(git_dir):
+            print("Repositorio detectado. Ejecutando git pull...")
+            subprocess.Popen(
+                ["git", "pull"],
+                cwd=BASE_PATH,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW
+            ).wait()
+        else:
+            print("No es un repo git. Clonando repositorio...")
+            subprocess.Popen(
+                ["git", "clone", REPO_URL, BASE_PATH],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW
+            ).wait()
 
-    if os.path.isdir(git_dir):
-        print("Repositorio detectado. Ejecutando git pull...")
-        subprocess.Popen(
-            ["git", "pull"],
-            cwd=BASE_PATH,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NO_WINDOW
-        ).wait()
-    else:
-        print("No es un repo git. Clonando repositorio...")
-        subprocess.Popen(
-            ["git", "clone", REPO_URL, BASE_PATH],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NO_WINDOW
-        ).wait()
-
-    print("Repositorio actualizado.")
+            print("Repositorio actualizado.")
+    except Exception as e:
+        print(e)
+        pass
 
 def port_in_use(host, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

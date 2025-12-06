@@ -1,23 +1,11 @@
 {
     "repoURL": "https://github.com/lauto16/Stock-SalesAPP.git",
-  
-    "node": {
-      "url": "https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi",
-      "installerName": "node-installer.msi"
-    },
-  
-    "python": {
-      "url": "https://www.python.org/ftp/python/3.12.1/python-3.12.1-amd64.exe",
-      "installerName": "python-installer.exe"
-    },
-  
     "paths": {
       "frontend": "Frontend/TiendaClick",
       "backend": "Backend"
     },
-  
     "projectFolder": "TiendaClick",
-  
+    "python_command_name": "py",
     "shortcutURL": "http://192.168.100.156:5173/"
   }
   
