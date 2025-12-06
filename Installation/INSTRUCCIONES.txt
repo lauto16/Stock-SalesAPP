@@ -1,6 +1,0 @@
-1| Instalar todos los .exe
-2| Reiniciar pc
-3| Ejecutar powershell como administrador y navegar a donde se quiera instalar
-4| Probar si funciona py, python o python3, Si no es py, cambiar la variable python_command_name en config.json
-5| Ejecutar installer.ps1
-6| Reiniciar pc y probar
