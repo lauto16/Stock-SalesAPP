@@ -1,4 +1,5 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # ============================
 # Cargar configuración desde JSON
@@ -15,50 +16,16 @@ $config = Get-Content $configPath | ConvertFrom-Json
 
 # Variables desde JSON
 $RepoURL        = $config.repoURL
-$NodeURL        = $config.node.url
-$NodeInstaller  = $config.node.installerName
-$PythonURL      = $config.python.url
-$PythonInstaller = $config.python.installerName
 $FrontendPath   = $config.paths.frontend
 $BackendPath    = $config.paths.backend
 $ShortcutURL    = $config.shortcutURL
 $ProjectFolder  = $config.projectFolder
+$PythonCmd      = $config.python_command_name
 
 $TargetDir = Join-Path $BasePath $ProjectFolder
 
 function Log($msg) {
     Write-Host "[+] $msg"
-}
-
-# Eliminar carpeta si existe
-if (Test-Path $TargetDir) {
-    Log "Eliminando carpeta existente $ProjectFolder..."
-    Remove-Item -Recurse -Force $TargetDir
-}
-
-# ============================
-# Instalar Git si no existe
-# ============================
-Log "Verificando instalación de Git..."
-
-if (!(Get-Command git.exe -ErrorAction SilentlyContinue)) {
-    Log "Git no encontrado. Instalando Git..."
-
-    $GitURL = "https://github.com/git-for-windows/git/releases/latest/download/Git-2.45.1-64-bit.exe"
-    $GitInstaller = "$env:TEMP\git_installer.exe"
-
-    Invoke-WebRequest $GitURL -OutFile $GitInstaller
-
-    Start-Process $GitInstaller -Wait -ArgumentList "/VERYSILENT", "/NORESTART"
-
-    if (!(Get-Command git.exe -ErrorAction SilentlyContinue)) {
-        Log "ERROR: Git no pudo instalarse."
-        exit
-    }
-
-    Log "Git instalado correctamente."
-} else {
-    Log "Git ya está instalado."
 }
 
 # Clonar repo
@@ -69,22 +36,6 @@ if ($LASTEXITCODE -ne 0) { Log "ERROR: git clone falló"; exit }
 Log "Repositorio clonado correctamente."
 
 Set-Location $TargetDir
-
-# ============================
-# Instalar Node si es necesario
-# ============================
-Log "Verificando Node.js..."
-if (!(Get-Command node.exe -ErrorAction SilentlyContinue)) {
-    Log "Node no encontrado. Instalando Node.js..."
-
-    $nodeInstallerPath = "$env:TEMP/$NodeInstaller"
-    Invoke-WebRequest $NodeURL -OutFile $nodeInstallerPath
-    Start-Process msiexec.exe -Wait -ArgumentList "/i `"$nodeInstallerPath`" /qn"
-
-    Log "Node instalado."
-} else {
-    Log "Node.js ya está instalado."
-}
 
 # ============================
 # Frontend
@@ -101,37 +52,6 @@ if (Test-Path $FrontendApp) {
 }
 
 Set-Location $TargetDir
-
-# ============================
-# Detectar Python o instalarlo
-# ============================
-function Detect-Python {
-    foreach ($cmd in @("python", "python3", "py")) {
-        if (Get-Command $cmd -ErrorAction SilentlyContinue) {
-            Log $cmd
-            return $cmd
-        }
-    }
-    return $null
-}
-
-$PythonCmd = "py"
-
-if (-not $PythonCmd) {
-    Log "Python no encontrado. Instalando Python..."
-
-    $pythonInstallerPath = "$env:TEMP/$PythonInstaller"
-    Invoke-WebRequest $PythonURL -OutFile $pythonInstallerPath
-    Start-Process $pythonInstallerPath -Wait -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1"
-
-    $PythonCmd = Detect-Python
-    if (-not $PythonCmd) {
-        Log "ERROR: Python no pudo instalarse."
-        exit
-    }
-}
-
-Log "Python detectado como comando: $PythonCmd"
 
 # ============================
 # Backend
@@ -185,10 +105,10 @@ Log "Actualizando PIN..."
 Log "Creando tarea programada RunApp..."
 
 $PythonW = Join-Path $TargetDir "Backend/venv/Scripts/pythonw.exe"
-$RunAppPy  = Join-Path $TargetDir "run_app.py"
+$RunAppPy = Join-Path $TargetDir "run_app.py"
 
 if (!(Test-Path $PythonW)) {
-    Log "ERROR: No se encontró pythonw.exe del venv en $PythonW"
+    Log "ERROR: No se encontró pythonw.exe en $PythonW"
     exit
 }
 
@@ -200,14 +120,21 @@ if (!(Test-Path $RunAppPy)) {
 $Action = New-ScheduledTaskAction -Execute $PythonW -Argument "`"$RunAppPy`""
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
 
+$User = "$env:USERNAME"
+$Principal = New-ScheduledTaskPrincipal `
+    -UserId $User `
+    -LogonType Interactive `
+    -RunLevel Limited
+
 Register-ScheduledTask `
     -TaskName "RunAppOnLogin" `
     -Action $Action `
     -Trigger $Trigger `
+    -Principal $Principal `
     -Description "Ejecuta run_app.py al iniciar sesión sin consola" `
     -Force
 
-Log "Tarea programada creada."
+Log "Tarea programada creada con éxito."
 
 
 Log "Ejecutando set_local_ip.py para obtener IP local..."
