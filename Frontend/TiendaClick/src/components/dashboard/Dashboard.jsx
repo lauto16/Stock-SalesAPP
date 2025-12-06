@@ -74,7 +74,7 @@ function Dashboard() {
     const get_employees_data_stats = async () => {
       const employees_data_stats = await fetchEmployeesStats(user.token)
       console.log(employees_data_stats);
-      
+
       if (employees_data_stats) {
         setEmployeeStats(employees_data_stats.employees_stats)
       } else {
@@ -163,27 +163,27 @@ function Dashboard() {
                 />
                 <ActionBox
                   name="Empleado con mas ventas hoy"
-                    number={`${employeeStats.most_selling_employee_this_day ? employeeStats.most_selling_employee_this_day : 'Nadie'}`}
-                    cardClass='text-bg-secondary'
-                    svgName="new-person"
+                  number={`${employeeStats.most_selling_employee_this_day ? employeeStats.most_selling_employee_this_day : 'Nadie'}`}
+                  cardClass='text-bg-secondary'
+                  svgName="new-person"
                 />
-                  <ActionBox
+                <ActionBox
                   name="Empleado con mas ventas este mes"
-                    number={`${employeeStats.most_selling_employee_this_month ? employeeStats.most_selling_employee_this_month : 'Nadie'}`}
-                    cardClass='text-bg-secondary'
-                    svgName="new-person"
+                  number={`${employeeStats.most_selling_employee_this_month ? employeeStats.most_selling_employee_this_month : 'Nadie'}`}
+                  cardClass='text-bg-secondary'
+                  svgName="new-person"
                 />
-                  <ActionBox
+                <ActionBox
                   name="Empleado con mas ventas este año"
-                    number={`${employeeStats.most_selling_employee_this_year ? employeeStats.most_selling_employee_this_year: 'Nadie'}`}
-                    cardClass='text-bg-secondary'
-                    svgName="new-person"
+                  number={`${employeeStats.most_selling_employee_this_year ? employeeStats.most_selling_employee_this_year : 'Nadie'}`}
+                  cardClass='text-bg-secondary'
+                  svgName="new-person"
                 />
-                  <ActionBox
+                <ActionBox
                   name="Empleado con mas ventas historicamente"
-                    number={`${employeeStats.most_selling_employee_historically ? employeeStats.most_selling_employee_historically: 'Nadie'}`}
-                    cardClass='text-bg-primary'
-                    svgName="new-person"
+                  number={`${employeeStats.most_selling_employee_historically ? employeeStats.most_selling_employee_historically : 'Nadie'}`}
+                  cardClass='text-bg-primary'
+                  svgName="new-person"
                 />
               </div>
 
@@ -193,7 +193,7 @@ function Dashboard() {
                     <div className="card-header">
                       <h4>Ventas</h4>
                     </div>
-                    <SalesChart sales={saleStats.total_sales_by_month}/>
+                    <SalesChart sales={saleStats.total_sales_by_month} />
                   </div>
                 </div>
 

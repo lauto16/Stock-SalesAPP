@@ -34,7 +34,7 @@ export default function AddItemModal({ show, handleClose, formConfig, selectedIt
                 <Form onSubmit={handleSubmit(onSubmit)}>
 
                     <Row className="g-3">
-
+                        {/*Pasar el field por prop como un componente */}
                         {FIELDS.map((field, index) => (
                             <Input field={field}
                                 reset={reset}
