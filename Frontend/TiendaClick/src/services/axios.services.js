@@ -196,6 +196,7 @@ async function updateProduct(oldCode, updatedData, token) {
     return { success: false, error: backendError };
   }
 }
+
 async function updateProvider(updatedData, token) {
   try {
     const id = updatedData.id
@@ -281,6 +282,7 @@ async function fetchSales({ page = 1, setLoading, token }) {
     setLoading(true);
     const response = await axios.get(`${apiUrl}sales/?page=${page}`, authHeader(token));
     return response.data;
+ 
   } catch (error) {
     console.error("Error fetching sales:", error);
     return { results: [], count: 0 };
