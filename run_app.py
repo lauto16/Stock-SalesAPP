@@ -31,7 +31,7 @@ def run_git_pull():
         if os.path.isdir(git_dir):
             print("Repositorio detectado. Ejecutando git pull...")
             subprocess.Popen(
-                ["git", "pull"],
+                ["git", "pull", "--force"],
                 cwd=BASE_PATH,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
