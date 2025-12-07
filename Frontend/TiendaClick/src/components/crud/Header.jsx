@@ -19,7 +19,9 @@ export default function Header({
   deleteItem,
   selectedItemsColumns = [{}],
   infoFormConfig,
-  reloadPageOne = () => { }
+  reloadPageOne = () => { },
+  InfoFormContent,
+  titleInfoForm
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -127,7 +129,10 @@ export default function Header({
       {!onExtraInfo ? <AddItemModal show={showInfo}
         handleClose={closeInfo}
         formConfig={infoFormConfig}
-        selectedItems={selectedItems} /> : <></>
+        selectedItems={selectedItems}
+        InfoForm={InfoFormContent}
+        title={titleInfoForm}
+      /> : <></>
       }
       <div className="d-flex align-items-center">
         <TitleDropdown currentTitle={title} />

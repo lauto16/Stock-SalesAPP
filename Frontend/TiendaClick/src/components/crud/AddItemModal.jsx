@@ -1,12 +1,11 @@
 import { Modal, Button, Form, Row } from "react-bootstrap";
 import Input from './Input.jsx'
 import { useAddItemForm } from './hooks/useAddItemForm.js'
+import InfoFormContent from "../providers/InfoFormContent.jsx";
+import { useEffect, useState } from "react";
 
-
-export default function AddItemModal({ show, handleClose, formConfig, selectedItems }) {
-    if (!formConfig) return
+export default function AddItemModal({ onSubmitHandler, show, handleClose, selectedItems, title, InfoForm }) {
     //when we need to execute a function inside useEffect, not implemented yet
-    const { onUseEffect, onSubmitHandler } = formConfig();
     const {
         register,
         handleSubmit,
@@ -14,10 +13,16 @@ export default function AddItemModal({ show, handleClose, formConfig, selectedIt
         watch,
         errors,
         onSubmit,
-        reset
-    } = useAddItemForm({ onSubmitHandler, handleClose, onUseEffect });
-    const { FIELDS, title } = formConfig(watch, selectedItems ?? undefined);
-    // reset(FIELDS.map((field) => { field.name })
+    } = useAddItemForm({ onSubmitHandler, handleClose });
+
+    const [selectedItem, setSelectedItem] = useState({})
+    useEffect(() => {
+        if (selectedItems?.size) {
+            //get the only selected item, making the transalation from map to array
+            const first = Array.from(selectedItems)[0][1];
+            setSelectedItem(first);
+        }
+    }, [show])
     return (
         <Modal
             show={show}
@@ -33,20 +38,8 @@ export default function AddItemModal({ show, handleClose, formConfig, selectedIt
             <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
 
-                    <Row className="g-3">
-                        {/*Pasar el field por prop como un componente */}
-                        {FIELDS.map((field, index) => (
-                            <Input field={field}
-                                reset={reset}
-                                register={register}
-                                control={control}
-                                errors={errors}
-                                key={index}
-                            />
-                        )
-                        )}
+                    <InfoForm register={register} selectedItem={selectedItem} watch={watch} />
 
-                    </Row>
                     <div className="d-flex justify-content-end">
                         <Button
                             variant="success"

@@ -73,7 +73,6 @@ function Dashboard() {
 
     const get_employees_data_stats = async () => {
       const employees_data_stats = await fetchEmployeesStats(user.token)
-      console.log(employees_data_stats);
 
       if (employees_data_stats) {
         setEmployeeStats(employees_data_stats.employees_stats)

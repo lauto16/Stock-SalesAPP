@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext.jsx'
 
-function Home() {
+export default function Home() {
   const { user } = useUser()
   const navigate = useNavigate()
   const getRedirectPathByRole = (role) => {
@@ -24,7 +24,6 @@ function Home() {
     navigate(getRedirectPathByRole(user?.role))
   }, [])
   return (
-
     <div className="container py-5">
       <h1 className="mb-4">Bienvenido a la Home</h1>
       <p className="lead">Esta es la página principal de tu negocio.</p>
@@ -34,8 +33,7 @@ function Home() {
           Ir al Dashboard
         </Link>
       </div>
-    </>
+    </div>
   )
 }
 
-export default Home;

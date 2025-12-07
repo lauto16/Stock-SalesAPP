@@ -14,6 +14,7 @@ import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
 import itemInfo from "./forms/providerExtraInfoConfig.js";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
+import InfoFormContent from "./InfoFormContent.jsx";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
@@ -146,7 +147,6 @@ function Providers() {
                             selectedItems={selectedItems}
                             isSomethingSelected={isSomethingSelected}
                             setSelectedItems={setSelectedItems}
-
                             user={user}
                             items={providers}
                             onViewSelected={() => setShowSelectedModal(true)}
@@ -155,6 +155,8 @@ function Providers() {
                             selectedItemsColumns={importantColumns}
                             infoFormConfig={itemInfo}
                             reloadPageOne={reloadPageOne}
+                            InfoFormContent={InfoFormContent}
+                            titleInfoForm={'Informacion del producto (editar)'}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
