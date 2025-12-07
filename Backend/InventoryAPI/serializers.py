@@ -31,11 +31,6 @@ class ProductPagination(PageNumberPagination):
             "results": data,
         })
 
-class OfferPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
 
 class ProductSerializer(serializers.ModelSerializer):
     in_offer = serializers.SerializerMethodField()
@@ -64,6 +59,21 @@ class ProductSerializer(serializers.ModelSerializer):
         now = timezone.now().date()
         offers = obj.offers.filter(end_date__gte=now)
         return OfferSerializer(offers, many=True, context=self.context).data
+
+
+class OfferPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+    def paginate_queryset(self, queryset, request, view=None):
+        try:
+            return super().paginate_queryset(queryset, request, view)
+        except NotFound:
+            self.error_response = Response({
+                "success": False,
+                "message": "La página solicitada no existe."
+            })
 
 class OfferSerializer(serializers.ModelSerializer):
     class Meta:
