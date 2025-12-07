@@ -408,46 +408,26 @@ class OfferViewSet(viewsets.ModelViewSet):
             products_ids = request.data.get("products")
 
             if not name:
-                return Response(
-                    {"success": False, "error": "El nombre es obligatorio."}, status=400
-                )
+                return Response({"success": False, "error": "El nombre es obligatorio."}, 400)
 
             if Offer.objects.filter(name=name).exists():
                 return Response(
                     {"success": False, "error": "Ya existe una oferta con ese nombre."},
-                    status=400,
+                    400,
                 )
 
             if percentage is None:
-                return Response(
-                    {"success": False, "error": "El porcentaje es obligatorio."},
-                    status=400,
-                )
+                return Response({"success": False, "error": "El porcentaje es obligatorio."}, 400)
 
             if end_date is None:
-                return Response(
-                    {
-                        "success": False,
-                        "error": "La fecha de finalización es obligatoria.",
-                    },
-                    status=400,
-                )
+                return Response({"success": False, "error": "La fecha de finalización es obligatoria."}, 400)
 
             if not products_ids or not isinstance(products_ids, list):
-                return Response(
-                    {
-                        "success": False,
-                        "error": "Debe proporcionar una lista de productos.",
-                    },
-                    status=400,
-                )
+                return Response({"success": False, "error": "Debe proporcionar una lista de productos."}, 400)
 
             products = Product.objects.filter(pk__in=products_ids)
             if products.count() != len(products_ids):
-                return Response(
-                    {"success": False, "error": "Uno o más productos no existen."},
-                    status=400,
-                )
+                return Response({"success": False, "error": "Uno o más productos no existen."}, 400)
 
             offer = Offer.objects.create(
                 name=name,
@@ -456,11 +436,83 @@ class OfferViewSet(viewsets.ModelViewSet):
             )
             offer.products.set(products)
 
-            return Response({"success": True, "error": ""}, status=201)
+            return Response({"success": True, "error": ""}, 201)
 
         except Exception as e:
-            return Response({"success": False, "error": str(e)}, status=500)
+            return Response({"success": False, "error": str(e)}, 500)
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            offer = self.get_object()
+            offer.delete()
+            return Response({"success": True, "error": ""}, 200)
+        except Offer.DoesNotExist:
+            return Response({"success": False, "error": "La oferta no existe."}, 404)
+        except Exception as e:
+            return Response({"success": False, "error": str(e)}, 500)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            offer = self.get_object()
+
+            name = request.data.get("name", offer.name)
+            percentage = request.data.get("percentage", offer.percentage)
+            end_date = request.data.get("end_date", offer.end_date)
+            products_ids = request.data.get("products", None)
+
+            if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
+                return Response(
+                    {"success": False, "error": "Ya existe otra oferta con ese nombre."},
+                    400,
+                )
+
+            if products_ids is not None:
+                if not isinstance(products_ids, list):
+                    return Response({"success": False, "error": "Products debe ser una lista."}, 400)
+
+                products = Product.objects.filter(pk__in=products_ids)
+                if products.count() != len(products_ids):
+                    return Response(
+                        {"success": False, "error": "Uno o más productos no existen."},
+                        400,
+                    )
+
+                offer.products.set(products)
+
+            offer.name = name
+            offer.percentage = percentage
+            offer.end_date = end_date
+            offer.save()
+
+            return Response({"success": True, "error": ""}, 200)
+
+        except Offer.DoesNotExist:
+            return Response({"success": False, "error": "La oferta no existe."}, 404)
+        except Exception as e:
+            return Response({"success": False, "error": str(e)}, 500)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response({
+                    "success": True,
+                    "error": "",
+                    "offers": serializer.data
+                })
+
+            serializer = self.get_serializer(queryset, many=True)
+            return Response({
+                "success": True,
+                "error": "",
+                "offers": serializer.data
+            })
+
+        except Exception as e:
+            return Response({"success": False, "error": str(e)}, 500)
 
 class ProductSearchView(APIView):
 
