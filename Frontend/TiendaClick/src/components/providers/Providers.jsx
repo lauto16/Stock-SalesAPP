@@ -7,14 +7,13 @@ import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
 import { fetchProviders_by_page, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
-
-// import ItemInfoModal from "./ItemInfoModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
 import addProviderConfig from "./forms/AddProviderConfig.js";
-import itemInfo from "./forms/providerExtraInfoConfig.js";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 import InfoFormContent from "./InfoFormContent.jsx";
+import AddItemContent from "./AddItemContent.jsx";
+import { addProvider, updateProvider } from "../../services/axios.services.js";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
@@ -153,8 +152,11 @@ function Providers() {
                             addFormConfig={addProviderConfig}
                             deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
-                            infoFormConfig={itemInfo}
                             reloadPageOne={reloadPageOne}
+                            onSubmitAddItem={addProvider}
+                            onSubmitEditItem={updateProvider}
+                            titleAddItem={'Añadir un nuevo proveedor'}
+                            AddItemcontent={AddItemContent}
                             InfoFormContent={InfoFormContent}
                             titleInfoForm={'Informacion del producto (editar)'}
                         />

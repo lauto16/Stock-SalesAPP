@@ -36,7 +36,7 @@ export default function SelectedItemsModal({
                     </thead>
                     <tbody>
                         {selectedArray.map((item) => (
-                            <tr key={item.code}>
+                            <tr key={item?.code ?? item?.id}>
                                 {columns.map((column, colIndex) => (
                                     <td key={colIndex}>{item[column.key]}</td>
                                 ))}

@@ -11,17 +11,21 @@ export default function Header({
   isSomethingSelected,
   selectedItems,
   setSelectedItems,
+
   items,
   user,
   onExtraInfo,
   extraButtons = [],
-  addFormConfig,
   deleteItem,
   selectedItemsColumns = [{}],
-  infoFormConfig,
   reloadPageOne = () => { },
+  titleAddItem,
+  AddItemcontent = () => { },
+  onSubmitAddItem,
+  onSubmitEditItem,
   InfoFormContent,
-  titleInfoForm
+  titleInfoForm,
+
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -56,14 +60,14 @@ export default function Header({
     //because selectedItems items its a Map 
     const previewList = Array.from(selectedItems.values())
       .slice(0, 5)
-      .map(item => `• ${item.name}(${item.code ?? item.id})`)
+      .map(item => `${item.name}`)
       .join('\n');
-    const extraCount = selectedItems.length - 5;
-
+    //check if selected items > 5 for better clarity
+    const extraCount = Array.from(selectedItems.values()).length - 5;
     const message = extraCount > 0
-      ? `${previewList}\n...y ${extraCount} más.`
+      ? `${previewList}\n... y ${extraCount} más.`
       : previewList;
-    openDelModal("Eliminar items seleccionados...", message)
+    openDelModal("Eliminar elementos seleccionados...", message)
   };
 
   const handleDelete = async () => {
@@ -115,7 +119,9 @@ export default function Header({
         columns={selectedItemsColumns}
       />
       {/* opens a form to add an Item */}
-      <AddItemModal show={showAddItem} handleClose={setShowAddItem} formConfig={addFormConfig} />
+      <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={onSubmitAddItem}
+        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne} />
+
       {/* enables to delete a set of Items */}
       <ConfirmationModal
         show={showDelModal}
@@ -127,11 +133,12 @@ export default function Header({
       {/* Items Info Modal if onExtraInfo is not defined*/}
 
       {!onExtraInfo ? <AddItemModal show={showInfo}
+        onSubmitHandler={onSubmitEditItem}
         handleClose={closeInfo}
-        formConfig={infoFormConfig}
         selectedItems={selectedItems}
-        InfoForm={InfoFormContent}
+        Content={InfoFormContent}
         title={titleInfoForm}
+        reloadPageOne={reloadPageOne}
       /> : <></>
       }
       <div className="d-flex align-items-center">
@@ -194,7 +201,6 @@ export default function Header({
           title="Información adicional"
           //if onExtraInfo Prop is defined, use a specific modal 
           //defined on the parent component, otherwise openInfo Modal
-          //with the provided configFile 
           onClick={onExtraInfo ?? openInfo}
           disabled={selectedItems.size !== 1}
         >
