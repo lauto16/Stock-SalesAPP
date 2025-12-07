@@ -4,11 +4,11 @@ import time
 import socket
 import json
 
+"""When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173"""
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-
-# ----- Leer config.json -----
 CONFIG_PATH = os.path.join(BASE_PATH, "config.json")
+
 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
     config = json.load(f)
 
@@ -16,14 +16,15 @@ REPO_URL = config["repoURL"]
 
 BACKEND_PATH = os.path.join(BASE_PATH, config["paths"]["backend"])
 FRONTEND_PATH = os.path.join(BASE_PATH, config["paths"]["frontend"])
-
-VENV_PYTHON = os.path.join(BACKEND_PATH, "venv", "Scripts", "python.exe")
-MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
 BACKEND_LOG = os.path.join(BACKEND_PATH, "backend.log")
 FRONTEND_LOG = os.path.join(FRONTEND_PATH, "frontend.log")
 
+VENV_PYTHON = os.path.join(BACKEND_PATH, "venv", "Scripts", "python.exe")
+MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
+
+
 def run_git_pull():
-    """Ejecuta git pull en BASE_PATH. Si no es repo, intenta git clone."""
+    """Ejecuta git pull en BASE_PATH"""
     print("Actualizando proyecto desde git...")
     try:
         git_dir = os.path.join(BASE_PATH, ".git")
@@ -38,26 +39,19 @@ def run_git_pull():
                 creationflags=subprocess.CREATE_NO_WINDOW
             ).wait()
         else:
-            print("No es un repo git. Clonando repositorio...")
-            subprocess.Popen(
-                ["git", "clone", REPO_URL, BASE_PATH],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                creationflags=subprocess.CREATE_NO_WINDOW
-            ).wait()
-
-            print("Repositorio actualizado.")
+            print("No es un repo git")
     except Exception as e:
         print(e)
         pass
 
 def port_in_use(host, port):
+    """Returns True if port is in use"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(0.5)
         return s.connect_ex((host, port)) == 0
 
-
 def start_django():
+    """Starts django instance"""
     with open(BACKEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Starting Django Server ---\n")
         log.flush()
@@ -75,8 +69,8 @@ def start_django():
             creationflags=subprocess.CREATE_NO_WINDOW
         )
 
-
 def start_react():
+    """Starts react instance"""
     with open(FRONTEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Starting Vite (npm run dev) ---\n")
         log.flush()
@@ -88,6 +82,7 @@ def start_react():
             stderr=log,
             creationflags=subprocess.CREATE_NO_WINDOW
         )
+
 
 if __name__ == "__main__":
     print("Ejecutando git pull antes de iniciar servicios...")
