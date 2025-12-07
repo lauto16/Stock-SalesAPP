@@ -1,5 +1,5 @@
 import { Row, Col } from "react-bootstrap"
-import CustomInput from "../crud/CustomInput"
+import CustomInput from "../../crud/CustomInput"
 export default function InfoFormContent({ register, selectedItem, errors }) {
   //infoForm content deberia respetar la signatura de register y selectedItem
 
