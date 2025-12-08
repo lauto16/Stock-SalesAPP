@@ -305,6 +305,22 @@ async function fetchSearchSales(search, token) {
     return null;
   }
 }
+//TODO las ventas se deberian poder eliminar?
+async function deleteSaleById(id, token) {
+  try {
+    const response = await axios.delete(
+      `${apiUrl}products/delete-by-code/${id}/`,
+      authHeader(token)
+    );
+    return response.data;
+  } catch (error) {
+    const backendError = error.response?.data?.error || "Error al eliminar la venta.";
+    return { success: false, error: backendError };
+  }
+}
+async function addSale(id, token) {
+  console.log("toImplement")
+}
 
 async function fetchDownloadExcelFile(token) {
   try {
@@ -419,5 +435,7 @@ export {
   updateProvider,
   signupUser,
   fetchDownloadExcelFile,
-  fetchSalesStats
+  fetchSalesStats,
+  deleteSaleById,
+  addSale
 };

@@ -39,7 +39,7 @@ export default function AddItemModal({ onSubmitHandler, show, handleClose, selec
             <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
 
-                    <Content register={register} selectedItem={selectedItem} watch={watch} errors={errors} />
+                    <Content register={register} selectedItem={selectedItem} watch={watch} errors={errors} control={control} />
 
                     <div className="d-flex justify-content-end">
                         <Button variant="success" type="submit" className="mt-2 send-form-button">

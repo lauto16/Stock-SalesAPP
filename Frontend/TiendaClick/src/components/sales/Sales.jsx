@@ -5,7 +5,7 @@ import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "../inventory/Search.jsx";
 import SaleDetailModal from "./SaleDetailModal.jsx";
-import { fetchSales, fetchSearchSales } from "../../services/axios.services.js";
+import { fetchSales, fetchSearchSales, deleteSaleById, addSale } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
@@ -72,8 +72,6 @@ export default function Sales() {
       setLoading(true);
       try {
         const data = await fetchSales({ page: currentPage, setLoading: setLoading, token: user.token });
-        console.log(data);
-
         setItems(formatSalesData(data.results));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
@@ -116,9 +114,7 @@ export default function Sales() {
     setSearchInput("");
     setCurrentPage(1);
   };
-  const onDelete = () => {
-    //TODO
-  }
+
   const onShowSaleDetail = () => {
     if (selectedItems.size === 0) {
       addNotification("warning", "Selecciona una venta para ver detalles.");
@@ -165,12 +161,21 @@ export default function Sales() {
             isSomethingSelected={isSomethingSelected}
             selectedItems={selectedItems}
             setSelectedItems={setSelectedItems}
-            items={items}
             user={user}
-            onExtraInfo={onShowSaleDetail}
-            extraButtons={[]}
-            addFormConfig={null}
-            deleteItem={onDelete}
+            items={items}
+            deleteItem={deleteSaleById}
+
+            //implementar logica de paginado 
+            reloadPageOne={() => { }}
+            titleAddItem={'Añadir una nueva venta'}
+
+            // AddItemcontent={AddItemContent}
+            onSubmitAddItem={addSale}
+
+            titleInfoForm={'Informacion de la venta (editar)'}
+            // onSubmitEditItem={updateProvider}
+            // InfoFormContent={InfoFormContent}
+
             selectedItemsColumns={[
               { className: "id", key: "id", label: "ID" },
               { className: "created_at", key: "created_at", label: "Fecha" },

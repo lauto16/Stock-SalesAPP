@@ -9,10 +9,9 @@ import { fetchProviders_by_page, deleteProviderById } from "../../services/axios
 import { useUser } from "../../context/UserContext.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import { useNotifications } from "../../context/NotificationSystem.jsx";
-import addProviderConfig from "./forms/AddProviderConfig.js";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
-import InfoFormContent from "./InfoFormContent.jsx";
-import AddItemContent from "./AddItemContent.jsx";
+import InfoFormContent from "./forms/InfoFormContent.jsx";
+import AddItemContent from "./forms/AddItemContent.jsx";
 import { addProvider, updateProvider } from "../../services/axios.services.js";
 
 function Providers() {
@@ -143,13 +142,11 @@ function Providers() {
 
                         <Header
                             title={"PROVEEDORES"}
-                            selectedItems={selectedItems}
                             isSomethingSelected={isSomethingSelected}
+                            selectedItems={selectedItems}
                             setSelectedItems={setSelectedItems}
                             user={user}
                             items={providers}
-                            onViewSelected={() => setShowSelectedModal(true)}
-                            addFormConfig={addProviderConfig}
                             deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
                             reloadPageOne={reloadPageOne}

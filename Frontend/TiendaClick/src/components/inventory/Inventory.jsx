@@ -6,17 +6,19 @@ import "../../css/inventory.css";
 import Search from "./Search.jsx";
 import {
     fetchSearchProducts, fetchProducts, deleteProductByCode,
-    fetchGetByCode, updateSelectedPrices, updateAllPrices, fetchDownloadExcelFile
+    fetchGetByCode, updateSelectedPrices, updateAllPrices, fetchDownloadExcelFile,
+    addProduct
 } from "../../services/axios.services.js";
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
 import CreateOfferModal from "./CreateOfferModal.jsx";
-import addItemConfig from "./forms/useAddItemsConfig.jsx";
+import addItemConfig from "./forms/ContentAddProduct.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 import { useModal } from "../crud/hooks/useModal.js";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
+import ContentAddProduct from "./forms/ContentAddProduct.jsx";
 
 export default function InventoryPage() {
 
@@ -286,109 +288,111 @@ export default function InventoryPage() {
     }
     return (
         <RequirePermission permission="access_inventory">
-        <div className="d-flex justify-content-center mt-5">
-            <CreateOfferModal
-                show={showOfferModal}
-                handleClose={() => setShowOfferModal(false)}
-                selectedItems={selectedItems}
-                setSelectedItems={setSelectedItems}
-                setIsSomethingSelected={setIsSomethingSelected}
-                fetchGetByCode={fetchGetByCode}
-            />
-            <ConfirmationModal
-                show={showConfirmation}
-                title={confirmationTitle}
-                message={confirmationText}
-                onSendForm={handleUpdatePricesSendForm}
-                handleClose={handleHideConfirmation}
-                isSending={isSending}
-            />
-            {/* download excel */}
-            <ConfirmationModal
-                show={showDownload}
-                title={titleDownload}
-                message={messageDownload}
-                onSendForm={handleDownload}
-                handleClose={closeDownload}
-                isSending={isSending}
-            />
-            <PriceUpdateModal
-                show={showPriceUpdateModal}
-                handleClose={() => setShowPriceUpdateModal(false)}
-                selectedItems={selectedItems}
-                onApply={applyPriceUpdate}
-                includeCombos={includeCombos}
-                setIncludeCombos={setIncludeCombos}
-                applyToAll={applyToAll}
-                setApplyToAll={setApplyToAll}
-                includeDiscounted={includeDiscounted}
-                setIncludeDiscounted={setIncludeDiscounted}
-            />
-            <ProductInfoModal
-                show={showProductInfo}
-                handleClose={() => setShowProductInfo(false)}
-                product={selectedProduct}
-                unselectAll={unselectAll}
-                reloadPageOne={reloadPageOne}
-            />
-
-            <div className="container container-modified">
-                {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
-                provided having two arguments: 1° the config dictionary containing constants, title and inputs; 
-                2° the onSubmit function that runs when the form is submited   */}
-                <Header
-                    title={'INVENTARIO'}
-                    isSomethingSelected={isSomethingSelected}
+            <div className="d-flex justify-content-center mt-5">
+                <CreateOfferModal
+                    show={showOfferModal}
+                    handleClose={() => setShowOfferModal(false)}
                     selectedItems={selectedItems}
                     setSelectedItems={setSelectedItems}
-                    items={items}
-                    user={user}
-                    onExtraInfo={onExtraInfo}
-                    extraButtons={EXTRABUTTONS}
-                    addFormConfig={addItemConfig}
-                    deleteItem={deleteProductByCode}
-                    selectedItemsColumns={importantColumns}
+                    setIsSomethingSelected={setIsSomethingSelected}
+                    fetchGetByCode={fetchGetByCode}
+                />
+                <ConfirmationModal
+                    show={showConfirmation}
+                    title={confirmationTitle}
+                    message={confirmationText}
+                    onSendForm={handleUpdatePricesSendForm}
+                    handleClose={handleHideConfirmation}
+                    isSending={isSending}
+                />
+                {/* download excel */}
+                <ConfirmationModal
+                    show={showDownload}
+                    title={titleDownload}
+                    message={messageDownload}
+                    onSendForm={handleDownload}
+                    handleClose={closeDownload}
+                    isSending={isSending}
+                />
+                <PriceUpdateModal
+                    show={showPriceUpdateModal}
+                    handleClose={() => setShowPriceUpdateModal(false)}
+                    selectedItems={selectedItems}
+                    onApply={applyPriceUpdate}
+                    includeCombos={includeCombos}
+                    setIncludeCombos={setIncludeCombos}
+                    applyToAll={applyToAll}
+                    setApplyToAll={setApplyToAll}
+                    includeDiscounted={includeDiscounted}
+                    setIncludeDiscounted={setIncludeDiscounted}
+                />
+                <ProductInfoModal
+                    show={showProductInfo}
+                    handleClose={() => setShowProductInfo(false)}
+                    product={selectedProduct}
+                    unselectAll={unselectAll}
                     reloadPageOne={reloadPageOne}
                 />
-                <div className="table-container">
-                    <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
 
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={handlePageChange}
-                        />
-                        <div className="search-wrapper">
+                <div className="container container-modified">
+                    {/* Header component has 4 buttons, and extra can be added. For each button, an ItemConfig object must be 
+                provided having two arguments: 1° the config dictionary containing constants, title and inputs; 
+                2° the onSubmit function that runs when the form is submited   */}
+                    <Header
+                        title={'INVENTARIO'}
+                        isSomethingSelected={isSomethingSelected}
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        items={items}
+                        user={user}
+                        onExtraInfo={onExtraInfo}
+                        extraButtons={EXTRABUTTONS}
+                        deleteItem={deleteProductByCode}
+                        titleAddItem={'Añadir Nuevo Producto'}
+                        onSubmitAddItem={addProduct}
+                        AddItemcontent={ContentAddProduct}
+                        selectedItemsColumns={importantColumns}
+                        reloadPageOne={reloadPageOne}
+                    />
+                    <div className="table-container">
+                        <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
 
-                            <Search
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                                onSearch={() => handleSearchSubmit(searchInput)}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
                             />
+                            <div className="search-wrapper">
+
+                                <Search
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onSearch={() => handleSearchSubmit(searchInput)}
+                                />
+                            </div>
+                        </div>
+
+                        <Table
+                            items={items}
+                            columns={columns}
+                            loading={loading}
+                            selectedItems={selectedItems}
+                            setSelectedItems={setSelectedItems}
+                            setIsSomethingSelected={setIsSomethingSelected}
+
+                        />
+                        <div className="table-footer-group footer-inventory">
+                            <button className="btn btn-outline-secondary" onClick={clearSearch}>
+                                Limpiar resultados de busqueda
+                            </button>
+                            <button className="btn btn-outline-success" onClick={downloadExcelFile}>
+                                Exportar inventario a Excel <i className="bi bi-file-earmark-arrow-down"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <Table
-                        items={items}
-                        columns={columns}
-                        loading={loading}
-                        selectedItems={selectedItems}
-                        setSelectedItems={setSelectedItems}
-                        setIsSomethingSelected={setIsSomethingSelected}
-
-                    />
-                    <div className="table-footer-group footer-inventory">
-                        <button className="btn btn-outline-secondary" onClick={clearSearch}>
-                            Limpiar resultados de busqueda
-                        </button>
-                        <button className="btn btn-outline-success" onClick={downloadExcelFile}>
-                            Exportar inventario a Excel <i className="bi bi-file-earmark-arrow-down"></i>
-                        </button>
-                    </div>
                 </div>
-
             </div>
-        </div>
         </RequirePermission>
     );
 }

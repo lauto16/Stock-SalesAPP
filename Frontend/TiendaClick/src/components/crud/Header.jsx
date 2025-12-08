@@ -11,7 +11,6 @@ export default function Header({
   isSomethingSelected,
   selectedItems,
   setSelectedItems,
-
   items,
   user,
   onExtraInfo,
@@ -24,8 +23,7 @@ export default function Header({
   onSubmitAddItem,
   onSubmitEditItem,
   InfoFormContent,
-  titleInfoForm,
-
+  titleInfoForm
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
