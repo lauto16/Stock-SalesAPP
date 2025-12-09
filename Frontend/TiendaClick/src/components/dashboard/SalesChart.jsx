@@ -1,10 +1,13 @@
 import React from 'react'
 import Chart from 'react-apexcharts'
-import { useEffect } from 'react'
 
 const SalesChart = ({ sales }) => {
 
     const months = ['Ene', "Feb", 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+    // Validate sales data
+    const hasData = sales && Array.isArray(sales) && sales.length > 0;
+
     const options = {
         chart: {
             type: 'line',
@@ -12,11 +15,23 @@ const SalesChart = ({ sales }) => {
         },
         stroke: {
             curve: 'smooth',
+            width: 3,
         },
+        colors: ['#28a745'],
         xaxis: {
-            categories: sales?.map((sale) => {
-                return months[sale.month - 1]
-            })
+            categories: hasData ? sales.map((sale) => months[sale.month - 1]) : []
+        },
+        yaxis: {
+            title: {
+                text: 'Cantidad de ventas'
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value + ' ventas'
+                }
+            }
         },
         responsive: [
             {
@@ -31,30 +46,32 @@ const SalesChart = ({ sales }) => {
     const series = [
         {
             name: 'Ventas',
-            data: sales?.map((sale) => {
-                return sale.sales
-            })
+            data: hasData ? sales.map((sale) => sale.sales) : []
         }
     ];
-
-    useEffect(() => {
-
-    }, [sales])
 
     return (
         <div
             className="chart-wrapper"
             style={{ width: '100%', maxWidth: '500px' }}
         >
-            <Chart
-                options={options}
-                series={series}
-                type="bar"
-                width="100%"
-                height={300}
-            />
+            {hasData ? (
+                <Chart
+                    options={options}
+                    series={series}
+                    type="bar"
+                    width="100%"
+                    height={300}
+                />
+            ) : (
+                <div className="text-center text-muted py-5">
+                    <i className="bi bi-graph-up" style={{ fontSize: '3rem' }}></i>
+                    <p className="mt-3">No hay datos de ventas disponibles</p>
+                </div>
+            )}
         </div>
     )
 }
 
 export default SalesChart
+
