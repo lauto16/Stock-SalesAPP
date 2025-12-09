@@ -6,6 +6,9 @@ from django.http import HttpRequest
 
 
 class AuthVerifyer:
+    """
+    Control class to verify credentdials
+    """
     def __init__(self) -> None:
         pass
 

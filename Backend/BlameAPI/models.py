@@ -5,8 +5,19 @@ from django.db import models
 
 class ChangeLog(models.Model):
     """
-    Blame log for those users whose desire to assign blame outweighs the compensation they receive.
+    Stores audit information about changes made to any model instance.
+
+    Each entry tracks:
+      - The model and specific object affected.
+      - The field that was modified.
+      - Old and new values.
+      - The user who performed the change.
+      - The timestamp of the modification.
+
+    This model uses Django's generic relations to support logging changes
+    across any app model.
     """
+
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.TextField()
     content_object = GenericForeignKey('content_type', 'object_id')

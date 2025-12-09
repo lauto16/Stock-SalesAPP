@@ -47,13 +47,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class CustomPermission(models.Model):
+    """A permission to do something such as entering restricted views or changing potencially 
+    important or secret content"""
     code_name = models.CharField(max_length=200, unique=True, null=False, blank=False)
     description = models.CharField(max_length=500, unique=False, null=True, blank=True)
 
 
 class Role(models.Model):
     """
-    Most escalable solution for giving each user a role
+    Solution for giving each user a role
     """
     ROLE_CHOICES = [
         ('salesperson', 'Vendedor'),

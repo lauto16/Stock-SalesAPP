@@ -15,8 +15,14 @@ from Auth.models import Role
 
 
 class LoginView(TokenObtainPairView):
+    """
+    Viewset to manage user's login
+    """
     def post(self, request, *args, **kwargs):
         try:
+            """
+            Returns useful information about the user along with their token.
+            """
             response = super().post(request, *args, **kwargs)
             access_token = response.data["access"]
             refresh_token = response.data["refresh"]
@@ -56,7 +62,11 @@ class LoginView(TokenObtainPairView):
 
 
 class LogoutView(APIView):
+    """
+    Viewset to manage user's logout
+    """
     def post(self, request):
+        """Logs the user out"""
         res = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
         res.delete_cookie("access")
         res.delete_cookie("refresh", path="/api/token/refresh/")
@@ -64,6 +74,9 @@ class LogoutView(APIView):
 
 
 class LoginViewSet(viewsets.ViewSet):
+    """
+    Control class to ask for data about the logued user and verify their pin
+    """
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=["get"])
@@ -80,6 +93,7 @@ class LoginViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path=r"verify-user-pin/(?P<pin>[\w-]+)")
     def verify_user_pin(self, request, pin=None):
+        "Returns True if the user submitted their pin correctly"
         user = request.user
         if not pin:
             return Response({"detail": "Se debe ingresar un pin"}, status=400)
@@ -97,10 +111,12 @@ CustomUser = get_user_model()
 
 
 class SignupViewSet(viewsets.ViewSet):
+    """Viewset for creating a new user"""
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
+        """Creates a new user (this can only be done from dashboard and by an admin)"""
         serializer = SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -135,11 +151,13 @@ class SignupViewSet(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ViewSet):
+    """This viewset is utilized to perform "crud" actions to CustomUser instances"""
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["get"], url_path="list")
     def list_users(self, request):
+        """Returns the list of users registered"""
         user = request.user
 
         if not hasattr(user, "role") or user.role.name != "administrator":
@@ -165,6 +183,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=["delete"], url_path="delete")
     def delete_user(self, request, pk=None):
+        """Deletes a user"""
         user = request.user
 
         if not hasattr(user, "role") or user.role.name != "administrator":
