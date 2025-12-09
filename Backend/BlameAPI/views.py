@@ -11,20 +11,38 @@ from .models import ChangeLog
 
 
 class ChangeLogPagination(PageNumberPagination):
+    """
+    Pagination class for ChangeLog results.
+
+    Provides configurable page size with a default of 10 items per page.
+    Allows clients to override the page size up to a maximum of 100.
+    """
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class NoPagination(PageNumberPagination):
+    """
+    Disables pagination for endpoints that require returning all results.
+
+    Setting `page_size` to None causes DRF to return full result sets
+    without applying any pagination.
+    """
     page_size = None
 
 
 class ChangeLogViewSet(viewsets.ModelViewSet):
     """
-    ViewSet para operaciones CRUD sobre proveedores con paginación.
-    """
+    ViewSet for listing, retrieving, and managing ChangeLog entries.
 
+    Uses standard Django REST Framework ModelViewSet behavior along with:
+      - Token and session authentication
+      - Authentication requirement (IsAuthenticated)
+      - Pagination through ChangeLogPagination
+
+    This endpoint is intended for general browsing and admin usage.
+    """
     queryset = ChangeLog.objects.all()
     serializer_class = ChangeLogSerializer
     pagination_class = ChangeLogPagination
@@ -33,8 +51,34 @@ class ChangeLogViewSet(viewsets.ModelViewSet):
 
 
 class ChangeLogSearchViewForProducts(APIView):
+    """
+    Provides advanced search over ChangeLog entries related to Product objects.
+
+    The search works by:
+      - Matching the query against the product name, product code,
+        and change date.
+      - Assigning a weighted score based on relevance.
+      - Sorting results in descending score order.
+
+    The response includes:
+      - A list of matching ChangeLog entries serialized with ChangeLogSerializer
+      - A count of the number of matches
+
+    Intended for use in frontend search bars and quick filtering interfaces.
+    """
 
     def get(self, request):
+        """
+        Handles GET requests for product-related ChangeLog search.
+
+        Query parameters:
+            q (str): The search term. Matches are case-insensitive.
+
+        Returns:
+            Response: JSON object containing:
+                - "results": serialized ChangeLog entries
+                - "count": number of matched entries
+        """
         query = request.GET.get("q", "").strip().lower()
         if not query:
             return Response([], status=status.HTTP_200_OK)

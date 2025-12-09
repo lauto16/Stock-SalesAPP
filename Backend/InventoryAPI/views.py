@@ -23,15 +23,41 @@ from openpyxl import Workbook
 import os
 
 
-
-
 class ProductValidator:
     """
-    Validator for Product PATCH request data
+    Provides validation logic for Product PATCH request data.
+
+    This helper class validates individual fields sent in a partial update
+    request and returns a consistent response format indicating whether the
+    data is valid. It performs checks for:
+      - Empty or invalid text fields
+      - Numeric fields (stock, buy price, sell price)
+      - Provider validation, including ID format and existence
+
+    All validation errors follow the same structure:
+        {"success": False, "error": "<message>"}
+
+    If no issues are found:
+        {"success": True, "error": None}
     """
 
     @staticmethod
     def validate_data(request: HttpRequest) -> dict:
+        """
+        Validates incoming PATCH data for updating a Product instance.
+
+        The method performs type checks, value constraints, and related-object
+        existence checks. It safely handles unexpected errors and wraps them
+        in a friendly error message.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request containing PATCH data.
+
+        Returns:
+            dict: A result dictionary with:
+                - success (bool): Whether validation passed.
+                - error (str | None): A human-readable error message, or None if valid.
+        """
         data = request.data
 
         try:
@@ -116,7 +142,16 @@ class ProductValidator:
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
-    Set of django views for each API request
+    ViewSet providing CRUD operations and custom actions for Product objects.
+
+    This ViewSet includes:
+      - Standard ModelViewSet functionality (list, retrieve, create, update, delete)
+      - Custom pagination using ProductPagination
+      - Session and token authentication
+      - Permission enforcement (authenticated users only)
+
+    A custom endpoint (`get-by-code/<code>`) allows retrieving a product
+    directly by its unique code field.
     """
 
     queryset = Product.objects.all()
@@ -127,6 +162,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path=r"get-by-code/(?P<code>[\w-]+)")
     def get_by_code(self, request, code=None):
+        """
+        Retrieves a Product instance by its `code` value.
+        """
         if not code:
             return Response(
                 {"error": "Código inválido"}, status=status.HTTP_400_BAD_REQUEST
@@ -155,16 +193,13 @@ class ProductViewSet(viewsets.ModelViewSet):
                 {"error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        products = Product.objects.filter(
-            stock__lte=limit).order_by("stock")[:150]
+        products = Product.objects.filter(stock__lte=limit).order_by("stock")[:150]
 
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
 
     @action(
-        detail=False,
-        methods=["delete"],
-        url_path="delete-by-code/(?P<code>[^/.]+)"
+        detail=False, methods=["delete"], url_path="delete-by-code/(?P<code>[^/.]+)"
     )
     def destroy_by_code(self, request, code=None):
         """
@@ -175,7 +210,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(
                 {
                     "success": False,
-                    "error": f'No se encontró el producto con código "{code}".'
+                    "error": f'No se encontró el producto con código "{code}".',
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -184,14 +219,14 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(
                 {
                     "success": False,
-                    "error": "El producto tiene ventas asignadas, no puede ser eliminado."
+                    "error": "El producto tiene ventas asignadas, no puede ser eliminado.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         product.delete()
         return Response({"success": True}, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=["patch"], url_path="patch-by-code/(?P<code>[^/.]+)")
     def patch_by_code(self, request, code=None):
         """
@@ -212,8 +247,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = ProductSerializer(
-            product, data=request.data, partial=True)
+        serializer = ProductSerializer(product, data=request.data, partial=True)
 
         if serializer.is_valid():
             for attr, value in serializer.validated_data.items():
@@ -268,8 +302,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 continue
 
             if isinstance(percentage, (int, float)):
-                product.sell_price = product.sell_price * \
-                    (1 + (percentage / 100))
+                product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
                 product.save(user=request.user)
                 updated_products.append(product.code)
@@ -285,9 +318,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["patch"], url_path="patch-all-prices")
     def patch_all(self, request):
         """
-        TODO: Add the functionality to take care of edge cases when user wants to apply discount/rise prices to
-        discounts(ofertas) and product combos ------> This needs to be done when the combos and discount structure and
-        DB are ready
+        Applies a percentage increase to all product prices,
+        optionally including products that already have a discount.
         """
         percentage = request.data.get("percentage")
         include_discounted = request.data.get("includeDiscounted", False)
@@ -299,25 +331,27 @@ class ProductViewSet(viewsets.ModelViewSet):
                 continue
 
             if isinstance(percentage, (int, float)):
-                product.sell_price = product.sell_price * \
-                    (1 + (percentage / 100))
+                product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
                 product.save(user=request.user)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
-    # EXPORT TO EXCEL
 
     @action(detail=False, methods=["get"], url_path="downloadExcel")
     def generate_excel(self, request):
+        """
+        Generates and returns an Excel file containing the full inventory,
+        formatted for readability and including product and provider details.
+        """
         try:
-            base_dir = os.path.dirname(os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__))))
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            )
             forms_dir = os.path.join(base_dir, "formularios")
             os.makedirs(forms_dir, exist_ok=True)
             file_name = "inventario.xlsx"
             file_path = os.path.join(forms_dir, file_name)
 
-            # Obtener datos
             data = []
             max_len = {
                 "Código": len("Código"),
@@ -325,10 +359,10 @@ class ProductViewSet(viewsets.ModelViewSet):
                 "Stock": len("Stock"),
                 "Precio de venta": len("Precio de venta"),
                 "Precio de compra": len("Precio de compra"),
-                "Proveedor": len("Proveedor")
+                "Proveedor": len("Proveedor"),
             }
             for product in Product.objects.all():
-                provider_name = 'No Registrado'
+                provider_name = "No Registrado"
                 if product.provider:
                     provider_name = product.provider.name
                 item = {
@@ -340,30 +374,28 @@ class ProductViewSet(viewsets.ModelViewSet):
                     "Proveedor": provider_name,
                 }
                 data.append(item)
-                # Seting the max lenght of the column, to aply styles
                 for key, value in item.items():
                     if len(str(value)) > max_len[key]:
                         max_len[key] = len(str(value))
 
-            # Crear archivo con openpyxl y estilo striped
             wb = Workbook()
             ws = wb.active
             ws.title = "Inventario"
 
             headers = list(data[0].keys()) if data else []
             ws.append(headers)
-            # width fit content
+
             for i, header in enumerate(headers, start=1):
                 col_letter = get_column_letter(i)
                 ws.column_dimensions[col_letter].width = max_len[header] + 2
 
-            fill = PatternFill(start_color="f1f1f1",
-                               end_color="f1f1f1", fill_type="solid")
+            fill = PatternFill(
+                start_color="f1f1f1", end_color="f1f1f1", fill_type="solid"
+            )
 
             for col in range(1, len(headers) + 1):
                 cell = ws.cell(row=1, column=col)
-                cell.alignment = Alignment(
-                    horizontal='center', vertical='center')
+                cell.alignment = Alignment(horizontal="center", vertical="center")
                 cell.font = Font(bold=True)
 
             for idx, item in enumerate(data, start=1):
@@ -374,13 +406,14 @@ class ProductViewSet(viewsets.ModelViewSet):
                         cell = ws.cell(row=idx + 1, column=col)
                         cell.fill = fill
                         cell.alignment = Alignment(
-                            horizontal='center', vertical='center')
+                            horizontal="center", vertical="center"
+                        )
                 else:
-                    # Para filas impares también centrar
                     for col in range(1, len(headers) + 1):
                         cell = ws.cell(row=idx + 1, column=col)
                         cell.alignment = Alignment(
-                            horizontal='center', vertical='center')
+                            horizontal="center", vertical="center"
+                        )
 
             wb.save(file_path)
 
@@ -388,7 +421,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 open(file_path, "rb"),
                 as_attachment=True,
                 filename=file_name,
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
 
         except Exception as e:
@@ -396,11 +429,18 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class OfferViewSet(viewsets.ModelViewSet):
+    """
+    Provides CRUD operations for managing product offers.
+    """
+
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
     pagination_class = OfferPagination
 
     def create(self, request, *args, **kwargs):
+        """
+        Creates a new offer after validating required fields and product IDs.
+        """
         try:
             name = request.data.get("name")
             percentage = request.data.get("percentage")
@@ -408,7 +448,9 @@ class OfferViewSet(viewsets.ModelViewSet):
             products_ids = request.data.get("products")
 
             if not name:
-                return Response({"success": False, "error": "El nombre es obligatorio."}, 400)
+                return Response(
+                    {"success": False, "error": "El nombre es obligatorio."}, 400
+                )
 
             if Offer.objects.filter(name=name).exists():
                 return Response(
@@ -417,17 +459,33 @@ class OfferViewSet(viewsets.ModelViewSet):
                 )
 
             if percentage is None:
-                return Response({"success": False, "error": "El porcentaje es obligatorio."}, 400)
+                return Response(
+                    {"success": False, "error": "El porcentaje es obligatorio."}, 400
+                )
 
             if end_date is None:
-                return Response({"success": False, "error": "La fecha de finalización es obligatoria."}, 400)
+                return Response(
+                    {
+                        "success": False,
+                        "error": "La fecha de finalización es obligatoria.",
+                    },
+                    400,
+                )
 
             if not products_ids or not isinstance(products_ids, list):
-                return Response({"success": False, "error": "Debe proporcionar una lista de productos."}, 400)
+                return Response(
+                    {
+                        "success": False,
+                        "error": "Debe proporcionar una lista de productos.",
+                    },
+                    400,
+                )
 
             products = Product.objects.filter(pk__in=products_ids)
             if products.count() != len(products_ids):
-                return Response({"success": False, "error": "Uno o más productos no existen."}, 400)
+                return Response(
+                    {"success": False, "error": "Uno o más productos no existen."}, 400
+                )
 
             offer = Offer.objects.create(
                 name=name,
@@ -442,6 +500,9 @@ class OfferViewSet(viewsets.ModelViewSet):
             return Response({"success": False, "error": str(e)}, 500)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        Deletes an existing offer if it exists.
+        """
         try:
             offer = self.get_object()
             offer.delete()
@@ -452,6 +513,9 @@ class OfferViewSet(viewsets.ModelViewSet):
             return Response({"success": False, "error": str(e)}, 500)
 
     def update(self, request, *args, **kwargs):
+        """
+        Updates an existing offer, including assigned products if provided.
+        """
         try:
             offer = self.get_object()
 
@@ -462,13 +526,18 @@ class OfferViewSet(viewsets.ModelViewSet):
 
             if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
                 return Response(
-                    {"success": False, "error": "Ya existe otra oferta con ese nombre."},
+                    {
+                        "success": False,
+                        "error": "Ya existe otra oferta con ese nombre.",
+                    },
                     400,
                 )
 
             if products_ids is not None:
                 if not isinstance(products_ids, list):
-                    return Response({"success": False, "error": "Products debe ser una lista."}, 400)
+                    return Response(
+                        {"success": False, "error": "Products debe ser una lista."}, 400
+                    )
 
                 products = Product.objects.filter(pk__in=products_ids)
                 if products.count() != len(products_ids):
@@ -492,30 +561,30 @@ class OfferViewSet(viewsets.ModelViewSet):
             return Response({"success": False, "error": str(e)}, 500)
 
     def list(self, request, *args, **kwargs):
+        """
+        Retrieves all offers with optional pagination support.
+        """
         try:
             queryset = self.get_queryset()
 
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response({
-                    "success": True,
-                    "error": "",
-                    "offers": serializer.data
-                })
+                return self.get_paginated_response(
+                    {"success": True, "error": "", "offers": serializer.data}
+                )
 
             serializer = self.get_serializer(queryset, many=True)
-            return Response({
-                "success": True,
-                "error": "",
-                "offers": serializer.data
-            })
+            return Response({"success": True, "error": "", "offers": serializer.data})
 
         except Exception as e:
             return Response({"success": False, "error": str(e)}, 500)
 
-class ProductSearchView(APIView):
 
+class ProductSearchView(APIView):
+    """
+    Performs a relevance-based search across products by name, code, or stock.
+    """
     def get(self, request):
         query = request.GET.get("q", "").strip().lower()
         if not query:

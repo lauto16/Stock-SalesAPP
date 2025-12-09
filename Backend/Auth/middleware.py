@@ -1,5 +1,5 @@
 class JWTAuthCookieMiddleware:
-    # Intercepts the request looking for the user's Token
+    """Intercepts the request looking for the user's Token"""
     def __init__(self, get_response):
         self.get_response = get_response
 

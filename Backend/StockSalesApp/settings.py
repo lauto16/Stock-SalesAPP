@@ -14,8 +14,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Auth',
-    'FilesAPI',
-    'Inventory',
     'InventoryAPI',
     'SalesAPI',
     'rest_framework',
