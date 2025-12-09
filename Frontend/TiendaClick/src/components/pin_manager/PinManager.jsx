@@ -14,6 +14,13 @@ export default function PinManager() {
   const { user, logout } = useUser();
   const { addNotification } = useNotifications();
 
+  // this dict is used to detect have something to show in the return in case user is not logued until the useEffect runs.
+  const safeUser = {
+    username: user?.username || "",
+    role: user?.role || "",
+    avatar: user?.avatar || "",
+  };
+
   const getRedirectPathByRole = (role) => {
     switch (role) {
       case "Repositor":
@@ -78,6 +85,9 @@ export default function PinManager() {
   }
 
   useEffect(() => {
+    if (!user) {
+      handleLogout()
+    }
     inputsRef.current[0]?.focus();
   }, []);
 
@@ -110,13 +120,14 @@ export default function PinManager() {
         </Card.Header>
         <Card.Body className="auth-card-body" style={{ textAlign: "center", position: "relative" }}>
           <i
-            className={`bi ${roleAvatar[user.role] || "bi-person"} fs-1`}
+            className={`bi ${roleAvatar[safeUser.role] || "bi-person"} fs-1`}
             style={{
               fontSize: "64px",
               marginBottom: "10px",
             }}
           ></i>
-          <h2 style={styles.name}>{user.username}</h2>
+
+          <h2 style={styles.name}>{safeUser.username}</h2>
           <p style={styles.text}>Ingresa tu PIN</p>
           <div style={styles.inputContainer}>
             {pin.map((digit, i) => (

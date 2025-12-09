@@ -12,10 +12,12 @@ import SignUp from './components/auth/SignUp.jsx';
 import Sales from './components/sales/Sales.jsx'
 import Offers from './components/offers/Offers.jsx';
 import DeleteUser from './components/auth/DeleteUser.jsx'
+import AuthGuard from "./components/auth/AuthGuard.jsx";
 
 function App() {
   return (
     <Router>
+      <AuthGuard>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -89,6 +91,7 @@ function App() {
           }
         />
       </Routes>
+      </AuthGuard>
     </Router>
   );
 }

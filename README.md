@@ -1,3 +1,2 @@
-Pegar este comando en powershell antes de ejecutar el installer
-
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+LINK INSTALADOR:
+https://drive.google.com/drive/folders/13dZSDKKQlU9LomB3yLnUDuNNeCJ_lo0v?usp=drive_link
