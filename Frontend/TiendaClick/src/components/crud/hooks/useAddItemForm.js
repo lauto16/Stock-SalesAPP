@@ -15,7 +15,8 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
 
     const { addNotification } = useNotifications();
     const handleBeforeClose = (type, message, handleClose) => {
-        handleClose();
+        handleClose()
+        reset()
         addNotification(type, message);
     };
 

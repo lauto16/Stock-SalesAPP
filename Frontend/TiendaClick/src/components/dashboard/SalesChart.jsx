@@ -17,7 +17,7 @@ const SalesChart = ({ sales }) => {
             curve: 'smooth',
             width: 3,
         },
-        colors: ['green'],
+        colors: ['#038f52ff'],
         xaxis: {
             categories: hasData ? sales.map((sale) => months[sale.month - 1]) : []
         },
