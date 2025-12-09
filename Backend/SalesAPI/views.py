@@ -9,11 +9,24 @@ from django.db import transaction
 from .models import Sale
 
 class SalePagination(PageNumberPagination):
+    """
+    Custom pagination class that standardizes the API response format.
+
+    It envelopes the results in a structured object containing success status,
+    total count, navigation links, and the actual data. It also handles
+    out-of-bound page requests gracefully.
+    """
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
     def paginate_queryset(self, queryset, request, view=None):
+        """
+        Attempts to paginate the queryset while catching 'NotFound' exceptions.
+
+        If the requested page is invalid (e.g., page 999 of 5), it prepares
+        a custom error response instead of raising a 404 exception immediately.
+        """
         try:
             return super().paginate_queryset(queryset, request, view)
         except NotFound:
@@ -23,6 +36,13 @@ class SalePagination(PageNumberPagination):
             })
 
     def get_paginated_response(self, data):
+        """
+        Constructs the final response dictionary.
+
+        If an error occurred during pagination (like an invalid page number),
+        returns the error response. Otherwise, returns the standard success
+        envelope with metadata and the results list.
+        """
         if hasattr(self, 'error_response'):
             return self.error_response
 
@@ -35,18 +55,37 @@ class SalePagination(PageNumberPagination):
         })
 
 class SaleViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet responsible for the complete management of sales records.
+
+    Handles listing, creating, retrieving, and deleting sales. It enforces
+    authentication, applies custom pagination, and orders results by creation date.
+    """
     queryset = Sale.objects.all().order_by("-created_at")
     serializer_class = SaleSerializer
     pagination_class = SalePagination
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
+        """
+        Determines which serializer to use based on the current action.
+
+        Returns the creation-specific serializer when making a new sale,
+        and the standard read-only serializer for all other operations.
+        """
         if self.action == "create":
             return SaleCreateSerializer
         return SaleSerializer
 
     @action(detail=False, methods=["get"], url_path=r"get-by-id/(?P<id>\d+)")
     def get_by_id(self, request, id=None):
+        """
+        Custom endpoint to retrieve a single sale by its numerical ID.
+
+        Validates the ID presence and existence of the sale in the database,
+        returning a 400 Bad Request if the sale is not found, or the serialized
+        data if successful.
+        """
         if not id:
             return Response({"error": "ID inválido"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,6 +98,12 @@ class SaleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["delete"], url_path=r"delete-by-id/(?P<id>\d+)")
     def destroy_by_id(self, request, id=None):
+        """
+        Custom endpoint to delete a specific sale by its numerical ID.
+
+        Checks if the sale exists before attempting deletion. Returns a success
+        flag or an error message if the ID is invalid or not found.
+        """
         sale = Sale.objects.filter(id=id)
         if not sale.exists():
             return Response({"error": f"No se pudo eliminar la venta con ID {id}"}, status=status.HTTP_400_BAD_REQUEST)
@@ -67,6 +112,13 @@ class SaleViewSet(viewsets.ModelViewSet):
         return Response({"success": True})
 
     def perform_create(self, serializer):
+        """
+        Intercepts the creation process to wrap operations in a database transaction.
+
+        Automatically assigns the current user and timestamp to the sale,
+        and triggers the 'finalize_sale' method on the model instance to
+        handle post-creation business logic (like stock updates).
+        """
         with transaction.atomic():
             sale = serializer.save(created_by=self.request.user, created_at=timezone.now())
             sale.finalize_sale(user=self.request.user)

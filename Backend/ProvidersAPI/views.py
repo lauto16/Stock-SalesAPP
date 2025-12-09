@@ -1,24 +1,28 @@
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.pagination import PageNumberPagination
+from ProvidersAPI.serializers import ProviderSerializer
 from rest_framework import viewsets, permissions
-from .serializers import ProviderSerializer
-from .models import Provider
-from django.http import HttpRequest
-from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .serializers import ProviderSerializer
+from rest_framework import viewsets, status
 from ProvidersAPI.models import Provider
-from ProvidersAPI.serializers import ProviderSerializer
+from django.http import HttpRequest
 from django.utils import timezone
+from .models import Provider
 
 
 class ProviderValidator:
     """
-    Validador para datos de PATCH de un Proveedor
+    Validator for PATCH request data when updating a Provider.
     """
 
     @staticmethod
     def validate_data(request: HttpRequest) -> dict:
+        """
+        Validates incoming PATCH data for a Provider, ensuring required fields
+        are non-empty and properly formatted.
+        """
         data = request.data
 
         try:
@@ -64,18 +68,25 @@ class ProviderValidator:
 
 
 class ProviderPagination(PageNumberPagination):
+    """Pagination class for Providers results."""
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class NoPagination(PageNumberPagination):
+    """
+    Disables pagination for endpoints that require returning all results.
+
+    Setting `page_size` to None causes DRF to return full result sets
+    without applying any pagination.
+    """
     page_size = None
 
 
 class ProviderViewSet(viewsets.ModelViewSet):
     """
-    ViewSet para operaciones CRUD sobre proveedores con paginación.
+    ViewSet providing CRUD operations for providers with pagination support.
     """
 
     queryset = Provider.objects.all()
@@ -87,7 +98,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="all")
     def get_all(self, request):
         """
-        Retorna todos los proveedores sin paginación.
+        Returns all providers without pagination.
         """
         providers = Provider.objects.all()
         serializer = self.get_serializer(providers, many=True)
@@ -96,7 +107,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["patch"], url_path="patch-by-id/(?P<id>[^/.]+)")
     def patch_by_id(self, request, id=None):
         """
-        Modifies a certain provider
+        Partially updates a provider based on its ID.
         """
         print(request)
         validate_response = ProviderValidator.validate_data(request)

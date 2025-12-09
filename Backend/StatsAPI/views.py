@@ -27,12 +27,31 @@ class StatsViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path=r"sales-data")
     def sales_data(self, request):
+        """
+        Calculates and returns key sales statistics across different time periods.
+
+        This custom action computes eight different metrics: the total count of sales 
+        and the total monetary value of sales (Sum of 'total_price'). 
+        These metrics are provided for four temporal scopes: historically, 
+        current year, current month, and current day. 
+        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay, Sum) 
+        for efficient, database-level computation.
+        """
         today = datetime.now()
         current_year = today.year
         current_month = today.month
         current_day = today.day
 
         def calc_totals():
+            """
+            Calculates eight key sales metrics grouped by time period (historic, year, month, day).
+
+            First, it annotates the entire sale queryset with temporal fields (year, month, day).
+            It then runs eight separate queries: four Count queries for the number of sales 
+            and four Sum queries for the monetary value (total_price), applying filters 
+            to restrict the data to the current year, month, and day as necessary.
+            Returns a dictionary containing all calculated statistics.
+            """
             qs = Sale.objects.annotate(
                 year=ExtractYear("created_at"),
                 month=ExtractMonth("created_at"),
@@ -92,6 +111,15 @@ class StatsViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path=r"employees-stats")
     def employees_stats(self, request):
+        """
+        Calculates and returns sales performance statistics for employees across different time periods.
+
+        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay) 
+        to annotate sales records by temporal periods (year, month, day).
+        A helper function, 'best_seller', processes these records using Python's 
+        Counter utility to determine the employee with the most sales historically, 
+        this year, this month, and today.
+        """
         today = datetime.now()
         current_year = today.year
         current_month = today.month
@@ -125,6 +153,15 @@ class StatsViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path=r"products-data")
     def products_data(self, request):
+        """
+        Calculates and returns aggregate product data, specifically the average gain margin.
+
+        It annotates each product by calculating its margin percentage directly 
+        in the database using Sell Price and Buy Price.
+        The overall average margin is then computed by aggregating the total margin 
+        across all products and dividing by the product count. 
+        It uses Coalesce to default the Sum to 0.0 if the queryset is empty.
+        """
         qs = Product.objects.annotate(
             margin=((F("sell_price") - F("buy_price")) / F("buy_price")) * 100.0
         )

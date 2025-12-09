@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.db import models
 
 
-
 class Product(models.Model):
     """
     Represents a single product, unique and sellable
@@ -62,7 +61,6 @@ class Product(models.Model):
         """
         return self.offers.filter(end_date__gte=timezone.now()).exists()
     
-
 
 class Offer(models.Model):
     """

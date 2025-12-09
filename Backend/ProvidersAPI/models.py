@@ -3,8 +3,6 @@ from BlameAPI.models import ChangeLog
 from django.db import models
 
 
-
-
 class Provider(models.Model):
     """
     Represents a single provider
@@ -22,10 +20,14 @@ class Provider(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
+        """
+        If its a creation, proceeds with it, otherwise its an update, hence does all
+        the necessary steps to create a ChangeLog and change the instance values.
+        """
         user = kwargs.pop('user', None)
 
         if not self.pk:  
-            # Caso: creación
+            # Case: Creation
             if not self.name:  
                 self.name = self._meta.get_field('name').default
             if not self.phone:
@@ -36,7 +38,7 @@ class Provider(models.Model):
                 self.email = self._meta.get_field('email').default
 
         else:
-            # Caso: actualización
+            # Case: Update
             try:
                 old = Provider.objects.get(pk=self.pk)
                 tracked_fields = ['name', 'phone', 'address', 'email']

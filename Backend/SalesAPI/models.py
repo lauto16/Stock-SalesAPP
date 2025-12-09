@@ -44,4 +44,5 @@ class SaleItem(models.Model):
 
     @property
     def subtotal(self):
+        """Returns the subtotal of an SaleItem"""
         return self.quantity * self.unit_price * (1 - self.discount_percentage / 100)
