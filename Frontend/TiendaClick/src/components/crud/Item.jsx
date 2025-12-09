@@ -1,4 +1,4 @@
-export default function Item({ item, columns, selectedItems = new Map(), setSelectedItems, pkName = 'code' }) {
+export default function Item({ item, columns, selectedItems = new Map(), setSelectedItems = () => { }, pkName = 'code' }) {
     const pkValue = item[pkName]
     const isSelected = selectedItems.has(pkValue);
     const classStockNull = item.stock === 0 ? 'text-danger' : '';

@@ -11,6 +11,7 @@ export default function Table({ setIsSomethingSelected,
     console.error('Items no es un array');
     return <></>;
   }
+
   return (
     <table className="table table-bordered align-middle">
       <thead>
