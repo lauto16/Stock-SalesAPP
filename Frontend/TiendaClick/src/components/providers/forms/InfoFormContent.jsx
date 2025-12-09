@@ -10,7 +10,7 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           label='Nombre'
           icon='bi-person'
           type='text'
-          value={selectedItem.name}
+          defaultValue={selectedItem.name}
           register={register('name', {
             required: "El nombre del proveedor es obligatorio",
             minLength: {
@@ -26,7 +26,7 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           label='Teléfono'
           icon='bi-telephone'
           type='text'
-          value={selectedItem.phone}
+          defaultValue={selectedItem.phone}
           register={register('phone', {
             required: "El teléfono es obligatorio",
             pattern: {
@@ -43,7 +43,7 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           label='Dirección'
           icon='bi-geo-alt'
           type='text'
-          value={selectedItem.address}
+          defaultValue={selectedItem.address}
           register={register('address', {
             required: "La dirección es obligatoria",
             minLength: {
@@ -74,7 +74,7 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
 
       <Col md={6} className="d-flex flex-column">
         <CustomInput
-          value={selectedItem.id}
+          defaultValue={selectedItem.id}
           register={register('id', {
           })}
           inputStyle={{ display: 'none' }}
