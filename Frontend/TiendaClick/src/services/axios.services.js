@@ -48,6 +48,7 @@ function authHeader(token) {
 }
 
 async function addProduct(product, token) {
+  console.log(product)
   return axios.post(`${apiUrl}products/`, product, authHeader(token))
     .then(response => response.data)
     .catch(error => {
