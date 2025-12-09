@@ -9,6 +9,7 @@ import { fetchSales, fetchSearchSales, deleteSaleById, addSale } from "../../ser
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
+import AddSaleContent from "./forms/AddSaleContent.jsx";
 
 export default function Sales() {
   const [items, setItems] = useState([]);
@@ -169,7 +170,7 @@ export default function Sales() {
             reloadPageOne={() => { }}
             titleAddItem={'Añadir una nueva venta'}
 
-            // AddItemcontent={AddItemContent}
+            AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}
 
             titleInfoForm={'Informacion de la venta (editar)'}
