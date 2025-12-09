@@ -53,7 +53,7 @@ const SalesChart = ({ sales }) => {
     return (
         <div
             className="chart-wrapper"
-            style={{ width: '100%', maxWidth: '600px' }}
+            style={{ width: '100%', maxWidth: '500px' }}
         >
             {hasData ? (
                 <Chart
