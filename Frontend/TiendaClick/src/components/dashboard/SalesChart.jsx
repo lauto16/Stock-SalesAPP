@@ -17,7 +17,7 @@ const SalesChart = ({ sales }) => {
             curve: 'smooth',
             width: 3,
         },
-        colors: ['#28a745'],
+        colors: ['green'],
         xaxis: {
             categories: hasData ? sales.map((sale) => months[sale.month - 1]) : []
         },
@@ -53,7 +53,7 @@ const SalesChart = ({ sales }) => {
     return (
         <div
             className="chart-wrapper"
-            style={{ width: '100%', maxWidth: '500px' }}
+            style={{ width: '100%', maxWidth: '600px' }}
         >
             {hasData ? (
                 <Chart
