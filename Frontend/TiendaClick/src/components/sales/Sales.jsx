@@ -33,7 +33,7 @@ export default function Sales() {
   const columns = [
     { className: "initial", key: "initial_price", label: "Precio inicial" },
     { className: "total", key: "total_price", label: "Precio final" },
-    { className: "discount_reason", key: "discount_reason", label: "Descuento / Aumento añadido" },
+    { className: "charge_reason", key: "charge_reason", label: "Descuento / Aumento añadido" },
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
     { className: "date", key: "created_at", label: "Fecha" },
   ];
@@ -45,7 +45,7 @@ export default function Sales() {
 
   const formatSalesData = (data) => {
     return data.map((sale) => {
-      const percentage = sale.applied_discount_percentage ?? 0;
+      const percentage = sale.applied_charge_percentage ?? 0;
       const percentageElement = (
         <span style={{ color: percentage >= 0 ? "green" : "red" }}>
           {percentage}%
@@ -57,9 +57,9 @@ export default function Sales() {
         created_at: sale.created_at ? formatDate(sale.created_at) : "",
         total_price: sale.total_price?.toFixed(2) ?? "0.00",
         final_price: sale.final_price?.toFixed(2) ?? "0.00",
-        discount_reason: (
+        charge_reason: (
           <>
-            {sale.discount_reason} ({percentageElement})
+            {sale.charge_reason} ({percentageElement})
           </>
         ),
         product_count: sale.items.length ?? 0,

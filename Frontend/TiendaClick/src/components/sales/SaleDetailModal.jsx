@@ -18,10 +18,10 @@ export default function SaleDetailModal({ show, handleClose, sale }) {
 
       <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
         <p><b>Fecha:</b> {sale.created_at}</p>
-        <p><b>Vendedor:</b> {sale.created_by_name}</p>
-        <p><b>Descuento aplicado:</b> {sale.applied_discount_percentage}%</p>
-        <p><b>Total (sin IVA):</b> ${sale.total_price}</p>
-        <p><b>Total (con IVA):</b> ${sale.total_price_iva}</p>
+        <p><b>Vendedor:</b> {sale.created_by}</p>
+        <p><b>Descuento aplicado:</b> {sale.applied_charge_percentage}%</p>
+        <p><b>Total (sin IVA):</b> ${sale.total_price.toFixed(2)}</p>
+        <p><b>Total (con IVA):</b> ${sale.total_price_iva.toFixed(2)}</p>
 
         <h5>Productos en la venta:</h5>
         <BSTable striped bordered hover size="sm">
