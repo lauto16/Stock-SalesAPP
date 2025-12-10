@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
 import { fetchSearchProducts } from "../../../services/axios.services.js";
+import Table from "../../crud/Table";
 
 export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
@@ -146,12 +147,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
             {/* Summary */}
             {selectedProducts.length > 0 && (
                 <Col md={12}>
-                    <div className="alert alert-info mt-2">
-                        <h6>Resumen de la venta:</h6>
-                        <p className="mb-0">
-                            <strong>Total final:</strong> ${calculateFinalPrice().toFixed(2)}
-                        </p>
-                    </div>
+                    <Table></Table>
                 </Col>
             )}
         </Row>
