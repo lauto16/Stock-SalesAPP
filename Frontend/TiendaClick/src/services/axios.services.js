@@ -321,8 +321,14 @@ async function deleteSaleById(id, token) {
     return { success: false, error: backendError };
   }
 }
-async function addSale(id, token) {
-  console.log("toImplement")
+async function addSale(sale, token) {
+  console.log(sale)
+  return axios.post(`${apiUrl}sales/`, sale, authHeader(token))
+    .then(response => response.data)
+    .catch(error => {
+      console.error('Error al crear la venta:', error);
+      throw error;
+    });
 }
 
 async function fetchDownloadExcelFile(token) {

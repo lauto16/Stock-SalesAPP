@@ -5,7 +5,9 @@ import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
 import { fetchSearchProducts } from "../../../services/axios.services.js";
-
+/* 'applied_discount_percentage', 'discount_reason', 'initial_price', 'total_price',
+    'tax_percentage', 'items'
+*/
 export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
