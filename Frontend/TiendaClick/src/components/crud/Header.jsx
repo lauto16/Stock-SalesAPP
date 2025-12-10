@@ -58,7 +58,15 @@ export default function Header({
     //because selectedItems items its a Map 
     const previewList = Array.from(selectedItems.values())
       .slice(0, 5)
-      .map(item => `${item.name}`)
+      .map(item => {
+        // Check if item has a name (products) or not (sales)
+        if (item.name) {
+          return item.name;
+        } else {
+          // For sales: show ID, date, and total price
+          return `Venta #${item.id} - ${item.created_at} - $${item.total_price}`;
+        }
+      })
       .join('\n');
     //check if selected items > 5 for better clarity
     const extraCount = Array.from(selectedItems.values()).length - 5;
@@ -71,17 +79,18 @@ export default function Header({
   const handleDelete = async () => {
     const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
       name: item.name,
-      id: item.code ?? item.id
+      id: item.code ?? item.id,
+      displayName: item.name || `Venta #${item.id}`
     }));
 
-    for (const { id, name } of itemsToDelete) {
+    for (let { id, displayName } of itemsToDelete) {
       const result = await deleteItem(id, user.token);
       console.log(result)
       if (result?.success) {
-        addNotification("success", `"${name}" eliminado con éxito`);
+        addNotification("success", `"${displayName}" eliminado con éxito`);
 
       } else {
-        const message = result?.error || `"${name}" no se pudo eliminar`;
+        const message = result?.error || `"${displayName}" no se pudo eliminar`;
         addNotification("error", message);
       }
     }
