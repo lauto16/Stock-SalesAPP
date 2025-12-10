@@ -4,6 +4,7 @@ from InventoryAPI.models import Product
 from .models import Sale, SaleItem
 from django.db import transaction
 
+
 class SaleDataValidator:
     """
     Contains validation methods for input data when creating a sale.
@@ -51,9 +52,9 @@ class SaleItemSerializer(serializers.ModelSerializer):
         model = SaleItem
         fields = [
             'id', 'product', 'product_id', 'quantity',
-            'unit_price', 'discount_percentage', 'subtotal'
+            'unit_price', 'charge_percentage', 'subtotal'
         ]
-        read_only_fields = ['unit_price', 'discount_percentage', 'subtotal']
+        read_only_fields = ['unit_price', 'charge_percentage', 'subtotal']
 
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -69,25 +70,28 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-            'id', 'applied_discount_percentage', 'discount_reason', 'initial_price', 'total_price',
-            'tax_percentage', 'created_at', 'created_by', 'items'
+            'id', 'applied_charge_percentage', 'charge_reason', 'initial_price', 'total_price', 'created_at', 'created_by', 'items'
         ]
 
+
 class SaleItemCreateSerializer(serializers.Serializer):
+    """Represents the data required to create a single sale item."""
     product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     quantity = serializers.IntegerField()
-    discount_percentage = serializers.FloatField(default=0)
+    charge_percentage = serializers.FloatField(default=0)
 
 
 class SaleCreateSerializer(serializers.ModelSerializer):
+    """
+    Handles the creation of a complete sale including all associated items.
+    """
     items = SaleItemCreateSerializer(many=True)
 
     class Meta:
         model = Sale
         fields = [
-            'applied_discount_percentage',
-            'discount_reason',
-            'tax_percentage',
+            'applied_charge_percentage',
+            'charge_reason',
             'items',
         ]
 
@@ -99,8 +103,6 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         for item in items:
             product = item['product_id']
             qty = item['quantity']
-            discount = item['discount_percentage']
-
             SaleDataValidator.validate_item_product_exists(product)
             SaleDataValidator.validate_item_quantity(qty)
             SaleDataValidator.validate_stock_availability(product, qty)
@@ -109,29 +111,30 @@ class SaleCreateSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        """
+        Re-implements the creation method, this is because creating a sales is way
+        more complex than simply adding some registries to a DB
+        """
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
 
         sale = Sale.objects.create(
-            applied_discount_percentage=validated_data["applied_discount_percentage"],
-            discount_reason=validated_data.get("discount_reason", ""),
-            tax_percentage=validated_data["tax_percentage"],
+            applied_charge_percentage=validated_data["applied_charge_percentage"],
+            charge_reason=validated_data.get("charge_reason", ""),
             created_by=user
         )
 
         for item in items_data:
             product = item["product_id"]
             quantity = item["quantity"]
-            discount = item["discount_percentage"]
+            charge = item["charge_percentage"]
 
             SaleItem.objects.create(
                 sale=sale,
                 product=product,
                 quantity=quantity,
                 unit_price=product.sell_price,
-                discount_percentage=discount,
+                charge_percentage=charge,
             )
-
-        sale.finalize_sale(user=user)
 
         return sale

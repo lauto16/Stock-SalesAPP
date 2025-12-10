@@ -308,11 +308,11 @@ async function fetchSearchSales(search, token) {
     return null;
   }
 }
-//TODO las ventas se deberian poder eliminar?
+
 async function deleteSaleById(id, token) {
   try {
     const response = await axios.delete(
-      `${apiUrl}products/delete-by-code/${id}/`,
+      `${apiUrl}sales/delete-by-id/${id}/`,
       authHeader(token)
     );
     return response.data;

@@ -99,16 +99,24 @@ class SaleViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["delete"], url_path=r"delete-by-id/(?P<id>\d+)")
     def destroy_by_id(self, request, id=None):
         """
-        Custom endpoint to delete a specific sale by its numerical ID.
-
-        Checks if the sale exists before attempting deletion. Returns a success
-        flag or an error message if the ID is invalid or not found.
+        Deletes a sale by ID and restores stock for all products involved in the sale.
         """
-        sale = Sale.objects.filter(id=id)
-        if not sale.exists():
-            return Response({"error": f"No se pudo eliminar la venta con ID {id}"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        sale.delete()
+        try:
+            sale = Sale.objects.select_related("created_by").prefetch_related("items__product").get(id=id)
+        except Sale.DoesNotExist:
+            return Response(
+                {"error": f"No se pudo eliminar la venta con ID {id}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            for item in sale.items.all():
+                product = item.product
+                product.stock += item.quantity
+                product.save(user=request.user)
+
+            sale.delete()
+
         return Response({"success": True})
 
     def perform_create(self, serializer):
