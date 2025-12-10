@@ -66,13 +66,22 @@ async function addProvider(provider, token) {
     });
 }
 
-async function addOffer(name, endDate, percentage, products, token) {
-  const offerData = { name, end_date: endDate, percentage, products };
+async function addOffer(data, token) {
   try {
-    const response = await axios.post(`${apiUrl}offers/`, offerData, authHeader(token));
+    const response = await axios.post(`${apiUrl}offers/`, data, authHeader(token));
     return response.data;
   } catch (error) {
     const message = error.response?.data?.error || 'Error desconocido al crear la oferta';
+    throw new Error(message);
+  }
+}
+//TODO revisar que esté bien
+async function updateOffer(data, token) {
+  try {
+    const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.error || 'Error desconocido al actualizar la oferta';
     throw new Error(message);
   }
 }
@@ -477,5 +486,6 @@ export {
   fetchSalesStats,
   deleteSaleById,
   addSale,
-  fetchOffers
+  fetchOffers,
+  updateOffer,
 };

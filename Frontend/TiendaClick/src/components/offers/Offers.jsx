@@ -1,10 +1,12 @@
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
-import { fetchOffers } from '../../services/axios.services.js'
+import { fetchOffers, addOffer, updateOffer } from '../../services/axios.services.js'
 import { useEffect, useState } from 'react'
 import { useUser } from "../../context/UserContext.jsx";
 import Header from '../crud/Header.jsx';
 import Table from '../crud/Table.jsx';
 import Pagination from '../inventory/Pagination.jsx';
+import AddOfferContent from './forms/AddOfferContent.jsx';
+import InfoOfferContent from './forms/InfoOfferContent.jsx';
 
 export default function Offers() {
 
@@ -58,6 +60,13 @@ export default function Offers() {
 
         loadOffers();
     }, [currentPage]);
+    useEffect(() => {
+        if (selectedItems.size !== 0) {
+            setIsSomethingSelected(true)
+        } else {
+            setIsSomethingSelected(false)
+        }
+    })
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -81,12 +90,12 @@ export default function Offers() {
                             items={offers}
                             // deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
-                            // reloadPageOne={reloadPageOne}
-                            // onSubmitAddItem={addProvider}
-                            // onSubmitEditItem={updateProvider}
+                            reloadPageOne={() => setCurrentPage(1)}
+                            onSubmitAddItem={addOffer}
+                            onSubmitEditItem={updateOffer}
                             titleAddItem={'Añadir una nueva oferta'}
-                            //AddItemcontent={AddOfferContent}
-                            //InfoFormContent={InfoOfferContent}
+                            AddItemcontent={AddOfferContent}
+                            InfoFormContent={InfoOfferContent}
                             titleInfoForm={'Informacion de la oferta (editar)'}
                         />
 
