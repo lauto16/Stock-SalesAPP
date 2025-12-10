@@ -41,9 +41,9 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
                     <h6>Información de la venta</h6>
                     <p className="mb-1"><strong>ID:</strong> #{selectedItem.id}</p>
                     <p className="mb-1"><strong>Fecha:</strong> {selectedItem.created_at}</p>
-                    <p className="mb-1"><strong>Vendedor:</strong> {selectedItem.created_by_name || 'N/A'}</p>
+                    <p className="mb-1"><strong>Vendedor:</strong> {selectedItem.created_by || 'N/A'}</p>
                     <p className="mb-1"><strong>Productos:</strong> {selectedItem.product_count || selectedItem.items?.length || 0}</p>
-                    <p className="mb-0"><strong>Total (sin descuento):</strong> ${selectedItem.initial_price || selectedItem.total_price}</p>
+                    <p className="mb-0"><strong>Total (sin descuento):</strong> ${selectedItem.initial_price.toFixed(2) || selectedItem.total_price.toFixed(2)}</p>
                 </div>
             </Col>
 
