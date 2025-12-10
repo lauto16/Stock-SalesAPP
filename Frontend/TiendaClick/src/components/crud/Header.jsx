@@ -24,7 +24,8 @@ export default function Header({
   onSubmitAddItem,
   onSubmitEditItem,
   InfoFormContent,
-  titleInfoForm
+  titleInfoForm,
+  disabledDeleteButton = false,
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -69,20 +70,7 @@ export default function Header({
           items={itemsToShow}
           showHeader={false}
         />
-        {/* <table className="table table-striped table-bordered">
-          <tbody>
-            {itemsToShow.map((item, index) => (
-              <tr key={index}>
-                <td>{item.name || `Venta #${item.id}`}</td>
-                <td>{item.created_at || '-'}</td>
-                <td>{item.total_price ? `$${item.total_price}` : '-'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {extraCount > 0 && (
-          <p className="text-muted">... y {extraCount} elemento{extraCount > 1 ? 's' : ''} más.</p>
-        )} */}
+        <p>Esta accion es irreversible, ¿estas seguro?</p>
 
       </>
     );
@@ -121,7 +109,7 @@ export default function Header({
     } else {
       const newSelected = new Map();
       items.forEach(item => {
-        newSelected.set(item.code ?? item.id, item);
+        newSelected.set(item.code ?? item.id ?? item.name, item);
       });
       setSelectedItems(newSelected);
     }
@@ -182,7 +170,7 @@ export default function Header({
           className="btn btn-danger remove-products-button"
           title="Eliminar productos seleccionados"
           onClick={prepareDelete}
-          disabled={!isSomethingSelected}
+          disabled={!isSomethingSelected || disabledDeleteButton}
         >
           <i className="bi bi-trash-fill"></i>
 
