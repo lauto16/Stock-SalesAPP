@@ -58,6 +58,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
         return total - discount;
     };
 
+
     return (
         <Row className="g-3">
             {/* Multi-Product Selector with Async Search */}
@@ -143,11 +144,53 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 </Col>
             )}
 
+            {/* Discount and Tax Fields */}
+            {selectedProducts.length > 0 && (
+                <>
+                    <Col md={6}>
+                        <CustomInput
+                            label="Descuento (%)"
+                            icon='bi-percent'
+                            type='number'
+                            step='0.01'
+                            defaultValue={0}
+                            register={register("applied_discount_percentage", {
+                                min: {
+                                    value: 0,
+                                    message: "El descuento no puede ser negativo"
+                                },
+                                max: {
+                                    value: 100,
+                                    message: "El descuento no puede ser mayor a 100%"
+                                }
+                            })}
+                        />
+                        {errors.applied_discount_percentage && (
+                            <div className="invalid-feedback d-block">
+                                {errors.applied_discount_percentage.message}
+                            </div>
+                        )}
+                    </Col>
+
+                    <Col md={6}>
+                        <CustomInput
+                            label="Razón del descuento"
+                            icon='bi-chat-left-text'
+                            type='text'
+                            placeholder="Ej: Promoción, Cliente frecuente..."
+                            register={register("discount_reason")}
+                        />
+                    </Col>
+                </>
+            )}
 
             {/* Summary */}
             {selectedProducts.length > 0 && (
                 <Col md={12}>
-                    <Table></Table>
+                    <Col md={12}>
+                        <h6>Productos en esta venta:</h6>
+
+                    </Col>
                 </Col>
             )}
         </Row>

@@ -321,8 +321,36 @@ async function deleteSaleById(id, token) {
     return { success: false, error: backendError };
   }
 }
-async function addSale(id, token) {
-  console.log("toImplement")
+
+async function addSale(formData, token) {
+  console.log("Raw form data:", formData);
+
+  // Calculate discount and final price
+  const discountPercentage = parseFloat(formData.applied_discount_percentage);
+
+  // Build items array with product_id and quantity
+  const items = formData.selectedProducts.map((product) => ({
+    product_id: product.code,
+    quantity: parseFloat(formData[`quantity_${product.code}`])
+  }));
+
+  // Prepare the payload for backend
+  const saleData = {
+    applied_discount_percentage: discountPercentage,
+    discount_reason: formData.discount_reason,
+    initial_price: null,
+    total_price: null,
+    items: items
+  };
+
+  console.log("Transformed sale data:", saleData);
+
+  return axios.post(`${apiUrl}sales/`, saleData, authHeader(token))
+    .then(response => response.data)
+    .catch(error => {
+      console.error('Error al crear la venta:', error);
+      throw error;
+    });
 }
 
 async function fetchDownloadExcelFile(token) {
