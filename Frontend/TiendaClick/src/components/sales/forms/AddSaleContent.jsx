@@ -132,6 +132,10 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                             min: {
                                                 value: 1,
                                                 message: "La cantidad debe ser mayor a 0"
+                                            },
+                                            max: {
+                                                value: product.stock,
+                                                message: `La cantidad no puede ser mayor a ${product.stock}`
                                             }
                                         })}
                                     />
