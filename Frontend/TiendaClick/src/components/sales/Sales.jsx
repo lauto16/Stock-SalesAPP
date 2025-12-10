@@ -174,7 +174,7 @@ export default function Sales() {
             AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}
 
-            titleInfoForm={'Informacion de la venta (editar)'}
+            titleInfoForm={'Informacion de la venta'}
 
             onSubmitEditItem={() => { }}
             InfoFormContent={InfoFormContent}

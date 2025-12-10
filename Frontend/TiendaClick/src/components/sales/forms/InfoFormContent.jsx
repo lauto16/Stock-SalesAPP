@@ -47,44 +47,13 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
                 </div>
             </Col>
 
-            {/* Discount Percentage (Editable) */}
-            <Col md={6} className="d-flex flex-column">
-                <CustomInput
-                    label='Descuento (%)'
-                    icon='bi-percent'
-                    type='number'
-                    step='0.01'
-                    defaultValue={selectedItem.applied_discount_percentage || 0}
-                    register={register('applied_discount_percentage', {
-                        min: {
-                            value: -100,
-                            message: "El descuento no puede ser menor a -100%"
-                        },
-                        max: {
-                            value: 100,
-                            message: "El descuento no puede ser mayor a 100%"
-                        }
-                    })}
-                />
-                {errors.applied_discount_percentage?.message && (
-                    <div className="invalid-feedback d-block">
-                        {errors.applied_discount_percentage.message}
-                    </div>
-                )}
-                <small className="text-muted">
-                    Valores negativos = aumentos, positivos = descuentos
-                </small>
-            </Col>
-
             {/* Products List (Read-only) */}
             {tableItems.length > 0 && (
                 <Col md={12}>
                     <h6>Productos en esta venta:</h6>
 
                     <Table columns={columns} items={tableItems} />
-                    <small className="text-muted">
-                        Los productos no pueden ser modificados después de crear la venta
-                    </small>
+
                 </Col>
             )}
         </Row>

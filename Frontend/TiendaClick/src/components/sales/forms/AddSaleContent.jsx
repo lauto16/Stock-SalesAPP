@@ -11,16 +11,19 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
 
-    const discountPercentage = watch("applied_discount_percentage", 0);
+    const chargePercentage = watch("applied_charge_percentage", 0);
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
-
+    const [subtotal, setSubtotal] = useState(0);
+    const [total, setTotal] = useState(0);
     // Clear selected products when form is reset
     useEffect(() => {
         if (!watchedSelectedProducts) {
             setSelectedProducts([]);
         }
-    }, [watchedSelectedProducts]);
+        setSubtotal(calculateTotal().toFixed(2));
+        setTotal(calculateFinalPrice().toFixed(2));
+    }, [watchedSelectedProducts, chargePercentage]);
 
     // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
@@ -54,8 +57,8 @@ export default function AddSaleContent({ register, control, errors, watch }) {
 
     const calculateFinalPrice = () => {
         const total = calculateTotal();
-        const discount = (total * discountPercentage) / 100;
-        return total - discount;
+        const charge = (total * chargePercentage) / 100;
+        return (total + charge) * 1.21;
     };
 
 
@@ -144,53 +147,103 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 </Col>
             )}
 
-            {/* Discount and Tax Fields */}
+            {/* Charge and Tax Fields */}
             {selectedProducts.length > 0 && (
                 <>
                     <Col md={6}>
                         <CustomInput
-                            label="Descuento (%)"
+                            label="Recargo (%)"
                             icon='bi-percent'
                             type='number'
                             step='0.01'
                             defaultValue={0}
-                            register={register("applied_discount_percentage", {
+                            register={register("applied_charge_percentage", {
                                 min: {
                                     value: 0,
-                                    message: "El descuento no puede ser negativo"
+                                    message: "El recargo no puede ser negativo"
                                 },
                                 max: {
                                     value: 100,
-                                    message: "El descuento no puede ser mayor a 100%"
+                                    message: "El recargo no puede ser mayor a 100%"
                                 }
                             })}
                         />
-                        {errors.applied_discount_percentage && (
+                        {errors.applied_charge_percentage && (
                             <div className="invalid-feedback d-block">
-                                {errors.applied_discount_percentage.message}
+                                {errors.applied_charge_percentage.message}
                             </div>
                         )}
                     </Col>
 
                     <Col md={6}>
                         <CustomInput
-                            label="Razón del descuento"
+                            label="Razón del aumento"
                             icon='bi-chat-left-text'
                             type='text'
-                            placeholder="Ej: Promoción, Cliente frecuente..."
-                            register={register("discount_reason")}
+                            placeholder="Ej: Recargo tarjeta credito"
+                            register={register("charge_reason")}
                         />
                     </Col>
                 </>
             )}
 
-            {/* Summary */}
+            {/* Summary Table */}
             {selectedProducts.length > 0 && (
                 <Col md={12}>
-                    <Col md={12}>
-                        <h6>Productos en esta venta:</h6>
+                    <h6 className="mb-3">Resumen de la venta:</h6>
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-hover">
+                            <thead className="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Código</th>
+                                    <th className="text-center">Cantidad</th>
+                                    <th className="text-end">Precio Unit.</th>
+                                    <th className="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {selectedProducts.map((product) => {
+                                    const quantity = watchedQuantities[`quantity_${product.code}`] || 1;
+                                    const subtotal = product.sell_price * quantity;
 
-                    </Col>
+                                    return (
+                                        <tr key={product.code}>
+                                            <td>{product.name}</td>
+                                            <td>{product.code}</td>
+                                            <td className="text-center">{quantity}</td>
+                                            <td className="text-end">${product.sell_price.toFixed(2)}</td>
+                                            <td className="text-end">${subtotal.toFixed(2)}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                            <tfoot className="table-secondary">
+                                <tr>
+                                    <td colSpan="4" className="text-end"><strong>Subtotal:</strong></td>
+                                    <td className="text-end"><strong>${subtotal}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="4" className="text-end"><strong>IVA:</strong></td>
+                                    <td className="text-end"><strong>21%</strong></td>
+                                </tr>
+                                {chargePercentage > 0 && (
+                                    <tr>
+                                        <td colSpan="4" className="text-end">
+                                            <strong>Recargo ({chargePercentage}%):</strong>
+                                        </td>
+                                        <td className="text-end text-danger">
+                                            <strong>+${((subtotal * chargePercentage) / 100).toFixed(2)}</strong>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr className="table-success">
+                                    <td colSpan="4" className="text-end"><strong>TOTAL:</strong></td>
+                                    <td className="text-end"><strong>${total}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </Col>
             )}
         </Row>

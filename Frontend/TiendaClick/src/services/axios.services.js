@@ -326,7 +326,7 @@ async function addSale(formData, token) {
   console.log("Raw form data:", formData);
 
   // Calculate discount and final price
-  const discountPercentage = parseFloat(formData.applied_discount_percentage);
+  const chargePercentage = parseFloat(formData.applied_charge_percentage);
 
   // Build items array with product_id and quantity
   const items = formData.selectedProducts.map((product) => ({
@@ -336,8 +336,8 @@ async function addSale(formData, token) {
 
   // Prepare the payload for backend
   const saleData = {
-    applied_discount_percentage: discountPercentage,
-    discount_reason: formData.discount_reason,
+    applied_charge_percentage: chargePercentage,
+    charge_reason: formData.charge_reason,
     initial_price: null,
     total_price: null,
     items: items
