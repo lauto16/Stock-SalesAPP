@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 from django.db import transaction
+from rest_framework.views import APIView
 from .models import Sale
 
 class SalePagination(PageNumberPagination):
@@ -130,3 +131,77 @@ class SaleViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             sale = serializer.save(created_by=self.request.user, created_at=timezone.now())
             sale.finalize_sale(user=self.request.user)
+
+
+class SaleSearchView(APIView):
+    """
+    Performs a relevance-based search across sales by date, products, or amount.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        query = request.GET.get("q", "").strip().lower()
+        if not query:
+            return Response([], status=status.HTTP_200_OK)
+
+        results = []
+        # Prefetch related items and products for efficient querying
+        sales = Sale.objects.prefetch_related('items__product').all()
+
+        for sale in sales:
+            score = 0
+
+            # Convert sale data to searchable strings
+            created_at_str = sale.created_at.strftime("%Y-%m-%d %H:%M:%S").lower() if sale.created_at else ""
+            date_only = sale.created_at.strftime("%Y-%m-%d").lower() if sale.created_at else ""
+            total_price_str = str(sale.total_price) if sale.total_price is not None else ""
+
+            # Search by date/time
+            if query in created_at_str:
+                score += 5
+                if date_only.startswith(query):
+                    score += 3
+
+            # Search by exact date match
+            if query == date_only:
+                score += 5
+
+            # Search by total price (exact match)
+            if query == total_price_str:
+                score += 5
+            # Search by total price (within 10% range)
+            elif query.replace('.', '').isdigit():
+                try:
+                    query_amount = float(query)
+                    if sale.total_price:
+                        price_diff = abs(sale.total_price - query_amount)
+                        if price_diff <= sale.total_price * 0.1:
+                            score += 2
+                except ValueError:
+                    pass
+
+            # Search by products in the sale
+            for item in sale.items.all():
+                product = item.product
+                product_name = product.name.lower() if product.name else ""
+                product_code = product.code.lower() if product.code else ""
+
+                if query in product_name:
+                    score += 4
+                    if product_name.startswith(query):
+                        score += 2
+
+                if query in product_code:
+                    score += 3
+                    if product_code.startswith(query):
+                        score += 2
+
+            if score > 0:
+                results.append((score, sale))
+
+        # Sort by score (highest first)
+        results.sort(key=lambda tup: tup[0], reverse=True)
+        matched_sales = [s for _, s in results]
+
+        serializer = SaleSerializer(matched_sales, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

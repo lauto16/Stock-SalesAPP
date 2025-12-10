@@ -37,6 +37,7 @@ router_users_admin_functions.register(r'admin-user-functions', UserViewSet, base
 
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
+    path('api/sales/search/', SaleSearchView.as_view(), name='sale-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),

@@ -8,7 +8,11 @@ export default function ConfirmationModal({ show, handleClose, title, message, o
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
-        <p style={{ whiteSpace: "pre-line" }}>{message}</p>
+        {typeof message === 'string' ? (
+          <p style={{ whiteSpace: "pre-line" }}>{message}</p>
+        ) : (
+          message
+        )}
       </Modal.Body>
       <Modal.Footer style={{ backgroundColor: "#f0f0f0" }}>
         <Button className="mt-2 btn-secondary" onClick={handleClose}>

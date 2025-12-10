@@ -120,7 +120,6 @@ export default function ProductBlame({ productCode }) {
       setLoading(true);
 
       const data = await fetchSearchBlames(query, user.token);
-
       const formatIfFloat = (value) => {
         const num = parseFloat(value);
         return !isNaN(num) ? num.toFixed(2) : value;
@@ -167,49 +166,49 @@ export default function ProductBlame({ productCode }) {
 
   return (
     <RequirePermission permission="access_blame">
-    <div className="d-flex justify-content-center mt-5">
-      <div className="container container-modified">
+      <div className="d-flex justify-content-center mt-5">
+        <div className="container container-modified">
 
-        <SimpleHeader
-          title={'CAMBIOS EN PRODUCTOS'}
-          userRole={user.role}
-        />
-
-        <div className="table-container">
-          <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={isSearching ? searchTotalPages : totalPages}
-              onPageChange={handlePageChange}
-            />
-            <div className="search-wrapper">
-              <Search
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onSearch={() => handleSearchSubmit(searchInput)}
-              />
-            </div>
-          </div>
-
-          <Table
-            items={isSearching ? allSearchResults : items}
-            columns={columns}
-            loading={loading}
-            selectedItems={selectedItems}
-            setSelectedItems={setSelectedItems}
-            setIsSomethingSelected={setIsSomethingSelected}
-            pkName="id"
+          <SimpleHeader
+            title={'CAMBIOS EN PRODUCTOS'}
+            userRole={user.role}
           />
 
-          <button
-            className="btn btn-outline-secondary clear-search-results-button"
-            onClick={clearSearch}
-          >
-            Limpiar resultados de búsqueda
-          </button>
+          <div className="table-container">
+            <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={isSearching ? searchTotalPages : totalPages}
+                onPageChange={handlePageChange}
+              />
+              <div className="search-wrapper">
+                <Search
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onSearch={() => handleSearchSubmit(searchInput)}
+                />
+              </div>
+            </div>
+
+            <Table
+              items={isSearching ? allSearchResults : items}
+              columns={columns}
+              loading={loading}
+              selectedItems={selectedItems}
+              setSelectedItems={setSelectedItems}
+              setIsSomethingSelected={setIsSomethingSelected}
+              pkName="id"
+            />
+
+            <button
+              className="btn btn-outline-secondary clear-search-results-button"
+              onClick={clearSearch}
+            >
+              Limpiar resultados de búsqueda
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </RequirePermission>
   );
 }
