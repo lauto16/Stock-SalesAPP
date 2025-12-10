@@ -6,6 +6,7 @@ import { useNotifications } from '../../context/NotificationSystem.jsx';
 import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
+import Table from "./Table.jsx";
 export default function Header({
   title,
   isSomethingSelected,
@@ -55,25 +56,38 @@ export default function Header({
   //delete logic
   const prepareDelete = () => {
     if (selectedItems.size === 0) return;
-    //because selectedItems items its a Map 
-    const previewList = Array.from(selectedItems.values())
-      .slice(0, 5)
-      .map(item => {
-        // Check if item has a name (products) or not (sales)
-        if (item.name) {
-          return item.name;
-        } else {
-          // For sales: show ID, date, and total price
-          return `Venta #${item.id} - ${item.created_at} - $${item.total_price}`;
-        }
-      })
-      .join('\n');
-    //check if selected items > 5 for better clarity
-    const extraCount = Array.from(selectedItems.values()).length - 5;
-    const message = extraCount > 0
-      ? `${previewList}\n... y ${extraCount} más.`
-      : previewList;
-    openDelModal("Eliminar elementos seleccionados...", message)
+
+    const selectedArray = Array.from(selectedItems.values());
+    const itemsToShow = selectedArray.slice(0, 5);
+    const extraCount = selectedArray.length - 5;
+
+    // Create table with selected items
+    const tableContent = (
+      <>
+        <Table
+          columns={selectedItemsColumns}
+          items={itemsToShow}
+          showHeader={false}
+        />
+        {/* <table className="table table-striped table-bordered">
+          <tbody>
+            {itemsToShow.map((item, index) => (
+              <tr key={index}>
+                <td>{item.name || `Venta #${item.id}`}</td>
+                <td>{item.created_at || '-'}</td>
+                <td>{item.total_price ? `$${item.total_price}` : '-'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {extraCount > 0 && (
+          <p className="text-muted">... y {extraCount} elemento{extraCount > 1 ? 's' : ''} más.</p>
+        )} */}
+
+      </>
+    );
+
+    openDelModal("Eliminar elementos seleccionados...", tableContent);
   };
 
   const handleDelete = async () => {

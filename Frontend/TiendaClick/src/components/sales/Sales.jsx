@@ -36,11 +36,16 @@ export default function Sales() {
     { className: "charge_reason", key: "charge_reason", label: "Descuento / Aumento añadido" },
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
     { className: "date", key: "created_at", label: "Fecha" },
+    { className: "hour", key: "hour", label: "Hora" },
   ];
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return date.toISOString().slice(0, 10);
+  };
+  const formatHour = (isoString) => {
+    const date = new Date(isoString);
+    return date.toISOString().slice(11, 19);
   };
 
   const formatSalesData = (data) => {
@@ -74,10 +79,17 @@ export default function Sales() {
       setLoading(true);
       try {
         const data = await fetchSales({ page: currentPage, setLoading: setLoading, token: user.token });
-        setItems(formatSalesData(data.results));
+        const results = data?.results.map((sale) => {
+          return {
+            ...sale,
+            created_at: sale.created_at ? formatDate(sale.created_at) : "",
+            hour: sale.created_at ? formatHour(sale.created_at) : "",
+          };
+        });
+        setItems(formatSalesData(results));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
-        addNotification("error", "Error cargando ventas.");
+        addNotification("error", "Error cargando ventas."); timezone
         console.error(error);
       }
       setLoading(false);
@@ -183,6 +195,7 @@ export default function Sales() {
               { className: "id", key: "id", label: "ID" },
               { className: "created_at", key: "created_at", label: "Fecha" },
               { className: "total_price", key: "total_price", label: "Total" },
+              { className: "hour", key: "hour", label: "Hora" },
             ]}
 
           />
