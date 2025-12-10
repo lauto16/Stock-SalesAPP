@@ -112,7 +112,7 @@ export default function Sales() {
 
       try {
         const data = await fetchSearchSales(query, setLoading, user.token);
-        setAllSearchResults(formatSalesData(data.results));
+        setAllSearchResults(formatSalesData(data));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
         addNotification("error", "Error buscando ventas.");

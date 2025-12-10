@@ -113,18 +113,15 @@ async function fetchProvidersById(id, token) {
 }
 
 async function fetchSearchBlames(query, token) {
-  const url = `${apiUrl}blames/search/?q=${encodeURIComponent(query)}`;
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
-    return await response.json();
+    const response = await axios.get(
+      `${apiUrl}blames/search/?q=${encodeURIComponent(query)}`,
+      authHeader(token)
+    );
+    return response.data;
   } catch (error) {
     console.error("Error fetching blames:", error);
-    return null;
+    return [];
   }
 }
 
@@ -139,18 +136,15 @@ async function deleteProviderById(id, token) {
 }
 
 async function fetchSearchProducts(search, token) {
-  const url = `${apiUrl}products/search/?q=${encodeURIComponent(search)}`;
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
-    return await response.json();
+    const response = await axios.get(
+      `${apiUrl}products/search/?q=${encodeURIComponent(search)}`,
+      authHeader(token)
+    );
+    return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
-    return null;
+    return [];
   }
 }
 
@@ -293,19 +287,19 @@ async function fetchSales({ page = 1, setLoading, token }) {
   }
 }
 
-async function fetchSearchSales(search, token) {
-  const url = `${apiUrl}sales/search/?q=${encodeURIComponent(search)}`;
+async function fetchSearchSales(search, setLoading, token) {
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error(`Search request failed with status: ${response.status}`);
-    return await response.json();
+    setLoading(true);
+    const response = await axios.get(
+      `${apiUrl}sales/search/?q=${encodeURIComponent(search)}`,
+      authHeader(token)
+    );
+    return response.data;
   } catch (error) {
     console.error("Error searching sales:", error);
-    return null;
+    return [];
+  } finally {
+    setLoading(false);
   }
 }
 
