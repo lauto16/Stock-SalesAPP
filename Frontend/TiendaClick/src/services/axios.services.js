@@ -321,6 +321,7 @@ async function deleteSaleById(id, token) {
     return { success: false, error: backendError };
   }
 }
+
 async function addSale(sale, token) {
   console.log(sale)
   return axios.post(`${apiUrl}sales/`, sale, authHeader(token))
