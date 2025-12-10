@@ -88,7 +88,6 @@ export default function Offers() {
                             setSelectedItems={setSelectedItems}
                             user={user}
                             items={offers}
-                            // deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
                             reloadPageOne={() => setCurrentPage(1)}
                             onSubmitAddItem={addOffer}
@@ -97,6 +96,7 @@ export default function Offers() {
                             AddItemcontent={AddOfferContent}
                             InfoFormContent={InfoOfferContent}
                             titleInfoForm={'Informacion de la oferta (editar)'}
+                            disabledDeleteButton={true}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

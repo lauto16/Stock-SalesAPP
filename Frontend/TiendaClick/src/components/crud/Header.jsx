@@ -24,7 +24,8 @@ export default function Header({
   onSubmitAddItem,
   onSubmitEditItem,
   InfoFormContent,
-  titleInfoForm
+  titleInfoForm,
+  disabledDeleteButton = false,
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -169,7 +170,7 @@ export default function Header({
           className="btn btn-danger remove-products-button"
           title="Eliminar productos seleccionados"
           onClick={prepareDelete}
-          disabled={!isSomethingSelected}
+          disabled={!isSomethingSelected || disabledDeleteButton}
         >
           <i className="bi bi-trash-fill"></i>
 
