@@ -429,16 +429,16 @@ async function deleteUser(userId, token) {
   }
 }
 
-async function fetchOffers({ page = 1, /*setLoading,*/ token }) {
+async function fetchOffers({ page = 1, setLoading, token }) {
   try {
-    //setLoading(true);
+    setLoading(true);
     const response = await axios.get(`${apiUrl}offers/?page=${page}`, authHeader(token));
     return response.data;
   } catch (error) {
     console.error("Error al obtener las ofertas:", error);
-    return { results: [], count: 0 };
+    return { results: [] };
   } finally {
-    //setLoading(false);
+    setLoading(false);
   }
 }
 

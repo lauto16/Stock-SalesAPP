@@ -1,14 +1,10 @@
-import React from "react";
 import Pagination from "../inventory/Pagination.jsx";
-import Search from "../inventory/Search.jsx";
 import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
 import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
 import { fetchProviders_by_page, deleteProviderById } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx"
-import ConfirmationModal from "../crud/ConfirmationModal.jsx"
-import { useNotifications } from "../../context/NotificationSystem.jsx";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 import InfoFormContent from "./forms/InfoFormContent.jsx";
 import AddItemContent from "./forms/AddItemContent.jsx";
@@ -21,14 +17,7 @@ function Providers() {
     const [providers, setProviders] = useState([])
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
-    const [isSearching, setIsSearching] = useState(false);
     const { user } = useUser();
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [confirmationText, setConfirmationText] = useState('')
-    const [confirmationTitle, setConfirmationTitle] = useState('')
-
-
-
     const PAGE_SIZE = 10;
 
     const columns = [
@@ -48,14 +37,8 @@ function Providers() {
         DELETE: 'DELETE',
         UPDATE: 'UPDATE'
     }
-    //modals
-
-    const handleHideConfirmation = () => setShowConfirmation(false);
-
-
     useEffect(() => {
         const fetchData = async () => {
-            if (isSearching) return;
             setLoading(true);
             const data = await fetchProviders_by_page({
                 page: currentPage,
@@ -69,7 +52,7 @@ function Providers() {
         };
 
         fetchData();
-    }, [currentPage, isSearching]);
+    }, [currentPage]);
 
     useEffect(() => {
         if (selectedItems.size !== 0) {
@@ -84,34 +67,6 @@ function Providers() {
             setCurrentPage(page);
         }
 
-    };
-
-
-    const handleSearchSubmit = async (query) => {
-        if (query.length >= 2) {
-            setIsSearching(true);
-            setSearchQuery(query);
-            setCurrentPage(1);
-            setLoading(true);
-            const results = await fetchSearchProducts(query);
-            setAllSearchResults(results);
-            setLoading(false);
-        }
-    };
-    const handleCreateProvider = async (query) => {
-        console.log("provider creado")
-    }
-
-    const toggleSelectAll = () => {
-        if (isSomethingSelected) {
-            setSelectedItems(new Map());
-        } else {
-            const newSelected = new Map();
-            items.forEach(item => {
-                newSelected.set(item.id, item);
-            });
-            setSelectedItems(newSelected);
-        }
     };
     const reloadPageOne = () => {
         if (currentPage === 1) {
@@ -128,16 +83,6 @@ function Providers() {
         <RequirePermission permission="access_providers">
             <div className="d-flex justify-content-center mt-5">
                 <div className="container">
-
-                    <ConfirmationModal
-                        show={showConfirmation}
-                        onHide={handleHideConfirmation}
-                        title={confirmationTitle}
-                        message={confirmationText}
-                        onSendForm={handleCreateProvider}
-                        handleClose={handleHideConfirmation}
-                    />
-
                     <div className="table-container-providers">
 
                         <Header
@@ -165,10 +110,6 @@ function Providers() {
                                 totalPages={totalPages}
                                 onPageChange={handlePageChange}
                             />
-
-                            <div className="search-wrapper">
-                                <Search />
-                            </div>
                         </div>
                         <Table items={providers}
                             columns={columns}
