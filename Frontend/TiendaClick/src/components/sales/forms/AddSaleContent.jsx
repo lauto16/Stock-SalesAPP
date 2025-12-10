@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
 import { fetchSearchProducts } from "../../../services/axios.services.js";
-import Table from "../../crud/Table";
+
 
 export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
@@ -14,16 +14,13 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     const chargePercentage = watch("applied_charge_percentage", 0);
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
-    const [subtotal, setSubtotal] = useState(0);
-    const [total, setTotal] = useState(0);
+
     // Clear selected products when form is reset
     useEffect(() => {
         if (!watchedSelectedProducts) {
             setSelectedProducts([]);
         }
-        setSubtotal(calculateTotal().toFixed(2));
-        setTotal(calculateFinalPrice().toFixed(2));
-    }, [watchedSelectedProducts, chargePercentage]);
+    }, [watchedSelectedProducts]);
 
     // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
@@ -48,17 +45,22 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     };
 
     // Calculate total based on selected products and quantities
-    const calculateTotal = () => {
+    const calculateSubtotal = () => {
         return selectedProducts.reduce((total, product) => {
-            const quantity = watchedQuantities[`quantity_${product.code}`] || 0;
+            const quantity = parseFloat(watchedQuantities[`quantity_${product.code}`]) || 1;
             return total + (product.sell_price * quantity);
         }, 0);
     };
 
-    const calculateFinalPrice = () => {
-        const total = calculateTotal();
-        const charge = (total * chargePercentage) / 100;
-        return (total + charge) * 1.21;
+    const calculateCharge = () => {
+        const subtotal = calculateSubtotal();
+        return (subtotal * chargePercentage) / 100;
+    };
+
+    const calculateTotal = () => {
+        const subtotal = calculateSubtotal();
+        const charge = calculateCharge();
+        return subtotal + charge;
     };
 
 
@@ -225,7 +227,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                             <tfoot className="table-secondary">
                                 <tr>
                                     <td colSpan="4" className="text-end"><strong>Subtotal:</strong></td>
-                                    <td className="text-end"><strong>${subtotal}</strong></td>
+                                    <td className="text-end"><strong>${calculateSubtotal().toFixed(2)}</strong></td>
                                 </tr>
                                 <tr>
                                     <td colSpan="4" className="text-end"><strong>IVA:</strong></td>
@@ -237,13 +239,13 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                             <strong>Recargo ({chargePercentage}%):</strong>
                                         </td>
                                         <td className="text-end text-danger">
-                                            <strong>+${((subtotal * chargePercentage) / 100).toFixed(2)}</strong>
+                                            <strong>+${calculateCharge().toFixed(2)}</strong>
                                         </td>
                                     </tr>
                                 )}
                                 <tr className="table-success">
                                     <td colSpan="4" className="text-end"><strong>TOTAL:</strong></td>
-                                    <td className="text-end"><strong>${total}</strong></td>
+                                    <td className="text-end"><strong>${calculateTotal().toFixed(2)}</strong></td>
                                 </tr>
                             </tfoot>
                         </table>
