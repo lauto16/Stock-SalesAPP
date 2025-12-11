@@ -67,6 +67,7 @@ class ProductValidator:
             buy_price = data.get("buy_price")
             sell_price = data.get("sell_price")
             provider = data.get("provider")
+            category = data.get("category")
 
             if code is not None and not code.strip():
                 return {
@@ -133,6 +134,14 @@ class ProductValidator:
                         "success": False,
                         "error": "El proveedor especificado no existe.",
                     }
+                    
+            if category is not None:
+                if not Provider.objects.filter(name=category).exists():
+                    return {
+                        "success": False,
+                        "error": "El proveedor especificado no existe.",
+                    }
+
 
             return {"success": True, "error": None}
 
@@ -597,7 +606,8 @@ class ProductSearchView(APIView):
             name = product.name.lower() if product.name else ""
             code = product.code.lower() if product.code else ""
             stock_str = str(product.stock) if product.stock is not None else ""
-
+            category = product.category.name if product.category is not None else ""
+            
             if query in name:
                 score += 5
                 if name.startswith(query):
@@ -607,6 +617,11 @@ class ProductSearchView(APIView):
                 score += 4
                 if code.startswith(query):
                     score += 2
+
+            if query in category:
+                score += 5
+                if category.startswith(query):
+                    score += 3
 
             if query == stock_str:
                 score += 2

@@ -96,6 +96,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "last_modification",
             "in_offer",
             "offers_data",
+            "category"
         ]
         read_only_fields = ["last_modification"]
 

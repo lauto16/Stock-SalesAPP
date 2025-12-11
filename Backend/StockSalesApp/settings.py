@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'ProvidersAPI',
     'AuthAPI',
     'BlameAPI',
+    'CategoryAPI'
 ]
 
 MIDDLEWARE = [
