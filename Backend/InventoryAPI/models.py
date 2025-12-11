@@ -18,7 +18,7 @@ class Product(models.Model):
     provider = models.ForeignKey(
         Provider, on_delete=models.SET_NULL, null=True, blank=True)
     last_modification = models.DateField(auto_now_add=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs) -> None:
         """

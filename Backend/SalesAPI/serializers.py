@@ -1,4 +1,5 @@
 from InventoryAPI.serializers import ProductSerializer
+from PayMethodAPI.models import PayMethod
 from rest_framework import serializers
 from InventoryAPI.models import Product
 from .models import Sale, SaleItem
@@ -32,7 +33,6 @@ class SaleDataValidator:
             raise serializers.ValidationError(
                 f"Stock insuficiente para el producto '{product.name}'. Disponible: {product.stock}."
             )
-        
         
 class SaleItemSerializer(serializers.ModelSerializer):
     """
@@ -70,7 +70,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-            'id', 'applied_charge_percentage', 'charge_reason', 'initial_price', 'total_price', 'created_at', 'created_by', 'items'
+            'id', 'applied_charge_percentage', 'charge_reason', 'initial_price', 'total_price', 'created_at', 'created_by', 'items', 'pay_method'
         ]
 
 
@@ -93,6 +93,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
             'applied_charge_percentage',
             'charge_reason',
             'items',
+            'pay_method'
         ]
 
     def validate(self, data):
@@ -118,10 +119,13 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
 
+        pay_method = PayMethod.objects.get_or_create(name=validated_data.get("pay_method", "Efectivo"))
+    
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
             charge_reason=validated_data.get("charge_reason", ""),
-            created_by=user
+            created_by=user,
+            pay_method=pay_method
         )
 
         for item in items_data:

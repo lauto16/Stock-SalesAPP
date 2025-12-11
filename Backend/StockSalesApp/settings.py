@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'ProvidersAPI',
     'AuthAPI',
     'BlameAPI',
-    'CategoryAPI'
+    'CategoryAPI',
+    'PayMethodAPI'
 ]
 
 MIDDLEWARE = [

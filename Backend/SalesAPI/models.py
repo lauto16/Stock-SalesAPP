@@ -1,6 +1,7 @@
+from PayMethodAPI.models import PayMethod
 from django.db import models, transaction
-from Auth.models import CustomUser
 from InventoryAPI.models import Product
+from Auth.models import CustomUser
 
 
 class Sale(models.Model):
@@ -11,6 +12,7 @@ class Sale(models.Model):
     total_price = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    pay_method = models.ForeignKey(PayMethod, on_delete=models.SET_NULL, null=True)
 
     def update_totals(self):
         initial = sum(item.subtotal for item in self.items.all())

@@ -145,31 +145,32 @@ class SaleSearchView(APIView):
             return Response([], status=status.HTTP_200_OK)
 
         results = []
-        # Prefetch related items and products for efficient querying
         sales = Sale.objects.prefetch_related('items__product').all()
 
         for sale in sales:
             score = 0
 
-            # Convert sale data to searchable strings
             created_at_str = sale.created_at.strftime("%Y-%m-%d %H:%M:%S").lower() if sale.created_at else ""
             date_only = sale.created_at.strftime("%Y-%m-%d").lower() if sale.created_at else ""
             total_price_str = str(sale.total_price) if sale.total_price is not None else ""
-
-            # Search by date/time
+            pay_method = str(sale.pay_method) if sale.pay_method is not None else ""
+            
             if query in created_at_str:
                 score += 5
                 if date_only.startswith(query):
                     score += 3
 
-            # Search by exact date match
             if query == date_only:
                 score += 5
 
-            # Search by total price (exact match)
             if query == total_price_str:
                 score += 5
-            # Search by total price (within 10% range)
+                
+            if query == pay_method:
+                score += 5
+                if pay_method.startswith(query):
+                    score += 3
+            
             elif query.replace('.', '').isdigit():
                 try:
                     query_amount = float(query)
@@ -180,7 +181,6 @@ class SaleSearchView(APIView):
                 except ValueError:
                     pass
 
-            # Search by products in the sale
             for item in sale.items.all():
                 product = item.product
                 product_name = product.name.lower() if product.name else ""
