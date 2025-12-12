@@ -428,6 +428,9 @@ async function fetchSalesAverageValueStatsByPeriod(token, period) {
   return axios.get(`${apiUrl}sales_stats/average-sales-value/${period}`, authHeader(token));
 }
 
+async function fetchMostUsedPaymentMethodsStatsByPeriod(token, period){
+  return axios.get(`${apiUrl}sales_stats/most-used-payment-methods/${period}`, authHeader(token));
+}
 
 // STATISTICS FUNCTIONS DASHBOARD
 async function fetchSalesStats(token) {
@@ -496,5 +499,6 @@ export {
   addSale,
   fetchOffers,
   updateOffer,
-  fetchSalesAverageValueStatsByPeriod
+  fetchSalesAverageValueStatsByPeriod,
+  fetchMostUsedPaymentMethodsStatsByPeriod
 };

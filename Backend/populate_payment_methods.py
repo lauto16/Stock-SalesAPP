@@ -26,6 +26,3 @@ def populate_payment_methods():
             print(f"⚠️Metodo de pago ya existe: {obj.name}")
 
     print("\n--- Finalizado ---")
-    
-    
-populate_payment_methods()
