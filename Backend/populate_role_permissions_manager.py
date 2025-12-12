@@ -11,7 +11,7 @@ django.setup()
 from populate_permissions import populate_permissions
 from populate_roles import populate_roles
 from populate_role_permissions import populate_role_permissions
-from populate_pay_methods import populate_pay_methods
+from populate_payment_methods import populate_payment_methods
 def run_all():
     
     print("\n=== CREANDO ROLES ===")
@@ -21,7 +21,7 @@ def run_all():
     populate_permissions()
     
     print("\n=== CREANDO METODOS DE PAGO ===")
-    populate_pay_methods()
+    populate_payment_methods()
 
     print("\n=== ASIGNANDO PERMISOS A ROLES ===")
     populate_role_permissions()

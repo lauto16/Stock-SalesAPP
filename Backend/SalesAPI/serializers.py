@@ -1,5 +1,5 @@
 from InventoryAPI.serializers import ProductSerializer
-from PayMethodAPI.models import PayMethod
+from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import serializers
 from InventoryAPI.models import Product
 from .models import Sale, SaleItem

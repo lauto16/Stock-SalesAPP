@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'AuthAPI',
     'BlameAPI',
     'CategoryAPI',
-    'PayMethodAPI'
+    'PaymentMethodAPI'
 ]
 
 MIDDLEWARE = [

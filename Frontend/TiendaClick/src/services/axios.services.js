@@ -366,35 +366,6 @@ async function fetchDownloadExcelFile(token) {
   }
 }
 
-async function fetchSalesStats(token) {
-  try {
-    const response = await axios.get(`${apiUrl}sales_stats/sales-stats`, authHeader(token));
-    return response.data || null;
-  } catch (error) {
-    console.error("Error al pedir los datos estadísticos de las ventas:", error);
-    return null;
-  }
-}
-
-async function fetchEmployeesStats(token) {
-  try {
-    const response = await axios.get(`${apiUrl}employees_stats/employees-stats/`, authHeader(token));
-    return response.data || null;
-  } catch (error) {
-    console.error("Error al pedir los datos estadísticos de los empleados:", error);
-    return null;
-  }
-}
-
-async function fetchProductsStats(token) {
-  try {
-    const response = await axios.get(`${apiUrl}products_stats/products-stats/`, authHeader(token));
-    return response.data || null;
-  } catch (error) {
-    console.error("Error al pedir los datos estadísticos de los productos:", error);
-    return null;
-  }
-}
 
 async function getAllUsers(token) {
   try {
@@ -451,6 +422,43 @@ async function fetchOffers({ page = 1, setLoading, token }) {
   }
 }
 
+// STATISTICS FUNCTIONS
+// returns the average value of the sales
+async function fetchSalesAverageValueStatsByPeriod(token, period) {
+  return axios.get(`${apiUrl}sales_stats/average-sales-value/${period}`, authHeader(token));
+}
+
+
+// STATISTICS FUNCTIONS DASHBOARD
+async function fetchSalesStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}sales_stats/sales-stats`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de las ventas:", error);
+    return null;
+  }
+}
+
+async function fetchEmployeesStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}employees_stats/employees-stats/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de los empleados:", error);
+    return null;
+  }
+}
+
+async function fetchProductsStats(token) {
+  try {
+    const response = await axios.get(`${apiUrl}products_stats/products-stats/`, authHeader(token));
+    return response.data || null;
+  } catch (error) {
+    console.error("Error al pedir los datos estadísticos de los productos:", error);
+    return null;
+  }
+}
 
 export {
   deleteUser,
@@ -488,4 +496,5 @@ export {
   addSale,
   fetchOffers,
   updateOffer,
+  fetchSalesAverageValueStatsByPeriod
 };

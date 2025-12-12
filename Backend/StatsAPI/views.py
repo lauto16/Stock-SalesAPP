@@ -11,12 +11,12 @@ from concurrent.futures import ThreadPoolExecutor
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from InventoryAPI.models import Product
 from SalesAPI.models import Sale
+from django.utils import timezone
 from collections import Counter
+from datetime import timedelta
 from datetime import datetime
-
 
 class ProductsStatsViewSet(viewsets.ViewSet):
     """
@@ -112,7 +112,62 @@ class SalesStatsViewSet(viewsets.ViewSet):
     efficient methods.
     """
     
+    """
+    Ganancia promedio (total vendido / cantidad de ventas)
+    Métodos de pago más usados
+    Ventas por franja horaria  (qué horas dan más ventas)
+    Ranking de productos más vendidos
+    Ranking de productos con mayor ganancia
+    """
+    
     permission_classes = [permissions.IsAuthenticated]
+
+    def calculate_average_sale(self, period: str):
+        now = timezone.now()
+        if period == "day":
+            start_date = now.replace(hour=0, minute=0, second=0)
+        elif period == "week":
+            start_date = now - timedelta(days=now.weekday())
+        elif period == "month":
+            start_date = now.replace(day=1, hour=0, minute=0, second=0)
+        elif period == "year":
+            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0)
+        elif period == "all":
+            start_date = None
+        else:
+            return None
+
+        qs = Sale.objects.all()
+        if start_date:
+            qs = qs.filter(created_at__gte=start_date)
+
+        result = qs.aggregate(total=Sum("total_price"), count=Count("id"))
+
+        total = result["total"] or 0
+        count = result["count"] or 0
+
+        if count == 0:
+            return 0
+
+        return total / count
+    
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)"
+    )
+    def average_sale_value(self, request, period=None):
+        average = self.calculate_average_sale(period)
+        if average is None:
+            return Response({"error": "Invalid period"}, status=400)
+
+        print(period, average)
+        
+        return Response({
+            "period": period,
+            "average_sale_value": average
+        })
+    
 
     @action(detail=False, methods=["get"], url_path=r"sales-stats")
     def sales_stats(self, request):

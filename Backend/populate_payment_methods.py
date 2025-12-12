@@ -4,7 +4,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'StockSalesApp.settings')
 django.setup()
 
-from PayMethodAPI.models import PayMethod
+from PaymentMethodAPI.models import PaymentMethod
 
 methods_data = [
     {"name": "Efectivo"},
@@ -15,9 +15,9 @@ methods_data = [
     {"name": "Cheque"},
 ]
 
-def populate_pay_methods():
+def populate_payment_methods():
     for method in methods_data:
-        obj, created = PayMethod.objects.get_or_create(
+        obj, created = PaymentMethod.objects.get_or_create(
             name=method["name"]
         )
         if created:
@@ -27,4 +27,5 @@ def populate_pay_methods():
 
     print("\n--- Finalizado ---")
     
-populate_pay_methods()
+    
+populate_payment_methods()
