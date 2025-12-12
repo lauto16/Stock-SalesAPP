@@ -23,6 +23,6 @@ def populate_payment_methods():
         if created:
             print(f"✅ Metodo de pago creado: {obj.name}")
         else:
-            print(f"⚠️Metodo de pago ya existe: {obj.name}")
+            print(f"⚠️ Metodo de pago ya existe: {obj.name}")
 
     print("\n--- Finalizado ---")
