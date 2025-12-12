@@ -1,7 +1,7 @@
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from PayMethodAPI.views import *
+from PaymentMethodAPI.views import *
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from CategoryAPI.views import *
@@ -44,8 +44,8 @@ router_products_stats.register(r'products_stats', ProductsStatsViewSet, basename
 router_users_admin_functions = DefaultRouter()
 router_users_admin_functions.register(r'admin-user-functions', UserViewSet, basename='admin-user-function')
 
-router_pay_methods = DefaultRouter()
-router_pay_methods.register(r'pay-methods', PayMethodViewSet, basename='paymethod')
+router_payment_methods = DefaultRouter()
+router_payment_methods.register(r'payment-methods', PaymentMethodViewSet, basename='payment-method')
 
 router_categories = DefaultRouter()
 router_categories.register(r'categories', CategoryViewSet, basename='category')
@@ -65,7 +65,7 @@ urlpatterns = [
     path('api/', include(router_sales_stats.urls)),
     path('api/', include(router_employees_stats.urls)),
     path('api/', include(router_products_stats.urls)),
-    path('api/', include(router_pay_methods.urls)),
+    path('api/', include(router_payment_methods.urls)),
     path('api/', include(router_categories.urls)),
     path('api/', include(router_users_admin_functions.urls)),
     path('api/login/', obtain_auth_token),

@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PaymethodapiConfig(AppConfig):
+class PaymentmethodapiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'PayMethodAPI'
+    name = 'PaymentMethodAPI'
