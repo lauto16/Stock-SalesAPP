@@ -79,8 +79,8 @@ Log "Ejecutando makemigrations..."
 Log "Ejecutando migrate..."
 & $PythonCmd manage.py migrate
 
-Log "Ejecutando populate_role_permissions_manager.py..."
-& $PythonCmd populate_role_permissions_manager.py
+Log "Ejecutando installer_db_population_manager.py..."
+& $PythonCmd installer_db_population_manager.py
 
 # ============================
 # Crear superusuario

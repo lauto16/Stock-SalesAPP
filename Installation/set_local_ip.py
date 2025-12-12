@@ -16,21 +16,17 @@ import argparse
 import sys
 
 def get_local_ip():
-    # Método estándar: abrir UDP socket a una IP externa (no envía datos) para obtener IP local
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # No hace conexión real; 8.8.8.8 es solo para resolver la interfaz
         s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
     except Exception:
         ip = None
     finally:
         s.close()
-    # Fallbacks: intentar hostname, o localhost
     if not ip:
         try:
             ip = socket.gethostbyname(socket.gethostname())
-            # Si vino como 127.x.x.x, fallback a localhost
             if ip.startswith("127."):
                 ip = None
         except Exception:
