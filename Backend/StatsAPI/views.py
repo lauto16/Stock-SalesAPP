@@ -4,9 +4,10 @@ from django.db.models.functions import (
     TruncDay,
     Coalesce,
 )
-from django.db.models import Sum, Count, F, FloatField
+from django.db.models import Sum, Count, Q, F, FloatField
 from django.db.models.functions import ExtractMonth
 from concurrent.futures import ThreadPoolExecutor
+from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -166,22 +167,25 @@ class SalesStatsViewSet(viewsets.ViewSet):
         else:
             return None
 
-        qs = Sale.objects.all()
-        if start_date:
-            qs = qs.filter(created_at__gte=start_date)
+        pm = PaymentMethod.objects.all()
 
-        usage = (
-            qs.values("payment_method__name")
-            .annotate(count=Count("payment_method"))
-            .order_by("-count")
-        )
+        if start_date:
+            pm = pm.annotate(
+                usage_count=Count("sale", filter=Q(sale__created_at__gte=start_date))
+            )
+        else:
+            pm = pm.annotate(
+                usage_count=Count("sale")
+            )
+
+        pm = pm.order_by("-usage_count")
 
         return [
             {
-                "payment_method": item["payment_method__name"],
-                "count": item["count"]
+                "payment_method": m.name,
+                "count": m.usage_count or 0
             }
-            for item in usage
+            for m in pm
         ]
     
     @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
