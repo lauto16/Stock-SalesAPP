@@ -491,6 +491,7 @@ class OfferViewSet(viewsets.ModelViewSet):
                 )
 
             products = Product.objects.filter(pk__in=products_ids)
+            print(products_ids)
             if products.count() != len(products_ids):
                 return Response(
                     {"success": False, "error": "Uno o más productos no existen."}, 400

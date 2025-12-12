@@ -67,7 +67,9 @@ async function addProvider(provider, token) {
 }
 
 async function addOffer(data, token) {
+  data.products = data.products.map(product => product.code);
   try {
+    console.log(data)
     const response = await axios.post(`${apiUrl}offers/`, data, authHeader(token));
     return response.data;
   } catch (error) {
@@ -77,6 +79,8 @@ async function addOffer(data, token) {
 }
 //TODO revisar que esté bien
 async function updateOffer(data, token) {
+  data.products = data.products.map(product => product.code);
+
   try {
     const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
     return response.data;
@@ -514,7 +518,7 @@ export {
   addSale,
   fetchOffers,
   updateOffer,
-  fetchSalesAverageValueStatsByPeriod
+  fetchSalesAverageValueStatsByPeriod,
   fetchPaymentMethods,
   fetchCategories,
 };

@@ -112,7 +112,7 @@ export default function AddOfferContent({ register, control, errors, watch }) {
                 <Form.Group className="mb-1">
                     <Form.Label>Productos</Form.Label>
                     <Controller
-                        name="selectedProducts"
+                        name="products"
                         control={control}
                         rules={{ required: "Debe seleccionar al menos un producto" }}
                         render={({ field }) => (
