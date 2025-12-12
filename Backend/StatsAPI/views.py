@@ -18,17 +18,107 @@ from collections import Counter
 from datetime import datetime
 
 
-class StatsViewSet(viewsets.ViewSet):
+class ProductsStatsViewSet(viewsets.ViewSet):
     """
-    A set of api endpoints (views) retrieving data statistics calculated using fast and 
+    A set of api endpoints retrieving product's data statistics calculated using fast and 
     efficient methods.
     """
+
+    @action(detail=False, methods=["get"], url_path=r"products-stats")
+    def products_stats(self, request):
+        """
+        Calculates and returns aggregate product data, specifically the average gain margin.
+
+        It annotates each product by calculating its margin percentage directly 
+        in the database using Sell Price and Buy Price.
+        The overall average margin is then computed by aggregating the total margin 
+        across all products and dividing by the product count. 
+        It uses Coalesce to default the Sum to 0.0 if the queryset is empty.
+        """
+        qs = Product.objects.annotate(
+            margin=((F("sell_price") - F("buy_price")) / F("buy_price")) * 100.0
+        )
+
+        aggregated = qs.aggregate(
+            total_margin=Coalesce(
+                Sum("margin", output_field=FloatField()), 0.0),
+        )
+
+        product_count = qs.count()
+        total_margin = aggregated["total_margin"]
+
+        average_margin = round(total_margin / product_count,
+                               2) if product_count > 0 else 0.0
+
+        data = {"average_gain_margin_per_product": average_margin}
+
+        return Response({"success": True, "products_data": data})
+
+
+class EmployeesStatsViewSet(viewsets.ViewSet):
+    """
+    A set of api endpoints retrieving employee's data statistics calculated using fast and 
+    efficient methods.
+    """
+    
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=["get"], url_path=r"sales-data")
-    def sales_data(self, request):
+    @action(detail=False, methods=["get"], url_path=r"employees-stats")
+    def employees_stats(self, request):
         """
-        Calculates and returns key sales statistics across different time periods.
+        Calculates and returns sales performance statistics for employees across different time periods.
+
+        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay) 
+        to annotate sales records by temporal periods (year, month, day).
+        A helper function, 'best_seller', processes these records using Python's 
+        Counter utility to determine the employee with the most sales historically, 
+        this year, this month, and today.
+        """
+        today = datetime.now()
+        current_year = today.year
+        current_month = today.month
+        current_day = today.day
+
+        qs = Sale.objects.annotate(
+            year=ExtractYear("created_at"),
+            month=ExtractMonth("created_at"),
+            day=TruncDay("created_at"),
+        )
+
+        def best_seller(queryset):
+            counter = Counter(queryset.values_list(
+                "created_by__username", flat=True))
+            return counter.most_common(1)[0][0] if counter else None
+
+        data = {
+            "most_selling_employee_historically": best_seller(qs),
+            "most_selling_employee_this_year": best_seller(qs.filter(year=current_year)),
+            "most_selling_employee_this_month": best_seller(
+                qs.filter(year=current_year, month=current_month)
+            ),
+            "most_selling_employee_this_day": best_seller(
+                qs.filter(
+                    year=current_year, month=current_month, day__day=current_day
+                )
+            ),
+        }
+
+        return Response({"success": True, "employees_stats": data})
+
+    
+class SalesStatsViewSet(viewsets.ViewSet):
+    """
+    A set of api endpoints retrieving product's data statistics calculated using fast and 
+    efficient methods.
+    """
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=["get"], url_path=r"sales-stats")
+    def sales_stats(self, request):
+        """
+        Calculates and returns key sales statistics across different time periods used mainly for
+        dashboard view.
 
         This custom action computes eight different metrics: the total count of sales 
         and the total monetary value of sales (Sum of 'total_price'). 
@@ -108,75 +198,3 @@ class StatsViewSet(viewsets.ViewSet):
             data.update(r)
 
         return Response({"success": True, "sales_data": data})
-
-    @action(detail=False, methods=["get"], url_path=r"employees-stats")
-    def employees_stats(self, request):
-        """
-        Calculates and returns sales performance statistics for employees across different time periods.
-
-        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay) 
-        to annotate sales records by temporal periods (year, month, day).
-        A helper function, 'best_seller', processes these records using Python's 
-        Counter utility to determine the employee with the most sales historically, 
-        this year, this month, and today.
-        """
-        today = datetime.now()
-        current_year = today.year
-        current_month = today.month
-        current_day = today.day
-
-        qs = Sale.objects.annotate(
-            year=ExtractYear("created_at"),
-            month=ExtractMonth("created_at"),
-            day=TruncDay("created_at"),
-        )
-
-        def best_seller(queryset):
-            counter = Counter(queryset.values_list(
-                "created_by__username", flat=True))
-            return counter.most_common(1)[0][0] if counter else None
-
-        data = {
-            "most_selling_employee_historically": best_seller(qs),
-            "most_selling_employee_this_year": best_seller(qs.filter(year=current_year)),
-            "most_selling_employee_this_month": best_seller(
-                qs.filter(year=current_year, month=current_month)
-            ),
-            "most_selling_employee_this_day": best_seller(
-                qs.filter(
-                    year=current_year, month=current_month, day__day=current_day
-                )
-            ),
-        }
-
-        return Response({"success": True, "employees_stats": data})
-
-    @action(detail=False, methods=["get"], url_path=r"products-data")
-    def products_data(self, request):
-        """
-        Calculates and returns aggregate product data, specifically the average gain margin.
-
-        It annotates each product by calculating its margin percentage directly 
-        in the database using Sell Price and Buy Price.
-        The overall average margin is then computed by aggregating the total margin 
-        across all products and dividing by the product count. 
-        It uses Coalesce to default the Sum to 0.0 if the queryset is empty.
-        """
-        qs = Product.objects.annotate(
-            margin=((F("sell_price") - F("buy_price")) / F("buy_price")) * 100.0
-        )
-
-        aggregated = qs.aggregate(
-            total_margin=Coalesce(
-                Sum("margin", output_field=FloatField()), 0.0),
-        )
-
-        product_count = qs.count()
-        total_margin = aggregated["total_margin"]
-
-        average_margin = round(total_margin / product_count,
-                               2) if product_count > 0 else 0.0
-
-        data = {"average_gain_margin_per_product": average_margin}
-
-        return Response({"success": True, "products_data": data})

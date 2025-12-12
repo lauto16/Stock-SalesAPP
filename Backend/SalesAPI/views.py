@@ -55,6 +55,7 @@ class SalePagination(PageNumberPagination):
             "results": data,
         })
 
+
 class SaleViewSet(viewsets.ModelViewSet):
     """
     ViewSet responsible for the complete management of sales records.

@@ -1,12 +1,15 @@
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
+from PayMethodAPI.views import *
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
+from CategoryAPI.views import *
 from BlameAPI.views import *
 from SalesAPI.views import *
 from StatsAPI.views import *
 from AuthAPI.views import *
+
 
 router_blame = DefaultRouter()
 router_blame.register(r'blames', ChangeLogViewSet, basename='blame')
@@ -29,11 +32,24 @@ router_signup.register(r'signup', SignupViewSet, basename='signup')
 router_sales = DefaultRouter()
 router_sales.register(r'sales', SaleViewSet, basename='sale')
 
-router_stats = DefaultRouter()
-router_stats.register(r'stats', StatsViewSet, basename='stat')
+router_sales_stats = DefaultRouter()
+router_sales_stats.register(r'sales_stats', SalesStatsViewSet, basename='sale_stat')
+
+router_employees_stats = DefaultRouter()
+router_employees_stats.register(r'employees_stats', EmployeesStatsViewSet, basename='employee_stat')
+
+router_products_stats = DefaultRouter()
+router_products_stats.register(r'products_stats', ProductsStatsViewSet, basename='product_stat')
 
 router_users_admin_functions = DefaultRouter()
 router_users_admin_functions.register(r'admin-user-functions', UserViewSet, basename='admin-user-function')
+
+router_pay_methods = DefaultRouter()
+router_pay_methods.register(r'pay-methods', PayMethodViewSet, basename='paymethod')
+
+router_categories = DefaultRouter()
+router_categories.register(r'categories', CategoryViewSet, basename='category')
+
 
 urlpatterns = [
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
@@ -46,7 +62,11 @@ urlpatterns = [
     path('api/', include(router_blame.urls)),
     path('api/', include(router_signup.urls)),
     path('api/', include(router_sales.urls)),
-    path('api/', include(router_stats.urls)),
+    path('api/', include(router_sales_stats.urls)),
+    path('api/', include(router_employees_stats.urls)),
+    path('api/', include(router_products_stats.urls)),
+    path('api/', include(router_pay_methods.urls)),
+    path('api/', include(router_categories.urls)),
     path('api/', include(router_users_admin_functions.urls)),
     path('api/login/', obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
