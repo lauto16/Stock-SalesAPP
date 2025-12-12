@@ -27,4 +27,3 @@ def populate_pay_methods():
 
     print("\n--- Finalizado ---")
     
-populate_pay_methods()

@@ -5,6 +5,7 @@ import { Controller } from "react-hook-form";
 import { useProviders } from "../../providers/hooks/useProviders.js";
 import { useUser } from "../../../context/UserContext.jsx";
 import { useEffect, useState } from "react";
+import { useCategories } from "../../Hooks/useCategories.js";
 
 export default function ContentAddProduct({ register, watch, control, errors, selectedItem }) {
 
@@ -13,8 +14,8 @@ export default function ContentAddProduct({ register, watch, control, errors, se
     const [profitMargin, setProfitMargin] = useState(0)
     // Lista de proveedores
     const { providers } = useProviders(user.token);
+    const { categories } = useCategories(user.token);
     const [colorpm, setColorpm] = useState("#dc3545")
-
     const purchasePrice = watch("buy_price");
     const sellingPrice = watch("sell_price");
 
@@ -130,6 +131,33 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                     inputStyle={{ color: colorpm }}
                     register={register('profitMargin')}
                 />
+            </Col>
+            <Col md={12} className="d-flex flex-column">
+                <Form.Group className="mb-1">
+                    <Form.Label>Categoria</Form.Label>
+                    <Controller
+                        name="category"
+                        control={control}
+                        defaultValue={categories.find(c => (c.name).toLowerCase() === 'sin categoria')?.name}
+                        render={({ field }) => (
+                            <Form.Select
+                                {...field}
+                                className="form-select"
+                                aria-label="Default select example"
+                            >
+                                <option value="">Seleccione una categoria</option>
+                                {categories.map((category, index) => (
+                                    <option key={index} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        )}
+                    />
+                    {errors.category && (
+                        <small className="text-danger">{errors.category.message}</small>
+                    )}
+                </Form.Group>
             </Col>
             <Col md={6} className="d-flex flex-column">
                 <CustomInput

@@ -4,13 +4,13 @@ import { Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
-import { fetchSearchProducts } from "../../../services/axios.services.js";
+import { fetchSearchProducts, fetchPaymentMethods } from "../../../services/axios.services.js";
 
 
 export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
-
+    const [paymentMethods, setPaymentMethods] = useState([]);
     const chargePercentage = watch("applied_charge_percentage", 0);
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
@@ -21,6 +21,15 @@ export default function AddSaleContent({ register, control, errors, watch }) {
             setSelectedProducts([]);
         }
     }, [watchedSelectedProducts]);
+
+    //
+    useEffect(() => {
+        fetchPaymentMethods(user.token).then((data) => {
+            setPaymentMethods(data);
+            console.log(data);
+
+        });
+    }, []);
 
     // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
@@ -153,7 +162,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 </Col>
             )}
 
-            {/* Charge and Tax Fields */}
+            {/* Charge, Pay Method and Tax Fields */}
             {selectedProducts.length > 0 && (
                 <>
                     <Col md={6}>
@@ -192,6 +201,34 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                     </Col>
                 </>
             )}
+
+            {selectedProducts.length > 0 && <Col md={12} className="d-flex flex-column">
+                <Form.Group className="mb-1">
+                    <Form.Label>Medio de pago</Form.Label>
+                    <Controller
+                        name="payment_method"
+                        control={control}
+                        rules={{ required: "Debe seleccionar al menos un medio de pago" }}
+                        render={({ field }) => (
+                            <Form.Select
+                                {...field}
+                                className="form-select"
+                                aria-label="Default select example"
+                            >
+                                <option value="">Seleccione un medio de pago</option>
+                                {paymentMethods.map((method, index) => (
+                                    <option key={index} value={method.name}>
+                                        {method.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        )}
+                    />
+                    {errors.payment_method && (
+                        <small className="text-danger">{errors.payment_method.message}</small>
+                    )}
+                </Form.Group>
+            </Col>}
 
             {/* Summary Table */}
             {selectedProducts.length > 0 && (

@@ -339,6 +339,7 @@ async function addSale(formData, token) {
 
   // Prepare the payload for backend
   const saleData = {
+    payment_method: formData.payment_method,
     applied_charge_percentage: chargePercentage,
     charge_reason: formData.charge_reason,
     initial_price: null,
@@ -450,7 +451,24 @@ async function fetchOffers({ page = 1, setLoading, token }) {
     setLoading(false);
   }
 }
-
+async function fetchPaymentMethods(token) {
+  try {
+    const response = await axios.get(`${apiUrl}payment-methods/`, authHeader(token));
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los medios de pago:", error);
+    return { results: [] };
+  }
+}
+async function fetchCategories(token) {
+  try {
+    const response = await axios.get(`${apiUrl}categories`, authHeader(token));
+    return response;
+  } catch (error) {
+    console.error("Error al obtener las categorías:", error);
+    return { results: [] };
+  }
+}
 
 export {
   deleteUser,
@@ -488,4 +506,6 @@ export {
   addSale,
   fetchOffers,
   updateOffer,
+  fetchPaymentMethods,
+  fetchCategories,
 };
