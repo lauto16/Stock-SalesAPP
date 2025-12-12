@@ -1,13 +1,13 @@
-
 from django.db.models.functions import (
     ExtractYear,
     ExtractMonth,
     TruncDay,
     Coalesce,
 )
-from django.db.models import Sum, Count, F, FloatField
+from django.db.models import Sum, Count, Q, F, FloatField
 from django.db.models.functions import ExtractMonth
 from concurrent.futures import ThreadPoolExecutor
+from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,9 +18,10 @@ from collections import Counter
 from datetime import timedelta
 from datetime import datetime
 
+
 class ProductsStatsViewSet(viewsets.ViewSet):
     """
-    A set of api endpoints retrieving product's data statistics calculated using fast and 
+    A set of api endpoints retrieving product's data statistics calculated using fast and
     efficient methods.
     """
 
@@ -29,10 +30,10 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         """
         Calculates and returns aggregate product data, specifically the average gain margin.
 
-        It annotates each product by calculating its margin percentage directly 
+        It annotates each product by calculating its margin percentage directly
         in the database using Sell Price and Buy Price.
-        The overall average margin is then computed by aggregating the total margin 
-        across all products and dividing by the product count. 
+        The overall average margin is then computed by aggregating the total margin
+        across all products and dividing by the product count.
         It uses Coalesce to default the Sum to 0.0 if the queryset is empty.
         """
         qs = Product.objects.annotate(
@@ -40,15 +41,15 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         )
 
         aggregated = qs.aggregate(
-            total_margin=Coalesce(
-                Sum("margin", output_field=FloatField()), 0.0),
+            total_margin=Coalesce(Sum("margin", output_field=FloatField()), 0.0),
         )
 
         product_count = qs.count()
         total_margin = aggregated["total_margin"]
 
-        average_margin = round(total_margin / product_count,
-                               2) if product_count > 0 else 0.0
+        average_margin = (
+            round(total_margin / product_count, 2) if product_count > 0 else 0.0
+        )
 
         data = {"average_gain_margin_per_product": average_margin}
 
@@ -57,10 +58,10 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
-    A set of api endpoints retrieving employee's data statistics calculated using fast and 
+    A set of api endpoints retrieving employee's data statistics calculated using fast and
     efficient methods.
     """
-    
+
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["get"], url_path=r"employees-stats")
@@ -68,10 +69,10 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
         """
         Calculates and returns sales performance statistics for employees across different time periods.
 
-        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay) 
+        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay)
         to annotate sales records by temporal periods (year, month, day).
-        A helper function, 'best_seller', processes these records using Python's 
-        Counter utility to determine the employee with the most sales historically, 
+        A helper function, 'best_seller', processes these records using Python's
+        Counter utility to determine the employee with the most sales historically,
         this year, this month, and today.
         """
         today = datetime.now()
@@ -86,40 +87,39 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
         )
 
         def best_seller(queryset):
-            counter = Counter(queryset.values_list(
-                "created_by__username", flat=True))
+            counter = Counter(queryset.values_list("created_by__username", flat=True))
             return counter.most_common(1)[0][0] if counter else None
 
         data = {
             "most_selling_employee_historically": best_seller(qs),
-            "most_selling_employee_this_year": best_seller(qs.filter(year=current_year)),
+            "most_selling_employee_this_year": best_seller(
+                qs.filter(year=current_year)
+            ),
             "most_selling_employee_this_month": best_seller(
                 qs.filter(year=current_year, month=current_month)
             ),
             "most_selling_employee_this_day": best_seller(
-                qs.filter(
-                    year=current_year, month=current_month, day__day=current_day
-                )
+                qs.filter(year=current_year, month=current_month, day__day=current_day)
             ),
         }
 
         return Response({"success": True, "employees_stats": data})
 
-    
+
 class SalesStatsViewSet(viewsets.ViewSet):
     """
-    A set of api endpoints retrieving product's data statistics calculated using fast and 
+    A set of api endpoints retrieving product's data statistics calculated using fast and
     efficient methods.
     """
-    
+
     """
-    Ganancia promedio (total vendido / cantidad de ventas)
+    TODO:
     Métodos de pago más usados
     Ventas por franja horaria  (qué horas dan más ventas)
     Ranking de productos más vendidos
     Ranking de productos con mayor ganancia
     """
-    
+
     permission_classes = [permissions.IsAuthenticated]
 
     def calculate_average_sale(self, period: str):
@@ -150,36 +150,78 @@ class SalesStatsViewSet(viewsets.ViewSet):
             return 0
 
         return total / count
+
+    def calculate_most_used_payment_methods(self, period: str):
+        now = timezone.now()
+
+        if period == "day":
+            start_date = now.replace(hour=0, minute=0, second=0)
+        elif period == "week":
+            start_date = now - timedelta(days=now.weekday())
+        elif period == "month":
+            start_date = now.replace(day=1, hour=0, minute=0, second=0)
+        elif period == "year":
+            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0)
+        elif period == "all":
+            start_date = None
+        else:
+            return None
+
+        pm = PaymentMethod.objects.all()
+
+        if start_date:
+            pm = pm.annotate(
+                usage_count=Count("sale", filter=Q(sale__created_at__gte=start_date))
+            )
+        else:
+            pm = pm.annotate(
+                usage_count=Count("sale")
+            )
+
+        pm = pm.order_by("-usage_count")
+
+        return [
+            {
+                "payment_method": m.name,
+                "count": m.usage_count or 0
+            }
+            for m in pm
+        ]
     
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)"
-    )
+    @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
     def average_sale_value(self, request, period=None):
         average = self.calculate_average_sale(period)
         if average is None:
             return Response({"error": "Invalid period"}, status=400)
 
         print(period, average)
-        
+
+        return Response({"period": period, "average_sale_value": average})
+
+    @action(detail=False, methods=["get"], url_path=r"most-used-payment-methods/(?P<period>[a-zA-Z]+)")
+    def most_used_payment_methods(self, request, period=None):
+        result = self.calculate_most_used_payment_methods(period)
+
+        if result is None:
+            return Response({"error": "Invalid period"}, status=400)
+
         return Response({
             "period": period,
-            "average_sale_value": average
+            "payment_method_usage": result
         })
+        
     
-
     @action(detail=False, methods=["get"], url_path=r"sales-stats")
     def sales_stats(self, request):
         """
         Calculates and returns key sales statistics across different time periods used mainly for
         dashboard view.
 
-        This custom action computes eight different metrics: the total count of sales 
-        and the total monetary value of sales (Sum of 'total_price'). 
-        These metrics are provided for four temporal scopes: historically, 
-        current year, current month, and current day. 
-        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay, Sum) 
+        This custom action computes eight different metrics: the total count of sales
+        and the total monetary value of sales (Sum of 'total_price').
+        These metrics are provided for four temporal scopes: historically,
+        current year, current month, and current day.
+        It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay, Sum)
         for efficient, database-level computation.
         """
         today = datetime.now()
@@ -192,8 +234,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
             Calculates eight key sales metrics grouped by time period (historic, year, month, day).
 
             First, it annotates the entire sale queryset with temporal fields (year, month, day).
-            It then runs eight separate queries: four Count queries for the number of sales 
-            and four Sum queries for the monetary value (total_price), applying filters 
+            It then runs eight separate queries: four Count queries for the number of sales
+            and four Sum queries for the monetary value (total_price), applying filters
             to restrict the data to the current year, month, and day as necessary.
             Returns a dictionary containing all calculated statistics.
             """
@@ -239,14 +281,16 @@ class SalesStatsViewSet(viewsets.ViewSet):
             )
             month_sales = {item["month"]: item["total"] for item in qs}
             all_months = [
-                {"month": month, "sales": month_sales.get(month, 0)} for month in range(1, 13)
+                {"month": month, "sales": month_sales.get(month, 0)}
+                for month in range(1, 13)
             ]
 
             return {"total_sales_by_month": all_months}
 
         with ThreadPoolExecutor(max_workers=2) as executor:
-            results = list(executor.map(lambda fn: fn(), [
-                           calc_totals, calc_sales_per_month]))
+            results = list(
+                executor.map(lambda fn: fn(), [calc_totals, calc_sales_per_month])
+            )
 
         data = {}
         for r in results:
