@@ -368,7 +368,7 @@ async function fetchDownloadExcelFile(token) {
 
 async function fetchSalesStats(token) {
   try {
-    const response = await axios.get(`${apiUrl}stats/sales-data/`, authHeader(token));
+    const response = await axios.get(`${apiUrl}sales_stats/sales-stats`, authHeader(token));
     return response.data || null;
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de las ventas:", error);
@@ -378,7 +378,7 @@ async function fetchSalesStats(token) {
 
 async function fetchEmployeesStats(token) {
   try {
-    const response = await axios.get(`${apiUrl}stats/employees-stats/`, authHeader(token));
+    const response = await axios.get(`${apiUrl}employees_stats/employees-stats/`, authHeader(token));
     return response.data || null;
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de los empleados:", error);
@@ -388,7 +388,7 @@ async function fetchEmployeesStats(token) {
 
 async function fetchProductsStats(token) {
   try {
-    const response = await axios.get(`${apiUrl}stats/products-data/`, authHeader(token));
+    const response = await axios.get(`${apiUrl}products_stats/products-stats/`, authHeader(token));
     return response.data || null;
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de los productos:", error);
