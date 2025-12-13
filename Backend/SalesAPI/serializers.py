@@ -70,7 +70,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-            'id', 'applied_charge_percentage', 'charge_reason', 'initial_price', 'total_price', 'created_at', 'created_by', 'items', 'pay_method'
+            'id', 'applied_charge_percentage', 'charge_reason', 'initial_price', 'total_price', 'created_at', 'created_by', 'items', 'payment_method'
         ]
 
 
@@ -93,7 +93,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
             'applied_charge_percentage',
             'charge_reason',
             'items',
-            'pay_method'
+            'payment_method'
         ]
 
     def validate(self, data):
@@ -119,13 +119,13 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
 
-        pay_method = PayMethod.objects.get(name=validated_data.get("pay_method", "Efectivo"))
+        payment_method = PayMethod.objects.get(name=validated_data.get("payment_method", "Efectivo"))
     
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
             charge_reason=validated_data.get("charge_reason", ""),
             created_by=user,
-            pay_method=pay_method
+            payment_method=payment_method
         )
 
         for item in items_data:
