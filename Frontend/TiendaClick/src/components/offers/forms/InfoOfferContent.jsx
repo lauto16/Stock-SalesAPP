@@ -1,7 +1,73 @@
-import { Row, Col } from "react-bootstrap"
+import { Row, Col, Form } from "react-bootstrap"
 import CustomInput from "../../crud/CustomInput"
+import { useUser } from "../../../context/UserContext"
+import { useController, Controller } from "react-hook-form"
+import AsyncSelect from "react-select/async"
+import { fetchSearchProducts } from "../../../services/axios.services"
+import { useState, useEffect } from "react"
 
-export default function InfoOfferContent({ register, selectedItem, errors }) {
+export default function InfoOfferContent({ register, selectedItem, errors, control }) {
+    const { user } = useUser();
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const { field } = useController({
+        name: 'products',
+        control,
+        defaultValue: selectedItem.products || []
+    });
+
+    useEffect(() => {
+        // Initialize selectedOptions from the existing product codes
+        // Since we don't have the names initially, we fallback to the code as label
+        // Ideally, we would fetch the product details here
+        const initialProducts = selectedItem.products || [];
+        const initialOptions = initialProducts.map(code => ({
+            value: code,
+            label: `Código: ${code}` // Placeholder until we have a real name, or we could fetch it
+        }));
+        setSelectedOptions(initialOptions);
+        // Ensure field value is synced (it should be via defaultValue, but good to be safe)
+        // field.onChange(initialProducts); // Not purely necessary if defaultValue is correct
+    }, [selectedItem]);
+
+    const handleRemove = (e, productValue) => {
+        e.preventDefault()
+        const updatedOptions = selectedOptions.filter((item) => item.value !== productValue)
+        setSelectedOptions(updatedOptions)
+
+        // Update form state with just the codes
+        const updatedCodes = updatedOptions.map(item => item.value)
+        field.onChange(updatedCodes)
+    }
+
+    // Load products dynamically based on search input
+    const loadProductOptions = async (inputValue) => {
+        if (!inputValue || inputValue.length < 2) {
+            return [];
+        }
+
+        try {
+            const data = await fetchSearchProducts(inputValue, user.token);
+            if (data) {
+                return data.map((p) => ({
+                    value: p.code,
+                    label: `${p.name} (${p.code}) - $${p.sell_price.toFixed(2)}`
+                }));
+            }
+            return [];
+        } catch (error) {
+            console.error("Error searching products:", error);
+            return [];
+        }
+    };
+
+    const handleSelectChange = (selected) => {
+        const newSelected = selected || [];
+        setSelectedOptions(newSelected);
+        // Extract codes for the form
+        field.onChange(newSelected.map(option => option.value));
+    };
+
     return (
         <Row className="g-3">
             <Col md={6} className="d-flex flex-column">
@@ -26,6 +92,9 @@ export default function InfoOfferContent({ register, selectedItem, errors }) {
                     icon='bi-percent'
                     type='number'
                     defaultValue={selectedItem.percentage}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') e.preventDefault();
+                    }}
                     register={register('percentage', {
                         required: "El porcentaje de descuento es obligatorio",
                         min: {
@@ -68,24 +137,61 @@ export default function InfoOfferContent({ register, selectedItem, errors }) {
                 />
             </Col>
 
-            {/* Products Section */}
+            {/*Search and add products section*/}
+            <Col md={12} className="d-flex flex-column">
+                <Form.Group className="mb-1">
+                    <Form.Label>Productos ({selectedOptions.length})</Form.Label>
+                    <AsyncSelect
+                        isMulti
+                        cacheOptions
+                        defaultOptions
+                        loadOptions={loadProductOptions}
+                        placeholder="Buscar productos..."
+                        value={selectedOptions}
+                        onChange={handleSelectChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') e.preventDefault();
+                        }}
+                        noOptionsMessage={({ inputValue }) =>
+                            inputValue.length < 2
+                                ? "Escribe al menos 2 caracteres"
+                                : "No se encontraron productos"
+                        }
+                    />
+
+                    {errors.products && (
+                        <small className="text-danger">{errors.products.message}</small>
+                    )}
+                </Form.Group>
+            </Col>
+
+            {/* Selected products section */}
             <Col md={12}>
                 <div className="mt-3">
                     <h5 className="mb-3">
                         <i className="bi bi-box-seam me-2"></i>
                         Productos en esta Oferta
                     </h5>
-                    {selectedItem.products && selectedItem.products.length > 0 ? (
+                    {selectedOptions.length > 0 ? (
                         <div className="border rounded p-3" style={{ backgroundColor: '#f8f9fa' }}>
                             <Row className="g-2">
-                                {selectedItem.products.map((productId, index) => (
+                                {selectedOptions.map((option, index) => (
                                     <Col key={index} md={6} lg={4}>
                                         <div className="p-2 bg-white rounded border">
                                             <div className="d-flex align-items-center">
                                                 <i className="bi bi-box text-primary me-2"></i>
-                                                <small className="text-muted">Código: {productId}</small>
+                                                <small className="text-muted" style={{ fontSize: '0.85rem' }}>
+                                                    {option.label}
+                                                </small>
                                             </div>
                                         </div>
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={(e) => { handleRemove(e, option.value) }}
+                                            title="Desvincular"
+                                        >
+                                            <i className="bi bi-x-lg me-1"></i> Eliminar
+                                        </button>
                                     </Col>
                                 ))}
                             </Row>
