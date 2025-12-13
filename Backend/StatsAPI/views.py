@@ -11,8 +11,8 @@ from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from SalesAPI.models import Sale, SaleItem
 from InventoryAPI.models import Product
-from SalesAPI.models import Sale
 from django.utils import timezone
 from collections import Counter
 from datetime import timedelta
@@ -114,9 +114,7 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
     """
     TODO:
-    Métodos de pago más usados
     Ventas por franja horaria  (qué horas dan más ventas)
-    Ranking de productos más vendidos
     Ranking de productos con mayor ganancia
     """
 
@@ -124,44 +122,53 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
     def calculate_average_sale(self, period: str):
         now = timezone.now()
+
         if period == "day":
-            start_date = now.replace(hour=0, minute=0, second=0)
+            start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "week":
-            start_date = now - timedelta(days=now.weekday())
+            start_date = (
+                now - timedelta(days=now.weekday())
+            ).replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "month":
-            start_date = now.replace(day=1, hour=0, minute=0, second=0)
+            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
-            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0)
+            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "all":
             start_date = None
         else:
             return None
 
         qs = Sale.objects.all()
-        if start_date:
-            qs = qs.filter(created_at__gte=start_date)
 
-        result = qs.aggregate(total=Sum("total_price"), count=Count("id"))
+        if start_date:
+            qs = qs.filter(
+                created_at__gte=start_date,
+                created_at__lte=now
+            )
+
+        result = qs.aggregate(
+            total=Sum("total_price"),
+            count=Count("id")
+        )
 
         total = result["total"] or 0
         count = result["count"] or 0
 
-        if count == 0:
-            return 0
-
-        return total / count
+        return 0 if count == 0 else total / count
 
     def calculate_most_used_payment_methods(self, period: str):
         now = timezone.now()
 
         if period == "day":
-            start_date = now.replace(hour=0, minute=0, second=0)
+            start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "week":
-            start_date = now - timedelta(days=now.weekday())
+            start_date = (
+                now - timedelta(days=now.weekday())
+            ).replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "month":
-            start_date = now.replace(day=1, hour=0, minute=0, second=0)
+            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
-            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0)
+            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "all":
             start_date = None
         else:
@@ -171,7 +178,13 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
         if start_date:
             pm = pm.annotate(
-                usage_count=Count("sale", filter=Q(sale__created_at__gte=start_date))
+                usage_count=Count(
+                    "sale",
+                    filter=Q(
+                        sale__created_at__gte=start_date,
+                        sale__created_at__lte=now
+                    )
+                )
             )
         else:
             pm = pm.annotate(
@@ -188,11 +201,46 @@ class SalesStatsViewSet(viewsets.ViewSet):
             for m in pm
         ]
     
+    def calculate_best_selling_products(self, period: str, count: int):
+        now = timezone.now()
+
+        if period == "day":
+            start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif period == "week":
+            start_date = (
+                now - timedelta(days=now.weekday())
+            ).replace(hour=0, minute=0, second=0, microsecond=0)
+        elif period == "month":
+            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        elif period == "year":
+            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        elif period == "all":
+            start_date = None
+        else:
+            return None
+
+        qs = SaleItem.objects.select_related("product", "sale")
+
+        if start_date:
+            qs = qs.filter(
+                sale__created_at__gte=start_date,
+                sale__created_at__lte=now
+            )
+
+        return (
+            qs.values(
+                "product__code",
+                "product__name",
+            )
+            .annotate(total_sold=Sum("quantity"))
+            .order_by("-total_sold")[:count]
+        )
+        
     @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
     def average_sale_value(self, request, period=None):
         average = self.calculate_average_sale(period)
         if average is None:
-            return Response({"error": "Invalid period"}, status=400)
+            return Response({"error": "Periodo invalido"}, status=400)
 
         print(period, average)
 
@@ -203,14 +251,31 @@ class SalesStatsViewSet(viewsets.ViewSet):
         result = self.calculate_most_used_payment_methods(period)
 
         if result is None:
-            return Response({"error": "Invalid period"}, status=400)
+            return Response({"error": "Periodo invalido"}, status=400)
 
         return Response({
             "period": period,
             "payment_method_usage": result
         })
-        
     
+    @action(detail=False, methods=["get"], url_path=r"best-selling-products/(?P<period>[a-zA-Z]+)")
+    def best_selling_products(self, request, period=None):
+        # /api/sales/best-selling-products/month?count=5
+        try:
+            count = int(request.query_params.get("count", 10))
+        except ValueError:
+            count = 10
+
+        ranking = self.calculate_best_selling_products(period, count)
+
+        if ranking is None:
+            return Response(
+                {"error": "Periodo invalido"},
+                status=400
+            )
+
+        return Response(ranking)
+        
     @action(detail=False, methods=["get"], url_path=r"sales-stats")
     def sales_stats(self, request):
         """

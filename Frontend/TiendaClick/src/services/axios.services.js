@@ -449,9 +449,14 @@ async function fetchCategories(token) {
 async function fetchSalesAverageValueStatsByPeriod(token, period) {
   return axios.get(`${apiUrl}sales_stats/average-sales-value/${period}`, authHeader(token));
 }
-
+// returns the most used payment methods
 async function fetchMostUsedPaymentMethodsStatsByPeriod(token, period) {
   return axios.get(`${apiUrl}sales_stats/most-used-payment-methods/${period}`, authHeader(token));
+}
+
+// returns the best sellers (products)
+async function fetchBestSellingProducts(token, period, count) {
+  return axios.get(`${apiUrl}sales_stats/best-selling-products/${period}?count=${count}`, authHeader(token));
 }
 
 // STATISTICS FUNCTIONS DASHBOARD
@@ -525,4 +530,5 @@ export {
   fetchMostUsedPaymentMethodsStatsByPeriod,
   fetchPaymentMethods,
   fetchCategories,
+  fetchBestSellingProducts
 };
