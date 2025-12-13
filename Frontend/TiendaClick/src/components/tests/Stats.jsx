@@ -3,13 +3,15 @@ import { useUser } from "../../context/UserContext.jsx"
 import {
     fetchSalesAverageValueStatsByPeriod,
     fetchMostUsedPaymentMethodsStatsByPeriod,
-    fetchBestSellingProducts
+    fetchBestSellingProducts,
+    fetchHigherMarginProducts
 } from "../../services/axios.services.js";
 
 export default function SalesStatsButtons() {
     const [resultSaleValueStat, setResultSaleValueStat] = useState(null);
     const [resultMostUsedPaymentMethod, setResultMostUsedPaymentMethod] = useState(null);
     const [resultBestSellingProducts, setResultBestSellingProducts] = useState(null);
+    const [resultHigherMarginProducts, setResultHigherMarginProducts] = useState(null);
 
     const { user } = useUser();
 
@@ -40,6 +42,16 @@ export default function SalesStatsButtons() {
         } catch (err) {
             console.error(err);
             setResultBestSellingProducts({ error: "Error fetching data" });
+        }
+    };
+
+    const fetchHigherMarginProductsStat = async () => {
+        try {
+            const res = await fetchHigherMarginProducts(user.token, 15);
+            setResultHigherMarginProducts(res.data);
+        } catch (err) {
+            console.error(err);
+            setResultHigherMarginProducts({ error: "Error fetching data" });
         }
     };
 
@@ -109,6 +121,22 @@ export default function SalesStatsButtons() {
 
                 <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
                     {JSON.stringify(resultBestSellingProducts, null, 2)}
+                </pre>
+            </div>
+
+            {/* Higher margin products */}
+            <div className="p-4 flex flex-col gap-4 max-w-md mx-auto">
+                <h5 className="text-xl">Higher margin products (Top 15)</h5>
+
+                <button
+                    onClick={fetchHigherMarginProductsStat}
+                    className="p-2 bg-gray-200 rounded-xl shadow hover:bg-gray-300 transition"
+                >
+                    LOAD
+                </button>
+
+                <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
+                    {JSON.stringify(resultHigherMarginProducts, null, 2)}
                 </pre>
             </div>
 

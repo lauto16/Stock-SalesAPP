@@ -4,7 +4,7 @@ from django.db.models.functions import (
     TruncDay,
     Coalesce,
 )
-from django.db.models import Sum, Count, Q, F, FloatField
+from django.db.models import Sum, Count, Q, F, FloatField, ExpressionWrapper
 from django.db.models.functions import ExtractMonth
 from concurrent.futures import ThreadPoolExecutor
 from PaymentMethodAPI.models import PaymentMethod
@@ -25,6 +25,25 @@ class ProductsStatsViewSet(viewsets.ViewSet):
     efficient methods.
     """
 
+    def calculate_higher_margin_products(self, count: int):
+        margin_expr = ExpressionWrapper(
+            F("sell_price") - F("buy_price"),
+            output_field=FloatField()
+        )
+
+        return (
+            Product.objects
+            .annotate(margin=margin_expr)
+            .order_by("-margin")[:count]
+            .values(
+                "code",
+                "sell_price",
+                "buy_price",
+                "name",
+                "margin",
+            )
+        )
+    
     @action(detail=False, methods=["get"], url_path=r"products-stats")
     def products_stats(self, request):
         """
@@ -54,8 +73,20 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         data = {"average_gain_margin_per_product": average_margin}
 
         return Response({"success": True, "products_data": data})
+        
+    @action(detail=False, methods=["get"], url_path="higher-margin-products")
+    def higher_margin_products(self, request):
+        # /api/products_stats/higher-margin-products/?count=5
+        try:
+            count = int(request.query_params.get("count", 10))
+        except ValueError:
+            count = 10
 
+        ranking = self.calculate_higher_margin_products(count)
 
+        return Response(ranking)
+   
+    
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
     A set of api endpoints retrieving employee's data statistics calculated using fast and
@@ -115,7 +146,6 @@ class SalesStatsViewSet(viewsets.ViewSet):
     """
     TODO:
     Ventas por franja horaria  (qué horas dan más ventas)
-    Ranking de productos con mayor ganancia
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -235,7 +265,7 @@ class SalesStatsViewSet(viewsets.ViewSet):
             .annotate(total_sold=Sum("quantity"))
             .order_by("-total_sold")[:count]
         )
-        
+
     @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
     def average_sale_value(self, request, period=None):
         average = self.calculate_average_sale(period)
@@ -260,7 +290,7 @@ class SalesStatsViewSet(viewsets.ViewSet):
     
     @action(detail=False, methods=["get"], url_path=r"best-selling-products/(?P<period>[a-zA-Z]+)")
     def best_selling_products(self, request, period=None):
-        # /api/sales/best-selling-products/month?count=5
+        # /api/sales_stats/best-selling-products/month?count=5
         try:
             count = int(request.query_params.get("count", 10))
         except ValueError:
