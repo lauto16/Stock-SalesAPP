@@ -46,7 +46,7 @@ export default function Offers() {
     useEffect(() => {
         const loadOffers = async () => {
             const { results, count } = await fetchOffers({
-                page: 1,
+                page: currentPage,
                 setLoading,
                 token: user.token,
             });

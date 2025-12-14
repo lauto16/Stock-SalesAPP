@@ -6,10 +6,16 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
     const containerClass = `small-box ${cardClass}`
     const image_path = `/${svgName}.svg`
 
-    const parsedNumber =
-        subtext_value !== undefined && subtext_value !== null
-            ? parseFloat(subtext_value).toFixed(2)
-            : '0.00'
+    const parsedNumber = subtext_value !== null && subtext_value !== undefined
+        ? Number(subtext_value).toLocaleString("es-AR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        )
+        : "";
+
+
 
     return (
         <div className="col-lg-3 col-md-6 col-12">

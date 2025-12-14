@@ -2,7 +2,7 @@ import { Row, Col } from "react-bootstrap"
 import CustomInput from "../../crud/CustomInput"
 
 export default function InfoCategoryContent({ register, selectedItem, errors }) {
-
+    register('old_name', { value: selectedItem.name })
     return (
         <Row className="g-3">
             <Col md={6} className="d-flex flex-column">
