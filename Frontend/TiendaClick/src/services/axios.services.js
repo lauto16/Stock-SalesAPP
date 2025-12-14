@@ -474,6 +474,11 @@ async function fetchHigherMarginProducts(token, count) {
   return axios.get(`${apiUrl}products_stats/higher-margin-products/?count=${count}`, authHeader(token));
 }
 
+// returns the 24 hrs of the day followed by the amount of sales made in each hour historically
+async function fetchBestSellingHours(token){
+  return axios.get(`${apiUrl}sales_stats/best-selling-hours/`, authHeader(token));
+}
+
 // STATISTICS FUNCTIONS DASHBOARD
 async function fetchSalesStats(token) {
   try {
@@ -549,5 +554,6 @@ export {
   updateCategory,
   deleteCategory,
   fetchBestSellingProducts,
-  fetchHigherMarginProducts
+  fetchHigherMarginProducts,
+  fetchBestSellingHours
 };

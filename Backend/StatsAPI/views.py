@@ -5,7 +5,7 @@ from django.db.models.functions import (
     Coalesce,
 )
 from django.db.models import Sum, Count, Q, F, FloatField, ExpressionWrapper
-from django.db.models.functions import ExtractMonth
+from django.db.models.functions import ExtractMonth, ExtractHour
 from concurrent.futures import ThreadPoolExecutor
 from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
@@ -266,6 +266,33 @@ class SalesStatsViewSet(viewsets.ViewSet):
             .order_by("-total_sold")[:count]
         )
 
+    def calculate_best_selling_hours(self):
+        qs = (
+            Sale.objects
+            .annotate(hour=ExtractHour("created_at"))
+            .values("hour")
+            .annotate(count=Count("id"))
+        )
+
+        hours_map = {
+            item["hour"]: item["count"]
+            for item in qs
+            if item["hour"] is not None
+        }
+
+        result = []
+
+        for h in range(24):
+            start = f"{h:02d}:00"
+            end = f"{(h + 1) % 24:02d}:00"
+
+            result.append({
+                "hour   ": f"{start}-{end}",
+                "count": hours_map.get(h, 0)
+            })
+
+        return result
+    
     @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
     def average_sale_value(self, request, period=None):
         average = self.calculate_average_sale(period)
@@ -301,6 +328,20 @@ class SalesStatsViewSet(viewsets.ViewSet):
         if ranking is None:
             return Response(
                 {"error": "Periodo invalido"},
+                status=400
+            )
+
+        return Response(ranking)
+        
+    @action(detail=False, methods=["get"], url_path=r"best-selling-hours")
+    def best_selling_hours(self, request):
+        # /api/sales_stats/best-selling-hours/
+
+        ranking = self.calculate_best_selling_hours()
+
+        if ranking is None:
+            return Response(
+                {"error": "No hay ventas registradas"},
                 status=400
             )
 
