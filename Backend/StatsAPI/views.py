@@ -13,6 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from SalesAPI.models import Sale, SaleItem
 from InventoryAPI.models import Product
+from CategoryAPI.models import Category
 from Auth.models import CustomUser
 from django.utils import timezone
 from collections import Counter
@@ -60,6 +61,52 @@ class ProductsStatsViewSet(viewsets.ViewSet):
             )
         )
 
+    def calculate_best_selling_categories(self):
+        return (
+            Category.objects
+            .annotate(
+                total_sold=Coalesce(
+                    Sum("product__saleitem__quantity"),
+                    0
+                )
+            )
+            .order_by("-total_sold")
+            .values(
+                "name",
+                "total_sold"
+            )
+        )
+    
+    @action(detail=False, methods=["get"], url_path="best-selling-categories")
+    def best_selling_categories(self, request):
+        # /api/products_stats/best-selling-categories/
+        ranking = self.calculate_best_selling_categories()
+        return Response(ranking)
+    
+    @action(detail=False, methods=["get"], url_path="higher-margin-products")
+    def higher_margin_products(self, request):
+        # /api/products_stats/higher-margin-products/?count=5
+        try:
+            count = int(request.query_params.get("count", 10))
+        except ValueError:
+            count = 10
+
+        ranking = self.calculate_higher_margin_products(count)
+
+        return Response(ranking)
+
+    @action(detail=False, methods=["get"], url_path="lower-margin-products")
+    def lower_margin_products(self, request):
+        # /api/products_stats/lower-margin-products/?count=5
+        try:
+            count = int(request.query_params.get("count", 10))
+        except ValueError:
+            count = 10
+
+        ranking = self.calculate_lower_margin_products(count)
+
+        return Response(ranking)
+
     @action(detail=False, methods=["get"], url_path=r"products-stats")
     def products_stats(self, request):
         """
@@ -90,31 +137,7 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
         return Response({"success": True, "products_data": data})
 
-    @action(detail=False, methods=["get"], url_path="higher-margin-products")
-    def higher_margin_products(self, request):
-        # /api/products_stats/higher-margin-products/?count=5
-        try:
-            count = int(request.query_params.get("count", 10))
-        except ValueError:
-            count = 10
-
-        ranking = self.calculate_higher_margin_products(count)
-
-        return Response(ranking)
-
-    @action(detail=False, methods=["get"], url_path="lower-margin-products")
-    def lower_margin_products(self, request):
-        # /api/products_stats/lower-margin-products/?count=5
-        try:
-            count = int(request.query_params.get("count", 10))
-        except ValueError:
-            count = 10
-
-        ranking = self.calculate_lower_margin_products(count)
-
-        return Response(ranking)
-
-
+    
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
     A set of api endpoints retrieving employee's data statistics calculated using fast and

@@ -3,8 +3,11 @@ import os
 import time
 import socket
 import json
+from datetime import datetime, timedelta
+import shutil
 
-"""When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173"""
+"""When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173, also does
+a git pull --force and creates a db.sqlite3 backup every three days"""
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_PATH, "config.json")
@@ -18,6 +21,11 @@ BACKEND_PATH = os.path.join(BASE_PATH, config["paths"]["backend"])
 FRONTEND_PATH = os.path.join(BASE_PATH, config["paths"]["frontend"])
 BACKEND_LOG = os.path.join(BACKEND_PATH, "backend.log")
 FRONTEND_LOG = os.path.join(FRONTEND_PATH, "frontend.log")
+DB_PATH = os.path.join(BACKEND_PATH, "db.sqlite3")
+BACKUPS_DIR = os.path.join(BACKEND_PATH, "db_backups")
+META_FILE = os.path.join(BACKUPS_DIR, "backup_meta.json")
+
+os.makedirs(BACKUPS_DIR, exist_ok=True)
 
 VENV_PYTHON = os.path.join(BACKEND_PATH, "venv", "Scripts", "python.exe")
 MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
@@ -36,7 +44,7 @@ def run_git_pull():
                 cwd=BASE_PATH,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                creationflags=subprocess.CREATE_NO_WINDOW
+                creationflags=subprocess.CREATE_NO_WINDOW,
             ).wait()
         else:
             print("No es un repo git")
@@ -44,11 +52,13 @@ def run_git_pull():
         print(e)
         pass
 
+
 def port_in_use(host, port):
     """Returns True if port is in use"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(0.5)
         return s.connect_ex((host, port)) == 0
+
 
 def start_django():
     """Starts django instance"""
@@ -66,8 +76,9 @@ def start_django():
             cwd=BACKEND_PATH,
             stdout=log,
             stderr=log,
-            creationflags=subprocess.CREATE_NO_WINDOW
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
+
 
 def start_react():
     """Starts react instance"""
@@ -80,8 +91,50 @@ def start_react():
             cwd=FRONTEND_PATH,
             stdout=log,
             stderr=log,
-            creationflags=subprocess.CREATE_NO_WINDOW
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
+
+
+def load_last_backup_time():
+    if not os.path.isfile(META_FILE):
+        return None
+    with open(META_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        return datetime.fromisoformat(data["last_backup"])
+
+
+def save_last_backup_time(dt):
+    with open(META_FILE, "w", encoding="utf-8") as f:
+        json.dump({"last_backup": dt.isoformat()}, f)
+
+
+def rotate_backups():
+    backups = sorted(
+        [
+            os.path.join(BACKUPS_DIR, f)
+            for f in os.listdir(BACKUPS_DIR)
+            if f.endswith(".sqlite3")
+        ],
+        key=os.path.getctime,
+    )
+
+    while len(backups) > 7:
+        os.remove(backups[0])
+        backups.pop(0)
+
+
+def create_db_backup():
+    if not os.path.isfile(DB_PATH):
+        return
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_name = f"db_backup_{timestamp}.sqlite3"
+    backup_path = os.path.join(BACKUPS_DIR, backup_name)
+
+    shutil.copy2(DB_PATH, backup_path)
+    rotate_backups()
+    save_last_backup_time(datetime.now())
+    print(f"Backup de DB creado: {backup_name}")
 
 
 if __name__ == "__main__":
@@ -96,16 +149,25 @@ if __name__ == "__main__":
     django_process = None
     react_process = None
 
+    last_backup = load_last_backup_time()
+
+    if last_backup is None or datetime.now() - last_backup >= timedelta(days=3):
+        create_db_backup()
+
     if django_running:
-        print("Django YA está ejecutándose en 0.0.0.0:8000. No se iniciará una nueva instancia.")
+        print(
+            "Django YA está ejecutándose en 0.0.0.0:8000. No se iniciará una nueva instancia."
+        )
     else:
         print("Iniciando Django...")
         django_process = start_django()
 
     time.sleep(1)
-    
+
     if react_running:
-        print("Vite/React YA está ejecutándose en el puerto 5173. No se iniciará otra instancia.")
+        print(
+            "Vite/React YA está ejecutándose en el puerto 5173. No se iniciará otra instancia."
+        )
     else:
         print("Iniciando Vite...")
         react_process = start_react()

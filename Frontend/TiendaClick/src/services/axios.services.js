@@ -489,6 +489,11 @@ async function fetchEmployeeSales(token){
   return axios.get(`${apiUrl}employees_stats/employees-sales/`, authHeader(token));
 }
 
+// returns all categories and the amount of sales for each one
+async function fetchBestSellingCategories(token){
+  return axios.get(`${apiUrl}products_stats/best-selling-categories/`, authHeader(token));
+}
+
 // STATISTICS FUNCTIONS DASHBOARD
 async function fetchSalesStats(token) {
   try {
@@ -567,5 +572,6 @@ export {
   fetchHigherMarginProducts,
   fetchBestSellingHours,
   fetchEmployeeSales,
-  fetchLowerMarginProducts
+  fetchLowerMarginProducts,
+  fetchBestSellingCategories
 };
