@@ -12,7 +12,8 @@ const options_other = [
   { label: "Proveedores", path: "/providers/", permission: "access_providers" },
   { label: "Ofertas", path: "/offers/", permission: "access_offers" },
   { label: "Cerrar sesión", path: "/login/" },
-  { label: "Categorias", path: "/categories/", permission: "access_inventory" }
+  { label: "Categorias", path: "/categories/", permission: "access_inventory" },
+  { label: "Estadisticas", path: "/stats/", permission: "access_dashboard" }
 ];
 
 const options_dashboard = [

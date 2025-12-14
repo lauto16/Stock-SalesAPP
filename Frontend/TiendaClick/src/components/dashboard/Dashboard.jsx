@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import SalesChart from './SalesChart.jsx'
 import ActionBox from './ActionBox.jsx'
 import DashboardHeader from './DashboardHeader.jsx'
 import SideBar from '../sideNav/SideBar.jsx'
@@ -186,16 +185,6 @@ function Dashboard() {
                 />
               </div>
 
-              <div className="row">
-                <div className="col-xxl-6 col-12 mb-3">
-                  <div className="card h-100">
-                    <div className="card-header">
-                      <h4>Ventas</h4>
-                    </div>
-                    <SalesChart sales={saleStats.total_sales_by_month} />
-                  </div>
-                </div>
-
                 <div className="col-xxl-6 col-12 mb-3">
                   <div className="card h-100 card-stock">
                     <div className="card-header stock-header">
@@ -244,7 +233,6 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
             </section>
           </main>
         </div>

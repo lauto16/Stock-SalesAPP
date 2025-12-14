@@ -28,13 +28,11 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
     def calculate_lower_margin_products(self, count: int):
         margin_expr = ExpressionWrapper(
-            F("sell_price") - F("buy_price"),
-            output_field=FloatField()
+            F("sell_price") - F("buy_price"), output_field=FloatField()
         )
 
         return (
-            Product.objects
-            .annotate(margin=margin_expr)
+            Product.objects.annotate(margin=margin_expr)
             .order_by("margin")[:count]
             .values(
                 "code",
@@ -47,13 +45,11 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
     def calculate_higher_margin_products(self, count: int):
         margin_expr = ExpressionWrapper(
-            F("sell_price") - F("buy_price"),
-            output_field=FloatField()
+            F("sell_price") - F("buy_price"), output_field=FloatField()
         )
 
         return (
-            Product.objects
-            .annotate(margin=margin_expr)
+            Product.objects.annotate(margin=margin_expr)
             .order_by("-margin")[:count]
             .values(
                 "code",
@@ -63,7 +59,7 @@ class ProductsStatsViewSet(viewsets.ViewSet):
                 "margin",
             )
         )
-    
+
     @action(detail=False, methods=["get"], url_path=r"products-stats")
     def products_stats(self, request):
         """
@@ -93,7 +89,7 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         data = {"average_gain_margin_per_product": average_margin}
 
         return Response({"success": True, "products_data": data})
-        
+
     @action(detail=False, methods=["get"], url_path="higher-margin-products")
     def higher_margin_products(self, request):
         # /api/products_stats/higher-margin-products/?count=5
@@ -105,7 +101,7 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         ranking = self.calculate_higher_margin_products(count)
 
         return Response(ranking)
-    
+
     @action(detail=False, methods=["get"], url_path="lower-margin-products")
     def lower_margin_products(self, request):
         # /api/products_stats/lower-margin-products/?count=5
@@ -117,7 +113,8 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         ranking = self.calculate_lower_margin_products(count)
 
         return Response(ranking)
-    
+
+
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
     A set of api endpoints retrieving employee's data statistics calculated using fast and
@@ -127,24 +124,20 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def calculate_sales_by_user(self, user):
-        return (
-            Sale.objects
-            .filter(created_by=user)
-            .count()
-        )     
+        return Sale.objects.filter(created_by=user).count()
 
     @action(detail=False, methods=["get"], url_path="employees-sales")
     def sales_by_employee(self, request):
         total_sales = {}
         users = CustomUser.objects.all()
-        
+
         for user in users:
             sales = self.calculate_sales_by_user(user)
             total_sales[user.username] = sales
 
         return Response(total_sales)
-    
-    @action(detail=False, methods=["get"], url_path=r"employees-stats/")
+
+    @action(detail=False, methods=["get"], url_path=r"employees-stats")
     def employees_stats(self, request):
         """
         Calculates and returns sales performance statistics for employees across different time periods.
@@ -205,13 +198,15 @@ class SalesStatsViewSet(viewsets.ViewSet):
         if period == "day":
             start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "week":
-            start_date = (
-                now - timedelta(days=now.weekday())
-            ).replace(hour=0, minute=0, second=0, microsecond=0)
+            start_date = (now - timedelta(days=now.weekday())).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "month":
             start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
-            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "all":
             start_date = None
         else:
@@ -220,15 +215,9 @@ class SalesStatsViewSet(viewsets.ViewSet):
         qs = Sale.objects.all()
 
         if start_date:
-            qs = qs.filter(
-                created_at__gte=start_date,
-                created_at__lte=now
-            )
+            qs = qs.filter(created_at__gte=start_date, created_at__lte=now)
 
-        result = qs.aggregate(
-            total=Sum("total_price"),
-            count=Count("id")
-        )
+        result = qs.aggregate(total=Sum("total_price"), count=Count("id"))
 
         total = result["total"] or 0
         count = result["count"] or 0
@@ -241,13 +230,15 @@ class SalesStatsViewSet(viewsets.ViewSet):
         if period == "day":
             start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "week":
-            start_date = (
-                now - timedelta(days=now.weekday())
-            ).replace(hour=0, minute=0, second=0, microsecond=0)
+            start_date = (now - timedelta(days=now.weekday())).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "month":
             start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
-            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "all":
             start_date = None
         else:
@@ -260,39 +251,32 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 usage_count=Count(
                     "sale",
                     filter=Q(
-                        sale__created_at__gte=start_date,
-                        sale__created_at__lte=now
-                    )
+                        sale__created_at__gte=start_date, sale__created_at__lte=now
+                    ),
                 )
             )
         else:
-            pm = pm.annotate(
-                usage_count=Count("sale")
-            )
+            pm = pm.annotate(usage_count=Count("sale"))
 
         pm = pm.order_by("-usage_count")
 
-        return [
-            {
-                "payment_method": m.name,
-                "count": m.usage_count or 0
-            }
-            for m in pm
-        ]
-    
+        return [{"payment_method": m.name, "count": m.usage_count or 0} for m in pm]
+
     def calculate_best_selling_products(self, period: str, count: int):
         now = timezone.now()
 
         if period == "day":
             start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif period == "week":
-            start_date = (
-                now - timedelta(days=now.weekday())
-            ).replace(hour=0, minute=0, second=0, microsecond=0)
+            start_date = (now - timedelta(days=now.weekday())).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "month":
             start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
-            start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+            )
         elif period == "all":
             start_date = None
         else:
@@ -301,10 +285,7 @@ class SalesStatsViewSet(viewsets.ViewSet):
         qs = SaleItem.objects.select_related("product", "sale")
 
         if start_date:
-            qs = qs.filter(
-                sale__created_at__gte=start_date,
-                sale__created_at__lte=now
-            )
+            qs = qs.filter(sale__created_at__gte=start_date, sale__created_at__lte=now)
 
         return (
             qs.values(
@@ -317,16 +298,13 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
     def calculate_best_selling_hours(self):
         qs = (
-            Sale.objects
-            .annotate(hour=ExtractHour("created_at"))
+            Sale.objects.annotate(hour=ExtractHour("created_at"))
             .values("hour")
             .annotate(count=Count("id"))
         )
 
         hours_map = {
-            item["hour"]: item["count"]
-            for item in qs
-            if item["hour"] is not None
+            item["hour"]: item["count"] for item in qs if item["hour"] is not None
         }
 
         result = []
@@ -335,14 +313,15 @@ class SalesStatsViewSet(viewsets.ViewSet):
             start = f"{h:02d}:00"
             end = f"{(h + 1) % 24:02d}:00"
 
-            result.append({
-                "hour   ": f"{start}-{end}",
-                "count": hours_map.get(h, 0)
-            })
+            result.append({"hour   ": f"{start}-{end}", "count": hours_map.get(h, 0)})
 
         return result
-    
-    @action(detail=False, methods=["get"], url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)")
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path=r"average-sales-value/(?P<period>[a-zA-Z]+)",
+    )
     def average_sale_value(self, request, period=None):
         average = self.calculate_average_sale(period)
         if average is None:
@@ -352,19 +331,24 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
         return Response({"period": period, "average_sale_value": average})
 
-    @action(detail=False, methods=["get"], url_path=r"most-used-payment-methods/(?P<period>[a-zA-Z]+)")
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path=r"most-used-payment-methods/(?P<period>[a-zA-Z]+)",
+    )
     def most_used_payment_methods(self, request, period=None):
         result = self.calculate_most_used_payment_methods(period)
 
         if result is None:
             return Response({"error": "Periodo invalido"}, status=400)
 
-        return Response({
-            "period": period,
-            "payment_method_usage": result
-        })
-    
-    @action(detail=False, methods=["get"], url_path=r"best-selling-products/(?P<period>[a-zA-Z]+)")
+        return Response({"period": period, "payment_method_usage": result})
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path=r"best-selling-products/(?P<period>[a-zA-Z]+)",
+    )
     def best_selling_products(self, request, period=None):
         # /api/sales_stats/best-selling-products/month?count=5
         try:
@@ -375,13 +359,10 @@ class SalesStatsViewSet(viewsets.ViewSet):
         ranking = self.calculate_best_selling_products(period, count)
 
         if ranking is None:
-            return Response(
-                {"error": "Periodo invalido"},
-                status=400
-            )
+            return Response({"error": "Periodo invalido"}, status=400)
 
         return Response(ranking)
-        
+
     @action(detail=False, methods=["get"], url_path=r"best-selling-hours")
     def best_selling_hours(self, request):
         # /api/sales_stats/best-selling-hours/
@@ -389,13 +370,10 @@ class SalesStatsViewSet(viewsets.ViewSet):
         ranking = self.calculate_best_selling_hours()
 
         if ranking is None:
-            return Response(
-                {"error": "No hay ventas registradas"},
-                status=400
-            )
+            return Response({"error": "No hay ventas registradas"}, status=400)
 
         return Response(ranking)
-        
+
     @action(detail=False, methods=["get"], url_path=r"sales-stats")
     def sales_stats(self, request):
         """

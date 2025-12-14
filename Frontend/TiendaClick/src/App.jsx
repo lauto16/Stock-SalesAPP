@@ -13,7 +13,7 @@ import Sales from './components/sales/Sales.jsx'
 import Offers from './components/offers/Offers.jsx';
 import DeleteUser from './components/auth/DeleteUser.jsx'
 import AuthGuard from "./components/auth/AuthGuard.jsx";
-import SalesStatsButtons from "./components/tests/Stats.jsx"
+import Stats from "./components/Stats/Stats.jsx"
 import Categories from './components/categories/Categories.jsx'
 function App() {
   return (
@@ -99,7 +99,11 @@ function App() {
           />
           <Route
             path='/stats/'
-            element={<SalesStatsButtons />}
+            element={
+              <PrivateRoute>
+                <Stats />
+              </PrivateRoute>
+            }
           />
         </Routes>
       </AuthGuard>
