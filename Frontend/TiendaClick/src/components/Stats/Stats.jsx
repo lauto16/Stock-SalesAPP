@@ -115,7 +115,8 @@ export default function Stats() {
 
     return (
         <RequirePermission permission="access_dashboard">
-        <DashboardHeader title={'ESTADISTICAS'} isDashboard={false} />
+        <br />
+        <DashboardHeader title={'ESTADISTICAS'} isDashboard={false}/>
         <div className="container my-4">
             <h2 className="mb-4">Estadísticas de tu tienda</h2>
             <h4 className="mb-4">Sobre las ventas</h4>
@@ -197,7 +198,7 @@ export default function Stats() {
                             ]}
                             options={{
                                 xaxis: {
-                                    categories: sp_periods.map(p => p.toUpperCase())
+                                    categories: sp_periods.map(p => p)
                                 },
                                 colors: ['#38946e'],
                                 tooltip: {

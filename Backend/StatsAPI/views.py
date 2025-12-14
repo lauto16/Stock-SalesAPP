@@ -436,20 +436,27 @@ class SalesStatsViewSet(viewsets.ViewSet):
             }
 
         def calc_sales_per_month():
-            """Returns the historically sales in each month"""
+            """Returns sales per month for the current year only"""
             qs = (
-                Sale.objects.annotate(month=ExtractMonth("created_at"))
+                Sale.objects
+                .annotate(
+                    year=ExtractYear("created_at"),
+                    month=ExtractMonth("created_at")
+                )
+                .filter(year=current_year)
                 .values("month")
                 .annotate(total=Count("id"))
             )
+
             month_sales = {item["month"]: item["total"] for item in qs}
+
             all_months = [
                 {"month": month, "sales": month_sales.get(month, 0)}
                 for month in range(1, 13)
             ]
 
             return {"total_sales_by_month": all_months}
-
+    
         with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(
                 executor.map(lambda fn: fn(), [calc_totals, calc_sales_per_month])

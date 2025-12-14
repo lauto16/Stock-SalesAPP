@@ -9,11 +9,12 @@ const options_other = [
   { label: "Registro de cambios", path: "/product-blame/", permission: "access_blame" },
   { label: "Ventas", path: "/sales/", permission: "access_sales" },
   { label: "Dashboard", path: "/dashboard/", permission: "access_dashboard" },
-  { label: "Proveedores", path: "/providers/", permission: "access_providers" },
   { label: "Ofertas", path: "/offers/", permission: "access_offers" },
   { label: "Cerrar sesión", path: "/login/" },
   { label: "Categorias", path: "/categories/", permission: "access_inventory" },
-  { label: "Estadisticas", path: "/stats/", permission: "access_dashboard" }
+  { label: "Estadisticas", path: "/stats/", permission: "access_dashboard" },
+  { label: "Proveedores", path: "/providers/", permission: "access_providers" },
+
 ];
 
 const options_dashboard = [
@@ -33,6 +34,9 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
   const otherOptions = options.filter(opt => opt.label !== "Cerrar sesión");
 
   const sortedOptions = [...otherOptions].sort((a, b) => {
+    const lengthDiff = b.label.length - a.label.length;
+    if (lengthDiff !== 0) return lengthDiff;
+  
     const aDisabled = a.permission && !user?.permissions?.includes(a.permission);
     const bDisabled = b.permission && !user?.permissions?.includes(b.permission);
     return aDisabled === bDisabled ? 0 : aDisabled ? -1 : 1;
