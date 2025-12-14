@@ -122,7 +122,7 @@ function Dashboard() {
                       ? 'text-bg-success'
                       : 'text-bg-secondary'
                   }
-                  subtext="Dinero recaudado"
+                  subtext="Total de venta"
                   subtext_value={saleStats.total_money_sales_this_day}
                   svgName="cart"
                 />
@@ -134,7 +134,7 @@ function Dashboard() {
                       ? 'text-bg-success'
                       : 'text-bg-secondary'
                   }
-                  subtext="Dinero recaudado"
+                  subtext="Total de venta"
                   subtext_value={saleStats.total_money_sales_this_month}
                   svgName="cart"
                 />
@@ -147,7 +147,7 @@ function Dashboard() {
                       : 'text-bg-secondary'
                   }
                   svgName="cart"
-                  subtext="Dinero recaudado"
+                  subtext="Total de venta"
                   subtext_value={saleStats.total_money_sales_this_year}
                 />
                 <ActionBox
