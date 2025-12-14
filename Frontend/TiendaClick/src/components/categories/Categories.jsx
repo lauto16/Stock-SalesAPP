@@ -1,5 +1,5 @@
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
-import { fetchCategories, addCategory, updateCategory } from '../../services/axios.services.js'
+import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../services/axios.services.js'
 import { useEffect, useState } from 'react'
 import { useUser } from "../../context/UserContext.jsx";
 import Header from '../crud/Header.jsx';
@@ -22,27 +22,16 @@ export default function Categories() {
 
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
-        { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
-        { className: "end_date", key: "end_date", label: 'Finaliza' },
-        { className: "created_at", key: "created_at", label: 'Creada' },
-    ];
-
-    //selectedItemsColums
-    const importantColumns = [
-        { className: "name", key: "name", label: 'Nombre' },
-        { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
-        { className: "end_date", key: "end_date", label: 'Finaliza' },
+        { className: "description", key: "description", label: 'Descripción' },
     ];
 
     useEffect(() => {
         const loadcategories = async () => {
-            const { results, count } = await fetchCategories({
-                page: 1,
+            const results = await fetchCategories(
                 setLoading,
-                token: user.token,
-            });
-            setCategories(results.categories);
-
+                user.token,
+            );
+            setCategories(results);
             setCount(count);
             setTotalPages(Math.ceil(count / PAGE_SIZE));
             setLoading(false);
@@ -79,7 +68,7 @@ export default function Categories() {
                             setSelectedItems={setSelectedItems}
                             user={user}
                             items={categories}
-                            selectedItemsColumns={importantColumns}
+                            selectedItemsColumns={columns}
                             reloadPageOne={() => setCurrentPage(1)}
                             onSubmitAddItem={addCategory}
                             onSubmitEditItem={updateCategory}
@@ -87,7 +76,7 @@ export default function Categories() {
                             AddItemcontent={AddCategoryContent}
                             InfoFormContent={InfoCategoryContent}
                             titleInfoForm={'Informacion de la categoria (editar)'}
-                            disabledDeleteButton={true}
+                            deleteItem={deleteCategory}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

@@ -436,12 +436,16 @@ async function fetchPaymentMethods(token) {
     return { results: [] };
   }
 }
-async function fetchCategories(token) {
+async function fetchCategories(setLoading, token) {
+  setLoading(true);
   try {
-    const response = await axios.get(`${apiUrl}categories`, authHeader(token));
-    return response;
+    const response = await axios.get(`${apiUrl}categories/`, authHeader(token));
+    setLoading(false);
+
+    return response.data;
   } catch (error) {
     console.error("Error al obtener las categorías:", error);
+    setLoading(false);
     return { results: [] };
   }
 }
@@ -449,7 +453,9 @@ async function addCategory(category, token) {
   return axios.post(`${apiUrl}categories/`, category, authHeader(token));
 }
 async function updateCategory(category, token) {
-  return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
+  console.log(category);
+  const newCategory = { name: category.name, description: category.description }
+  return axios.put(`${apiUrl}categories/${category.old_name}/`, newCategory, authHeader(token));
 }
 async function deleteCategory(category, token) {
   return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
@@ -480,12 +486,12 @@ async function fetchLowerMarginProducts(token, count) {
 }
 
 // returns the 24 hrs of the day followed by the amount of sales made in each hour historically
-async function fetchBestSellingHours(token){
+async function fetchBestSellingHours(token) {
   return axios.get(`${apiUrl}sales_stats/best-selling-hours/`, authHeader(token));
 }
 
 // returns each employee name followed by their sales
-async function fetchEmployeeSales(token){
+async function fetchEmployeeSales(token) {
   return axios.get(`${apiUrl}employees_stats/employees-sales/`, authHeader(token));
 }
 
