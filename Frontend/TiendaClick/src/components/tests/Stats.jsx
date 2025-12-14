@@ -5,6 +5,7 @@ import {
     fetchMostUsedPaymentMethodsStatsByPeriod,
     fetchBestSellingProducts,
     fetchHigherMarginProducts,
+    fetchLowerMarginProducts,
     fetchBestSellingHours,
     fetchEmployeeSales
 } from "../../services/axios.services.js";
@@ -14,6 +15,7 @@ export default function SalesStatsButtons() {
     const [resultMostUsedPaymentMethod, setResultMostUsedPaymentMethod] = useState(null);
     const [resultBestSellingProducts, setResultBestSellingProducts] = useState(null);
     const [resultHigherMarginProducts, setResultHigherMarginProducts] = useState(null);
+    const [resultLowerMarginProducts, setResultLowerMarginProducts] = useState(null);
     const [resultBestSellingHours, setResultBestSellingHours] = useState(null);
     const [resultEmployeeSales, setResultEmployeeSales] = useState(null);
 
@@ -59,6 +61,16 @@ export default function SalesStatsButtons() {
         }
     };
 
+    const fetchLowerMarginProductsStat = async () => {
+        try {
+            const res = await fetchLowerMarginProducts(user.token, 15);
+            setResultLowerMarginProducts(res.data);
+        } catch (err) {
+            console.error(err);
+            setResultLowerMarginProducts({ error: "Error fetching data" });
+        }
+    };
+
     const fetchBestSellingHoursStat = async () => {
         try {
             const res = await fetchBestSellingHours(user.token);
@@ -86,7 +98,6 @@ export default function SalesStatsButtons() {
 
             {/* Sales average value */}
             <div className="p-4 flex flex-col gap-4 max-w-md mx-auto">
-                <h1 className="text-xl font-bold">Sales Stats</h1>
                 <h5 className="text-xl">Sales average value</h5>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -161,6 +172,22 @@ export default function SalesStatsButtons() {
 
                 <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
                     {JSON.stringify(resultHigherMarginProducts, null, 2)}
+                </pre>
+            </div>
+
+            {/* Lower margin products */}
+            <div className="p-4 flex flex-col gap-4 max-w-md mx-auto">
+                <h5 className="text-xl">Lower margin products (Top 15)</h5>
+
+                <button
+                    onClick={fetchLowerMarginProductsStat}
+                    className="p-2 bg-gray-200 rounded-xl shadow hover:bg-gray-300 transition"
+                >
+                    LOAD
+                </button>
+
+                <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
+                    {JSON.stringify(resultLowerMarginProducts, null, 2)}
                 </pre>
             </div>
 

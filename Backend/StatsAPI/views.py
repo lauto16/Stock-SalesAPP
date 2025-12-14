@@ -26,6 +26,25 @@ class ProductsStatsViewSet(viewsets.ViewSet):
     efficient methods.
     """
 
+    def calculate_lower_margin_products(self, count: int):
+        margin_expr = ExpressionWrapper(
+            F("sell_price") - F("buy_price"),
+            output_field=FloatField()
+        )
+
+        return (
+            Product.objects
+            .annotate(margin=margin_expr)
+            .order_by("margin")[:count]
+            .values(
+                "code",
+                "sell_price",
+                "buy_price",
+                "name",
+                "margin",
+            )
+        )
+
     def calculate_higher_margin_products(self, count: int):
         margin_expr = ExpressionWrapper(
             F("sell_price") - F("buy_price"),
@@ -86,7 +105,18 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         ranking = self.calculate_higher_margin_products(count)
 
         return Response(ranking)
-   
+    
+    @action(detail=False, methods=["get"], url_path="lower-margin-products")
+    def lower_margin_products(self, request):
+        # /api/products_stats/lower-margin-products/?count=5
+        try:
+            count = int(request.query_params.get("count", 10))
+        except ValueError:
+            count = 10
+
+        ranking = self.calculate_lower_margin_products(count)
+
+        return Response(ranking)
     
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
