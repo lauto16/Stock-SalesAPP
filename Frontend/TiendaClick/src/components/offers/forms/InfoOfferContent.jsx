@@ -92,18 +92,12 @@ export default function InfoOfferContent({ register, selectedItem, errors, contr
                     icon='bi-percent'
                     type='number'
                     defaultValue={selectedItem.percentage}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') e.preventDefault();
-                    }}
+                    step={'any'}
                     register={register('percentage', {
-                        required: "El porcentaje de descuento es obligatorio",
+                        required: true,
                         min: {
                             value: 0,
                             message: "El porcentaje debe ser mayor o igual a 0"
-                        },
-                        max: {
-                            value: 100,
-                            message: "El porcentaje debe ser menor o igual a 100"
                         }
                     })}
                 />
@@ -187,6 +181,7 @@ export default function InfoOfferContent({ register, selectedItem, errors, contr
                                         </div>
                                         <button
                                             className="btn btn-sm btn-danger"
+                                            type="button"
                                             onClick={(e) => { handleRemove(e, option.value) }}
                                             title="Desvincular"
                                         >
