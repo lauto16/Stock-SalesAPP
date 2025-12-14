@@ -445,6 +445,15 @@ async function fetchCategories(token) {
     return { results: [] };
   }
 }
+async function addCategory(category, token) {
+  return axios.post(`${apiUrl}categories/`, category, authHeader(token));
+}
+async function updateCategory(category, token) {
+  return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
+}
+async function deleteCategory(category, token) {
+  return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
+}
 // STATISTICS FUNCTIONS
 // returns the average value of the sales
 async function fetchSalesAverageValueStatsByPeriod(token, period) {
@@ -526,4 +535,7 @@ export {
   fetchMostUsedPaymentMethodsStatsByPeriod,
   fetchPaymentMethods,
   fetchCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
 };

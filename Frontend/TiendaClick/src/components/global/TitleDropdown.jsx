@@ -12,6 +12,7 @@ const options_other = [
   { label: "Proveedores", path: "/providers/", permission: "access_providers" },
   { label: "Ofertas", path: "/offers/", permission: "access_offers" },
   { label: "Cerrar sesión", path: null },
+  { label: "Categorias", path: "/categories/", permission: "access_categories" }
 ];
 
 const options_dashboard = [
@@ -69,10 +70,9 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
             <Dropdown.Item
               key={opt.label}
               onClick={() => handleSelect(opt.label, opt.path, disabled)}
-              className={`${disabled ? "text-secondary" : ""} ${
-                opt.label === "Cerrar sesión" ? "text-danger" : ""
-              }`}
-              style={{ color: disabled ? "#6c757d" : undefined, backgroundColor: disabled ? "#d9d9d9" : undefined }} 
+              className={`${disabled ? "text-secondary" : ""} ${opt.label === "Cerrar sesión" ? "text-danger" : ""
+                }`}
+              style={{ color: disabled ? "#6c757d" : undefined, backgroundColor: disabled ? "#d9d9d9" : undefined }}
               disabled={disabled}
             >
               {opt.label} {disabled && <FaLock className="ms-2" />}

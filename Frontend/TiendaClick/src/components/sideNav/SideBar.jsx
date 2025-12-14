@@ -34,6 +34,8 @@ function SideBar({ onLogout }) {
                                 <NavLink name="Inventario" url="/inventory" />
                                 <NavLink name="Cambios en productos" url="/product-blame" />
                                 <NavLink name="Ventas" url="/sales" />
+                                <NavLink name="Categoria por producto" url="/categories" />
+
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                                 <NavLink name="Informe de Ventas" />
                                 <li className="nav-header">USUARIOS</li>

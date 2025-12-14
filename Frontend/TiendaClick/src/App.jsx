@@ -14,87 +14,94 @@ import Offers from './components/offers/Offers.jsx';
 import DeleteUser from './components/auth/DeleteUser.jsx'
 import AuthGuard from "./components/auth/AuthGuard.jsx";
 import SalesStatsButtons from "./components/tests/Stats.jsx"
+import Categories from './components/categories/Categories.jsx'
 function App() {
   return (
     <Router>
       <AuthGuard>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/providers"
-          element={
-            <PrivateRoute>
-              <Providers />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/inventory"
-          element={
-            <PrivateRoute>
-              <Inventory />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/sales"
-          element={
-            <PrivateRoute>
-              <Sales />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/product-blame/"
-          element={
-            <PrivateRoute>
-              <ProductBlame />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/pin-manager/"
-          element={
-            <PinManager />
-          }
-        />
-        <Route
-          path='/sign-up/'
-          element={
-            <PrivateRoute>
-              <SignUp />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path='delete-user'
-          element={<PrivateRoute>
-            <DeleteUser />
-          </PrivateRoute>}
-        />
-        <Route
-          path='/offers/'
-          element={
-            <PrivateRoute>
-              <Offers />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path='/stats/'
-          element={<SalesStatsButtons></SalesStatsButtons>}
-        />
-      </Routes>
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/providers"
+            element={
+              <PrivateRoute>
+                <Providers />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/inventory"
+            element={
+              <PrivateRoute>
+                <Inventory />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sales"
+            element={
+              <PrivateRoute>
+                <Sales />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/product-blame/"
+            element={
+              <PrivateRoute>
+                <ProductBlame />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/categories/"
+            element={
+              <Categories />
+            }
+          />
+          <Route
+            path="/pin-manager/"
+            element={
+              <PinManager />
+            }
+          />
+          <Route
+            path='/sign-up/'
+            element={
+              <PrivateRoute>
+                <SignUp />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='delete-user'
+            element={<PrivateRoute>
+              <DeleteUser />
+            </PrivateRoute>}
+          />
+          <Route
+            path='/offers/'
+            element={
+              <PrivateRoute>
+                <Offers />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/stats/'
+            element={<SalesStatsButtons />}
+          />
+        </Routes>
       </AuthGuard>
     </Router>
   );
