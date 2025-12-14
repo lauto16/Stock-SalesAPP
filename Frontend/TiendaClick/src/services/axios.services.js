@@ -453,9 +453,7 @@ async function addCategory(category, token) {
   return axios.post(`${apiUrl}categories/`, category, authHeader(token));
 }
 async function updateCategory(category, token) {
-  console.log(category);
-  const newCategory = { name: category.name, description: category.description }
-  return axios.put(`${apiUrl}categories/${category.old_name}/`, newCategory, authHeader(token));
+  return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
 }
 async function deleteCategory(category, token) {
   return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
@@ -496,7 +494,7 @@ async function fetchEmployeeSales(token) {
 }
 
 // returns all categories and the amount of sales for each one
-async function fetchBestSellingCategories(token){
+async function fetchBestSellingCategories(token) {
   return axios.get(`${apiUrl}products_stats/best-selling-categories/`, authHeader(token));
 }
 
