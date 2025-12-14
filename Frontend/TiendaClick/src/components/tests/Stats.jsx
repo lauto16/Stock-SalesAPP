@@ -5,7 +5,8 @@ import {
     fetchMostUsedPaymentMethodsStatsByPeriod,
     fetchBestSellingProducts,
     fetchHigherMarginProducts,
-    fetchBestSellingHours
+    fetchBestSellingHours,
+    fetchEmployeeSales
 } from "../../services/axios.services.js";
 
 export default function SalesStatsButtons() {
@@ -14,6 +15,7 @@ export default function SalesStatsButtons() {
     const [resultBestSellingProducts, setResultBestSellingProducts] = useState(null);
     const [resultHigherMarginProducts, setResultHigherMarginProducts] = useState(null);
     const [resultBestSellingHours, setResultBestSellingHours] = useState(null);
+    const [resultEmployeeSales, setResultEmployeeSales] = useState(null);
 
     const { user } = useUser();
 
@@ -64,6 +66,16 @@ export default function SalesStatsButtons() {
         } catch (err) {
             console.error(err);
             setResultBestSellingHours({ error: "Error fetching data" });
+        }
+    };
+
+    const fetchEmployeeSalesStat = async () => {
+        try {
+            const res = await fetchEmployeeSales(user.token);
+            setResultEmployeeSales(res.data);
+        } catch (err) {
+            console.error(err);
+            setResultEmployeeSales({ error: "Error fetching data" });
         }
     };
 
@@ -165,6 +177,22 @@ export default function SalesStatsButtons() {
 
                 <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
                     {JSON.stringify(resultBestSellingHours, null, 2)}
+                </pre>
+            </div>
+
+            {/* Employee sales */}
+            <div className="p-4 flex flex-col gap-4 max-w-md mx-auto">
+                <h5 className="text-xl">Sales by employee</h5>
+
+                <button
+                    onClick={fetchEmployeeSalesStat}
+                    className="p-2 bg-gray-200 rounded-xl shadow hover:bg-gray-300 transition"
+                >
+                    LOAD
+                </button>
+
+                <pre className="bg-black text-white p-3 rounded-xl text-sm whitespace-pre-wrap">
+                    {JSON.stringify(resultEmployeeSales, null, 2)}
                 </pre>
             </div>
 

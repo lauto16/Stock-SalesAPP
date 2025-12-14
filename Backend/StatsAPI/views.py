@@ -13,6 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from SalesAPI.models import Sale, SaleItem
 from InventoryAPI.models import Product
+from Auth.models import CustomUser
 from django.utils import timezone
 from collections import Counter
 from datetime import timedelta
@@ -95,7 +96,25 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=["get"], url_path=r"employees-stats")
+    def calculate_sales_by_user(self, user):
+        return (
+            Sale.objects
+            .filter(created_by=user)
+            .count()
+        )     
+
+    @action(detail=False, methods=["get"], url_path="employees-sales")
+    def sales_by_employee(self, request):
+        total_sales = {}
+        users = CustomUser.objects.all()
+        
+        for user in users:
+            sales = self.calculate_sales_by_user(user)
+            total_sales[user.username] = sales
+
+        return Response(total_sales)
+    
+    @action(detail=False, methods=["get"], url_path=r"employees-stats/")
     def employees_stats(self, request):
         """
         Calculates and returns sales performance statistics for employees across different time periods.

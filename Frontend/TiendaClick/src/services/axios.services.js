@@ -479,6 +479,11 @@ async function fetchBestSellingHours(token){
   return axios.get(`${apiUrl}sales_stats/best-selling-hours/`, authHeader(token));
 }
 
+// returns each employee name followed by their sales
+async function fetchEmployeeSales(token){
+  return axios.get(`${apiUrl}employees_stats/employees-sales/`, authHeader(token));
+}
+
 // STATISTICS FUNCTIONS DASHBOARD
 async function fetchSalesStats(token) {
   try {
@@ -555,5 +560,6 @@ export {
   deleteCategory,
   fetchBestSellingProducts,
   fetchHigherMarginProducts,
-  fetchBestSellingHours
+  fetchBestSellingHours,
+  fetchEmployeeSales
 };
