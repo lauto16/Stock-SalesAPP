@@ -11,8 +11,8 @@ const options_other = [
   { label: "Dashboard", path: "/dashboard/", permission: "access_dashboard" },
   { label: "Proveedores", path: "/providers/", permission: "access_providers" },
   { label: "Ofertas", path: "/offers/", permission: "access_offers" },
-  { label: "Cerrar sesión", path: null },
-  { label: "Categorias", path: "/categories/", permission: "access_categories" }
+  { label: "Cerrar sesión", path: "/login/" },
+  { label: "Categorias", path: "/categories/", permission: "access_inventory" }
 ];
 
 const options_dashboard = [
@@ -28,7 +28,6 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
 
   const options = isDashboard ? options_dashboard : options_other;
 
-  // Separar "Cerrar sesión" y ordenar el resto
   const logoutOption = options.find(opt => opt.label === "Cerrar sesión");
   const otherOptions = options.filter(opt => opt.label !== "Cerrar sesión");
 
@@ -38,7 +37,6 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
     return aDisabled === bDisabled ? 0 : aDisabled ? -1 : 1;
   });
 
-  // Poner logout al final
   if (logoutOption) sortedOptions.push(logoutOption);
 
   const handleSelect = (label, path, disabled) => {
