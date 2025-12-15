@@ -26,7 +26,6 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
-  isSale=false
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -130,7 +129,7 @@ export default function Header({
       />
       {/* opens a form to add an Item */}
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={onSubmitAddItem}
-        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne} isSale={isSale}/>
+        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne}/>
 
       {/* enables to delete a set of Items */}
       <ConfirmationModal
@@ -149,7 +148,6 @@ export default function Header({
         Content={InfoFormContent}
         title={titleInfoForm}
         reloadPageOne={reloadPageOne}
-        isSale={isSale}
       /> : <></>
       }
       <div className="d-flex align-items-center">
