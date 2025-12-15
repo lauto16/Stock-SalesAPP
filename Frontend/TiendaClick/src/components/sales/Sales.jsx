@@ -4,7 +4,6 @@ import Table from "../crud/Table.jsx";
 import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "../inventory/Search.jsx";
-import SaleDetailModal from "./SaleDetailModal.jsx";
 import { fetchSales, fetchSearchSales, deleteSaleById, addSale } from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
@@ -22,8 +21,6 @@ export default function Sales() {
   const [isSomethingSelected, setIsSomethingSelected] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [allSearchResults, setAllSearchResults] = useState([]);
-  const [showSaleDetailModal, setShowSaleDetailModal] = useState(false);
-  const [selectedSale, setSelectedSale] = useState(null);
 
   const { user } = useUser();
   const { addNotification } = useNotifications();
@@ -40,12 +37,15 @@ export default function Sales() {
   ];
 
   const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    return date.toISOString().slice(0, 10);
+    return new Date(isoString).toLocaleDateString("en-CA", {
+      timeZone: "America/Argentina/Buenos_Aires",
+    });
   };
   const formatHour = (isoString) => {
-    const date = new Date(isoString);
-    return date.toISOString().slice(11, 19);
+    return new Date(isoString).toLocaleTimeString("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour12: false,
+    });
   };
 
   const formatSalesData = (data) => {
@@ -161,14 +161,6 @@ export default function Sales() {
     <RequirePermission permission="access_sales">
       <div className="d-flex justify-content-center mt-5">
         <div className="container container-modified">
-
-          {showSaleDetailModal && selectedSale && (
-            <SaleDetailModal
-              show={showSaleDetailModal}
-              handleClose={() => setShowSaleDetailModal(false)}
-              sale={selectedSale}
-            />
-          )}
 
           <Header
             title={"VENTAS"}

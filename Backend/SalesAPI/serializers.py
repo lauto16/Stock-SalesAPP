@@ -118,8 +118,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         """
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
-
-        payment_method = PaymentMethod.objects.get(name=validated_data.get("payment_method", "Efectivo"))
+        payment_method = validated_data.get("payment_method", "Efectivo")
     
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
