@@ -323,6 +323,7 @@ async function deleteSaleById(id, token) {
       `${apiUrl}sales/delete-by-id/${id}/`,
       authHeader(token)
     );
+    console.log(response);
     return response.data;
   } catch (error) {
     const backendError = error.response?.data?.error || "Error al eliminar la venta.";
@@ -456,7 +457,7 @@ async function updateCategory(category, token) {
   return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
 }
 async function deleteCategory(category, token) {
-  return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
+  return axios.delete(`${apiUrl}categories/${category}/`, authHeader(token));
 }
 // STATISTICS FUNCTIONS
 // returns the average value of the sales

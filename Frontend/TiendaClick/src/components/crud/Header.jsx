@@ -26,7 +26,7 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
-  isSale=false
+  isSale = false
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -89,7 +89,7 @@ export default function Header({
     for (let { id, displayName } of itemsToDelete) {
       const result = await deleteItem(id, user.token);
       console.log(result)
-      if (result?.success) {
+      if (result?.status === 204) {
         addNotification("success", `"${displayName}" eliminado con éxito`);
 
       } else {
@@ -130,7 +130,7 @@ export default function Header({
       />
       {/* opens a form to add an Item */}
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={onSubmitAddItem}
-        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne} isSale={isSale}/>
+        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne} isSale={isSale} />
 
       {/* enables to delete a set of Items */}
       <ConfirmationModal

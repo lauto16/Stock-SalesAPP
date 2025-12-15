@@ -54,7 +54,16 @@ export default function Categories() {
         }
 
     };
-
+    const reloadPageOne = () => {
+        if (currentPage === 1) {
+            setCurrentPage(2);
+            setTimeout(() => setCurrentPage(1), 50);
+        } else {
+            setCurrentPage(1);
+        }
+        setLoading(true);
+        setTimeout(() => setLoading(false), 0);
+    }
     return (
         <RequirePermission permission="access_inventory">
             <div className="d-flex justify-content-center mt-5">
@@ -69,7 +78,7 @@ export default function Categories() {
                             user={user}
                             items={categories}
                             selectedItemsColumns={columns}
-                            reloadPageOne={() => setCurrentPage(1)}
+                            reloadPageOne={reloadPageOne}
                             onSubmitAddItem={addCategory}
                             onSubmitEditItem={updateCategory}
                             titleAddItem={'Añadir una nueva categoria'}
@@ -93,7 +102,7 @@ export default function Categories() {
                             setLoading={setLoading}
                             selectedItems={selectedItems}
                             setSelectedItems={setSelectedItems}
-                            pkName={'name'}
+                            pkName={'id'}
                         />
 
                     </div>

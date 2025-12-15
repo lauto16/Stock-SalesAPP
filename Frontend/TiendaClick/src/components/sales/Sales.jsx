@@ -32,7 +32,7 @@ export default function Sales() {
     { className: "total", key: "total_price", label: "Precio final" },
     { className: "charge_reason", key: "charge_reason", label: "Descuento / Aumento añadido" },
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
-    { className: "date", key: "created_at", label: "Fecha" },
+    { className: "date", key: "full_date", label: "Fecha" },
     { className: "hour", key: "hour", label: "Hora" },
   ];
 
@@ -58,7 +58,7 @@ export default function Sales() {
 
       return {
         ...sale,
-        created_at: sale.created_at ? formatDate(sale.created_at) : "",
+        full_date: sale.created_at ? formatDate(sale.created_at) : "",
         total_price: sale.total_price?.toFixed(2) ?? "0.00",
         final_price: sale.final_price?.toFixed(2) ?? "0.00",
         charge_reason: (
@@ -73,7 +73,7 @@ export default function Sales() {
 
   useEffect(() => {
     if (isSearching) return;
-    
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -81,14 +81,15 @@ export default function Sales() {
         if (!data.results) {
           return
         }
-
+        console.log(data);
         const results = data?.results.map((sale) => {
           return {
             ...sale,
-            created_at: sale.created_at ? formatDate(sale.created_at) : "",
+            full_date: sale.created_at ? formatDate(sale.created_at) : "",
             hour: sale.created_at ? formatHour(sale.created_at) : "",
           };
         });
+
         setItems(formatSalesData(results));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
@@ -190,7 +191,7 @@ export default function Sales() {
 
             selectedItemsColumns={[
               { className: "id", key: "id", label: "ID" },
-              { className: "created_at", key: "created_at", label: "Fecha" },
+              { className: "full_date", key: "full_date", label: "Fecha" },
               { className: "total_price", key: "total_price", label: "Total" },
               { className: "hour", key: "hour", label: "Hora" },
             ]}
