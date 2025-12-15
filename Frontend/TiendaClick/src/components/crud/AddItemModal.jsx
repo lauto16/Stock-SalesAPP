@@ -2,7 +2,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { useAddItemForm } from './hooks/useAddItemForm.js'
 import { useEffect, useState } from "react";
 
-export default function AddItemModal({ onSubmitHandler, show, handleClose, selectedItems, title, Content, reloadPageOne }) {
+export default function AddItemModal({ isSale, onSubmitHandler, show, handleClose, selectedItems, title, Content, reloadPageOne }) {
     const {
         register,
         handleSubmit,
@@ -41,11 +41,11 @@ export default function AddItemModal({ onSubmitHandler, show, handleClose, selec
 
                     <Content register={register} selectedItem={selectedItem} watch={watch} errors={errors} control={control} />
 
-                    <div className="d-flex justify-content-end">
+                    {isSale ? <></> : <div className="d-flex justify-content-end">
                         <Button variant="success" type="submit" className="mt-2 send-form-button">
                             Agregar
                         </Button>
-                    </div>
+                    </div>}
                 </Form>
             </Modal.Body>
         </Modal>

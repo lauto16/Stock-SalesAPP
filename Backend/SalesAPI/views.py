@@ -154,7 +154,7 @@ class SaleSearchView(APIView):
             created_at_str = sale.created_at.strftime("%Y-%m-%d %H:%M:%S").lower() if sale.created_at else ""
             date_only = sale.created_at.strftime("%Y-%m-%d").lower() if sale.created_at else ""
             total_price_str = str(sale.total_price) if sale.total_price is not None else ""
-            pay_method = str(sale.pay_method) if sale.pay_method is not None else ""
+            payment_method = str(sale.payment_method) if sale.payment_method is not None else ""
             
             if query in created_at_str:
                 score += 5
@@ -167,9 +167,9 @@ class SaleSearchView(APIView):
             if query == total_price_str:
                 score += 5
                 
-            if query == pay_method:
+            if query == payment_method:
                 score += 5
-                if pay_method.startswith(query):
+                if payment_method.startswith(query):
                     score += 3
             
             elif query.replace('.', '').isdigit():

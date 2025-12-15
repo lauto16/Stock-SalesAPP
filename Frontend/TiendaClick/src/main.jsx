@@ -7,7 +7,6 @@ import { NotificationProvider } from './context/NotificationSystem';
 import { PinProvider } from './context/PinContext';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <NotificationProvider>
       <UserProvider>
         <PinProvider>
@@ -15,5 +14,4 @@ createRoot(document.getElementById('root')).render(
         </PinProvider>
       </UserProvider>
     </NotificationProvider>
-  </StrictMode>
 )

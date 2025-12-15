@@ -36,13 +36,12 @@ export default function Sales() {
     { className: "hour", key: "hour", label: "Hora" },
   ];
 
-  const formatDate = (isoString) => {
-    return new Date(isoString).toLocaleDateString("en-CA", {
-      timeZone: "America/Argentina/Buenos_Aires",
-    });
+  const formatDate = (str) => {
+    return str.slice(0, 10).replace("-", "/")
   };
+
   const formatHour = (isoString) => {
-    return new Date(isoString).toLocaleTimeString("es-AR", {
+    return new Date(isoString).toLocaleTimeString("es-CA", {
       timeZone: "America/Argentina/Buenos_Aires",
       hour12: false,
     });
@@ -74,11 +73,15 @@ export default function Sales() {
 
   useEffect(() => {
     if (isSearching) return;
-
+    
     const fetchData = async () => {
       setLoading(true);
       try {
         const data = await fetchSales({ page: currentPage, setLoading: setLoading, token: user.token });
+        if (!data.results) {
+          return
+        }
+
         const results = data?.results.map((sale) => {
           return {
             ...sale,
@@ -89,7 +92,7 @@ export default function Sales() {
         setItems(formatSalesData(results));
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
-        addNotification("error", "Error cargando ventas."); timezone
+        addNotification("error", "Error cargando ventas.");
         console.error(error);
       }
       setLoading(false);
@@ -97,6 +100,10 @@ export default function Sales() {
 
     if (user?.token) fetchData();
   }, [currentPage, isSearching, user]);
+
+
+
+
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -129,19 +136,16 @@ export default function Sales() {
     setCurrentPage(1);
   };
 
-  const onShowSaleDetail = () => {
-    if (selectedItems.size === 0) {
-      addNotification("warning", "Selecciona una venta para ver detalles.");
-      return;
+  const reloadPageOne = () => {
+    if (currentPage === 1) {
+      setCurrentPage(2);
+      setTimeout(() => setCurrentPage(1), 50);
+    } else {
+      setCurrentPage(1);
     }
-    if (selectedItems.size > 1) {
-      addNotification("warning", "Selecciona solo una venta para ver detalles.");
-      return;
-    }
-    const sale = Array.from(selectedItems.values())[0];
-    setSelectedSale(sale);
-    setShowSaleDetailModal(true);
-  };
+    setLoading(true);
+    setTimeout(() => setLoading(false), 0);
+  }
 
   useEffect(() => {
     setIsSomethingSelected(selectedItems.size > 0);
@@ -171,8 +175,10 @@ export default function Sales() {
             items={items}
             deleteItem={deleteSaleById}
 
+            isSale={true}
+
             //implementar logica de paginado 
-            reloadPageOne={() => { }}
+            reloadPageOne={reloadPageOne}
             titleAddItem={'Añadir una nueva venta'}
 
             AddItemcontent={AddSaleContent}
