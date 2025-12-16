@@ -26,6 +26,7 @@ class Sale(models.Model):
         with transaction.atomic():
             for item in self.items.select_related("product"):
                 product = item.product
+                
                 old_stock = product.stock
                 product.stock = max(0, old_stock - item.quantity)
                 product.save(user=user)

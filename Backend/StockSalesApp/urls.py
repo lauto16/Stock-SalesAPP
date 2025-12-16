@@ -9,7 +9,7 @@ from BlameAPI.views import *
 from SalesAPI.views import *
 from StatsAPI.views import *
 from AuthAPI.views import *
-
+from Testing.views import *
 
 router_blame = DefaultRouter()
 router_blame.register(r'blames', ChangeLogViewSet, basename='blame')
@@ -70,4 +70,5 @@ urlpatterns = [
     path('api/', include(router_users_admin_functions.urls)),
     path('api/login/', obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
+    path('tests/sales_test', test_sales, name='test_sales')
 ]

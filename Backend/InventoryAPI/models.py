@@ -59,11 +59,17 @@ class Product(models.Model):
     
     def has_discount(self) -> bool:
         """
-        Returns True if the product has at least 1 active offer (fecha de finalización >= hoy).
+        Returns True if the product has at least 1 active discount (Offer object) (fecha de finalización >= hoy).
         """
         return self.offers.filter(end_date__gte=timezone.now()).exists()
     
-
+    def get_active_discount(self) -> dict:
+        """
+        Returns active offer
+        """
+        return self.offers.filter(end_date__gte=timezone.now()).first()
+    
+    
 class Offer(models.Model):
     """
     Temporal offer aplies to 'n' products

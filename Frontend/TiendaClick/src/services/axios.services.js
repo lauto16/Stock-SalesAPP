@@ -67,6 +67,7 @@ async function addProvider(provider, token) {
 }
 
 async function addOffer(data, token) {
+  console.log('DASASDASD: ', data)
   data.products = data.products.map(product => product.code);
   try {
     console.log(data)

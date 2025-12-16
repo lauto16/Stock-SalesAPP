@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     'AuthAPI',
     'BlameAPI',
     'CategoryAPI',
-    'PaymentMethodAPI'
+    'PaymentMethodAPI',
+    'Testing'
 ]
 
 MIDDLEWARE = [
@@ -46,10 +47,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            join(BASE_DIR, 'Auth/templates'),
-            join(BASE_DIR, 'Inventory/templates'),
-            join(BASE_DIR, 'Sales/templates'),
-            join(BASE_DIR, 'Stats/templates'),
+            join(BASE_DIR, 'StockSalesApp/templates')
         ],
         'APP_DIRS': True,
         'OPTIONS': {

@@ -129,8 +129,14 @@ class SaleCreateSerializer(serializers.ModelSerializer):
 
         for item in items_data:
             product = item["product_id"]
+            
+            offer = product.get_active_discount()
+            if offer:
+                charge = offer.percentage
+            else:
+                charge = item["charge_percentage"]
+                          
             quantity = item["quantity"]
-            charge = item["charge_percentage"]
 
             SaleItem.objects.create(
                 sale=sale,
