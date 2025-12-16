@@ -228,7 +228,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         </Col>
                     </Row>
 
-                    {/* NUEVA SECCIÓN DE OFERTA */}
                     {product?.offers_data && product.offers_data.length > 0 && (
                         <>
                             <hr />

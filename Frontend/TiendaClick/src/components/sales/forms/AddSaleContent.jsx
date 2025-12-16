@@ -14,6 +14,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     const chargePercentage = watch("applied_charge_percentage", 0);
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
+    const [allActiveOffers, setAllActiveOffers] = useState([]);
 
     // Clear selected products when form is reset
     useEffect(() => {
@@ -21,6 +22,24 @@ export default function AddSaleContent({ register, control, errors, watch }) {
             setSelectedProducts([]);
         }
     }, [watchedSelectedProducts]);
+
+    useEffect(() => {
+        const active_offers = []
+    
+        selectedProducts.forEach(product => {
+            if (product.offers_data) {
+                active_offers.push({
+                    ...product.offers_data,
+                    product_code: product.code,
+                    product_name: product.name,
+                })
+            }
+        })
+    
+        setAllActiveOffers(active_offers)
+    }, [selectedProducts])
+
+
 
     //
     useEffect(() => {
@@ -230,6 +249,55 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 </Form.Group>
             </Col>}
 
+            <Col md={12}>
+                {allActiveOffers && allActiveOffers.length > 0 && (
+                    <>
+                        <hr />
+                        <h5>Ofertas activas</h5>
+
+                        {allActiveOffers.map((offer, idx) => {
+                            const isLast = idx === allActiveOffers.length - 1
+
+                            return (
+                                <div key={`${offer.product_code}-${offer.id}`}>
+                                    <Row className="g-3 mb-3">
+                                        <Col md={3}>
+                                            <p className="fw-bold mb-1">{offer.name}</p>
+                                            <small className="text-muted">
+                                                {offer.product_name}
+                                            </small>
+                                        </Col>
+
+                                        <Col md={2}>
+                                            <Form.Group>
+                                                <Form.Label>Porcentaje</Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={offer.percentage}
+                                                    disabled
+                                                />
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col md={3}>
+                                            <Form.Group>
+                                                <Form.Label>Fecha fin</Form.Label>
+                                                <Form.Control
+                                                    type="date"
+                                                    value={offer.end_date}
+                                                    disabled
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+
+                                    {!isLast && <hr />}
+                                </div>
+                            )
+                        })}
+                    </>
+                )}
+            </Col>
             {/* Summary Table */}
             {selectedProducts.length > 0 && (
                 <Col md={12}>
@@ -243,13 +311,14 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     <th className="text-center">Cantidad</th>
                                     <th className="text-end">Precio Unit.</th>
                                     <th className="text-end">Subtotal</th>
+                                    <th className="text-end">Menos oferta</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {selectedProducts.map((product) => {
                                     const quantity = watchedQuantities[`quantity_${product.code}`] || 1;
                                     const subtotal = product.sell_price * quantity;
-
+                                    const subtotal_minus_offers = subtotal - (subtotal * product.offers_data.percentage / 100)
                                     return (
                                         <tr key={product.code}>
                                             <td>{product.name}</td>
@@ -257,6 +326,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                             <td className="text-center">{quantity}</td>
                                             <td className="text-end">${product.sell_price.toFixed(2)}</td>
                                             <td className="text-end">${subtotal.toFixed(2)}</td>
+                                            <td className="text-end">${subtotal_minus_offers.toFixed(2)}</td>
                                         </tr>
                                     );
                                 })}
@@ -266,6 +336,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     <td colSpan="4" className="text-end"><strong>Subtotal:</strong></td>
                                     <td className="text-end"><strong>${calculateSubtotal().toFixed(2)}</strong></td>
                                 </tr>
+
                                 <tr>
                                     <td colSpan="4" className="text-end"><strong>IVA:</strong></td>
                                     <td className="text-end"><strong>21%</strong></td>
