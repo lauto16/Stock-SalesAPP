@@ -6,6 +6,7 @@ import CustomInput from "../crud/CustomInput";
 import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 import { useUser } from "../../context/UserContext";
+import { useCategories } from "../Hooks/useCategories.js";
 
 export default function ProductInfoModal({ show, handleClose, product, unselectAll, reloadPageOne }) {
     const {
@@ -26,6 +27,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const [providers, setProviders] = useState([]);
     const { user } = useUser();
     const [isSending, setIsSending] = useState(false)
+    const { categories } = useCategories(user.token);
 
     useEffect(() => {
         
@@ -122,7 +124,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 <Controller
                                     name="provider"
                                     control={control}
-                                    rules={{ required: true }}
+                                    rules={{ required: false }}
                                     render={({ field }) => {
                                         const selectedOption = providers.find(p => p.id === field.value);
 
@@ -142,11 +144,38 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                         );
                                     }}
                                 />
-                                {errors.provider && (
-                                    <small className="text-danger">El proveedor es requerido</small>
-                                )}
                             </Form.Group>
                         </Col>
+
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Categoria</Form.Label>
+                                <Controller
+                                    name="category"
+                                    control={control}
+                                    rules={{ required: false }}
+                                    render={({ field }) => {
+                                        const selectedOption = categories.find(p => p.id === field.value);
+
+                                        return (
+                                            <Select
+                                                {...field}
+                                                value={
+                                                    selectedOption
+                                                        ? { value: selectedOption.id, label: selectedOption.name }
+                                                        : null
+                                                }
+                                                onChange={(option) => field.onChange(option ? option.value : null)}
+                                                options={categories.map(p => ({ value: p.id, label: p.name }))}
+                                                placeholder="Seleccionar categoria..."
+                                                isSearchable
+                                            />
+                                        );
+                                    }}
+                                />
+                            </Form.Group>
+                        </Col>
+
                         <Col md={6}>
                             <CustomInput
                                 label="Stock"

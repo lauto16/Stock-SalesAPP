@@ -4,7 +4,7 @@ export function useCategories(token) {
     const [categories, setCategories] = useState([])
     useEffect(() => {
         fetchCategories(token)
-            .then((res) => { setCategories(res.data) })
+            .then((res) => { setCategories(res) })
             .catch((err) => console.error('Error, no se pudieron cargar los datos: ', err))
     }, [])
     return {

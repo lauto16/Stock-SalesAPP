@@ -428,6 +428,7 @@ async function fetchOffers({ page = 1, setLoading, token }) {
     setLoading(false);
   }
 }
+
 async function fetchPaymentMethods(token) {
   try {
     const response = await axios.get(`${apiUrl}payment-methods/`, authHeader(token));
@@ -437,28 +438,29 @@ async function fetchPaymentMethods(token) {
     return { results: [] };
   }
 }
-async function fetchCategories(setLoading, token) {
-  setLoading(true);
+
+async function fetchCategories(token) {
   try {
     const response = await axios.get(`${apiUrl}categories/`, authHeader(token));
-    setLoading(false);
-
     return response.data;
   } catch (error) {
     console.error("Error al obtener las categorías:", error);
-    setLoading(false);
     return { results: [] };
   }
 }
+
 async function addCategory(category, token) {
   return axios.post(`${apiUrl}categories/`, category, authHeader(token));
 }
+
 async function updateCategory(category, token) {
   return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
 }
+
 async function deleteCategory(category, token) {
   return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
 }
+
 // STATISTICS FUNCTIONS
 // returns the average value of the sales
 async function fetchSalesAverageValueStatsByPeriod(token, period) {
