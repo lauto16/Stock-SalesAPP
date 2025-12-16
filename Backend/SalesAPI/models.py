@@ -29,7 +29,7 @@ class Sale(models.Model):
                 
                 old_stock = product.stock
                 product.stock = max(0, old_stock - item.quantity)
-                product.save(user=user)
+                product.save(user=user, createChangeLog=False)
             self.update_totals()
 
 
