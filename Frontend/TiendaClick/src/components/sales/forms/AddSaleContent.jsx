@@ -257,46 +257,32 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                         <hr />
                         <h5>Ofertas activas</h5>
 
-                        {activeOffers.map((offer, idx) => {
-                            const isLast = idx === allActiveOffers.length - 1
-                            return (
-                                <div key={`${offer.product_code}-${offer.id}`}>
-                                    <Row className="g-3 mb-3">
-                                        <Col md={3}>
-                                            <p className="fw-bold mb-1">{offer.name}</p>
-                                            <small className="text-muted">
-                                                {offer.product_name}
-                                            </small>
-                                        </Col>
-
-                                        <Col md={2}>
-                                            <Form.Group>
-                                                <Form.Label>Porcentaje</Form.Label>
-                                                <Form.Control
-                                                    type="number"
-                                                    value={offer.percentage}
-                                                    disabled
-                                                />
-                                            </Form.Group>
-                                        </Col>
-
-                                        <Col md={3}>
-                                            <Form.Group>
-                                                <Form.Label>Fecha fin</Form.Label>
-                                                <Form.Control
-                                                    type="date"
-                                                    value={offer.end_date}
-                                                    disabled
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-
-                                    {!isLast && <hr />}
+                        {activeOffers.map((offer) => (
+                            <div
+                                key={`${offer.product_code}-${offer.id}`}
+                                className="d-flex align-items-center justify-content-between border rounded px-3 py-2"
+                                style={{ fontSize: '0.9rem' }}
+                            >
+                                {/* Producto */}
+                                <div className="flex-grow-1">
+                                    <div className="fw-semibold">{offer.name}</div>
+                                    <small className="text-muted">{offer.product_name}</small>
                                 </div>
-                            )
-                        })
-                        }
+
+                                {/* Porcentaje */}
+                                <div className="text-center" style={{ width: 90 }}>
+                                    <span className="badge bg-success">
+                                        {offer.percentage}%
+                                    </span>
+                                </div>
+
+                                {/* Fecha */}
+                                <div className="text-end text-muted" style={{ width: 120 }}>
+                                    <div className="fw-semibold">Fecha fin:</div>
+                                    {offer.end_date}
+                                </div>
+                            </div>
+                        ))}
                     </>)}
             </Col>
             {/* Summary Table */}
