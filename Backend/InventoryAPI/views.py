@@ -68,7 +68,8 @@ class ProductValidator:
             sell_price = data.get("sell_price")
             provider = data.get("provider")
             category = data.get("category")
-
+                
+            
             if code is not None and not code.strip():
                 return {
                     "success": False,

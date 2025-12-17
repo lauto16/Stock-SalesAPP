@@ -71,15 +71,11 @@ class ProductPagination(PageNumberPagination):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Product objects.
-
-    Adds two computed fields:
-      - `in_offer`: Indicates if the product currently has any active offer.
-      - `offers_data`: Serialized details of all active offers.
-
-    Active offers are determined based on the current date.
-    """
+    expiration = serializers.DateField(
+        required=False,
+        allow_null=True,
+        input_formats=["%Y-%m-%d"]
+    )
 
     in_offer = serializers.SerializerMethodField()
     offers_data = serializers.SerializerMethodField()
@@ -96,7 +92,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "last_modification",
             "in_offer",
             "offers_data",
-            "category"
+            "category",
+            "expiration",
         ]
         read_only_fields = ["last_modification"]
 

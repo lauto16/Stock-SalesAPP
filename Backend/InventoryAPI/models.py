@@ -21,7 +21,8 @@ class Product(models.Model):
     )
     last_modification = models.DateField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-
+    expiration = models.DateField(null=True, blank=True)
+    
     def save(self, *args, **kwargs) -> None:
         """
         Reeimplented Model.save method for creating a BlameAPI.ChangeLog register everytime
@@ -78,6 +79,7 @@ class Product(models.Model):
         Returns active offer
         """
         return self.offers.filter(end_date__gte=timezone.now()).first()
+
 
 
 class Offer(models.Model):
