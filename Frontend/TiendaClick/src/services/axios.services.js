@@ -439,26 +439,93 @@ async function fetchPaymentMethods(token) {
   }
 }
 
-async function fetchCategories(token) {
+async function fetchCategories(setLoading, token) {
   try {
-    const response = await axios.get(`${apiUrl}categories/`, authHeader(token));
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener las categorías:", error);
-    return { results: [] };
+    const response = await axios.get(
+      `${apiUrl}categories/`,
+      authHeader(token)
+    );
+
+    const { success, error, data } = response.data;
+
+    if (!success) {
+      return { success: false, error };
+    }
+
+    return {
+      success: true,
+      error: "",
+      data: Array.isArray(data) ? data : [] 
+    };
+
+  } catch (err) {
+    return {
+      success: false,
+      error: err?.message || "Error al obtener categorías",
+    };
   }
 }
 
 async function addCategory(category, token) {
-  return axios.post(`${apiUrl}categories/`, category, authHeader(token));
+  try {
+    const response = await axios.post(
+      `${apiUrl}categories/`,
+      category,
+      authHeader(token)
+    );
+
+    const { success, error, data } = response.data;
+
+    if (!success) {
+      throw new Error(error);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Error al crear la categoría:", err.message);
+    throw err;
+  }
 }
 
 async function updateCategory(category, token) {
-  return axios.put(`${apiUrl}categories/${category.id}/`, category, authHeader(token));
+  try {
+    const response = await axios.put(
+      `${apiUrl}categories/${category.id}/`,
+      category,
+      authHeader(token)
+    );
+
+    const { success, error, data } = response.data;
+
+    if (!success) {
+      throw new Error(error);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Error al actualizar la categoría:", err.message);
+    throw err;
+  }
 }
 
 async function deleteCategory(category, token) {
-  return axios.delete(`${apiUrl}categories/${category.id}/`, authHeader(token));
+  try {
+    const response = await axios.delete(
+      `${apiUrl}categories/${category.id}/`,
+      authHeader(token)
+    );
+
+    const { success, error } = response.data;
+
+    if (!success) {
+      throw new Error(error);
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Error al eliminar la categoría:", err.message);
+    throw err;
+  }
 }
 
 // STATISTICS FUNCTIONS

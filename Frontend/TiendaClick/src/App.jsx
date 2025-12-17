@@ -66,7 +66,9 @@ function App() {
           <Route
             path="/categories/"
             element={
-              <Categories />
+              <PrivateRoute>
+                <Categories />
+              </PrivateRoute>
             }
           />
           <Route

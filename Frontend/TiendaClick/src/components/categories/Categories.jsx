@@ -7,6 +7,7 @@ import Table from '../crud/Table.jsx';
 import Pagination from '../inventory/Pagination.jsx';
 import AddCategoryContent from './forms/AddCategoryContent.jsx';
 import InfoCategoryContent from './forms/InfoCategoryContent.jsx';
+import { useNotifications } from '../../context/NotificationSystem';
 
 export default function Categories() {
 
@@ -19,6 +20,7 @@ export default function Categories() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false);
     const PAGE_SIZE = 10;
+    const { addNotification } = useNotifications();
 
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
@@ -27,11 +29,20 @@ export default function Categories() {
 
     useEffect(() => {
         const loadcategories = async () => {
-            const results = await fetchCategories(
+            const {success, error, data} = await fetchCategories(
                 setLoading,
                 user.token,
             );
-            setCategories(results);
+            if (!success) {
+                if (error) {
+                    addNotification("error", error);
+                }
+                setCategories([]);
+                setLoading(false);
+                return;
+            }
+            console.log("DATA CATEGORIES:", data, Array.isArray(data));
+            setCategories(data);
             setCount(count);
             setTotalPages(Math.ceil(count / PAGE_SIZE));
             setLoading(false);
