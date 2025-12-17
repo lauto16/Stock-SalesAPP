@@ -35,6 +35,9 @@ router_sales.register(r'sales', SaleViewSet, basename='sale')
 router_sales_stats = DefaultRouter()
 router_sales_stats.register(r'sales_stats', SalesStatsViewSet, basename='sale_stat')
 
+router_sales_download_excel = DefaultRouter()
+router_sales_download_excel.register(r'sales_download_excel', SaleDownloadExcelView, basename='sale_download_excel')
+
 router_employees_stats = DefaultRouter()
 router_employees_stats.register(r'employees_stats', EmployeesStatsViewSet, basename='employee_stat')
 
@@ -70,5 +73,6 @@ urlpatterns = [
     path('api/', include(router_users_admin_functions.urls)),
     path('api/login/', obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
-    path('tests/sales_test', test_sales, name='test_sales')
+    path('tests/sales_test', test_sales, name='test_sales'),
+    path('api/', include(router_sales_download_excel.urls)),
 ]

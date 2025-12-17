@@ -4,11 +4,12 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.http import JsonResponse
 from django.utils import timezone
 from django.db import transaction
 from rest_framework.views import APIView
 from .models import Sale
-
+from forms.export_to_excel import export_to_excel
 class SalePagination(PageNumberPagination):
     """
     Custom pagination class that standardizes the API response format.
@@ -206,3 +207,20 @@ class SaleSearchView(APIView):
 
         serializer = SaleSerializer(matched_sales, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SaleDownloadExcelView(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        columns = [
+            ("Fecha", "created_at"),
+            ("Monto", "total_price"),
+            ("Metodo de pago", "payment_method"),
+            ("Usuario", "created_by__username"),
+        ]
+        filename = "ventas"
+        sales = Sale.objects.all()
+        serializer = SaleSerializer(sales, many=True)
+        print("llegueee")
+        export_to_excel(filename, columns, serializer.data)
+        return JsonResponse({"success":False})

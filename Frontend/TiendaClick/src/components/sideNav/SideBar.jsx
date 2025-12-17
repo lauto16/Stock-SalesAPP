@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import SideBarBrand from './SideBarBrand.jsx';
 import ConfirmationModal from '../crud/ConfirmationModal.jsx'
 import NavLink from './NavLink'
+import { Button } from 'react-bootstrap';
+import { fetchSalesDownloadExcel } from '../../services/forms.services.js';
 
 function SideBar({ onLogout }) {
     const [showModal, setShowModal] = useState(false);
-
+    const token = localStorage.getItem('token');
     const handleClose = () => setShowModal(false);
-    const handleOpen = () => setShowModal(true);
     const confirmLogout = () => {
         setShowModal(false);
         onLogout?.();
@@ -39,7 +40,7 @@ function SideBar({ onLogout }) {
 
 
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
-                                <NavLink name="Informe de Ventas" />
+                                <Button onClick={() => fetchSalesDownloadExcel(token)}>Informe de Ventas</Button>
                                 <li className="nav-header">USUARIOS</li>
                                 <NavLink name="Crear nuevo usuario" url="/sign-up" />
                                 <NavLink name="Eliminar usuarios" url="/delete-user" />
