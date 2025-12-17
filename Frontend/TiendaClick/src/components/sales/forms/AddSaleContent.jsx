@@ -25,7 +25,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
 
     useEffect(() => {
         const active_offers = []
-    
+
         selectedProducts.forEach(product => {
             if (product.offers_data) {
                 active_offers.push({
@@ -35,7 +35,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 })
             }
         })
-    
+
         setAllActiveOffers(active_offers)
     }, [selectedProducts])
 
@@ -45,7 +45,6 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     useEffect(() => {
         fetchPaymentMethods(user.token).then((data) => {
             setPaymentMethods(data);
-            console.log(data);
 
         });
     }, []);
@@ -76,7 +75,8 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     const calculateSubtotal = () => {
         return selectedProducts.reduce((total, product) => {
             const quantity = parseFloat(watchedQuantities[`quantity_${product.code}`]) || 1;
-            return total + (product.sell_price * quantity);
+            const offerPrice = product.sell_price * quantity * product.offers_data.percentage / 100;
+            return total + (product.sell_price * quantity) - offerPrice;
         }, 0);
     };
 
@@ -250,53 +250,52 @@ export default function AddSaleContent({ register, control, errors, watch }) {
             </Col>}
 
             <Col md={12}>
-                {allActiveOffers && allActiveOffers.length > 0 && (
-                    <>
-                        <hr />
-                        <h5>Ofertas activas</h5>
+                {/* active offers */}
+                <>
+                    <hr />
+                    <h5>Ofertas activas</h5>
 
-                        {allActiveOffers.map((offer, idx) => {
-                            const isLast = idx === allActiveOffers.length - 1
+                    {allActiveOffers.filter((offer) => offer.percentage > 0).map((offer, idx) => {
+                        const isLast = idx === allActiveOffers.length - 1
+                        console.log(offer)
+                        return (
+                            <div key={`${offer.product_code}-${offer.id}`}>
+                                <Row className="g-3 mb-3">
+                                    <Col md={3}>
+                                        <p className="fw-bold mb-1">{offer.name}</p>
+                                        <small className="text-muted">
+                                            {offer.product_name}
+                                        </small>
+                                    </Col>
 
-                            return (
-                                <div key={`${offer.product_code}-${offer.id}`}>
-                                    <Row className="g-3 mb-3">
-                                        <Col md={3}>
-                                            <p className="fw-bold mb-1">{offer.name}</p>
-                                            <small className="text-muted">
-                                                {offer.product_name}
-                                            </small>
-                                        </Col>
+                                    <Col md={2}>
+                                        <Form.Group>
+                                            <Form.Label>Porcentaje</Form.Label>
+                                            <Form.Control
+                                                type="number"
+                                                value={offer.percentage}
+                                                disabled
+                                            />
+                                        </Form.Group>
+                                    </Col>
 
-                                        <Col md={2}>
-                                            <Form.Group>
-                                                <Form.Label>Porcentaje</Form.Label>
-                                                <Form.Control
-                                                    type="number"
-                                                    value={offer.percentage}
-                                                    disabled
-                                                />
-                                            </Form.Group>
-                                        </Col>
+                                    <Col md={3}>
+                                        <Form.Group>
+                                            <Form.Label>Fecha fin</Form.Label>
+                                            <Form.Control
+                                                type="date"
+                                                value={offer.end_date}
+                                                disabled
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
-                                        <Col md={3}>
-                                            <Form.Group>
-                                                <Form.Label>Fecha fin</Form.Label>
-                                                <Form.Control
-                                                    type="date"
-                                                    value={offer.end_date}
-                                                    disabled
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-
-                                    {!isLast && <hr />}
-                                </div>
-                            )
-                        })}
-                    </>
-                )}
+                                {!isLast && <hr />}
+                            </div>
+                        )
+                    })}
+                </>
             </Col>
             {/* Summary Table */}
             {selectedProducts.length > 0 && (
@@ -311,35 +310,35 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     <th className="text-center">Cantidad</th>
                                     <th className="text-end">Precio Unit.</th>
                                     <th className="text-end">Subtotal</th>
-                                    <th className="text-end">Menos oferta</th>
+                                    <th className="text-end">Oferta aplicada</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {selectedProducts.map((product) => {
-                                    const quantity = watchedQuantities[`quantity_${product.code}`] || 1;
-                                    const subtotal = product.sell_price * quantity;
-                                    const subtotal_minus_offers = subtotal - (subtotal * product.offers_data.percentage / 100)
+                                    const quantity = parseFloat(watchedQuantities[`quantity_${product.code}`]);
+                                    const productSubtotal = product.sell_price * quantity;
+                                    const offerPrice = (productSubtotal * product.offers_data.percentage / 100)
                                     return (
                                         <tr key={product.code}>
                                             <td>{product.name}</td>
                                             <td>{product.code}</td>
                                             <td className="text-center">{quantity}</td>
                                             <td className="text-end">${product.sell_price.toFixed(2)}</td>
-                                            <td className="text-end">${subtotal.toFixed(2)}</td>
-                                            <td className="text-end">${subtotal_minus_offers.toFixed(2)}</td>
+                                            <td className="text-end">${productSubtotal.toFixed(2)}</td>
+                                            <td className="text-end">${offerPrice.toFixed(2)}</td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                             <tfoot className="table-secondary">
                                 <tr>
-                                    <td colSpan="4" className="text-end"><strong>Subtotal:</strong></td>
+                                    <td colSpan="5" className="text-end"><strong>Subtotal:</strong></td>
                                     <td className="text-end"><strong>${calculateSubtotal().toFixed(2)}</strong></td>
                                 </tr>
 
                                 {chargePercentage > 0 && (
                                     <tr>
-                                        <td colSpan="4" className="text-end">
+                                        <td colSpan="5" className="text-end">
                                             <strong>Recargo ({chargePercentage}%):</strong>
                                         </td>
                                         <td className="text-end text-danger">
@@ -347,8 +346,9 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                         </td>
                                     </tr>
                                 )}
+
                                 <tr className="table-success">
-                                    <td colSpan="4" className="text-end"><strong>TOTAL:</strong></td>
+                                    <td colSpan="5" className="text-end"><strong>TOTAL:</strong></td>
                                     <td className="text-end"><strong>${calculateTotal().toFixed(2)}</strong></td>
                                 </tr>
                             </tfoot>
