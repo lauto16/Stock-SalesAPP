@@ -120,7 +120,7 @@ class ProductValidator:
                         "error": "El precio de venta debe ser mayor a 0.",
                     }
 
-            if provider is not None:
+            if provider:
                 try:
                     provider_id = int(provider)
                 except ValueError:
@@ -134,14 +134,13 @@ class ProductValidator:
                         "success": False,
                         "error": "El proveedor especificado no existe.",
                     }
-                    
-            if category is not None:
-                if not Provider.objects.filter(name=category).exists():
+
+            if category:
+                if not category.objects.filter(name=category).exists():
                     return {
                         "success": False,
-                        "error": "El proveedor especificado no existe.",
+                        "error": "La categoria especificada no existe.",
                     }
-
 
             return {"success": True, "error": None}
 
@@ -456,8 +455,6 @@ class OfferViewSet(viewsets.ModelViewSet):
             end_date = request.data.get("end_date")
             products_ids = request.data.get("products")
 
-            
-            
             if not name:
                 return Response(
                     {"success": False, "error": "El nombre es obligatorio."}, 400
@@ -493,17 +490,21 @@ class OfferViewSet(viewsets.ModelViewSet):
                 )
 
             products = Product.objects.filter(pk__in=products_ids)
-            
+
             if products.count() != len(products_ids):
                 return Response(
                     {"success": False, "error": "Uno o más productos no existen."}, 400
                 )
-                
+
             for product in products:
                 if product.has_discount():
                     return Response(
-                    {"success": False, "error": f"{product.name} ya tiene una oferta asignada"}, 400
-                )
+                        {
+                            "success": False,
+                            "error": f"{product.name} ya tiene una oferta asignada",
+                        },
+                        400,
+                    )
 
             offer = Offer.objects.create(
                 name=name,
@@ -603,6 +604,7 @@ class ProductSearchView(APIView):
     """
     Performs a relevance-based search across products by name, code, or stock.
     """
+
     def get(self, request):
         query = request.GET.get("q", "").strip().lower()
         if not query:
@@ -616,7 +618,7 @@ class ProductSearchView(APIView):
             code = product.code.lower() if product.code else ""
             stock_str = str(product.stock) if product.stock is not None else ""
             category = product.category.name if product.category is not None else ""
-            
+
             if query in name:
                 score += 5
                 if name.startswith(query):

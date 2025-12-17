@@ -115,17 +115,13 @@ export default function InventoryPage() {
         }
 
         try {
-            const data = await fetchGetByCode(firstSelected.code, user.token);  // <-- token aquí
-            const buy_price_iva = data.buy_price * 1.21;
-            const sell_price_iva = data.sell_price * 1.21;
+            const data = await fetchGetByCode(firstSelected.code, user.token);
             const margin_percent = data.buy_price > 0
                 ? `${Math.round(((data.sell_price - data.buy_price) / data.buy_price) * 100)}%`
                 : "0%";
 
             setSelectedProduct({
                 ...data,
-                buy_price_iva,
-                sell_price_iva,
                 margin_percent,
             });
 

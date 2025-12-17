@@ -71,7 +71,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                     <Controller
                         name="provider"
                         control={control}
-                        rules={{ required: "El proveedor es requerido" }}
                         render={({ field }) => (
                             <Select
                                 {...field}
@@ -95,6 +94,9 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                     )}
                 </Form.Group>
             </Col>
+
+            
+
             <Col md={6} className="d-flex flex-column">
                 <CustomInput
                     label='Precio de compra'
@@ -138,7 +140,11 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                     <Controller
                         name="category"
                         control={control}
-                        defaultValue={categories.find(c => (c.name).toLowerCase() === 'sin categoria')?.name}
+                        defaultValue={
+                            categories?.find(
+                                c => c.name.toLowerCase() === 'sin categoria'
+                            )?.id ?? ""
+                        }
                         render={({ field }) => (
                             <Form.Select
                                 {...field}
@@ -154,9 +160,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                             </Form.Select>
                         )}
                     />
-                    {errors.category && (
-                        <small className="text-danger">{errors.category.message}</small>
-                    )}
                 </Form.Group>
             </Col>
             <Col md={6} className="d-flex flex-column">

@@ -6,6 +6,7 @@ import CustomInput from "../crud/CustomInput";
 import { fetchProviders, updateProduct } from "../../services/axios.services";
 import { useNotifications } from "../../context/NotificationSystem";
 import { useUser } from "../../context/UserContext";
+import { useCategories } from "../Hooks/useCategories.js";
 
 export default function ProductInfoModal({ show, handleClose, product, unselectAll, reloadPageOne }) {
     const {
@@ -26,6 +27,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const [providers, setProviders] = useState([]);
     const { user } = useUser();
     const [isSending, setIsSending] = useState(false)
+    const { categories } = useCategories(user.token);
 
     useEffect(() => {
         
@@ -55,8 +57,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
         if (Number(purchasePrice) === 0) return 0;
         return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
     };
-
-    const calculateIVA = (value) => (value * 1.21).toFixed(2);
 
     const onSubmit = async (data) => {
         try {
@@ -122,7 +122,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 <Controller
                                     name="provider"
                                     control={control}
-                                    rules={{ required: true }}
+                                    rules={{ required: false }}
                                     render={({ field }) => {
                                         const selectedOption = providers.find(p => p.id === field.value);
 
@@ -142,11 +142,38 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                         );
                                     }}
                                 />
-                                {errors.provider && (
-                                    <small className="text-danger">El proveedor es requerido</small>
-                                )}
                             </Form.Group>
                         </Col>
+
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Categoria</Form.Label>
+                                <Controller
+                                    name="category"
+                                    control={control}
+                                    rules={{ required: false }}
+                                    render={({ field }) => {
+                                        const selectedOption = categories.find(p => p.id === field.value);
+
+                                        return (
+                                            <Select
+                                                {...field}
+                                                value={
+                                                    selectedOption
+                                                        ? { value: selectedOption.id, label: selectedOption.name }
+                                                        : null
+                                                }
+                                                onChange={(option) => field.onChange(option ? option.value : null)}
+                                                options={categories.map(p => ({ value: p.id, label: p.name }))}
+                                                placeholder="Seleccionar categoria..."
+                                                isSearchable
+                                            />
+                                        );
+                                    }}
+                                />
+                            </Form.Group>
+                        </Col>
+
                         <Col md={6}>
                             <CustomInput
                                 label="Stock"
@@ -176,26 +203,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 placeholder="Precio de venta"
                                 register={register("sellingPrice", { valueAsNumber: true })}
                             />
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Precio compra + IVA</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={`$${calculateIVA(purchasePrice)}`}
-                                    disabled
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Precio venta + IVA</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={`$${calculateIVA(sellingPrice)}`}
-                                    disabled
-                                />
-                            </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
@@ -234,7 +241,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                             <h5>Oferta(s) activa(s)</h5>
                             {product.offers_data.map((offer, idx) => {
                                 const priceWithOffer = product.sell_price * (1 + offer.percentage / 100);
-                                const priceWithOfferIVA = priceWithOffer * 1.21;
                                 const isLast = idx === product.offers_data.length - 1;
 
                                 return (
@@ -257,20 +263,10 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                             </Col>
                                             <Col md={2}>
                                                 <Form.Group>
-                                                    <Form.Label>Precio sin IVA</Form.Label>
+                                                    <Form.Label>Precio</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         value={`$${priceWithOffer.toFixed(2)}`}
-                                                        disabled
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label>Precio con IVA</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={`$${priceWithOfferIVA.toFixed(2)}`}
                                                         disabled
                                                     />
                                                 </Form.Group>

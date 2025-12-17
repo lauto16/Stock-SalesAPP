@@ -7,6 +7,11 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
     // Only discount percentage and discount reason are editable
     // Products and quantities cannot be modified after sale creation
 
+    const formatDate = (isoString) => {
+        if (!isoString) return "";
+        return isoString.slice(0, 10).replaceAll("-", "/");
+      };
+
     // Transform items to flatten product data for table display
     const tableItems = selectedItem.items?.map(item => ({
         code: item.product?.code || 'N/A',
@@ -40,10 +45,10 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
                 <div className="alert alert-info">
                     <h6>Información de la venta</h6>
                     <p className="mb-1"><strong>ID:</strong> #{selectedItem.id}</p>
-                    <p className="mb-1"><strong>Fecha:</strong> {selectedItem.created_at}</p>
+                    <p className="mb-1"><strong>Fecha:</strong> {formatDate(selectedItem.created_at)}</p>
                     <p className="mb-1"><strong>Vendedor:</strong> {selectedItem.created_by || 'N/A'}</p>
                     <p className="mb-1"><strong>Productos:</strong> {selectedItem.product_count || selectedItem.items?.length || 0}</p>
-                    <p className="mb-0"><strong>Total (sin descuento):</strong> ${selectedItem.initial_price.toFixed(2) || selectedItem.total_price.toFixed(2)}</p>
+                    <p className="mb-0"><strong>Total:</strong> ${selectedItem.total_price}</p>
                 </div>
             </Col>
 

@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { fetchCategories } from "../../services/axios.services";
+
 export function useCategories(token) {
-    const [categories, setCategories] = useState([])
-    useEffect(() => {
-        fetchCategories(token)
-            .then((res) => { setCategories(res.data) })
-            .catch((err) => console.error('Error, no se pudieron cargar los datos: ', err))
-    }, [])
-    return {
-        categories,
-        setCategories
-    }
+  const [categories, setCategories] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategories(setLoading, token)
+      .then((data) => setCategories(data.data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  return {
+    categories,
+    setCategories,
+    error,
+    loading
+  };
 }
