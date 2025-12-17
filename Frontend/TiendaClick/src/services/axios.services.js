@@ -1,7 +1,5 @@
 import axios from 'axios';
-
-const apiUrl = `http://${window.location.hostname}:8000/api/`;
-
+import { apiUrl, authHeader } from './consts';
 async function verifyPin(pin, token) {
   try {
     const response = await axios.get(`${apiUrl}login/verify-user-pin/${pin}/`, authHeader(token));
@@ -39,13 +37,7 @@ function logoutUser(token) {
   return true
 }
 
-function authHeader(token) {
-  return {
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-  };
-}
+
 
 async function addProduct(product, token) {
   console.log(product)
