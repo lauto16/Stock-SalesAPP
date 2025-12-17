@@ -90,7 +90,9 @@ export default function AddSaleContent({ register, control, errors, watch }) {
         const charge = calculateCharge();
         return subtotal + charge;
     };
-
+    const activeOffers = allActiveOffers.filter(
+        offer => offer.percentage > 0
+    );
 
     return (
         <Row className="g-3">
@@ -248,54 +250,54 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                     )}
                 </Form.Group>
             </Col>}
-
+            {/* active offers */}
             <Col md={12}>
-                {/* active offers */}
-                <>
-                    <hr />
-                    <h5>Ofertas activas</h5>
+                {activeOffers.length > 0 && (
+                    <>
+                        <hr />
+                        <h5>Ofertas activas</h5>
 
-                    {allActiveOffers.filter((offer) => offer.percentage > 0).map((offer, idx) => {
-                        const isLast = idx === allActiveOffers.length - 1
-                        console.log(offer)
-                        return (
-                            <div key={`${offer.product_code}-${offer.id}`}>
-                                <Row className="g-3 mb-3">
-                                    <Col md={3}>
-                                        <p className="fw-bold mb-1">{offer.name}</p>
-                                        <small className="text-muted">
-                                            {offer.product_name}
-                                        </small>
-                                    </Col>
+                        {activeOffers.map((offer, idx) => {
+                            const isLast = idx === allActiveOffers.length - 1
+                            return (
+                                <div key={`${offer.product_code}-${offer.id}`}>
+                                    <Row className="g-3 mb-3">
+                                        <Col md={3}>
+                                            <p className="fw-bold mb-1">{offer.name}</p>
+                                            <small className="text-muted">
+                                                {offer.product_name}
+                                            </small>
+                                        </Col>
 
-                                    <Col md={2}>
-                                        <Form.Group>
-                                            <Form.Label>Porcentaje</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                value={offer.percentage}
-                                                disabled
-                                            />
-                                        </Form.Group>
-                                    </Col>
+                                        <Col md={2}>
+                                            <Form.Group>
+                                                <Form.Label>Porcentaje</Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={offer.percentage}
+                                                    disabled
+                                                />
+                                            </Form.Group>
+                                        </Col>
 
-                                    <Col md={3}>
-                                        <Form.Group>
-                                            <Form.Label>Fecha fin</Form.Label>
-                                            <Form.Control
-                                                type="date"
-                                                value={offer.end_date}
-                                                disabled
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
+                                        <Col md={3}>
+                                            <Form.Group>
+                                                <Form.Label>Fecha fin</Form.Label>
+                                                <Form.Control
+                                                    type="date"
+                                                    value={offer.end_date}
+                                                    disabled
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
 
-                                {!isLast && <hr />}
-                            </div>
-                        )
-                    })}
-                </>
+                                    {!isLast && <hr />}
+                                </div>
+                            )
+                        })
+                        }
+                    </>)}
             </Col>
             {/* Summary Table */}
             {selectedProducts.length > 0 && (
