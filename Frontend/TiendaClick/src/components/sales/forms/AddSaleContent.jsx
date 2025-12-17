@@ -337,10 +337,6 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     <td className="text-end"><strong>${calculateSubtotal().toFixed(2)}</strong></td>
                                 </tr>
 
-                                <tr>
-                                    <td colSpan="4" className="text-end"><strong>IVA:</strong></td>
-                                    <td className="text-end"><strong>21%</strong></td>
-                                </tr>
                                 {chargePercentage > 0 && (
                                     <tr>
                                         <td colSpan="4" className="text-end">

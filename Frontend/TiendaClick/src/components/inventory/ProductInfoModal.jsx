@@ -58,8 +58,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
         return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
     };
 
-    const calculateIVA = (value) => (value * 1.21).toFixed(2);
-
     const onSubmit = async (data) => {
         try {
             const { success, error } = await updateProduct(
@@ -208,26 +206,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Precio compra + IVA</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={`$${calculateIVA(purchasePrice)}`}
-                                    disabled
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Precio venta + IVA</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={`$${calculateIVA(sellingPrice)}`}
-                                    disabled
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group>
                                 <Form.Label>% Ganancia</Form.Label>
                                 <div className="input-group">
                                     <span className="input-group-text bg-white">%</span>
@@ -263,7 +241,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                             <h5>Oferta(s) activa(s)</h5>
                             {product.offers_data.map((offer, idx) => {
                                 const priceWithOffer = product.sell_price * (1 + offer.percentage / 100);
-                                const priceWithOfferIVA = priceWithOffer * 1.21;
                                 const isLast = idx === product.offers_data.length - 1;
 
                                 return (
@@ -286,20 +263,10 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                             </Col>
                                             <Col md={2}>
                                                 <Form.Group>
-                                                    <Form.Label>Precio sin IVA</Form.Label>
+                                                    <Form.Label>Precio</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         value={`$${priceWithOffer.toFixed(2)}`}
-                                                        disabled
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label>Precio con IVA</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={`$${priceWithOfferIVA.toFixed(2)}`}
                                                         disabled
                                                     />
                                                 </Form.Group>
