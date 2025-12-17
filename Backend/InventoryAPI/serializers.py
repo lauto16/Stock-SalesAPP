@@ -125,9 +125,8 @@ class ProductSerializer(serializers.ModelSerializer):
         Returns:
             list: A list of OfferSerializer representations.
         """
-        now = timezone.now().date()
-        offers = obj.offers.filter(end_date__gte=now)
-        return OfferSerializer(offers, many=True, context=self.context).data
+        offer = obj.get_active_discount()
+        return OfferSerializer(offer, many=False, context=self.context).data
 
 
 class OfferPagination(PageNumberPagination):

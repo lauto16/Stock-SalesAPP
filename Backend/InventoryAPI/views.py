@@ -456,6 +456,8 @@ class OfferViewSet(viewsets.ModelViewSet):
             end_date = request.data.get("end_date")
             products_ids = request.data.get("products")
 
+            
+            
             if not name:
                 return Response(
                     {"success": False, "error": "El nombre es obligatorio."}, 400
@@ -491,10 +493,16 @@ class OfferViewSet(viewsets.ModelViewSet):
                 )
 
             products = Product.objects.filter(pk__in=products_ids)
-            print(products_ids)
+            
             if products.count() != len(products_ids):
                 return Response(
                     {"success": False, "error": "Uno o más productos no existen."}, 400
+                )
+                
+            for product in products:
+                if product.has_discount():
+                    return Response(
+                    {"success": False, "error": f"{product.name} ya tiene una oferta asignada"}, 400
                 )
 
             offer = Offer.objects.create(

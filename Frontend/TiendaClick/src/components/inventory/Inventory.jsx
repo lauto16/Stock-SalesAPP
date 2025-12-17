@@ -12,8 +12,6 @@ import {
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
-import CreateOfferModal from "./CreateOfferModal.jsx";
-import addItemConfig from "./forms/ContentAddProduct.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from '../../context/NotificationSystem';
 import { useModal } from "../crud/hooks/useModal.js";
@@ -37,7 +35,6 @@ export default function InventoryPage() {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
-    const [showOfferModal, setShowOfferModal] = useState(false);
     const { addNotification } = useNotifications();
 
     const { user } = useUser();
@@ -263,12 +260,6 @@ export default function InventoryPage() {
         title: 'Aumentar precios',
         icon: 'bi bi-graph-up-arrow me-2',
     },
-    {
-        action: setShowOfferModal,
-        SomethingSelectedNeeded: true,
-        icon: "bi bi-clock-history me-2",
-        title: 'Oferta temporal'
-    }
     ]
 
     const downloadExcelFile = () => {
@@ -289,14 +280,6 @@ export default function InventoryPage() {
     return (
         <RequirePermission permission="access_inventory">
             <div className="d-flex justify-content-center mt-5">
-                <CreateOfferModal
-                    show={showOfferModal}
-                    handleClose={() => setShowOfferModal(false)}
-                    selectedItems={selectedItems}
-                    setSelectedItems={setSelectedItems}
-                    setIsSomethingSelected={setIsSomethingSelected}
-                    fetchGetByCode={fetchGetByCode}
-                />
                 <ConfirmationModal
                     show={showConfirmation}
                     title={confirmationTitle}

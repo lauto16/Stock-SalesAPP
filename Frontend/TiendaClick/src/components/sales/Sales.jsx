@@ -4,9 +4,14 @@ import Table from "../crud/Table.jsx";
 import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "../inventory/Search.jsx";
-import { fetchSales, fetchSearchSales, deleteSaleById, addSale } from "../../services/axios.services.js";
+import {
+  fetchSales,
+  fetchSearchSales,
+  deleteSaleById,
+  addSale,
+} from "../../services/axios.services.js";
 import { useUser } from "../../context/UserContext.jsx";
-import { useNotifications } from '../../context/NotificationSystem';
+import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddSaleContent from "./forms/AddSaleContent.jsx";
 import InfoFormContent from "./forms/InfoFormContent.jsx";
@@ -36,25 +41,29 @@ export default function Sales() {
     { className: "hour", key: "hour", label: "Hora" },
   ];
 
-  const formatDate = (str) => {
-    return str.slice(0, 10).replace("-", "/")
+  /* =======================
+     FORMAT HELPERS
+     ======================= */
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "";
+    return isoString.slice(0, 10).replaceAll("-", "/");
   };
 
   const formatHour = (isoString) => {
-    return new Date(isoString).toLocaleTimeString("es-CA", {
+    if (!isoString) return "";
+    return new Date(isoString).toLocaleTimeString("es-AR", {
       timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
       hour12: false,
     });
   };
 
-  const formatSalesData = (data) => {
+  const formatSalesData = (data = []) => {
     return data.map((sale) => {
       const percentage = sale.applied_charge_percentage ?? 0;
-      const percentageElement = (
-        <span style={{ color: percentage >= 0 ? "green" : "red" }}>
-          {percentage}%
-        </span>
-      );
 
       return {
         ...sale,
@@ -63,16 +72,25 @@ export default function Sales() {
         final_price: sale.final_price?.toFixed(2) ?? "0.00",
         charge_reason: (
           <>
-            {sale.charge_reason} ({percentageElement})
+            {sale.charge_reason} (
+            <span style={{ color: percentage >= 0 ? "green" : "red" }}>
+              {percentage}%
+            </span>
+            )
           </>
         ),
-        product_count: sale.items.length ?? 0,
+        product_count: sale.items?.length ?? 0,
       };
     });
   };
 
+  /* =======================
+     FETCH NORMAL
+     ======================= */
+
   useEffect(() => {
     if (isSearching) return;
+
 
     const fetchData = async () => {
       setLoading(true);
@@ -102,39 +120,57 @@ export default function Sales() {
     if (user?.token) fetchData();
   }, [currentPage, isSearching, user]);
 
-
-
-
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  /* =======================
+     SEARCH
+     ======================= */
 
   const handleSearchSubmit = async (query) => {
-    if (query.length >= 2) {
-      setIsSearching(true);
-      setCurrentPage(1);
-      setLoading(true);
+    if (query.length < 2) return;
 
-      try {
-        const data = await fetchSearchSales(query, setLoading, user.token);
-        setAllSearchResults(formatSalesData(data));
-        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
-      } catch (error) {
-        addNotification("error", "Error buscando ventas.");
-        setAllSearchResults([]);
-        setTotalPages(1);
-      }
-      setLoading(false);
+    setIsSearching(true);
+    setCurrentPage(1);
+    setLoading(true);
+
+    try {
+      const data = await fetchSearchSales(query, setLoading, user.token);
+      const formatted = formatSalesData(data);
+
+      setAllSearchResults(formatted);
+      setItems(formatted.slice(0, PAGE_SIZE));
+      setTotalPages(Math.ceil(formatted.length / PAGE_SIZE));
+    } catch (error) {
+      addNotification("error", "Error buscando ventas.");
+      setAllSearchResults([]);
+      setItems([]);
+      setTotalPages(1);
     }
+
+    setLoading(false);
   };
 
   const clearSearch = () => {
     setIsSearching(false);
     setSearchInput("");
     setCurrentPage(1);
+  };
+
+
+  useEffect(() => {
+    if (!isSearching) return;
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    setItems(allSearchResults.slice(start, end));
+  }, [currentPage, isSearching, allSearchResults]);
+
+  useEffect(() => {
+    setIsSomethingSelected(selectedItems.size > 0);
+  }, [selectedItems]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   const reloadPageOne = () => {
@@ -144,29 +180,12 @@ export default function Sales() {
     } else {
       setCurrentPage(1);
     }
-    setLoading(true);
-    setTimeout(() => setLoading(false), 0);
-  }
-
-  useEffect(() => {
-    setIsSomethingSelected(selectedItems.size > 0);
-  }, [selectedItems]);
-
-  useEffect(() => {
-    if (!isSearching) return;
-    const total = Math.ceil(allSearchResults.length / PAGE_SIZE);
-    setTotalPages(total);
-
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    setItems(allSearchResults.slice(start, end));
-  }, [allSearchResults, currentPage, isSearching]);
+  };
 
   return (
     <RequirePermission permission="access_sales">
       <div className="d-flex justify-content-center mt-5">
         <div className="container container-modified">
-
           <Header
             title={"VENTAS"}
             isSomethingSelected={isSomethingSelected}
@@ -175,27 +194,20 @@ export default function Sales() {
             user={user}
             items={items}
             deleteItem={deleteSaleById}
-
             isSale={true}
-
-            //implementar logica de paginado 
             reloadPageOne={reloadPageOne}
-            titleAddItem={'Añadir una nueva venta'}
-
+            titleAddItem={"Añadir una nueva venta"}
             AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}
-
-            titleInfoForm={'Informacion de la venta'}
+            titleInfoForm={"Informacion de la venta"}
             onSubmitEditItem={() => { }}
             InfoFormContent={InfoFormContent}
-
             selectedItemsColumns={[
               { className: "id", key: "id", label: "ID" },
               { className: "full_date", key: "full_date", label: "Fecha" },
               { className: "total_price", key: "total_price", label: "Total" },
               { className: "hour", key: "hour", label: "Hora" },
             ]}
-
           />
 
           <div className="table-container">
@@ -221,7 +233,7 @@ export default function Sales() {
               selectedItems={selectedItems}
               setSelectedItems={setSelectedItems}
               setIsSomethingSelected={setIsSomethingSelected}
-              pkName={'id'}
+              pkName={"id"}
             />
 
             <button
