@@ -2,28 +2,15 @@ import { apiUrl, authHeader } from './consts';
 import axios from 'axios';
 
 export async function fetchSalesDownloadExcel(token) {
-    try {
-        const response = await axios.get(`${apiUrl}sales_download_excel/`,
-            { responseType: "blob", headers: authHeader(token) });
-        const blob = new Blob(
-            [response.data],
-            { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }
-        );
+    const response = await axios.get(`${apiUrl}sales_download_excel/`);
 
-        const url = window.URL.createObjectURL(blob);
-
+    if (response.data.success) {
+        const fileUrl = response.data.file_path;
         const link = document.createElement("a");
-        link.href = url;
-        link.download = "ventas.xlsx";
+        link.href = fileUrl;
+        link.setAttribute("download", "");
         document.body.appendChild(link);
         link.click();
         link.remove();
-        window.URL.revokeObjectURL(url);
-        return response.data || null;
-    } catch (error) {
-        console.error("Error al pedir los datos de la descarga de ventas:", error);
-        return null;
     }
 }
-
-

@@ -35,9 +35,6 @@ router_sales.register(r'sales', SaleViewSet, basename='sale')
 router_sales_stats = DefaultRouter()
 router_sales_stats.register(r'sales_stats', SalesStatsViewSet, basename='sale_stat')
 
-router_sales_download_excel = DefaultRouter()
-router_sales_download_excel.register(r'sales_download_excel', SaleDownloadExcelView, basename='sale_download_excel')
-
 router_employees_stats = DefaultRouter()
 router_employees_stats.register(r'employees_stats', EmployeesStatsViewSet, basename='employee_stat')
 
@@ -55,6 +52,7 @@ router_categories.register(r'categories', CategoryViewSet, basename='category')
 
 
 urlpatterns = [
+    path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/sales/search/', SaleSearchView.as_view(), name='sale-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
@@ -74,5 +72,10 @@ urlpatterns = [
     path('api/login/', obtain_auth_token),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('tests/sales_test', test_sales, name='test_sales'),
-    path('api/', include(router_sales_download_excel.urls)),
+    path('api/sales_download_excel', sale_download_excel, name='sale_download_excel')
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

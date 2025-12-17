@@ -10,6 +10,8 @@ from django.db import transaction
 from rest_framework.views import APIView
 from .models import Sale
 from forms.export_to_excel import export_to_excel
+
+
 class SalePagination(PageNumberPagination):
     """
     Custom pagination class that standardizes the API response format.
@@ -18,6 +20,7 @@ class SalePagination(PageNumberPagination):
     total count, navigation links, and the actual data. It also handles
     out-of-bound page requests gracefully.
     """
+
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -32,10 +35,9 @@ class SalePagination(PageNumberPagination):
         try:
             return super().paginate_queryset(queryset, request, view)
         except NotFound:
-            self.error_response = Response({
-                "success": False,
-                "message": "La página solicitada no existe."
-            })
+            self.error_response = Response(
+                {"success": False, "message": "La página solicitada no existe."}
+            )
 
     def get_paginated_response(self, data):
         """
@@ -45,16 +47,18 @@ class SalePagination(PageNumberPagination):
         returns the error response. Otherwise, returns the standard success
         envelope with metadata and the results list.
         """
-        if hasattr(self, 'error_response'):
+        if hasattr(self, "error_response"):
             return self.error_response
 
-        return Response({
-            "success": True,
-            "count": self.page.paginator.count,
-            "next": self.get_next_link(),
-            "previous": self.get_previous_link(),
-            "results": data,
-        })
+        return Response(
+            {
+                "success": True,
+                "count": self.page.paginator.count,
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "results": data,
+            }
+        )
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -64,6 +68,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     Handles listing, creating, retrieving, and deleting sales. It enforces
     authentication, applies custom pagination, and orders results by creation date.
     """
+
     queryset = Sale.objects.all().order_by("-created_at")
     serializer_class = SaleSerializer
     pagination_class = SalePagination
@@ -90,11 +95,15 @@ class SaleViewSet(viewsets.ModelViewSet):
         data if successful.
         """
         if not id:
-            return Response({"error": "ID inválido"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "ID inválido"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         sale = Sale.objects.filter(id=id).first()
         if not sale:
-            return Response({"error": "La venta no existe"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "La venta no existe"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         serializer = self.get_serializer(sale)
         return Response(serializer.data)
@@ -105,7 +114,11 @@ class SaleViewSet(viewsets.ModelViewSet):
         Deletes a sale by ID and restores stock for all products involved in the sale.
         """
         try:
-            sale = Sale.objects.select_related("created_by").prefetch_related("items__product").get(id=id)
+            sale = (
+                Sale.objects.select_related("created_by")
+                .prefetch_related("items__product")
+                .get(id=id)
+            )
         except Sale.DoesNotExist:
             return Response(
                 {"error": f"No se pudo eliminar la venta con ID {id}"},
@@ -131,7 +144,9 @@ class SaleViewSet(viewsets.ModelViewSet):
         handle post-creation business logic (like stock updates).
         """
         with transaction.atomic():
-            sale = serializer.save(created_by=self.request.user, created_at=timezone.now())
+            sale = serializer.save(
+                created_by=self.request.user, created_at=timezone.now()
+            )
             sale.finalize_sale(user=self.request.user)
 
 
@@ -139,6 +154,7 @@ class SaleSearchView(APIView):
     """
     Performs a relevance-based search across sales by date, products, or amount.
     """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -147,16 +163,26 @@ class SaleSearchView(APIView):
             return Response([], status=status.HTTP_200_OK)
 
         results = []
-        sales = Sale.objects.prefetch_related('items__product').all()
+        sales = Sale.objects.prefetch_related("items__product").all()
 
         for sale in sales:
             score = 0
 
-            created_at_str = sale.created_at.strftime("%Y-%m-%d %H:%M:%S").lower() if sale.created_at else ""
-            date_only = sale.created_at.strftime("%Y-%m-%d").lower() if sale.created_at else ""
-            total_price_str = str(sale.total_price) if sale.total_price is not None else ""
-            payment_method = str(sale.payment_method) if sale.payment_method is not None else ""
-            
+            created_at_str = (
+                sale.created_at.strftime("%Y-%m-%d %H:%M:%S").lower()
+                if sale.created_at
+                else ""
+            )
+            date_only = (
+                sale.created_at.strftime("%Y-%m-%d").lower() if sale.created_at else ""
+            )
+            total_price_str = (
+                str(sale.total_price) if sale.total_price is not None else ""
+            )
+            payment_method = (
+                str(sale.payment_method) if sale.payment_method is not None else ""
+            )
+
             if query in created_at_str:
                 score += 5
                 if date_only.startswith(query):
@@ -167,13 +193,13 @@ class SaleSearchView(APIView):
 
             if query == total_price_str:
                 score += 5
-                
+
             if query == payment_method:
                 score += 5
                 if payment_method.startswith(query):
                     score += 3
-            
-            elif query.replace('.', '').isdigit():
+
+            elif query.replace(".", "").isdigit():
                 try:
                     query_amount = float(query)
                     if sale.total_price:
@@ -208,19 +234,22 @@ class SaleSearchView(APIView):
         serializer = SaleSerializer(matched_sales, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class SaleDownloadExcelView(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
-        columns = [
-            ("Fecha", "created_at"),
-            ("Monto", "total_price"),
-            ("Metodo de pago", "payment_method"),
-            ("Usuario", "created_by__username"),
-        ]
-        filename = "ventas"
-        sales = Sale.objects.all()
-        serializer = SaleSerializer(sales, many=True)
-        print("llegueee")
-        export_to_excel(filename, columns, serializer.data)
-        return JsonResponse({"success":False})
+
+def sale_download_excel(request):
+    columns = [
+        ("Fecha", "created_at"),
+        ("Monto", "total_price"),
+        ("Metodo de pago", "payment_method"),
+        ("Usuario", "created_by__username"),
+    ]
+
+    filename = "ventas"
+    sales = Sale.objects.select_related("created_by")
+
+    success, file_path = export_to_excel(filename, columns, sales)
+
+    return JsonResponse({
+        "success": success,
+        "file_path": file_path
+    })

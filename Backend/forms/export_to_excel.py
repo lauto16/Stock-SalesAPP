@@ -1,6 +1,9 @@
 from openpyxl import Workbook
 from django.http import HttpResponse
 import os
+from django.conf import settings
+from PaymentMethodAPI.models import PaymentMethod
+from Auth.models import CustomUser
 
 def export_to_excel(filename: str, columns: list, queryset):
     """
@@ -10,28 +13,31 @@ def export_to_excel(filename: str, columns: list, queryset):
     """
     print("Exportando a excel")
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_folder = os.path.join(script_dir, "planillas_excel")
+    output_folder = os.path.join(settings.MEDIA_ROOT, "planillas_excel")
     os.makedirs(output_folder, exist_ok=True)
     file_name = f'{filename}.xlsx'
     file_path = os.path.join(output_folder, file_name)
 
-
     wb = Workbook()
     ws = wb.active
     ws.title = "Datos"
-    # Headers
     headers = [col[0] for col in columns]
     ws.append(headers)
 
-    # Rows
     for obj in queryset:
         row = []
         for _, field in columns:
             value = getattr(obj, field, "")
+            if (isinstance(value, PaymentMethod)):
+                value = value.name
+            elif (isinstance(value, CustomUser)):
+                value = value.username
+                
             row.append(value)
+                
+                
         ws.append(row)
 
-    # Response HTTP
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
