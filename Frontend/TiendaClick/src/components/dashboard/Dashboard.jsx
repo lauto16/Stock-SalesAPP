@@ -5,6 +5,8 @@ import DashboardHeader from './DashboardHeader.jsx'
 import SideBar from '../sideNav/SideBar.jsx'
 import Nav from '../sideNav/Nav.jsx'
 import Table from '../crud/Table.jsx'
+import Notifications from "../notifications/Notifications";
+
 import {
   fetchLowStock,
   fetchSalesStats,
@@ -185,7 +187,8 @@ function Dashboard() {
                 />
               </div>
 
-                <div className="col-xxl-6 col-12 mb-3">
+              <div className="row">
+                <div className="col-12 mb-3">
                   <div className="card h-100 card-stock">
                     <div className="card-header stock-header">
                       <Link
@@ -195,6 +198,7 @@ function Dashboard() {
                         <h5>Stock Faltante</h5>
                       </Link>
                     </div>
+
                     <div className="scrollable-card-body">
                       <div className="card-header stock-header">
                         <div className="input-group w-auto">
@@ -207,11 +211,7 @@ function Dashboard() {
                             defaultValue={amount}
                             className="form-control"
                             ref={inputRef}
-                            style={{
-                              padding: 0,
-                              textAlign: 'center',
-                              textJustify: 'center',
-                            }}
+                            style={{ padding: 0, textAlign: 'center' }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') handleButtonClick()
                             }}
@@ -225,6 +225,7 @@ function Dashboard() {
                           </button>
                         </div>
                       </div>
+
                       <Table
                         items={products}
                         loading={loading}
@@ -233,6 +234,18 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
+                <div className="col-12 col-xxl-6 mb-3">
+                  <div className="card h-100">
+                    <div className="card-header">
+                      <h5>Notificaciones</h5>
+                    </div>
+                    <div className="scrollable-card-body">
+                      <Notifications />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </section>
           </main>
         </div>

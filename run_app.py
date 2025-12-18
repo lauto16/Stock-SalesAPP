@@ -5,6 +5,8 @@ import socket
 import json
 from datetime import datetime, timedelta
 import shutil
+from Backend.create_notifications import create_expiration_notifications
+
 
 """When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173, also does
 a git pull --force and creates a db.sqlite3 backup every three days"""
@@ -149,6 +151,8 @@ if __name__ == "__main__":
     django_process = None
     react_process = None
 
+    create_expiration_notifications(limit=5)
+    
     last_backup = load_last_backup_time()
 
     if last_backup is None or datetime.now() - last_backup >= timedelta(days=3):

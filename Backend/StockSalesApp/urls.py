@@ -2,6 +2,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from PaymentMethodAPI.views import *
+from NotificationAPI.views import *
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from CategoryAPI.views import *
@@ -10,6 +11,8 @@ from SalesAPI.views import *
 from StatsAPI.views import *
 from AuthAPI.views import *
 from Testing.views import *
+
+
 
 router_blame = DefaultRouter()
 router_blame.register(r'blames', ChangeLogViewSet, basename='blame')
@@ -50,12 +53,17 @@ router_payment_methods.register(r'payment-methods', PaymentMethodViewSet, basena
 router_categories = DefaultRouter()
 router_categories.register(r'categories', CategoryViewSet, basename='category')
 
+router_notifications = DefaultRouter()
+router_notifications.register(r'notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/sales/search/', SaleSearchView.as_view(), name='sale-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
+    path('api/logout/', LogoutView.as_view(), name='logout'),
+    path('tests/sales_test', test_sales, name='test_sales'),
+    path('api/sales_download_excel', sale_download_excel, name='sale_download_excel'),
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
@@ -69,10 +77,9 @@ urlpatterns = [
     path('api/', include(router_payment_methods.urls)),
     path('api/', include(router_categories.urls)),
     path('api/', include(router_users_admin_functions.urls)),
+    path('api/', include(router_notifications.urls)),
     path('api/login/', obtain_auth_token),
-    path('api/logout/', LogoutView.as_view(), name='logout'),
-    path('tests/sales_test', test_sales, name='test_sales'),
-    path('api/sales_download_excel', sale_download_excel, name='sale_download_excel')
+
 ]
 
 from django.conf import settings
