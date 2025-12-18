@@ -21,9 +21,11 @@ def export_to_excel(filename: str, columns: list, queryset):
     wb = Workbook()
     ws = wb.active
     ws.title = "Datos"
+    #headers
     headers = [col[0] for col in columns]
     ws.append(headers)
-
+    
+    #rows
     for obj in queryset:
         row = []
         for _, field in columns:

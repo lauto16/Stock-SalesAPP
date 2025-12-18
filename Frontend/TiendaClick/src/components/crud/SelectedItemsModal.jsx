@@ -36,14 +36,14 @@ export default function SelectedItemsModal({
                     </thead>
                     <tbody>
                         {selectedArray.map((item) => (
-                            <tr key={item?.code ?? item?.id}>
+                            <tr key={item?.code ?? item?.id ?? item?.name}>
                                 {columns.map((column, colIndex) => (
                                     <td key={colIndex}>{item[column.key]}</td>
                                 ))}
                                 <td className="text-center">
                                     <button
                                         className="btn btn-sm btn-remove"
-                                        onClick={() => handleRemove(item.code ?? item.id)}
+                                        onClick={() => handleRemove(item.code ?? item.id ?? item.name)}
                                         title="Deseleccionar"
                                     >
                                         <i className="bi bi-x-lg"></i>
