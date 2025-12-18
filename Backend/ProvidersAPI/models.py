@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from InventoryAPI.models import Product
 from BlameAPI.models import ChangeLog
 from django.db import models
 
@@ -7,41 +8,38 @@ class Provider(models.Model):
     """
     Represents a single provider
     """
-    name = models.CharField(max_length=100, default='')
-    phone = models.CharField(max_length=20, blank=True,
-                             null=True, default='')
-    address = models.CharField(
-        max_length=200, blank=True, null=True,  default="")
 
-    email = models.EmailField(
-        max_length=200, blank=True, null=True, default="")
+    name = models.CharField(max_length=100, default="")
+    phone = models.CharField(max_length=20, blank=True, null=True, default="")
+    address = models.CharField(max_length=200, blank=True, null=True, default="")
+
+    email = models.EmailField(max_length=200, blank=True, null=True, default="")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    products = models.ManyToManyField(Product, related_name="providers", blank=True)
+
     def save(self, *args, **kwargs):
         """
         If its a creation, proceeds with it, otherwise its an update, hence does all
         the necessary steps to create a ChangeLog and change the instance values.
         """
-        user = kwargs.pop('user', None)
+        user = kwargs.pop("user", None)
 
-        if not self.pk:  
-            # Case: Creation
-            if not self.name:  
-                self.name = self._meta.get_field('name').default
+        if not self.pk:
+            if not self.name:
+                self.name = self._meta.get_field("name").default
             if not self.phone:
-                self.phone = self._meta.get_field('phone').default
+                self.phone = self._meta.get_field("phone").default
             if not self.address:
-                self.address = self._meta.get_field('address').default
+                self.address = self._meta.get_field("address").default
             if not self.email:
-                self.email = self._meta.get_field('email').default
+                self.email = self._meta.get_field("email").default
 
         else:
-            # Case: Update
             try:
                 old = Provider.objects.get(pk=self.pk)
-                tracked_fields = ['name', 'phone', 'address', 'email']
+                tracked_fields = ["name", "phone", "address", "email"]
 
                 for field in tracked_fields:
                     old_value = getattr(old, field)

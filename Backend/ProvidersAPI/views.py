@@ -1,11 +1,10 @@
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import viewsets, permissions, status
 from ProvidersAPI.serializers import ProviderSerializer
-from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .serializers import ProviderSerializer
-from rest_framework import viewsets, status
 from ProvidersAPI.models import Provider
 from django.http import HttpRequest
 from django.utils import timezone
@@ -30,6 +29,13 @@ class ProviderValidator:
             phone = data.get("phone")
             address = data.get("address")
             email = data.get("email")
+            products = data.get("products")
+
+            if products is not None and not isinstance(products, list):
+                return {
+                    "success": False,
+                    "error": "El campo 'products' debe ser una lista."
+                }
 
             if name is not None and not name.strip():
                 return {
@@ -129,11 +135,20 @@ class ProviderViewSet(viewsets.ModelViewSet):
             provider, data=request.data, partial=True)
 
         if serializer.is_valid():
-            for attr, value in serializer.validated_data.items():
+            validated_data = serializer.validated_data
+
+            products = validated_data.pop("products", None)
+
+            # Other columns
+            for attr, value in validated_data.items():
                 setattr(provider, attr, value)
 
             provider.updated_at = timezone.now()
-            provider.save(user=request.user)
+            provider.save()
+
+            # ManyToMany columns
+            if products is not None:
+                provider.products.set(products)
 
             return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
 
