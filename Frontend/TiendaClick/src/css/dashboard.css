@@ -70,3 +70,30 @@ main {
 .eye-button {
     box-shadow: none !important;
 }
+
+.notification-card {
+    background-color: #f6f8ee;
+    border-radius: 14px;
+    padding: 12px 14px;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.notification-card:hover {
+    background-color: #f3f1e3;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scrollable-card-body {
+    padding: 12px;
+  }
