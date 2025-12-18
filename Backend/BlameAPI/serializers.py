@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from InventoryAPI.models import Provider
+from ProvidersAPI.models import Provider
 from rest_framework import serializers
 from .models import ChangeLog
 

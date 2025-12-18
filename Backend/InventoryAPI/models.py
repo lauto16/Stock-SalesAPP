@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from ProvidersAPI.models import Provider
 from CategoryAPI.models import Category
 from BlameAPI.models import ChangeLog
 from django.utils import timezone
@@ -16,9 +15,6 @@ class Product(models.Model):
     stock = models.FloatField()
     sell_price = models.FloatField()
     buy_price = models.FloatField()
-    provider = models.ForeignKey(
-        Provider, on_delete=models.SET_NULL, null=True, blank=True
-    )
     last_modification = models.DateField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     expiration = models.DateField(null=True, blank=True)
