@@ -9,6 +9,7 @@ class Notification(models.Model):
         """
         STOCK = "STOCK", "Stock"
         EXPIRATION = "EXP", "Vencimiento"
+        NO_STOCK = "NO_STOCK", 'Cero stock'
 
     name = models.CharField(max_length=200)
     subject = models.CharField(

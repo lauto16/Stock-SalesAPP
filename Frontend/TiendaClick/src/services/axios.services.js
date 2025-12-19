@@ -1,10 +1,23 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
 
-async function fetchNotifications(token) {
+async function fetchUnseenNotifications(token) {
   try {
     const response = await axios.get(
       `${apiUrl}notifications/unseen/`,
+      authHeader(token)
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener notificaciones:", error);
+    return { success: false, data: [] };
+  }
+}
+
+async function fetchSeenNotifications(token) {
+  try {
+    const response = await axios.get(
+      `${apiUrl}notifications/seen/`,
       authHeader(token)
     );
     return response.data;
@@ -682,7 +695,8 @@ export {
   fetchEmployeeSales,
   fetchLowerMarginProducts,
   fetchBestSellingCategories,
-  fetchNotifications,
+  fetchUnseenNotifications,
+  fetchSeenNotifications,
   deleteNotificationById,
   markNotificationAsSeen
 };

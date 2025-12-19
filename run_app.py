@@ -1,12 +1,11 @@
-import subprocess
-import os
-import time
-import socket
-import json
+from Backend.create_notifications import delete_old_notifications, create_expiration_notifications, create_best_sellers_low_stock_notification
 from datetime import datetime, timedelta
+import subprocess
+import socket
 import shutil
-from Backend.create_notifications import create_expiration_notifications
-
+import json
+import time
+import os
 
 """When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173, also does
 a git pull --force and creates a db.sqlite3 backup every three days"""
@@ -63,6 +62,7 @@ def port_in_use(host, port):
 
 
 def start_django():
+    open(BACKEND_LOG, "w", encoding="utf-8").close()
     """Starts django instance"""
     with open(BACKEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Starting Django Server ---\n")
@@ -83,6 +83,7 @@ def start_django():
 
 
 def start_react():
+    open(FRONTEND_LOG, "w", encoding="utf-8").close()
     """Starts react instance"""
     with open(FRONTEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Starting Vite (npm run dev) ---\n")
@@ -151,7 +152,9 @@ if __name__ == "__main__":
     django_process = None
     react_process = None
 
+    delete_old_notifications(months=1)
     create_expiration_notifications(limit=5)
+    create_best_sellers_low_stock_notification(stock_limit=5)
     
     last_backup = load_last_backup_time()
 

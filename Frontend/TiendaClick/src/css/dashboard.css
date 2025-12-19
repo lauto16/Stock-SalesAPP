@@ -72,7 +72,7 @@ main {
 }
 
 .notification-card {
-    background-color: #f6f8ee;
+    background-color: #f0efeb;
     border-radius: 14px;
     padding: 12px 14px;
     transition: background-color 0.3s ease, box-shadow 0.2s ease;
@@ -80,7 +80,7 @@ main {
 }
 
 .notification-card:hover {
-    background-color: #f3f1e3;
+    background-color: #e2e2e2;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
@@ -96,4 +96,85 @@ main {
 
 .scrollable-card-body {
     padding: 12px;
-  }
+}
+
+
+.icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+pulse-strong {
+    animation: pulse-strong 1.2s infinite;
+}
+
+@keyframes pulse-strong {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+.notifications-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    padding: 0.75rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Tabs */
+.tab-btn {
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    color: #374151;
+}
+
+.tab-btn:hover {
+    background: #f3f4f6;
+}
+
+.tab-active {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    font-weight: 600;
+}
+
+.notifications-container {
+  display: block;
+padding: 10px;
+}

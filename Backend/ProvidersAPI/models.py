@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from InventoryAPI.models import Product
 from BlameAPI.models import ChangeLog
 from django.db import models
 
@@ -17,7 +16,6 @@ class Provider(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    products = models.ManyToManyField(Product, related_name="providers", blank=True)
 
     def save(self, *args, **kwargs):
         """

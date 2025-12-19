@@ -2,7 +2,7 @@ import os
 import django
 import random
 from faker import Faker
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StockSalesApp.settings")
 django.setup()
@@ -15,10 +15,6 @@ from Auth.models import CustomUser
 from CategoryAPI.models import Category
 
 fake = Faker()
-
-# -------------------------------------------------
-# Providers
-# -------------------------------------------------
 
 def create_providers(n=100):
     providers = []
@@ -34,17 +30,20 @@ def create_providers(n=100):
     Provider.objects.bulk_create(providers)
     print(f"✅ {n} proveedores creados.")
 
-
-# -------------------------------------------------
-# Products
-# -------------------------------------------------
-
 def create_products(n=200):
     providers = list(Provider.objects.all())
     categories = list(Category.objects.all())
 
+    today = date.today()
+    min_date = today - timedelta(days=2)
+    max_date = today + timedelta(days=60)
+
     products = []
     for _ in range(n):
+        random_expiration = min_date + timedelta(
+            days=random.randint(0, (max_date - min_date).days)
+        )
+
         products.append(
             Product(
                 code=fake.unique.bothify(text="??-###"),
@@ -54,17 +53,13 @@ def create_products(n=200):
                 sell_price=round(random.uniform(1200, 15000), 2),
                 provider=random.choice(providers) if providers else None,
                 category=random.choice(categories) if categories else None,
+                expiration=random_expiration,  # 👈 AQUI
             )
         )
 
     created = Product.objects.bulk_create(products)
-    print(f"✅ {n} productos creados.")
+    print(f"✅ {n} productos creados con vencimiento aleatorio.")
     return created
-
-
-# -------------------------------------------------
-# Sales + SaleItems
-# -------------------------------------------------
 
 def create_sales(n=400, extra_products=None):
     products = list(Product.objects.all())

@@ -236,12 +236,7 @@ function Dashboard() {
                 </div>
                 <div className="col-12 col-xxl-6 mb-3">
                   <div className="card h-100">
-                    <div className="card-header">
-                      <h5>Notificaciones</h5>
-                    </div>
-                    <div className="scrollable-card-body">
                       <Notifications />
-                    </div>
                   </div>
                 </div>
               </div>
