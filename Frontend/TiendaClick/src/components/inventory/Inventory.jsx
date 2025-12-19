@@ -55,6 +55,7 @@ export default function InventoryPage() {
     const [includeCombos, setIncludeCombos] = useState(false);
 
     const PAGE_SIZE = 10;
+
     //table columns
     const columns = [
         { className: "code", key: "code", label: 'Código' },
@@ -89,7 +90,7 @@ export default function InventoryPage() {
             setLoading(true);
 
             const results = await fetchSearchProducts(query, user.token);
-
+            
             setAllSearchResults(results);
             setLoading(false);
         }
@@ -172,7 +173,6 @@ export default function InventoryPage() {
         handleShowConfirmation();
     };
 
-
     const handleUpdatePricesSendForm = async () => {
         const data = {
             percentage: updatePricePercentage,
@@ -200,6 +200,7 @@ export default function InventoryPage() {
         setIsSending(false)
 
     }
+    
     const reloadPageOne = () => {
         if (currentPage === 1) {
             setCurrentPage(2);

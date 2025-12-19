@@ -60,6 +60,7 @@ export default function Offers() {
 
         loadOffers();
     }, [currentPage]);
+    
     useEffect(() => {
         if (selectedItems.size !== 0) {
             setIsSomethingSelected(true)

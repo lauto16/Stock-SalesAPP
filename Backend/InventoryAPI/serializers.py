@@ -42,7 +42,7 @@ class ProductPagination(PageNumberPagination):
         except NotFound:
             self.error_response = Response({
                 "success": False,
-                "message": "La página solicitada no existe."
+                "error": "La página solicitada no existe."
             })
 
     def get_paginated_response(self, data):
@@ -156,7 +156,7 @@ class OfferPagination(PageNumberPagination):
         except NotFound:
             self.error_response = Response({
                 "success": False,
-                "message": "La página solicitada no existe."
+                "error": "La página solicitada no existe."
             })
 
 

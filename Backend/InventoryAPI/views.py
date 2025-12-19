@@ -176,14 +176,14 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         if not code:
             return Response(
-                {"error": "Código inválido"}, status=status.HTTP_400_BAD_REQUEST
+                {"success": False, "error": "Código inválido"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         found = Product.objects.filter(code=code).first()
 
         if not found:
             return Response(
-                {"error": "El producto con este código no existe"},
+                {"success": False, "error": "El producto con este código no existe"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -199,7 +199,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             limit = float(limit)
         except ValueError:
             return Response(
-                {"error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
+                {"success": False, "error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         products = Product.objects.filter(stock__lte=limit).order_by("stock")[:150]
@@ -610,39 +610,43 @@ class ProductSearchView(APIView):
         query = request.GET.get("q", "").strip().lower()
         if not query:
             return Response([], status=status.HTTP_200_OK)
+        try:
+            results = []
+            for product in Product.objects.all():
+                score = 0
 
-        results = []
-        for product in Product.objects.all():
-            score = 0
+                name = product.name.lower() if product.name else ""
+                code = product.code.lower() if product.code else ""
+                stock_str = str(product.stock) if product.stock is not None else ""
+                category = product.category.name if product.category is not None else ""
 
-            name = product.name.lower() if product.name else ""
-            code = product.code.lower() if product.code else ""
-            stock_str = str(product.stock) if product.stock is not None else ""
-            category = product.category.name if product.category is not None else ""
+                if query in name:
+                    score += 5
+                    if name.startswith(query):
+                        score += 3
 
-            if query in name:
-                score += 5
-                if name.startswith(query):
-                    score += 3
+                if query in code:
+                    score += 4
+                    if code.startswith(query):
+                        score += 2
 
-            if query in code:
-                score += 4
-                if code.startswith(query):
+                if query in category:
+                    score += 5
+                    if category.startswith(query):
+                        score += 3
+
+                if query == stock_str:
                     score += 2
 
-            if query in category:
-                score += 5
-                if category.startswith(query):
-                    score += 3
+                if score > 0:
+                    results.append((score, product))
 
-            if query == stock_str:
-                score += 2
+            results.sort(key=lambda tup: tup[0], reverse=True)
+            matched_products = [p for _, p in results]
 
-            if score > 0:
-                results.append((score, product))
-
-        results.sort(key=lambda tup: tup[0], reverse=True)
-        matched_products = [p for _, p in results]
-
-        serializer = ProductSerializer(matched_products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = ProductSerializer(matched_products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            print(e)
+            return Response([], status=status.HTTP_200_OK)
