@@ -54,7 +54,7 @@ router_categories = DefaultRouter()
 router_categories.register(r'categories', CategoryViewSet, basename='category')
 
 router_notifications = DefaultRouter()
-router_notifications.register(r'notifications', NotificationViewSet, basename='notification')
+router_notifications.register(r'notifications', ProductNotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),

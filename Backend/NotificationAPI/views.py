@@ -1,15 +1,15 @@
 from django.db.models import Case, When, Value, IntegerField
-from .serializers import NotificationSerializer
+from .serializers import ProductNotificationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
-from .models import Notification
+from .models import ProductNotification
 from django.utils import timezone
 from datetime import timedelta
 
-class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
+class ProductNotificationViewSet(viewsets.ModelViewSet):
+    queryset = ProductNotification.objects.all()
+    serializer_class = ProductNotificationSerializer
 
     def success_response(self, data=None, status_code=status.HTTP_200_OK):
         return Response(
@@ -28,7 +28,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         """
 
         notifications = (
-            Notification.objects.filter(seen=False)
+            ProductNotification.objects.filter(seen=False)
             .annotate(
                 priority=Case(
                     When(subject="EXPIRED", then=Value(0)),
@@ -58,7 +58,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         one_month_ago = timezone.now() - timedelta(days=30)
 
         notifications = (
-            Notification.objects
+            ProductNotification.objects
             .filter(
                 seen=True,
                 created_at__gte=one_month_ago,

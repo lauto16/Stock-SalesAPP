@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import Notification
+from .models import ProductNotification
 
 
-class NotificationSerializer(serializers.ModelSerializer):
+class ProductNotificationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Notification
+        model = ProductNotification
         fields = "__all__"
         read_only_fields = ["id", "seen", "created_at"]

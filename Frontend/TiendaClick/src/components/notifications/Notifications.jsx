@@ -11,6 +11,11 @@ export default function Notifications() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("unseen");
 
+  const formatDate = (isoString) => {
+    if (!isoString) return "";
+    return isoString.slice(0, 10).replaceAll("-", "/");
+  };
+
   useEffect(() => {
     async function loadNotifications() {
       setLoading(true);
@@ -96,26 +101,28 @@ export default function Notifications() {
       {/* Header sticky */}
       <div className="notifications-header">
         <h5 className="mb-0">Notificaciones</h5>
-
+  
         <div className="d-flex gap-1">
           <button
-            className={`btn btn-sm tab-btn ${activeTab === "unseen" ? "tab-active" : ""
-              }`}
+            className={`btn btn-sm tab-btn ${
+              activeTab === "unseen" ? "tab-active" : ""
+            }`}
             onClick={() => setActiveTab("unseen")}
           >
             Nuevas
           </button>
-
+  
           <button
-            className={`btn btn-sm tab-btn ${activeTab === "seen" ? "tab-active" : ""
-              }`}
+            className={`btn btn-sm tab-btn ${
+              activeTab === "seen" ? "tab-active" : ""
+            }`}
             onClick={() => setActiveTab("seen")}
           >
             Vistas
           </button>
         </div>
       </div>
-
+  
       {/* Content */}
       <div className="scrollable-card-body">
         <div className="notifications-content">
@@ -129,7 +136,7 @@ export default function Notifications() {
             notifications.map(notification => (
               <div
                 key={notification.id}
-                className={` mt-2 notification-card border ${getBorderColor(
+                className={`mt-2 notification-card border ${getBorderColor(
                   notification.subject
                 )}`}
               >
@@ -137,12 +144,24 @@ export default function Notifications() {
                   <div className="icon-box">
                     {getIcon(notification.subject)}
                   </div>
-
+  
                   <div className="flex-grow-1">
                     <div className="fw-semibold">{notification.name}</div>
-                    <div className="small text-muted">{notification.text}</div>
+  
+                    <div className="small text-muted">
+                      {notification.text}
+                    </div>
+  
+                    {notification.created_at && (
+                      <div className="small text-muted mt-1">
+                        <span className="fst-italic">
+                          {activeTab === "seen" ? "Emitida el " : "Emitida el "}
+                          {formatDate(notification.created_at)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-
+  
                   {activeTab === "unseen" && (
                     <button
                       className="btn btn-sm btn-link text-muted p-0"

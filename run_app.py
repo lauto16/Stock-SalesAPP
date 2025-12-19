@@ -1,4 +1,4 @@
-from Backend.create_notifications import delete_old_notifications, create_expiration_notifications, create_best_sellers_low_stock_notification
+from Backend.create_notifications import delete_old_products_notifications, create_product_expiration_notifications, create_best_sellers_products_low_stock_notification
 from datetime import datetime, timedelta
 import subprocess
 import socket
@@ -152,9 +152,9 @@ if __name__ == "__main__":
     django_process = None
     react_process = None
 
-    delete_old_notifications(months=1)
-    create_expiration_notifications(limit=5)
-    create_best_sellers_low_stock_notification(stock_limit=5)
+    delete_old_products_notifications(months=1)
+    create_product_expiration_notifications(limit=5)
+    create_best_sellers_products_low_stock_notification(stock_limit=5)
     
     last_backup = load_last_backup_time()
 
