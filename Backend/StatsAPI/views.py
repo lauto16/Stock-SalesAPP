@@ -350,8 +350,6 @@ class SalesStatsViewSet(viewsets.ViewSet):
         if average is None:
             return Response({"error": "Periodo invalido"}, status=400)
 
-        print(period, average)
-
         return Response({"period": period, "average_sale_value": average})
 
     @action(

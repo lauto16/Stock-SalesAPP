@@ -11,8 +11,6 @@ def export_to_excel(filename: str, columns: list, queryset):
     columns: list of tuples -> [("Title", "model_field"), ...]
     queryset: queryset or iterable
     """
-    print("Exportando a excel")
-    script_dir = os.path.dirname(os.path.abspath(__file__))
     output_folder = os.path.join(settings.MEDIA_ROOT, "planillas_excel")
     os.makedirs(output_folder, exist_ok=True)
     file_name = f'{filename}.xlsx'

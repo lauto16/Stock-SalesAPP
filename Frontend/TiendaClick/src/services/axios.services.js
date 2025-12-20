@@ -94,7 +94,6 @@ function logoutUser(token) {
 
 
 async function addProduct(product, token) {
-  console.log(product)
   return axios.post(`${apiUrl}products/`, product, authHeader(token))
     .then(response => response.data)
     .catch(error => {
@@ -113,10 +112,8 @@ async function addProvider(provider, token) {
 }
 
 async function addOffer(data, token) {
-  console.log('DASASDASD: ', data)
   data.products = data.products.map(product => product.code);
   try {
-    console.log(data)
     const response = await axios.post(`${apiUrl}offers/`, data, authHeader(token));
     return response.data;
   } catch (error) {
@@ -128,7 +125,6 @@ async function addOffer(data, token) {
 async function updateOffer(data, token) {
   data.products = data.products.map(product => product);
 
-  console.log(data)
   try {
     const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
     return response.data;
@@ -256,7 +252,6 @@ async function updateProduct(oldCode, updatedData, token) {
 async function updateProvider(updatedData, token) {
   try {
     const id = updatedData.id
-    console.log(updatedData)
     const response = await axios.patch(`${apiUrl}providers/patch-by-id/${id}/`, updatedData, authHeader(token));
 
     return {
@@ -301,8 +296,6 @@ async function fetchUserData(token) {
   try {
 
     const response = await axios.get(`${apiUrl}login/me/`, authHeader(token));
-    console.log(response.data);
-    console.log(authHeader(token))
     return response.data || null;
   } catch (error) {
     console.error("Error al obtener el rol del usuario:", error);
@@ -328,7 +321,7 @@ async function signupUser({ username, password, role, pin }, token) {
         message: error.response.data.error || "Error al crear el usuario"
       };
     }
-    console.log(error);
+    console.error(error);
 
     return { success: false, message: "Error de red" };
   }
@@ -370,7 +363,6 @@ async function deleteSaleById(id, token) {
       `${apiUrl}sales/delete-by-id/${id}/`,
       authHeader(token)
     );
-    console.log(response);
     return response.data;
   } catch (error) {
     const backendError = error.response?.data?.error || "Error al eliminar la venta.";
@@ -379,8 +371,6 @@ async function deleteSaleById(id, token) {
 }
 
 async function addSale(formData, token) {
-  console.log("Raw form data:", formData);
-
   // Calculate discount and final price
   const chargePercentage = parseFloat(formData.applied_charge_percentage);
 
@@ -399,8 +389,6 @@ async function addSale(formData, token) {
     total_price: null,
     items: items
   };
-
-  console.log("Transformed sale data:", saleData);
 
   return axios.post(`${apiUrl}sales/`, saleData, authHeader(token))
     .then(response => response.data)

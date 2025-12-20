@@ -115,7 +115,6 @@ class ProviderViewSet(viewsets.ModelViewSet):
         """
         Partially updates a provider based on its ID.
         """
-        print(request)
         validate_response = ProviderValidator.validate_data(request)
         if validate_response["success"] is False:
             return Response(
