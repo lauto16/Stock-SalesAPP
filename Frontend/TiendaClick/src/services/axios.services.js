@@ -43,14 +43,14 @@ async function markNotificationAsSeen(id, token) {
 
 async function deleteNotificationById(id, token) {
   try {
-      const response = await axios.delete(
-          `${apiUrl}notifications/${id}/`,
-          authHeader(token)
-      );
-      return response.data;
+    const response = await axios.delete(
+      `${apiUrl}notifications/${id}/`,
+      authHeader(token)
+    );
+    return response.data;
   } catch (error) {
-      console.error("Error al eliminar notificación:", error);
-      return { success: false };
+    console.error("Error al eliminar notificación:", error);
+    return { success: false };
   }
 }
 
@@ -558,17 +558,14 @@ async function updateCategory(category, token) {
 async function deleteCategory(category, token) {
   try {
     const response = await axios.delete(
-      `${apiUrl}categories/${category.id}/`,
+      `${apiUrl}categories/${category}/`,
       authHeader(token)
     );
-
-    const { success, error } = response.data;
-
-    if (!success) {
-      throw new Error(error);
+    const { status, statusText } = response;
+    if (status !== 204) {
+      throw new Error(statusText);
     }
-
-    return true;
+    return;
   } catch (err) {
     console.error("Error al eliminar la categoría:", err.message);
     throw err;

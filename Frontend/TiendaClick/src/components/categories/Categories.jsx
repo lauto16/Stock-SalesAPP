@@ -29,7 +29,7 @@ export default function Categories() {
 
     useEffect(() => {
         const loadcategories = async () => {
-            const {success, error, data} = await fetchCategories(
+            const { success, error, data } = await fetchCategories(
                 setLoading,
                 user.token,
             );
@@ -41,7 +41,6 @@ export default function Categories() {
                 setLoading(false);
                 return;
             }
-            console.log("DATA CATEGORIES:", data, Array.isArray(data));
             setCategories(data);
             setCount(count);
             setTotalPages(Math.ceil(count / PAGE_SIZE));
