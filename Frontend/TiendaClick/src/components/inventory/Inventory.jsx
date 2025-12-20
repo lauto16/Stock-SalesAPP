@@ -219,8 +219,6 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchData = async () => {
             if (isSearching) return;
-            console.log(user.token);
-
             if (!user?.token) return;
 
             setLoading(true);
@@ -266,7 +264,6 @@ export default function InventoryPage() {
         setIsSending(true)
         try {
             const response = await fetchDownloadExcelFile(user.token);
-            console.log(response)
         } catch (error) {
             addNotification("error", "No se pudo obtener la información del producto.");
             console.error("Error al obtener producto:", error);

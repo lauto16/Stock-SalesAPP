@@ -99,7 +99,6 @@ export default function Sales() {
         if (!data.results) {
           return
         }
-        console.log(data);
         const results = data?.results.map((sale) => {
           return {
             ...sale,
