@@ -4,10 +4,12 @@ import ConfirmationModal from '../crud/ConfirmationModal.jsx'
 import NavLink from './NavLink'
 import { Button } from 'react-bootstrap';
 import { fetchSalesDownloadExcel } from '../../services/forms.services.js';
+import { useUser } from '../../context/userContext';
 
 function SideBar({ onLogout }) {
     const [showModal, setShowModal] = useState(false);
-    const token = localStorage.getItem('token');
+    const { user } = useUser();
+    const token = user?.token;
     const handleClose = () => setShowModal(false);
     const confirmLogout = () => {
         setShowModal(false);

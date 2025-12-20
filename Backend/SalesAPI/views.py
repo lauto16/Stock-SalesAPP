@@ -1,6 +1,7 @@
 from .serializers import SaleSerializer, SaleCreateSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,7 +11,10 @@ from django.db import transaction
 from rest_framework.views import APIView
 from .models import Sale
 from forms.export_to_excel import export_to_excel
-
+from django.http import JsonResponse, FileResponse
+import os
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class SalePagination(PageNumberPagination):
     """
@@ -236,20 +240,27 @@ class SaleSearchView(APIView):
 
 
 
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def sale_download_excel(request):
+    print(request.user)
     columns = [
         ("Fecha", "created_at"),
         ("Monto", "total_price"),
-        ("Metodo de pago", "payment_method"),
+        ("Metodo de pago", "payment_method__name"),
         ("Usuario", "created_by__username"),
     ]
-
     filename = "ventas"
-    sales = Sale.objects.select_related("created_by")
+    # Optimize query with select_related for both foreign keys
+    sales = Sale.objects.select_related("created_by", "payment_method")
 
     success, file_path = export_to_excel(filename, columns, sales)
 
+    if success and os.path.exists(file_path):
+        return FileResponse(open(file_path, "rb"), as_attachment=True, filename=f"{filename}.xlsx")
+    
     return JsonResponse({
-        "success": success,
-        "file_path": file_path
-    })
+        "success": False,
+        "message": file_path # file_path contains the error
+    }, status=500)
