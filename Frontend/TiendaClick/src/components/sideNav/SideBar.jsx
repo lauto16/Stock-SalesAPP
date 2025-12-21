@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import SideBarBrand from './SideBarBrand.jsx';
 import ConfirmationModal from '../crud/ConfirmationModal.jsx'
 import NavLink from './NavLink'
-import { Button } from 'react-bootstrap';
-import { fetchSalesDownloadExcel } from '../../services/forms.services.js';
-import { useUser } from '../../context/userContext';
+import DownloadButton from './DownloadButton.jsx';
+import { fetchSalesDownloadExcel, fetchProductsDownloadExcel } from '../../services/forms.services.js';
+import { useUser } from '../../context/UserContext';
 
 function SideBar({ onLogout }) {
     const [showModal, setShowModal] = useState(false);
@@ -42,7 +42,9 @@ function SideBar({ onLogout }) {
 
 
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
-                                <Button onClick={() => fetchSalesDownloadExcel(token)}>Informe de Ventas</Button>
+                                <DownloadButton onClick={() => fetchSalesDownloadExcel(token)} name="Informe de Ventas" />
+                                <DownloadButton onClick={() => fetchProductsDownloadExcel(token)} name="Informe de Inventario" />
+
                                 <li className="nav-header">USUARIOS</li>
                                 <NavLink name="Crear nuevo usuario" url="/sign-up" />
                                 <NavLink name="Eliminar usuarios" url="/delete-user" />

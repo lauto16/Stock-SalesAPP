@@ -322,6 +322,7 @@ async function signupUser({ username, password, role, pin }, token) {
       };
     }
     console.error(error);
+    console.error(error);
 
     return { success: false, message: "Error de red" };
   }
@@ -371,6 +372,7 @@ async function deleteSaleById(id, token) {
 }
 
 async function addSale(formData, token) {
+
   // Calculate discount and final price
   const chargePercentage = parseFloat(formData.applied_charge_percentage);
 
@@ -390,6 +392,7 @@ async function addSale(formData, token) {
     items: items
   };
 
+
   return axios.post(`${apiUrl}sales/`, saleData, authHeader(token))
     .then(response => response.data)
     .catch(error => {
@@ -398,24 +401,9 @@ async function addSale(formData, token) {
     });
 }
 
-async function fetchDownloadExcelFile(token) {
-  try {
-    const response = await axios.get(`${apiUrl}products/downloadExcel/`, authHeader(token));
-    return response.data || null;
-  } catch (error) {
-    console.error("Error al descargar el archivo Excel:", error);
-    return null;
-  }
-}
-
-
 async function getAllUsers(token) {
   try {
-    const response = await axios.get(`${apiUrl}admin-user-functions/list/`, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
+    const response = await axios.get(`${apiUrl}admin-user-functions/list/`, authHeader(token));
 
     return response.data;
   } catch (error) {
@@ -432,11 +420,7 @@ async function getAllUsers(token) {
 
 async function deleteUser(userId, token) {
   try {
-    const response = await axios.delete(`${apiUrl}admin-user-functions/${userId}/delete/`, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
+    const response = await axios.delete(`${apiUrl}admin-user-functions/${userId}/delete/`, authHeader(token));
 
     return response.data;
   } catch (error) {
@@ -661,7 +645,6 @@ export {
   verifyPin,
   updateProvider,
   signupUser,
-  fetchDownloadExcelFile,
   fetchSalesStats,
   deleteSaleById,
   addSale,

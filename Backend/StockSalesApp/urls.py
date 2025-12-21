@@ -63,7 +63,6 @@ urlpatterns = [
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('tests/sales_test', test_sales, name='test_sales'),
-    path('api/sales_download_excel', sale_download_excel, name='sale_download_excel'),
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
