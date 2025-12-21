@@ -96,17 +96,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return self.success_response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-        except Exception:
-            return self.error_response(
-                "La categoría no existe.",
-                status.HTTP_404_NOT_FOUND
-            )
-
+        instance = self.get_object()
         instance.delete()
-        return self.success_response(
-            None,
-            status.HTTP_204_NO_CONTENT
-        )
-    
+        return Response(status=status.HTTP_204_NO_CONTENT)

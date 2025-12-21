@@ -29,7 +29,7 @@ export default function Categories() {
 
     useEffect(() => {
         const loadcategories = async () => {
-            const {success, error, data} = await fetchCategories(
+            const { success, error, data } = await fetchCategories(
                 setLoading,
                 user.token,
             );
