@@ -5,8 +5,6 @@ from .serializers import (
     OfferPagination,
 )
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from openpyxl.styles import Alignment, Font, PatternFill
-from openpyxl.utils import get_column_letter
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
@@ -19,8 +17,7 @@ from django.http import HttpRequest
 from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
-from openpyxl import Workbook
-import os
+from forms.export_to_excel import export_to_excel
 
 
 class ProductValidator:
@@ -346,90 +343,31 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return Response({"success": True}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="downloadExcel")
+    @action(detail=False, methods=["get"], url_path="products_download_excel")
     def generate_excel(self, request):
         """
         Generates and returns an Excel file containing the full inventory,
         formatted for readability and including product and provider details.
         """
         try:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            )
-            forms_dir = os.path.join(base_dir, "formularios")
-            os.makedirs(forms_dir, exist_ok=True)
-            file_name = "inventario.xlsx"
-            file_path = os.path.join(forms_dir, file_name)
+            columns = [
+                ("Código", "code"),
+                ("Nombre", "name"),
+                ("Stock", "stock"),
+                ("Precio de venta", "sell_price"),
+                ("Precio de compra", "buy_price"),
+                ("Proveedor", "provider__name"),
+            ]
+            
+            success, file_path = export_to_excel("inventario", columns, Product.objects.all())
 
-            data = []
-            max_len = {
-                "Código": len("Código"),
-                "Nombre": len("Nombre"),
-                "Stock": len("Stock"),
-                "Precio de venta": len("Precio de venta"),
-                "Precio de compra": len("Precio de compra"),
-                "Proveedor": len("Proveedor"),
-            }
-            for product in Product.objects.all():
-                provider_name = "No Registrado"
-                if product.provider:
-                    provider_name = product.provider.name
-                item = {
-                    "Código": product.code,
-                    "Nombre": product.name,
-                    "Stock": product.stock,
-                    "Precio de venta": product.sell_price,
-                    "Precio de compra": product.buy_price,
-                    "Proveedor": provider_name,
-                }
-                data.append(item)
-                for key, value in item.items():
-                    if len(str(value)) > max_len[key]:
-                        max_len[key] = len(str(value))
-
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Inventario"
-
-            headers = list(data[0].keys()) if data else []
-            ws.append(headers)
-
-            for i, header in enumerate(headers, start=1):
-                col_letter = get_column_letter(i)
-                ws.column_dimensions[col_letter].width = max_len[header] + 2
-
-            fill = PatternFill(
-                start_color="f1f1f1", end_color="f1f1f1", fill_type="solid"
-            )
-
-            for col in range(1, len(headers) + 1):
-                cell = ws.cell(row=1, column=col)
-                cell.alignment = Alignment(horizontal="center", vertical="center")
-                cell.font = Font(bold=True)
-
-            for idx, item in enumerate(data, start=1):
-                row = [item[h] for h in headers]
-                ws.append(row)
-                if (idx + 1) % 2 == 0:
-                    for col in range(1, len(headers) + 1):
-                        cell = ws.cell(row=idx + 1, column=col)
-                        cell.fill = fill
-                        cell.alignment = Alignment(
-                            horizontal="center", vertical="center"
-                        )
-                else:
-                    for col in range(1, len(headers) + 1):
-                        cell = ws.cell(row=idx + 1, column=col)
-                        cell.alignment = Alignment(
-                            horizontal="center", vertical="center"
-                        )
-
-            wb.save(file_path)
+            if not success:
+                return Response({"error": "Error generando el archivo"}, status=500)
 
             return FileResponse(
                 open(file_path, "rb"),
                 as_attachment=True,
-                filename=file_name,
+                filename="inventario.xlsx",
                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
 

@@ -6,9 +6,10 @@ import "../../css/inventory.css";
 import Search from "./Search.jsx";
 import {
     fetchSearchProducts, fetchProducts, deleteProductByCode,
-    fetchGetByCode, updateSelectedPrices, updateAllPrices, fetchDownloadExcelFile,
+    fetchGetByCode, updateSelectedPrices, updateAllPrices,
     addProduct
 } from "../../services/axios.services.js";
+import { fetchProductsDownloadExcel } from "../../services/forms.services.js";
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
 import ConfirmationModal from "../crud/ConfirmationModal.jsx"
@@ -90,7 +91,7 @@ export default function InventoryPage() {
             setLoading(true);
 
             const results = await fetchSearchProducts(query, user.token);
-            
+
             setAllSearchResults(results);
             setLoading(false);
         }
@@ -200,7 +201,7 @@ export default function InventoryPage() {
         setIsSending(false)
 
     }
-    
+
     const reloadPageOne = () => {
         if (currentPage === 1) {
             setCurrentPage(2);
@@ -219,7 +220,6 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchData = async () => {
             if (isSearching) return;
-            console.log(user.token);
 
             if (!user?.token) return;
 
@@ -265,8 +265,7 @@ export default function InventoryPage() {
     const handleDownload = async () => {
         setIsSending(true)
         try {
-            const response = await fetchDownloadExcelFile(user.token);
-            console.log(response)
+            const response = await fetchProductsDownloadExcel(user.token);
         } catch (error) {
             addNotification("error", "No se pudo obtener la información del producto.");
             console.error("Error al obtener producto:", error);
