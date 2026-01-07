@@ -3,7 +3,10 @@ import SideBarBrand from './SideBarBrand.jsx';
 import ConfirmationModal from '../crud/ConfirmationModal.jsx'
 import NavLink from './NavLink'
 import DownloadButton from './DownloadButton.jsx';
-import { fetchSalesDownloadExcel, fetchProductsDownloadExcel } from '../../services/forms.services.js';
+import {
+    fetchSalesDownloadExcel, fetchProductsDownloadExcel,
+    fetchStatsDownloadExcel
+} from '../../services/forms.services.js';
 import { useUser } from '../../context/UserContext';
 
 function SideBar({ onLogout }) {
@@ -42,8 +45,9 @@ function SideBar({ onLogout }) {
 
 
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
-                                <DownloadButton onClick={() => fetchSalesDownloadExcel(token)} name="Informe de Ventas" />
-                                <DownloadButton onClick={() => fetchProductsDownloadExcel(token)} name="Informe de Inventario" />
+                                <DownloadButton onClick={() => fetchSalesDownloadExcel(token)} name="Excel de Ventas" />
+                                <DownloadButton onClick={() => fetchProductsDownloadExcel(token)} name="Excel de Inventario" />
+                                <DownloadButton onClick={() => fetchStatsDownloadExcel(token)} name="Excel de Estadisticas" />
 
                                 <li className="nav-header">USUARIOS</li>
                                 <NavLink name="Crear nuevo usuario" url="/sign-up" />

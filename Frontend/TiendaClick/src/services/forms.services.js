@@ -25,3 +25,16 @@ export async function fetchProductsDownloadExcel(token) {
         return false;
     }
 }
+
+export async function fetchStatsDownloadExcel(token) {
+    try {
+        const response = await axios.get(`${apiUrl}/stats/stats_download_excel/`,
+            { responseType: "blob", ...authHeader(token) });
+        downloadFile(response.data, "estadisticas.xlsx");
+
+        return true;
+    } catch (error) {
+        console.error("Error al descargar el Excel de estadisticas:", error);
+        return false;
+    }
+}

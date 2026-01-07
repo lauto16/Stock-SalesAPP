@@ -19,6 +19,7 @@ from django.utils import timezone
 from collections import Counter
 from datetime import timedelta
 from datetime import datetime
+from forms.export_to_excel import export_to_excel
 
 
 class ProductsStatsViewSet(viewsets.ViewSet):
@@ -486,5 +487,86 @@ class SalesStatsViewSet(viewsets.ViewSet):
         data = {}
         for r in results:
             data.update(r)
-
+        
         return Response({"success": True, "sales_data": data})
+
+
+@action(detail=False, methods=["get"], url_path="stats_download_excel")
+def download_stats(request):
+    """
+    Generates and returns an Excel file containing the stats.
+    """
+    try:
+        # 1. Sales Stats
+        sales_viewset = SalesStatsViewSet()
+        sales_data_dict = sales_viewset.calc_sales_stats_data()
+        
+        # Transform flat dictionary to list of dicts for the excel exporter
+        # We'll create a row for each key-value pair
+        sales_rows = [{"metric": k, "value": v} for k, v in sales_data_dict.items() if k != "total_sales_by_month"]
+        
+        # 2. Best Selling Products (Top 50 for report)
+        products_viewset = SalesStatsViewSet() # calculate_best_selling_products is in SalesStatsViewSet
+        best_selling_products = products_viewset.calculate_best_selling_products(period="all", count=50)
+
+        # 3. Best Selling Categories
+        cat_viewset = ProductsStatsViewSet()
+        best_selling_categories = cat_viewset.calculate_best_selling_categories()
+
+        # 4. Employees Sales
+        employees_viewset = EmployeesStatsViewSet()
+        users = CustomUser.objects.all()
+        employee_sales = []
+        for user in users:
+            count = employees_viewset.calculate_sales_by_user(user)
+            employee_sales.append({"username": user.username, "sales": count})
+        columns = [
+                        ("Resumen Ventas", "sales_rows"),
+                        ("Productos Más Vendidos", "best_selling_products"),
+                        ("Categorías Más Vendidas", "best_selling_categories"),
+                        ("Ventas por Empleado", "employee_sales"),
+                    ]
+        stats = Stats(
+                    sales_rows,
+                    best_selling_products,
+                    best_selling_categories,
+                    employee_sales,
+                    # average_sales,
+                    # most_used_payment_methods,
+                    # best_selling_hours
+        )
+        
+        success, file_path = export_to_excel(file_name="estadisticas", columns=columns, queryset=stats)
+
+        if not success:
+            return Response({"error": "Error generando el archivo"}, status=500)
+
+        return FileResponse(
+            open(file_path, "rb"),
+            as_attachment=True,
+            filename="estadisticas.xlsx",
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e)}, status=500)
+
+class Stats:
+    def __init__(
+        self,
+        sales_rows,
+        best_selling_products,
+        best_selling_categories,
+        employee_sales,
+        average_sales,
+        most_used_payment_methods,
+        best_selling_hours,
+    ):
+        self.sales_rows = sales_rows
+        self.best_selling_products = best_selling_products
+        self.best_selling_categories = best_selling_categories
+        self.employee_sales = employee_sales
+        self.average_sales = average_sales
+        self.most_used_payment_methods = most_used_payment_methods
+        self.best_selling_hours = best_selling_hours
