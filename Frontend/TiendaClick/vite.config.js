@@ -16,6 +16,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./test/setupTests.js"],
     css: true,
+    logHeapUsage: false,
 
   }
 })

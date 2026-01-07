@@ -7,11 +7,11 @@ import { NotificationProvider } from './context/NotificationSystem';
 import { PinProvider } from './context/PinContext';
 
 createRoot(document.getElementById('root')).render(
-    <NotificationProvider>
-      <UserProvider>
-        <PinProvider>
-          <App />
-        </PinProvider>
-      </UserProvider>
-    </NotificationProvider>
+  <NotificationProvider>
+    <UserProvider>
+      <PinProvider>
+        <App />
+      </PinProvider>
+    </UserProvider>
+  </NotificationProvider>
 )

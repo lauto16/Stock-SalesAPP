@@ -12,7 +12,7 @@ describe('ActionBox Component', () => {
         subtext_value: '1000'
     };
 
-    it('renders basic information correctly', () => {
+    it('renders basic informAation correctly', () => {
         render(<ActionBox {...defaultProps} />);
 
         expect(screen.getByText('Test Metric')).toBeInTheDocument();

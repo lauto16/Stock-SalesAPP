@@ -47,7 +47,7 @@ function Dashboard() {
         setLowStockText('Stock menor que')
       }
     }
-
+    console.log(user)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
@@ -236,7 +236,7 @@ function Dashboard() {
                 </div>
                 <div className="col-12 col-xxl-6 mb-3">
                   <div className="card h-100">
-                      <Notifications />
+                    <Notifications />
                   </div>
                 </div>
               </div>

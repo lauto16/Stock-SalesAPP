@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 function NavLink({ name, url = "" }) {
     //if url is "", gets transformed to "/"
     return (
