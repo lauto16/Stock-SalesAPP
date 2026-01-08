@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.57% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/14</span>
+                <span class='fraction'>13/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
@@ -131,13 +131,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -146,9 +144,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -161,7 +159,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -200,7 +200,7 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
     const image_path = `/${svgName}.svg`
 &nbsp;
     const parsedNumber = subtext_value !== null &amp;&amp; subtext_value !== undefined
-        ? <span class="branch-0 cbranch-no" title="branch not covered" >Number(subtext_value).toLocaleString("es-AR",</span>
+        ? Number(subtext_value).toLocaleString("es-AR",
             {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
@@ -214,7 +214,7 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
         &lt;div className="col-lg-3 col-md-6 col-12"&gt;
             &lt;div className={containerClass}&gt;
                 &lt;div className="inner"&gt;
-                    &lt;h3&gt;{number === "undefined" ? "0" : number}&lt;/h3&gt;
+                    &lt;h3&gt;{number === "undefined" ? <span class="branch-0 cbranch-no" title="branch not covered" >"0" : n</span>umber}&lt;/h3&gt;
                     &lt;p&gt;{name}&lt;/p&gt;
 &nbsp;
                     {subtext &amp;&amp; (
@@ -225,10 +225,10 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
                             &lt;span&gt;{subtext}&lt;/span&gt;
                             &lt;button
                                 type="button"
-                                onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowValue(!showValue)}</span>
+                                onClick={() =&gt; setShowValue(!showValue)}
                                 className="btn btn-sm p-0 border-0 bg-transparent eye-button"
                             &gt;
-                                {<span class="branch-0 cbranch-no" title="branch not covered" >showValue ? (</span>
+                                {showValue ? (
                                     &lt;EyeOff size={25} /&gt;
                                 ) : (
                                     &lt;Eye size={25} /&gt;
@@ -239,7 +239,7 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
 &nbsp;
                     {subtext &amp;&amp; (
                         &lt;p className="mt-1 mb-0" style={{ fontSize: '0.95rem' }}&gt;
-                            {showValue ? <span class="branch-0 cbranch-no" title="branch not covered" >`$${parsedNumber}` </span>: '***'}
+                            {showValue ? `$${parsedNumber}` : '***'}
                         &lt;/p&gt;
                     )}
                 &lt;/div&gt;
@@ -262,7 +262,7 @@ export default ActionBox
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-07T03:26:56.601Z
+                at 2026-01-08T02:21:32.263Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

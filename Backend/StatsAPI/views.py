@@ -429,7 +429,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 month=ExtractMonth("created_at"),
                 day=TruncDay("created_at"),
             )
-
+            now = timezone.now()
+            print(now)
             return {
                 "total_sales_historically": qs.count(),
                 "total_sales_this_year": qs.filter(year=current_year).count(),

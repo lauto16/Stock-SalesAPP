@@ -10,6 +10,7 @@ import {
   deleteSaleById,
   addSale,
 } from "../../services/axios.services.js";
+import { formatDate, formatHour } from "../helpers/helpers.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
@@ -41,25 +42,7 @@ export default function Sales() {
     { className: "hour", key: "hour", label: "Hora" },
   ];
 
-  /* =======================
-     FORMAT HELPERS
-     ======================= */
 
-  const formatDate = (isoString) => {
-    if (!isoString) return "";
-    return isoString.slice(0, 10).replaceAll("-", "/");
-  };
-
-  const formatHour = (isoString) => {
-    if (!isoString) return "";
-    return new Date(isoString).toLocaleTimeString("es-AR", {
-      timeZone: "America/Argentina/Buenos_Aires",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  };
 
   const formatSalesData = (data = []) => {
     return data.map((sale) => {
