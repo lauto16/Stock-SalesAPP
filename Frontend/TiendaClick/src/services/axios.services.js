@@ -588,6 +588,8 @@ async function fetchBestSellingCategories(token) {
 async function fetchSalesStats(token) {
   try {
     const response = await axios.get(`${apiUrl}sales_stats/sales-stats`, authHeader(token));
+    console.log(response);
+    
     return response.data || null;
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de las ventas:", error);
