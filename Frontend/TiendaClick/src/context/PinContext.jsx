@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { verifyPin } from "../services/axios.services";
+import { verifyPin, updateAskForPin } from "../services/axios.services";
 import { useUser } from "./UserContext";
-
 const PinContext = createContext();
 
 export function usePin() {
@@ -12,6 +11,7 @@ export function PinProvider({ children }) {
   const [pinVerified, setPinVerified] = useState(false);
   const [checking, setChecking] = useState(true);
   const { user } = useUser();
+  const [pinDisabled, setPinDisabled] = useState(false)
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -47,7 +47,9 @@ export function PinProvider({ children }) {
     pinVerified,
     checking,
     verifyAndSavePin,
-    setPinVerified
+    setPinVerified,
+    pinDisabled,
+    setPinDisabled
   };
 
   return <PinContext.Provider value={value}>{children}</PinContext.Provider>;

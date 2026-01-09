@@ -18,7 +18,7 @@ function SideBar({ onLogout }) {
 
     return (
         <>
-            <aside className="app-sidebar bg-body-secondary shadow d-flex flex-column justify-content-between" data-bs-theme="dark">
+            <aside style={{overflow: 'auto'}} className="app-sidebar bg-body-secondary shadow d-flex flex-column justify-content-between" data-bs-theme="dark">
                 <div>
                     <SideBarBrand />
 
@@ -48,6 +48,7 @@ function SideBar({ onLogout }) {
                                 <li className="nav-header">USUARIOS</li>
                                 <NavLink name="Crear nuevo usuario" url="/sign-up" />
                                 <NavLink name="Eliminar usuarios" url="/delete-user" />
+                                <NavLink name="Configuración" url="/config-app" />
                             </ul>
                         </nav>
                     </div>

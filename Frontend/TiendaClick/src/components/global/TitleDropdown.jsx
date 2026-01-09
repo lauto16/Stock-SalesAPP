@@ -2,26 +2,40 @@ import React from "react";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext.jsx";
-import { FaLock } from "react-icons/fa";
+import {
+  FaBox,
+  FaHistory,
+  FaShoppingCart,
+  FaChartBar,
+  FaTags,
+  FaSignOutAlt,
+  FaList,
+  FaChartLine,
+  FaTruck,
+  FaCog,
+  FaUserPlus,
+  FaUserMinus,
+  FaLock
+} from "react-icons/fa";
 
 const options_other = [
-  { label: "Inventario", path: "/inventory/", permission: "access_inventory" },
-  { label: "Registro de cambios", path: "/product-blame/", permission: "access_blame" },
-  { label: "Ventas", path: "/sales/", permission: "access_sales" },
-  { label: "Dashboard", path: "/dashboard/", permission: "access_dashboard" },
-  { label: "Ofertas", path: "/offers/", permission: "access_offers" },
-  { label: "Cerrar sesión", path: "/login/" },
-  { label: "Categorias", path: "/categories/", permission: "access_inventory" },
-  { label: "Estadisticas", path: "/stats/", permission: "access_dashboard" },
-  { label: "Proveedores", path: "/providers/", permission: "access_providers" },
-
+  { label: "Inventario", path: "/inventory/", permission: "access_inventory", icon: <FaBox /> },
+  { label: "Registro de cambios", path: "/product-blame/", permission: "access_blame", icon: <FaHistory /> },
+  { label: "Ventas", path: "/sales/", permission: "access_sales", icon: <FaShoppingCart /> },
+  { label: "Dashboard", path: "/dashboard/", permission: "access_dashboard", icon: <FaChartBar /> },
+  { label: "Ofertas", path: "/offers/", permission: "access_offers", icon: <FaTags /> },
+  { label: "Categorias", path: "/categories/", permission: "access_inventory", icon: <FaList /> },
+  { label: "Estadisticas", path: "/stats/", permission: "access_dashboard", icon: <FaChartLine /> },
+  { label: "Proveedores", path: "/providers/", permission: "access_providers", icon: <FaTruck /> },
+  { label: "Configuración", path: "/config-app/", permission: "access_dashboard", icon: <FaCog /> },
+  { label: "Cerrar sesión", path: "/login/", icon: <FaSignOutAlt /> },
 ];
 
 const options_dashboard = [
   ...options_other.filter(opt => opt.label !== "Cerrar sesión"),
-  { label: "Crear nuevo usuario", path: "/sign-up/", permission: null },
-  { label: "Eliminar usuario", path: "/delete-user/", permission: null },
-  options_other.find(opt => opt.label === "Cerrar sesión")
+  { label: "Crear nuevo usuario", path: "/sign-up/", permission: null, icon: <FaUserPlus /> },
+  { label: "Eliminar usuario", path: "/delete-user/", permission: null, icon: <FaUserMinus /> },
+  options_other.find(opt => opt.label === "Cerrar sesión"),
 ];
 
 export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
@@ -36,7 +50,7 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
   const sortedOptions = [...otherOptions].sort((a, b) => {
     const lengthDiff = b.label.length - a.label.length;
     if (lengthDiff !== 0) return lengthDiff;
-  
+
     const aDisabled = a.permission && !user?.permissions?.includes(a.permission);
     const bDisabled = b.permission && !user?.permissions?.includes(b.permission);
     return aDisabled === bDisabled ? 0 : aDisabled ? -1 : 1;
@@ -73,12 +87,21 @@ export default function TitleDropdown({ currentTitle, setTitle, isDashboard }) {
             <Dropdown.Item
               key={opt.label}
               onClick={() => handleSelect(opt.label, opt.path, disabled)}
-              className={`${disabled ? "text-secondary" : ""} ${opt.label === "Cerrar sesión" ? "text-danger" : ""
-                }`}
-              style={{ color: disabled ? "#6c757d" : undefined, backgroundColor: disabled ? "#d9d9d9" : undefined }}
+              className={`d-flex align-items-center justify-content-between
+    ${disabled ? "text-secondary" : ""}
+    ${opt.label === "Cerrar sesión" ? "text-danger" : ""}`}
+              style={{
+                color: disabled ? "#6c757d" : undefined,
+                backgroundColor: disabled ? "#d9d9d9" : undefined
+              }}
               disabled={disabled}
             >
-              {opt.label} {disabled && <FaLock className="ms-2" />}
+              <span className="d-flex align-items-center gap-2">
+                {opt.icon}
+                {opt.label}
+              </span>
+
+              {disabled && <FaLock />}
             </Dropdown.Item>
           );
         })}

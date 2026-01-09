@@ -14,6 +14,8 @@ import DeleteUser from './components/auth/DeleteUser.jsx'
 import AuthGuard from "./components/auth/AuthGuard.jsx";
 import Stats from "./components/Stats/Stats.jsx"
 import Categories from './components/categories/Categories.jsx'
+import ConfigApp from './components/config/ConfigApp.jsx'
+
 function App() {
   return (
     <Router>
@@ -103,6 +105,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Stats />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/config-app/'
+            element={
+              <PrivateRoute>
+                <ConfigApp />
               </PrivateRoute>
             }
           />
