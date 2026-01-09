@@ -5,17 +5,17 @@ import "@testing-library/jest-dom";
 import Dashboard from "../src/components/dashboard/Dashboard.jsx";
 import { mockUser } from "./mocks/useUser.mock.js";
 
-// ✅ mock del hook REAL
+// mock del hook user
 vi.mock("../src/context/userContext.jsx", () => ({
     useUser: () => ({ user: mockUser }),
 }));
 
-// ✅ mock de permisos
+// mock de permisos
 vi.mock("../src/components/permissions_manager/PermissionVerifier.jsx", () => ({
     default: ({ children }) => children,
 }));
 
-// ✅ mock de guards
+// mock de guards
 vi.mock("../src/components/auth/PrivateRoute.jsx", () => ({
     default: ({ children }) => children,
 }));
@@ -124,7 +124,7 @@ describe("Dashboard – test integral", () => {
     });
 
     it("renderiza el dashboard con datos y tabla", async () => {
-        render(
+        const dashboard = render(
             <MemoryRouter initialEntries={["/dashboard"]}>
                 <Dashboard />
             </MemoryRouter>
@@ -132,27 +132,27 @@ describe("Dashboard – test integral", () => {
 
         // Header
         expect(
-            screen.getByRole("heading", { name: /dashboard/i })
+            dashboard.getByRole("heading", { name: /dashboard/i })
         ).toBeInTheDocument();
 
         // Action boxes
-        expect(screen.getByText("Ventas hoy")).toBeInTheDocument();
-        // expect(screen.getByText("3")).toBeInTheDocument();
+        expect(dashboard.getByText("Ventas hoy")).toBeInTheDocument();
+        expect(await screen.findByText("3")).toBeInTheDocument();
 
         expect(
-            screen.getByText("Margen de ganancia promedio")
+            dashboard.getByText("Margen de ganancia promedio")
         ).toBeInTheDocument();
-        // expect(screen.getByText("25%")).toBeInTheDocument();
+        expect(await screen.findByText("25%")).toBeInTheDocument();
 
         // Tabla (espera async)
         await waitFor(() => {
             expect(
-                screen.getByText("Producto bajo stock")
+                dashboard.getByText("Producto bajo stock")
             ).toBeInTheDocument();
         });
 
         // Notifications
-        expect(screen.getByText("Notifications")).toBeInTheDocument();
+        expect(dashboard.getByText("Notifications")).toBeInTheDocument();
     });
 
     it("permite cambiar el valor de stock mínimo y vuelve a cargar", async () => {
@@ -164,7 +164,6 @@ describe("Dashboard – test integral", () => {
 
         const input = screen.getByRole("spinbutton");
         const button = screen.getByRole("button");
-
         fireEvent.change(input, { target: { value: "10" } });
         fireEvent.click(button);
 
