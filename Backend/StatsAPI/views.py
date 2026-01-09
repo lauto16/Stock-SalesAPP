@@ -64,26 +64,19 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
     def calculate_best_selling_categories(self):
         return (
-            Category.objects
-            .annotate(
-                total_sold=Coalesce(
-                    Sum("product__saleitem__quantity"),
-                    0
-                )
+            Category.objects.annotate(
+                total_sold=Coalesce(Sum("product__saleitem__quantity"), 0)
             )
             .order_by("-total_sold")
-            .values(
-                "name",
-                "total_sold"
-            )
+            .values("name", "total_sold")
         )
-    
+
     @action(detail=False, methods=["get"], url_path="best-selling-categories")
     def best_selling_categories(self, request):
         # /api/products_stats/best-selling-categories/
         ranking = self.calculate_best_selling_categories()
         return Response(ranking)
-    
+
     @action(detail=False, methods=["get"], url_path="higher-margin-products")
     def higher_margin_products(self, request):
         # /api/products_stats/higher-margin-products/?count=5
@@ -138,7 +131,7 @@ class ProductsStatsViewSet(viewsets.ViewSet):
 
         return Response({"success": True, "products_data": data})
 
-    
+
 class EmployeesStatsViewSet(viewsets.ViewSet):
     """
     A set of api endpoints retrieving employee's data statistics calculated using fast and
@@ -207,11 +200,6 @@ class SalesStatsViewSet(viewsets.ViewSet):
     """
     A set of api endpoints retrieving product's data statistics calculated using fast and
     efficient methods.
-    """
-
-    """
-    TODO:
-    Ventas por franja horaria  (qué horas dan más ventas)
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -409,10 +397,19 @@ class SalesStatsViewSet(viewsets.ViewSet):
         It uses Django's database functions (ExtractYear, ExtractMonth, TruncDay, Sum)
         for efficient, database-level computation.
         """
-        today = datetime.now()
+        today = timezone.now() - timedelta(hours=3)
         current_year = today.year
         current_month = today.month
-        current_day = today.day
+
+        today_local = timezone.now() - timedelta(hours=3)
+
+        start_of_day_local = today_local.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        end_of_day_local = start_of_day_local + timedelta(days=1)
+
+        start_of_day_utc = start_of_day_local + timedelta(hours=3)
+        end_of_day_utc = end_of_day_local + timedelta(hours=3)
 
         def calc_totals():
             """
@@ -437,8 +434,9 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 "total_sales_this_month": qs.filter(
                     year=current_year, month=current_month
                 ).count(),
-                "total_sales_this_day": qs.filter(
-                    year=current_year, month=current_month, day__day=current_day
+                "total_sales_this_day": Sale.objects.filter(
+                    created_at__gte=start_of_day_utc,
+                    created_at__lt=end_of_day_utc,
                 ).count(),
                 "total_money_sales_historically": qs.aggregate(Sum("total_price"))[
                     "total_price__sum"
@@ -452,8 +450,9 @@ class SalesStatsViewSet(viewsets.ViewSet):
                     year=current_year, month=current_month
                 ).aggregate(Sum("total_price"))["total_price__sum"]
                 or 0.0,
-                "total_money_sales_this_day": qs.filter(
-                    year=current_year, month=current_month, day__day=current_day
+                "total_money_sales_this_day": Sale.objects.filter(
+                    created_at__gte=start_of_day_utc,
+                    created_at__lt=end_of_day_utc,
                 ).aggregate(Sum("total_price"))["total_price__sum"]
                 or 0.0,
             }
@@ -461,10 +460,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
         def calc_sales_per_month():
             """Returns sales per month for the current year only"""
             qs = (
-                Sale.objects
-                .annotate(
-                    year=ExtractYear("created_at"),
-                    month=ExtractMonth("created_at")
+                Sale.objects.annotate(
+                    year=ExtractYear("created_at"), month=ExtractMonth("created_at")
                 )
                 .filter(year=current_year)
                 .values("month")
@@ -479,7 +476,7 @@ class SalesStatsViewSet(viewsets.ViewSet):
             ]
 
             return {"total_sales_by_month": all_months}
-    
+
         with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(
                 executor.map(lambda fn: fn(), [calc_totals, calc_sales_per_month])

@@ -17,7 +17,7 @@ const RequirePermission = ({ permission, children }) => {
 
     if (!user) return null;
 
-    return user.permissions.includes(permission) ? children : null;
+    return user.permissions?.includes(permission) ? children : null;
 };
 
 export default RequirePermission;

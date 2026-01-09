@@ -14768,8 +14768,8 @@ fieldset:disabled .btn {
   grid-gap: 0;
   align-content: stretch;
   align-items: stretch;
-  max-width: 100vw;
-  min-height: 100vh;
+  max-width: 120vw;
+  min-height: 120vh;
 }
 
 .app-wrapper>* {

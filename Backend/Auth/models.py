@@ -36,12 +36,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     pin = models.CharField(max_length=5)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    askForPin = models.BooleanField(default=True)    
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            first_user = CustomUser.objects.first()
+            if first_user:
+                self.askForPin = first_user.askForPin
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"{self.username} ({self.role})"
 

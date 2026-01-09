@@ -176,6 +176,20 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                 />
                 {errors.stock && <div className="invalid-feedback d-block">{errors.stock.message}</div>}
             </Col>
+            <Col md={6} className="d-flex flex-column">
+                <CustomInput
+                    label='Fecha de vencimiento más próxima'
+                    icon='bi-box'
+                    type='date'
+                    step=''
+                    defaultValue={0}
+                    register={register('expiration', {
+                        required: false,
+                    })}
+
+                />
+                {errors.stock && <div className="invalid-feedback d-block">{errors.stock.message}</div>}
+            </Col>
         </Row>
     );
 }

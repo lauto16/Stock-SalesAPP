@@ -89,7 +89,7 @@ class LoginViewSet(viewsets.ViewSet):
 
         permissions = list(user.role.permissions.values_list("code_name", flat=True))
 
-        return Response({"role_name_sp": user.role.name_sp, "permissions": permissions})
+        return Response({"role_name_sp": user.role.name_sp, "permissions": permissions, "askForPin": user.askForPin})
 
     @action(detail=False, methods=["get"], url_path=r"verify-user-pin/(?P<pin>[\w-]+)")
     def verify_user_pin(self, request, pin=None):
@@ -213,6 +213,43 @@ class UserViewSet(viewsets.ViewSet):
             {
                 "success": True,
                 "message": f"Usuario '{username_deleted}' eliminado correctamente.",
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["get"], url_path="get-ask-for-pin")
+    def get_ask_for_pin(self, request):
+        return Response({"askForPin": request.user.askForPin}, status=200)
+    
+    @action(detail=False, methods=["patch"], url_path="ask-for-pin")
+    def update_ask_for_pin(self, request):
+        """Updates CustomUser.askForPin for a specific user"""
+        user = request.user
+
+        if not hasattr(user, "role") or user.role.name != "administrator":
+            return Response(
+                {"detail": "No tenés permisos para modificar este valor."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        ask_for_pin = request.data.get("askForPin")
+        if not isinstance(ask_for_pin, bool):
+            return Response(
+                {"detail": "askForPin debe ser booleano."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+        target_users = CustomUser.objects.all()
+
+        for target_user in target_users:
+            target_user.askForPin = ask_for_pin
+            target_user.save(update_fields=["askForPin"])
+
+        return Response(
+            {
+                "success": True,
+                "askForPinValue": ask_for_pin
             },
             status=status.HTTP_200_OK,
         )

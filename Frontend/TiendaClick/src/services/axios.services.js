@@ -588,6 +588,8 @@ async function fetchBestSellingCategories(token) {
 async function fetchSalesStats(token) {
   try {
     const response = await axios.get(`${apiUrl}sales_stats/sales-stats`, authHeader(token));
+    console.log(response);
+
     return response.data || null;
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de las ventas:", error);
@@ -612,6 +614,33 @@ async function fetchProductsStats(token) {
   } catch (error) {
     console.error("Error al pedir los datos estadísticos de los productos:", error);
     return null;
+  }
+}
+
+async function updateAskForPin(askForPin, token) {
+  // changes all users askforpin register to AskForPin bool parameter.
+  
+  try {
+    const response = await axios.patch(
+      `${apiUrl}admin-user-functions/ask-for-pin/`,
+      { askForPin },
+      authHeader(token)
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar la petición del pin:", error);
+    return { success: false };
+  }
+}
+
+async function getAskForPin(token) {
+  try {
+    const response = await axios.get(`${apiUrl}admin-user-functions/get-ask-for-pin/`, authHeader(token));
+    return response.data || false;
+  } catch (error) {
+    console.error("Error al pedir el valor de la opcionalidad del pin:", error);
+    return false;
   }
 }
 
@@ -666,5 +695,7 @@ export {
   fetchUnseenNotifications,
   fetchSeenNotifications,
   deleteNotificationById,
-  markNotificationAsSeen
+  markNotificationAsSeen,
+  updateAskForPin,
+  getAskForPin
 };

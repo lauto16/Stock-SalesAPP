@@ -17,19 +17,22 @@ export const UserProvider = ({ children }) => {
         }
     }, [user]);
 
-    useEffect(() => {
-        const getRoleName = async () => {
-            if (user?.token && !user.role) {
-                const user_data = await fetchUserData(user.token);
-                if (user_data) {
-                    const role = user_data.role_name_sp
-                    const permissions = user_data.permissions
-                    setUser((prev) => ({ ...prev, role, permissions }));
-                }
+    const updateUserData = async () => {
+        console.log('updating user');
+        
+        if (user?.token) {
+            const user_data = await fetchUserData(user.token);
+            if (user_data) {
+                const role = user_data.role_name_sp
+                const permissions = user_data.permissions
+                const askForPin = user_data.askForPin
+                setUser((prev) => ({ ...prev, role, permissions, askForPin }));
             }
-        };
+        }
+    };
 
-        getRoleName();
+    useEffect(() => {
+        updateUserData();
     }, [user?.token]);
 
     const login = async ({ username, password }) => {
@@ -52,7 +55,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, login, setUser, logout }}>
+        <UserContext.Provider value={{ user, login, setUser, logout, updateUserData }}>
             {children}
         </UserContext.Provider>
     );

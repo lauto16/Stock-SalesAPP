@@ -11,7 +11,10 @@ export default function PrivateRoute({ children }) {
 
   if (checking) return null;
 
-  //Views that can be visited without pin
+  if (!user.askForPin) {
+    return children;
+  }
+
   const allowWithoutPin = ["/pin-manager"];
 
   if (!pinVerified && !allowWithoutPin.includes(location.pathname)) {

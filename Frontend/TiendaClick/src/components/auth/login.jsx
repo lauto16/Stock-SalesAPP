@@ -15,7 +15,20 @@ export default function Login() {
     const navigate = useNavigate();
     const { login, user } = useUser();
 
-
+    const getRedirectPathByRole = (role) => {
+        switch (role) {
+          case "Repositor":
+            return "/inventory";
+          case "Administrador":
+            return "/dashboard";
+          case "Vendedor":
+            return "/sales";
+          case "Vendedor y Repositor":
+            return "/sales"
+          default:
+            return "/";
+        }
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +44,8 @@ export default function Login() {
 
     useEffect(() => {
         if (user) {
-            navigate("/dashboard");
+            const redirectTo = getRedirectPathByRole(user.role);
+            navigate(redirectTo);
         }
     }, [user, navigate]);
 
