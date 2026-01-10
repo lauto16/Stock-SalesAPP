@@ -1,6 +1,5 @@
 import { Modal } from "react-bootstrap";
-import { useEffect } from "react";
-import Table from "./Table";
+
 export default function SelectedItemsModal({
     show,
     handleClose,
@@ -13,6 +12,9 @@ export default function SelectedItemsModal({
         const newSelected = new Map(selectedItems);
         newSelected.delete(code);
         setSelectedItems(newSelected);
+        if (newSelected.size === 0){
+            handleClose()
+        }
     };
 
 

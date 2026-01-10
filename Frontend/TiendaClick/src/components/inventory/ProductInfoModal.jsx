@@ -43,6 +43,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         purchasePrice: product.buy_price || 0,
                         sellingPrice: product.sell_price || 0,
                         provider: product.provider || null,
+                        expiration: product.expiration || null
                     });
                 })
                 .catch(() => addNotification("error", "No se pudieron cargar los proveedores"));
@@ -69,6 +70,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                     buy_price: data.purchasePrice,
                     sell_price: data.sellingPrice,
                     provider: data.provider,
+                    expiration: data.expiration
                 },
                 user.token
             );
@@ -233,6 +235,18 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 />
                             </Form.Group>
                         </Col>
+                        <Col md={6}>
+                        <Form.Group>
+                            <Form.Label>Fecha de vencimiento más próxima</Form.Label>
+                            <Form.Control
+                                type="date"
+                                {...register("expiration", {
+                                    required: false,
+                                    setValueAs: (value) => value === "" ? null : value
+                                })}
+                            />
+                        </Form.Group>
+                    </Col>
                     </Row>
 
                     {product?.offers_data && product.offers_data.length > 0 && (

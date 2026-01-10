@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from .models import Product, Offer
 from django.utils import timezone
+from datetime import datetime
 
 
 class ProductPagination(PageNumberPagination):
@@ -70,11 +71,18 @@ class ProductPagination(PageNumberPagination):
         })
 
 
+class NullableDateField(serializers.DateField):
+    def to_internal_value(self, value):
+        try:
+            return super().to_internal_value(value)
+        except Exception:
+            return None
+
 class ProductSerializer(serializers.ModelSerializer):
-    expiration = serializers.DateField(
+    expiration = NullableDateField(
         required=False,
         allow_null=True,
-        input_formats=["%Y-%m-%d"]
+        input_formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]
     )
 
     in_offer = serializers.SerializerMethodField()

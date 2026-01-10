@@ -30,8 +30,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
 
     return (
         <Row className="g-3">
-
-            {/* Código */}
             <Col md={6} className="d-flex flex-column">
                 <CustomInput
                     label='Código'
@@ -45,7 +43,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                 {errors.code && <div className="invalid-feedback d-block">{errors.code.message}</div>}
             </Col>
 
-            {/* Nombre */}
             <Col md={6} className="d-flex flex-column">
                 <CustomInput
                     label='Nombre'
@@ -63,7 +60,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                 {errors.name && <div className="invalid-feedback d-block">{errors.name.message}</div>}
             </Col>
 
-            {/* Proveedor */}
             <Col md={6} className="d-flex flex-column">
                 <Form.Group className="mb-1">
                     <Form.Label>Proveedor</Form.Label>
@@ -94,8 +90,6 @@ export default function ContentAddProduct({ register, watch, control, errors, se
                     )}
                 </Form.Group>
             </Col>
-
-            
 
             <Col md={6} className="d-flex flex-column">
                 <CustomInput

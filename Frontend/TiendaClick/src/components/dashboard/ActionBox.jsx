@@ -18,7 +18,7 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
 
 
     return (
-        <div className="col-lg-3 col-md-6 col-12">
+        <div className="col-lg-3 col-md-6 col-12 action-box">
             <div className={containerClass}>
                 <div className="inner">
                     <h3>{number === "undefined" ? "0" : number}</h3>
