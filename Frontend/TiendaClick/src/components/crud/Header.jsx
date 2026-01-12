@@ -26,9 +26,10 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
+  notModifyItem
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
-  const { addNotification } = useNotifications();
+  const { atification } = useNotifications();
   //Delete modal
   const {
     title: titleDelete,
@@ -149,6 +150,7 @@ export default function Header({
         Content={InfoFormContent}
         title={titleInfoForm}
         reloadPageOne={reloadPageOne}
+        notModifyItem={notModifyItem}
       /> : <></>
       }
       <div className="d-flex align-items-center">

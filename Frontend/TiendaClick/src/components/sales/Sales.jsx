@@ -186,6 +186,7 @@ export default function Sales() {
       <div className="d-flex justify-content-center mt-5">
         <div className="container container-modified">
           <Header
+            notModifyItem={true}
             title={"VENTAS"}
             isSomethingSelected={isSomethingSelected}
             selectedItems={selectedItems}

@@ -86,6 +86,7 @@ function Providers() {
                     <div className="table-container-providers">
 
                         <Header
+                            notModifyItem={false}
                             title={"PROVEEDORES"}
                             isSomethingSelected={isSomethingSelected}
                             selectedItems={selectedItems}

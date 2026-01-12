@@ -81,6 +81,7 @@ export default function Categories() {
                     <div className="table-container-providers">
 
                         <Header
+                            notModifyItem={false}
                             title={"CATEGORIAS"}
                             isSomethingSelected={isSomethingSelected}
                             selectedItems={selectedItems}

@@ -318,6 +318,7 @@ export default function InventoryPage() {
                 provided having two arguments: 1° the config dictionary containing constants, title and inputs; 
                 2° the onSubmit function that runs when the form is submited   */}
                     <Header
+                        notModifyItem={false}
                         title={'INVENTARIO'}
                         isSomethingSelected={isSomethingSelected}
                         selectedItems={selectedItems}

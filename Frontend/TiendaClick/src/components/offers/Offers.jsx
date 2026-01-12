@@ -83,6 +83,7 @@ export default function Offers() {
                     <div className="table-container-providers">
 
                         <Header
+                            notModifyItem={false}
                             title={"OFERTAS"}
                             isSomethingSelected={isSomethingSelected}
                             selectedItems={selectedItems}
