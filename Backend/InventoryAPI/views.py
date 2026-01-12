@@ -349,6 +349,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         else:
             new_value_text = f"Aumento del {percentage}%"
 
+        # to prevent creating N changelogs when all prices are updated we create only this one.
         ChangeLog.objects.create(
             content_type=ContentType.objects.get_for_model(Product),
             object_id="Todos",
