@@ -5,11 +5,14 @@ from .serializers import (
     OfferPagination,
 )
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from django.contrib.contenttypes.models import ContentType
+from forms.export_to_excel import export_to_excel
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
 from rest_framework.views import APIView
 from rest_framework import permissions
+from BlameAPI.models import ChangeLog
 from SalesAPI.models import SaleItem
 from django.http import FileResponse
 from rest_framework import viewsets
@@ -17,7 +20,6 @@ from django.http import HttpRequest
 from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
-from forms.export_to_excel import export_to_excel
 
 
 class ProductValidator:
@@ -65,8 +67,7 @@ class ProductValidator:
             sell_price = data.get("sell_price")
             provider = data.get("provider")
             category = data.get("category")
-                
-            
+
             if code is not None and not code.strip():
                 return {
                     "success": False,
@@ -173,7 +174,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         if not code:
             return Response(
-                {"success": False, "error": "Código inválido"}, status=status.HTTP_400_BAD_REQUEST
+                {"success": False, "error": "Código inválido"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         found = Product.objects.filter(code=code).first()
@@ -196,7 +198,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             limit = float(limit)
         except ValueError:
             return Response(
-                {"success": False, "error": "Limite invalido"}, status=status.HTTP_400_BAD_REQUEST
+                {"success": False, "error": "Limite invalido"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         products = Product.objects.filter(stock__lte=limit).order_by("stock")[:150]
@@ -339,7 +342,21 @@ class ProductViewSet(viewsets.ModelViewSet):
             if isinstance(percentage, (int, float)):
                 product.sell_price = product.sell_price * (1 + (percentage / 100))
                 product.last_modification = timezone.now()
-                product.save(user=request.user)
+                product.save(user=request.user, createChangeLog=False)
+
+        if percentage <= 0:
+            new_value_text = f"Descuento del {-percentage}%"
+        else:
+            new_value_text = f"Aumento del {percentage}%"
+
+        ChangeLog.objects.create(
+            content_type=ContentType.objects.get_for_model(Product),
+            object_id="Todos",
+            field_name="Precio de venta",
+            old_value=str("Todos los precios"),
+            new_value=str(new_value_text),
+            changed_by=request.user,
+        )
 
         return Response({"success": True}, status=status.HTTP_200_OK)
 
@@ -358,8 +375,10 @@ class ProductViewSet(viewsets.ModelViewSet):
                 ("Precio de compra", "buy_price"),
                 ("Proveedor", "provider__name"),
             ]
-            
-            success, file_path = export_to_excel("inventario", columns, Product.objects.all())
+
+            success, file_path = export_to_excel(
+                "inventario", columns, Product.objects.all()
+            )
 
             if not success:
                 return Response({"error": "Error generando el archivo"}, status=500)
@@ -584,7 +603,7 @@ class ProductSearchView(APIView):
 
             serializer = ProductSerializer(matched_products, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
+
         except Exception as e:
             print(e)
             return Response([], status=status.HTTP_200_OK)

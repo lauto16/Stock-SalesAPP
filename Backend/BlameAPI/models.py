@@ -22,11 +22,11 @@ class ChangeLog(models.Model):
     object_id = models.TextField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    field_name = models.CharField(max_length=255)
+    field_name = models.CharField(max_length=255, null=True, blank=True)
     old_value = models.TextField(null=True, blank=True)
     new_value = models.TextField(null=True, blank=True)
-    changed_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
-    changed_at = models.DateTimeField(auto_now_add=True)
+    changed_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL, blank=True)
+    changed_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         ordering = ['-changed_at']
