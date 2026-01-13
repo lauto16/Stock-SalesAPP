@@ -29,7 +29,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
             handleBeforeClose("success", "Item agregado con éxito", handleClose);
         } catch (err) {
             console.log(err)
-            handleBeforeClose("error", "Error al cargar el item", handleClose);
+            handleBeforeClose("error", err.message, handleClose);
         }
 
     };
