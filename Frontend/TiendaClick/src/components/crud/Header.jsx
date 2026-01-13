@@ -7,6 +7,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
 import Table from "./Table.jsx";
+
 export default function Header({
   title,
   isSomethingSelected,
@@ -29,7 +30,7 @@ export default function Header({
   notModifyItem
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
-  const { atification } = useNotifications();
+  const { addNotification } = useNotifications();
   //Delete modal
   const {
     title: titleDelete,
