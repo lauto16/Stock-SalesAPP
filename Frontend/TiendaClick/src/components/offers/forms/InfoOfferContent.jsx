@@ -1,7 +1,7 @@
 import { Row, Col, Form } from "react-bootstrap"
 import CustomInput from "../../crud/CustomInput"
 import { useUser } from "../../../context/UserContext"
-import { useController, Controller } from "react-hook-form"
+import { useController } from "react-hook-form"
 import AsyncSelect from "react-select/async"
 import { fetchSearchProducts } from "../../../services/axios.services"
 import { useState, useEffect } from "react"

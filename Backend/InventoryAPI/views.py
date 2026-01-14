@@ -400,7 +400,7 @@ class OfferViewSet(viewsets.ModelViewSet):
     Provides CRUD operations for managing product offers.
     """
 
-    queryset = Offer.objects.all()
+    queryset = Offer.objects.all().order_by("-created_at")
     serializer_class = OfferSerializer
     pagination_class = OfferPagination
 
@@ -494,37 +494,38 @@ class OfferViewSet(viewsets.ModelViewSet):
         """
         Updates an existing offer, including assigned products if provided.
         """
-        try:
-            offer = self.get_object()
-
-            name = request.data.get("name", offer.name)
-            percentage = request.data.get("percentage", offer.percentage)
-            end_date = request.data.get("end_date", offer.end_date)
-            products_ids = request.data.get("products", None)
-
-            if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
+        
+        offer = self.get_object()
+        name = request.data.get("name", offer.name)
+        percentage = request.data.get("percentage", offer.percentage)
+        end_date = request.data.get("end_date", offer.end_date)
+        products_ids = request.data.get("products", None)
+        
+        if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
+            
+            return Response(
+                {
+                    "success": False,
+                    "error": "Ya existe otra oferta con ese nombre.",
+                },
+                400,
+            )
+            
+        if products_ids is not None:
+            
+            if not isinstance(products_ids, list):
                 return Response(
-                    {
-                        "success": False,
-                        "error": "Ya existe otra oferta con ese nombre.",
-                    },
+                    {"success": False, "error": "Products debe ser una lista."}, 400
+                )
+                
+            products = Product.objects.filter(pk__in=products_ids)
+            if products.count() != len(products_ids):
+                return Response(
+                    {"success": False, "error": "Uno o más productos no existen."},
                     400,
                 )
-
-            if products_ids is not None:
-                if not isinstance(products_ids, list):
-                    return Response(
-                        {"success": False, "error": "Products debe ser una lista."}, 400
-                    )
-
-                products = Product.objects.filter(pk__in=products_ids)
-                if products.count() != len(products_ids):
-                    return Response(
-                        {"success": False, "error": "Uno o más productos no existen."},
-                        400,
-                    )
-
-                offer.products.set(products)
+                
+            offer.products.set(products)
 
             offer.name = name
             offer.percentage = percentage
@@ -533,30 +534,20 @@ class OfferViewSet(viewsets.ModelViewSet):
 
             return Response({"success": True, "error": ""}, 200)
 
-        except Offer.DoesNotExist:
-            return Response({"success": False, "error": "La oferta no existe."}, 404)
-        except Exception as e:
-            return Response({"success": False, "error": str(e)}, 500)
-
     def list(self, request, *args, **kwargs):
         """
         Retrieves all offers with optional pagination support.
         """
-        try:
-            queryset = self.get_queryset()
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(
+                {"success": True, "error": "", "offers": serializer.data}
+            )
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"success": True, "error": "", "offers": serializer.data})
 
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(
-                    {"success": True, "error": "", "offers": serializer.data}
-                )
-
-            serializer = self.get_serializer(queryset, many=True)
-            return Response({"success": True, "error": "", "offers": serializer.data})
-
-        except Exception as e:
-            return Response({"success": False, "error": str(e)}, 500)
 
 
 class ProductSearchView(APIView):

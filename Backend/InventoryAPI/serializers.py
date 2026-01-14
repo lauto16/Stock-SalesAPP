@@ -78,6 +78,7 @@ class NullableDateField(serializers.DateField):
         except Exception:
             return None
 
+
 class ProductSerializer(serializers.ModelSerializer):
     expiration = NullableDateField(
         required=False,
@@ -181,10 +182,11 @@ class OfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = [
+            "id",
             "name",
             "percentage",
             "end_date",
             "created_at",
             "products",
         ]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["id", "created_at"]

@@ -124,7 +124,8 @@ async function addOffer(data, token) {
 //TODO revisar que esté bien
 async function updateOffer(data, token) {
   data.products = data.products.map(product => product);
-
+  console.log(data);
+  
   try {
     const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
     return response.data;
