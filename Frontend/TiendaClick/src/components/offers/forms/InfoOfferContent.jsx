@@ -171,23 +171,24 @@ export default function InfoOfferContent({ register, selectedItem, errors, contr
                             <Row className="g-2">
                                 {selectedOptions.map((option, index) => (
                                     <Col key={index} md={6} lg={4}>
-                                        <div className="p-2 bg-white rounded border">
-                                            <div className="d-flex align-items-center">
-                                                <i className="bi bi-box text-primary me-2"></i>
-                                                <small className="text-muted" style={{ fontSize: '0.85rem' }}>
-                                                    {option.label}
-                                                </small>
-                                            </div>
+                                    <div className="p-2 bg-white rounded border d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <i className="bi bi-box text-primary me-2"></i>
+                                            <small className="text-secondary" style={{ fontSize: '0.85rem' }}>
+                                                {option.label}
+                                            </small>
                                         </div>
+                                
                                         <button
-                                            className="btn btn-sm btn-danger"
+                                            className="btn btn-sm btn-danger ms-2"
                                             type="button"
-                                            onClick={(e) => { handleRemove(e, option.value) }}
+                                            onClick={(e) => handleRemove(e, option.value)}
                                             title="Desvincular"
                                         >
-                                            <i className="bi bi-x-lg me-1"></i> Eliminar
+                                            <i className="bi bi-x-lg"></i>
                                         </button>
-                                    </Col>
+                                    </div>
+                                </Col>
                                 ))}
                             </Row>
                         </div>
