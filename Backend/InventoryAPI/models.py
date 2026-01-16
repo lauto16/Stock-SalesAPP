@@ -22,7 +22,29 @@ class Product(models.Model):
     last_modification = models.DateField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     expiration = models.DateField(null=True, blank=True)
+    in_use = models.BooleanField(default=True)
     
+    def delete(self, *args, **kwargs) -> None:
+        """
+        Reeimplented Model.delete method for creating a BlameAPI.ChangeLog register everytime
+        a Product is deleted, as well as setting in_use to False.
+
+        Args:
+        user: (CustomUser)
+        """
+        user = kwargs.pop("user", None)
+        
+        ChangeLog.objects.create(
+                                content_type=ContentType.objects.get_for_model(Product),
+                                object_id=self.pk,
+                                field_name='Estado',
+                                old_value=str('En uso'),
+                                new_value=str('Eliminado'),
+                                changed_by=user,
+        )
+        self.in_use = False
+        self.save(user=user, createChangeLog=False)
+     
     def save(self, *args, **kwargs) -> None:
         """
         Reeimplented Model.save method for creating a BlameAPI.ChangeLog register everytime

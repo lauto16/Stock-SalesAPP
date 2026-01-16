@@ -161,7 +161,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     directly by its unique code field.
     """
 
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().filter(in_use=True)
     serializer_class = ProductSerializer
     pagination_class = ProductPagination
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -202,7 +202,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        products = Product.objects.filter(stock__lte=limit).order_by("stock")[:150]
+        products = Product.objects.filter(stock__lte=limit, in_use=True).order_by("stock")[:150]
 
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
@@ -214,7 +214,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         Deletes a product from the DB only if there's no sales associated with the product
         """
-        product = Product.objects.filter(code=code).first()
+        product = Product.objects.filter(code=code, in_use=True).first()
         if not product:
             return Response(
                 {
@@ -224,16 +224,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if SaleItem.objects.filter(product=product).exists():
-            return Response(
-                {
-                    "success": False,
-                    "error": "El producto tiene ventas asignadas, no puede ser eliminado.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        product.delete()
+        product.delete(user=request.user)
         return Response({"success": True}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["patch"], url_path="patch-by-code/(?P<code>[^/.]+)")
@@ -333,7 +324,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         percentage = request.data.get("percentage")
         include_discounted = request.data.get("includeDiscounted", False)
 
-        products = Product.objects.all()
+        products = Product.objects.all().filter(in_use=True)
 
         for product in products:
             if product.has_discount() and not include_discounted:
@@ -378,7 +369,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             ]
 
             success, file_path = export_to_excel(
-                "inventario", columns, Product.objects.all()
+                "inventario", columns, Product.objects.all().filter(in_use=True)
             )
 
             if not success:
@@ -554,14 +545,13 @@ class ProductSearchView(APIView):
     """
     Performs a relevance-based search across products by name, code, or stock.
     """
-
     def get(self, request):
         query = request.GET.get("q", "").strip().lower()
         if not query:
             return Response([], status=status.HTTP_200_OK)
         try:
             results = []
-            for product in Product.objects.all():
+            for product in Product.objects.all().filter(in_use=True):
                 score = 0
 
                 name = product.name.lower() if product.name else ""

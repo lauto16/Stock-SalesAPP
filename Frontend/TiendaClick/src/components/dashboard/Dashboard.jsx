@@ -234,7 +234,7 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 col-xxl-6 mb-3">
+                <div className="col-12 mb-3">
                   <div className="card h-100">
                       <Notifications />
                   </div>
