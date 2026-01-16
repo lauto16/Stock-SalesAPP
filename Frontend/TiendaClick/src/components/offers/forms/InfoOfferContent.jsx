@@ -40,7 +40,6 @@ export default function InfoOfferContent({ register, selectedItem, errors, contr
         field.onChange(updatedCodes)
     }
 
-    // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
         if (!inputValue || inputValue.length < 2) {
             return [];
@@ -113,10 +112,7 @@ export default function InfoOfferContent({ register, selectedItem, errors, contr
                     register={register('end_date', {
                         required: "La fecha de finalización es obligatoria",
                         validate: (value) => {
-                            const selectedDate = new Date(value);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            return selectedDate >= today || "La fecha debe ser hoy o posterior";
+                            return true
                         }
                     })}
                 />
