@@ -60,7 +60,7 @@ export default function Offers() {
 
         loadOffers();
     }, [currentPage]);
-    
+
     useEffect(() => {
         if (selectedItems.size !== 0) {
             setIsSomethingSelected(true)
@@ -75,6 +75,23 @@ export default function Offers() {
         }
 
     };
+
+    const reloadPageOne = () => {
+        if (currentPage === 1) {
+            setCurrentPage(2);
+            setTimeout(() => setCurrentPage(1), 50);
+        } else {
+            setCurrentPage(1);
+        }
+        setLoading(true);
+        setTimeout(() => setLoading(false), 0);
+    }
+
+    const handleUpdateOffer = (data, token) => {
+        updateOffer(data, token)
+        setSelectedItems(new Map())
+        reloadPageOne()
+    }
 
     return (
         <RequirePermission permission="access_offers">
@@ -93,7 +110,7 @@ export default function Offers() {
                             selectedItemsColumns={importantColumns}
                             reloadPageOne={() => setCurrentPage(1)}
                             onSubmitAddItem={addOffer}
-                            onSubmitEditItem={updateOffer}
+                            onSubmitEditItem={handleUpdateOffer}
                             titleAddItem={'Añadir una nueva oferta'}
                             AddItemcontent={AddOfferContent}
                             InfoFormContent={InfoOfferContent}
