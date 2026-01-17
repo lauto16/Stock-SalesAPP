@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'CategoryAPI',
     'PaymentMethodAPI',
     'NotificationAPI',
-    'Entries',
+    'EntryAPI',
     'Testing'
 ]
 

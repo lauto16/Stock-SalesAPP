@@ -7,6 +7,7 @@ from .serializers import (
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.contrib.contenttypes.models import ContentType
 from forms.export_to_excel import export_to_excel
+from EntryAPI.models import Entry, EntryDetail
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
@@ -202,7 +203,9 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        products = Product.objects.filter(stock__lte=limit, in_use=True).order_by("stock")[:150]
+        products = Product.objects.filter(stock__lte=limit, in_use=True).order_by(
+            "stock"
+        )[:150]
 
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
@@ -247,6 +250,21 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # TODO: QUITAR ESTE IF, SOLO ESTÁ HASTA QUE HAGAMOS EL CRUD DE ENTRIES.
+        if request.data["stock"] > product.stock:
+            print("dsi")
+            new_stock = request.data["stock"] - product.stock
+            entry = Entry.objects.create(created_by=request.user)
+            entry_detail = EntryDetail.objects.create(
+                entry=entry,
+                product=product,
+                stock_amount=new_stock,
+                subtotal=(product.buy_price * new_stock),
+            )
+            entry_detail.apply_entry()
+            request.data['stock'] = product.stock + new_stock
+
+    
         serializer = ProductSerializer(product, data=request.data, partial=True)
 
         if serializer.is_valid():
@@ -485,15 +503,15 @@ class OfferViewSet(viewsets.ModelViewSet):
         """
         Updates an existing offer, including assigned products if provided.
         """
-        
+
         offer = self.get_object()
         name = request.data.get("name", offer.name)
         percentage = request.data.get("percentage", offer.percentage)
         end_date = request.data.get("end_date", offer.end_date)
         products_ids = request.data.get("products", None)
-        
+
         if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
-            
+
             return Response(
                 {
                     "success": False,
@@ -501,21 +519,21 @@ class OfferViewSet(viewsets.ModelViewSet):
                 },
                 400,
             )
-            
+
         if products_ids is not None:
-            
+
             if not isinstance(products_ids, list):
                 return Response(
                     {"success": False, "error": "Products debe ser una lista."}, 400
                 )
-                
+
             products = Product.objects.filter(pk__in=products_ids)
             if products.count() != len(products_ids):
                 return Response(
                     {"success": False, "error": "Uno o más productos no existen."},
                     400,
                 )
-                
+
             offer.products.set(products)
 
             offer.name = name
@@ -540,11 +558,11 @@ class OfferViewSet(viewsets.ModelViewSet):
         return Response({"success": True, "error": "", "offers": serializer.data})
 
 
-
 class ProductSearchView(APIView):
     """
     Performs a relevance-based search across products by name, code, or stock.
     """
+
     def get(self, request):
         query = request.GET.get("q", "").strip().lower()
         if not query:
