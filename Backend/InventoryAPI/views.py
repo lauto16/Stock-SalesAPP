@@ -250,6 +250,38 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         # TODO: QUITAR ESTE IF, SOLO ESTÁ HASTA QUE HAGAMOS EL CRUD DE ENTRIES.
         if request.data["stock"] > product.stock:
             print("dsi")
@@ -263,6 +295,36 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
             entry_detail.apply_entry()
             request.data['stock'] = product.stock + new_stock
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
         serializer = ProductSerializer(product, data=request.data, partial=True)

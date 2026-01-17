@@ -15,7 +15,7 @@ import AuthGuard from "./components/auth/AuthGuard.jsx";
 import Stats from "./components/Stats/Stats.jsx"
 import Categories from './components/categories/Categories.jsx'
 import ConfigApp from './components/config/ConfigApp.jsx'
-
+import Entries from './components/entries/Entries.jsx'
 function App() {
   return (
     <Router>
@@ -113,6 +113,14 @@ function App() {
             element={
               <PrivateRoute>
                 <ConfigApp />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/entries/'
+            element={
+              <PrivateRoute>
+                <Entries />
               </PrivateRoute>
             }
           />

@@ -16,6 +16,11 @@ export default function Login() {
     const { login, user } = useUser();
 
     const getRedirectPathByRole = (role) => {
+
+        if (user.askForPin){
+            return '/pin-manager'
+        }
+        
         switch (role) {
           case "Repositor":
             return "/inventory";

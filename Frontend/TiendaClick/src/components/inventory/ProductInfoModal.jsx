@@ -30,7 +30,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const { categories } = useCategories(user.token);
 
     useEffect(() => {
-        
+
         if (show && product) {
             setIsSending(true)
             fetchProviders(user.token)
@@ -185,6 +185,12 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                                 placeholder="Stock"
                                 register={register("stock", { valueAsNumber: true })}
                             />
+                            <div className="text-muted fst-italic mt-1 d-flex align-items-center gap-2 small">
+                                <i className="bi bi-info-circle-fill"></i>
+                                <span>
+                                    Si es un ingreso de stock, registralo en <a style={{ textDecoration: 'none' }} href="/entries/">Ingresos</a>
+                                </span>
+                            </div>
                         </Col>
                         <Col md={6}>
                             <CustomInput
@@ -236,17 +242,17 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                        <Form.Group>
-                            <Form.Label>Fecha de vencimiento más próxima</Form.Label>
-                            <Form.Control
-                                type="date"
-                                {...register("expiration", {
-                                    required: false,
-                                    setValueAs: (value) => value === "" ? null : value
-                                })}
-                            />
-                        </Form.Group>
-                    </Col>
+                            <Form.Group>
+                                <Form.Label>Fecha de vencimiento más próxima</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    {...register("expiration", {
+                                        required: false,
+                                        setValueAs: (value) => value === "" ? null : value
+                                    })}
+                                />
+                            </Form.Group>
+                        </Col>
                     </Row>
 
                     {product?.offers_data && product.offers_data.length > 0 && (

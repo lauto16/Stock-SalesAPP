@@ -38,9 +38,9 @@ function SideBar({ onLogout }) {
                                 <NavLink name="Proveedores" url="/providers" />
                                 <NavLink name="Categorias" url="/categories" />
                                 <NavLink name="Inventario" url="/inventory" />
+                                <NavLink name="Ingresos" url="/entries" />
                                 <NavLink name="Ofertas" url="/offers" />
                                 <NavLink name="Ventas" url="/sales" />
-
 
                                 <li className="nav-header">DESCARGAR DOCUMENTOS</li>
                                 <DownloadButton onClick={() => fetchSalesDownloadExcel(token)} name="Informe de Ventas" />

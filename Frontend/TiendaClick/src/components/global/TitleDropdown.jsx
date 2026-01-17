@@ -8,11 +8,12 @@ import {
   FaShoppingCart,
   FaChartBar,
   FaTags,
-  FaSignOutAlt,
   FaList,
   FaChartLine,
   FaTruck,
   FaCog,
+  FaSignOutAlt,
+  FaTruckLoading,
   FaUserPlus,
   FaUserMinus,
   FaLock
@@ -29,6 +30,7 @@ const options_other = [
   { label: "Proveedores", path: "/providers/", permission: "access_providers", icon: <FaTruck /> },
   { label: "Configuración", path: "/config-app/", permission: "access_dashboard", icon: <FaCog /> },
   { label: "Cerrar sesión", path: "/login/", icon: <FaSignOutAlt /> },
+  { label: "Ingresos", path: "/entries/", icon: <FaTruckLoading /> },
 ];
 
 const options_dashboard = [
