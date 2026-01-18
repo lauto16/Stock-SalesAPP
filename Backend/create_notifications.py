@@ -9,7 +9,7 @@ def delete_old_products_notifications(months: int = 1):
     from datetime import timedelta
     from django.utils import timezone
 
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../backend"))
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Backend"))
     sys.path.append(BASE_DIR)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StockSalesApp.settings")
@@ -60,7 +60,7 @@ def create_best_sellers_products_low_stock_notification(stock_limit: int):
     import sys
     import django
 
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../backend"))
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Backend"))
     sys.path.append(BASE_DIR)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StockSalesApp.settings")
@@ -136,7 +136,7 @@ def create_product_expiration_notifications(limit: int):
     from datetime import timedelta
     from django.utils import timezone
 
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../backend"))
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Backend"))
     sys.path.append(BASE_DIR)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StockSalesApp.settings")
