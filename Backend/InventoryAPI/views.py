@@ -290,8 +290,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             entry_detail = EntryDetail.objects.create(
                 entry=entry,
                 product=product,
-                stock_amount=new_stock,
-                subtotal=(product.buy_price * new_stock),
+                quantity=new_stock,
+                unit_price=product.buy_price
             )
             entry_detail.apply_entry()
             request.data['stock'] = product.stock + new_stock

@@ -44,7 +44,7 @@ class EntryDetail(models.Model):
     quantity = models.FloatField()
     observations = models.TextField(null=True, blank=True, default='Sin observaciones')
     extra_percentage = models.FloatField(default=0)
-    receipt = models.CharField(max_length=200, blank=True, null=True)
+    receipt = models.CharField(max_length=200, blank=True, null=True, default='-')
 
     @property
     def subtotal(self):
