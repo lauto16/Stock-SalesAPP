@@ -1,4 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
+from InventoryAPI.models import Provider, Category
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -106,31 +107,31 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["last_modification"]
 
+    def validate(self, attrs):
+        """
+        If provider/category are null, empty, false or missing,
+        assign default objects.
+        """
+
+        provider = attrs.get("provider", None)
+
+        if not provider:
+            provider, _ = Provider.objects.get_or_create(name="Sin proveedor")
+            attrs["provider"] = provider
+
+        category = attrs.get("category", None)
+
+        if not category:
+            category, _ = Category.objects.get_or_create(name="Sin categoria")
+            attrs["category"] = category
+
+        return attrs
+
     def get_in_offer(self, obj):
-        """
-        Returns whether the product is currently included in any active offer.
-
-        An offer is considered active if its end_date is today or later.
-
-        Args:
-            obj (Product): The product instance.
-
-        Returns:
-            bool: True if the product has at least one active offer.
-        """
         now = timezone.now().date()
         return obj.offers.filter(end_date__gte=now).exists()
 
     def get_offers_data(self, obj):
-        """
-        Retrieves serialized information about all active offers for the product.
-
-        Args:
-            obj (Product): The product instance.
-
-        Returns:
-            list: A list of OfferSerializer representations.
-        """
         offer = obj.get_active_discount()
         return OfferSerializer(offer, many=False, context=self.context).data
 
