@@ -328,7 +328,7 @@ export default function InventoryPage() {
                         onExtraInfo={onExtraInfo}
                         extraButtons={EXTRABUTTONS}
                         deleteItem={deleteProductByCode}
-                        titleAddItem={'Añadir Nuevo Producto'}
+                        titleAddItem={'Añadir nuevo producto'}
                         onSubmitAddItem={addProduct}
                         AddItemcontent={ContentAddProduct}
                         selectedItemsColumns={importantColumns}
