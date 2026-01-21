@@ -111,7 +111,7 @@ export default function Offers() {
                             reloadPageOne={() => setCurrentPage(1)}
                             onSubmitAddItem={addOffer}
                             onSubmitEditItem={handleUpdateOffer}
-                            titleAddItem={'Añadir una nueva oferta'}
+                            titleAddItem={'Añadir nueva oferta'}
                             AddItemcontent={AddOfferContent}
                             InfoFormContent={InfoOfferContent}
                             titleInfoForm={'Informacion de la oferta (editar)'}

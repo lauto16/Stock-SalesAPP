@@ -196,7 +196,7 @@ export default function Sales() {
             deleteItem={deleteSaleById}
             isSale={true}
             reloadPageOne={reloadPageOne}
-            titleAddItem={"Añadir una nueva venta"}
+            titleAddItem={"Añadir nueva venta"}
             AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}
             titleInfoForm={"Informacion de la venta"}
