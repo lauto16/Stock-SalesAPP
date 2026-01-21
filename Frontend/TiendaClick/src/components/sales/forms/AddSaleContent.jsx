@@ -155,12 +155,17 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                 <Col md={colSize} key={product.code}>
                                     <CustomInput
                                         label={`${product.name} (${product.code})`}
-                                        icon='bi-box'
-                                        type='number'
-                                        step='1'
+                                        icon="bi-box"
+                                        type="text"
+                                        inputMode="decimal"
+                                        step="any"
                                         defaultValue={1}
                                         register={register(`quantity_${product.code}`, {
                                             required: "La cantidad es obligatoria",
+                                            setValueAs: (value) => {
+                                                if (!value) return value;
+                                                return parseFloat(value.toString().replace(',', '.'));
+                                            },
                                             min: {
                                                 value: 1,
                                                 message: "La cantidad debe ser mayor a 0"
@@ -171,12 +176,14 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                             }
                                         })}
                                     />
+
                                     {errors[`quantity_${product.code}`] && (
                                         <div className="invalid-feedback d-block">
                                             {errors[`quantity_${product.code}`].message}
                                         </div>
                                     )}
                                 </Col>
+
                             );
                         })}
                     </Row>
