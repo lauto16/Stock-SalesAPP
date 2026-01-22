@@ -76,7 +76,8 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                     buy_price: data.purchasePrice,
                     sell_price: data.sellingPrice,
                     provider: data.provider,
-                    expiration: data.expiration
+                    expiration: data.expiration,
+                    category: data.category,
                 },
                 user.token
             );

@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
 from rest_framework.views import APIView
+from CategoryAPI.models import Category
 from rest_framework import permissions
 from BlameAPI.models import ChangeLog
 from SalesAPI.models import SaleItem
@@ -136,7 +137,7 @@ class ProductValidator:
                     }
 
             if category:
-                if not category.objects.filter(name=category).exists():
+                if not Category.objects.filter(id=category).exists():
                     return {
                         "success": False,
                         "error": "La categoria especificada no existe.",
@@ -162,7 +163,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     directly by its unique code field.
     """
 
-    queryset = Product.objects.all().filter(in_use=True)
+    queryset = Product.objects.filter(in_use=True).order_by("category__name", "name")
     serializer_class = ProductSerializer
     pagination_class = ProductPagination
     authentication_classes = [SessionAuthentication, TokenAuthentication]
