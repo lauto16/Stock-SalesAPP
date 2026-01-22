@@ -98,7 +98,7 @@ function Providers() {
                             reloadPageOne={reloadPageOne}
                             onSubmitAddItem={addProvider}
                             onSubmitEditItem={updateProvider}
-                            titleAddItem={'Añadir un nuevo proveedor'}
+                            titleAddItem={'Añadir nuevo proveedor'}
                             AddItemcontent={AddItemContent}
                             InfoFormContent={InfoFormContent}
                             titleInfoForm={'Informacion del producto (editar)'}

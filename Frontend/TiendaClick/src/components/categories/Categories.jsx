@@ -92,7 +92,7 @@ export default function Categories() {
                             reloadPageOne={reloadPageOne}
                             onSubmitAddItem={addCategory}
                             onSubmitEditItem={updateCategory}
-                            titleAddItem={'Añadir una nueva categoria'}
+                            titleAddItem={'Añadir nueva categoria'}
                             AddItemcontent={AddCategoryContent}
                             InfoFormContent={InfoCategoryContent}
                             titleInfoForm={'Informacion de la categoria (editar)'}

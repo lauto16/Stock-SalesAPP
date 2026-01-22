@@ -39,7 +39,7 @@ class SaleItem(models.Model):
     """
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField()
+    quantity = models.FloatField()
     unit_price = models.FloatField()
     charge_percentage = models.FloatField(default=0)
 

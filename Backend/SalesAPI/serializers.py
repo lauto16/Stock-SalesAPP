@@ -77,7 +77,7 @@ class SaleSerializer(serializers.ModelSerializer):
 class SaleItemCreateSerializer(serializers.Serializer):
     """Represents the data required to create a single sale item."""
     product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    quantity = serializers.IntegerField()
+    quantity = serializers.FloatField()
     charge_percentage = serializers.FloatField(default=0)
 
 
