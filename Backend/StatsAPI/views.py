@@ -4,7 +4,7 @@ from django.db.models.functions import (
     TruncDay,
     Coalesce,
 )
-from django.db.models import Sum, Count, Q, F, FloatField, ExpressionWrapper
+from django.db.models import Sum, Count, Q, F, FloatField, ExpressionWrapper, When, Case, Value
 from django.db.models.functions import ExtractMonth, ExtractHour
 from concurrent.futures import ThreadPoolExecutor
 from PaymentMethodAPI.models import PaymentMethod
@@ -28,38 +28,44 @@ class ProductsStatsViewSet(viewsets.ViewSet):
     """
 
     def calculate_lower_margin_products(self, count: int):
-        margin_expr = ExpressionWrapper(
-            F("sell_price") - F("buy_price"), output_field=FloatField()
+        margin_expr = Case(
+            When(
+                buy_price__gt=0,
+                then=ExpressionWrapper(
+                    (F("sell_price") - F("buy_price")) * 100.0 / F("buy_price"),
+                    output_field=FloatField(),
+                ),
+            ),
+            default=Value(0.0),
+            output_field=FloatField(),
         )
 
         return (
             Product.objects.annotate(margin=margin_expr)
             .order_by("margin")[:count]
-            .values(
-                "code",
-                "sell_price",
-                "buy_price",
-                "name",
-                "margin",
-            )
+            .values("code", "sell_price", "buy_price", "name", "margin")
         )
 
+
     def calculate_higher_margin_products(self, count: int):
-        margin_expr = ExpressionWrapper(
-            F("sell_price") - F("buy_price"), output_field=FloatField()
+        margin_expr = Case(
+            When(
+                buy_price__gt=0,
+                then=ExpressionWrapper(
+                    (F("sell_price") - F("buy_price")) * 100.0 / F("buy_price"),
+                    output_field=FloatField(),
+                ),
+            ),
+            default=Value(0.0),
+            output_field=FloatField(),
         )
 
         return (
             Product.objects.annotate(margin=margin_expr)
             .order_by("-margin")[:count]
-            .values(
-                "code",
-                "sell_price",
-                "buy_price",
-                "name",
-                "margin",
-            )
+            .values("code", "sell_price", "buy_price", "name", "margin")
         )
+
 
     def calculate_best_selling_categories(self):
         return (

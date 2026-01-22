@@ -165,7 +165,7 @@ export default function Stats() {
                     />
                     <ActionBox
                         name="Margen de ganancia promedio"
-                        number={`${productStats.average_gain_margin_per_product}%`}
+                        number={`${productStats.average_gain_margin_per_product} %`}
                         cardClass={
                             productStats.average_gain_margin_per_product > 0
                                 ? 'text-bg-success'
@@ -348,7 +348,7 @@ export default function Stats() {
                                     },
                                     tooltip: {
                                         y: {
-                                            formatter: (val) => `$ ${val.toFixed(1)}`
+                                            formatter: (val) => `${val.toFixed(1)} %`
                                         }
                                     },
 
@@ -398,7 +398,7 @@ export default function Stats() {
                                     },
                                     tooltip: {
                                         y: {
-                                            formatter: (val) => `$ ${val.toFixed(1)}`
+                                            formatter: (val) => `${val.toFixed(1)} %`
                                         }
                                     },
                                     dataLabels: {
@@ -419,7 +419,6 @@ export default function Stats() {
                             />
                         </div>
                     </div>
-
                     {/* Best selling categories */}
                     {bestCategories.length > 0 && (
                         <div className="card mb-4">
