@@ -29,6 +29,11 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const [isSending, setIsSending] = useState(false)
     const { categories } = useCategories(user.token);
 
+    useEffect(()=>{
+        console.log(categories);
+        
+    }, [categories]);
+
     useEffect(() => {
 
         if (show && product) {
@@ -43,6 +48,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                         purchasePrice: product.buy_price || 0,
                         sellingPrice: product.sell_price || 0,
                         provider: product.provider || null,
+                        category: product.category || null,
                         expiration: product.expiration || null
                     });
                 })
