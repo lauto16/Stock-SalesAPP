@@ -10,7 +10,18 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
     const formatDate = (isoString) => {
         if (!isoString) return "";
         return isoString.slice(0, 10).replaceAll("-", "/");
-      };
+    };
+
+    const formatHour = (isoString) => {
+        if (!isoString) return "";
+        return new Date(isoString).toLocaleTimeString("es-AR", {
+            timeZone: "America/Argentina/Buenos_Aires",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+        });
+    };
 
     // Transform items to flatten product data for table display
     const tableItems = selectedItem.items?.map(item => ({
@@ -45,7 +56,7 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
                 <div className="alert alert-info">
                     <h6>Información de la venta</h6>
                     <p className="mb-1"><strong>ID:</strong> #{selectedItem.id}</p>
-                    <p className="mb-1"><strong>Fecha:</strong> {formatDate(selectedItem.created_at)}</p>
+                    <p className="mb-1"><strong>Fecha:</strong> {formatDate(selectedItem.created_at)} - {formatHour(selectedItem.created_at)}</p>
                     <p className="mb-1"><strong>Vendedor:</strong> {selectedItem.created_by || 'N/A'}</p>
                     <p className="mb-1"><strong>Productos:</strong> {selectedItem.product_count || selectedItem.items?.length || 0}</p>
                     <p className="mb-0"><strong>Total:</strong> ${selectedItem.total_price}</p>

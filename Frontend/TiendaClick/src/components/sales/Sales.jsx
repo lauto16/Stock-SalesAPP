@@ -33,12 +33,10 @@ export default function Sales() {
   const PAGE_SIZE = 10;
 
   const columns = [
-    { className: "initial", key: "initial_price", label: "Precio inicial" },
     { className: "total", key: "total_price", label: "Precio final" },
     { className: "charge_reason", key: "charge_reason", label: "Descuento / Aumento añadido" },
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
     { className: "date", key: "full_date", label: "Fecha" },
-    { className: "hour", key: "hour", label: "Hora" },
   ];
 
   /* =======================
