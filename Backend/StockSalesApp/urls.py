@@ -9,9 +9,9 @@ from CategoryAPI.views import *
 from BlameAPI.views import *
 from SalesAPI.views import *
 from StatsAPI.views import *
+from EntryAPI.views import *
 from AuthAPI.views import *
 from Testing.views import *
-
 
 
 router_blame = DefaultRouter()
@@ -56,6 +56,11 @@ router_categories.register(r'categories', CategoryViewSet, basename='category')
 router_notifications = DefaultRouter()
 router_notifications.register(r'notifications', ProductNotificationViewSet, basename='notification')
 
+router_entries = DefaultRouter()
+router_entries.register(r'entries', EntryViewSet, basename='entry')
+
+
+
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
@@ -77,6 +82,7 @@ urlpatterns = [
     path('api/', include(router_categories.urls)),
     path('api/', include(router_users_admin_functions.urls)),
     path('api/', include(router_notifications.urls)),
+    path('api/', include(router_entries.urls)),
     path('api/login/', obtain_auth_token),
 
 ]
