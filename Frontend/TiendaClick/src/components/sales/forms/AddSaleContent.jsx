@@ -195,7 +195,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                 <>
                     <Col md={6}>
                         <CustomInput
-                            label="Recargo (%)"
+                            label="Recargo / Descuento (%)"
                             icon='bi-percent'
                             type='number'
                             step='0.01'
@@ -211,7 +211,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
 
                     <Col md={6}>
                         <CustomInput
-                            label="Razón del aumento"
+                            label="Razón del recargo / descuento"
                             icon='bi-chat-left-text'
                             type='text'
                             placeholder="Ej: Recargo tarjeta credito"
