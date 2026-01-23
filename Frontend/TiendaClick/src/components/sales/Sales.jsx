@@ -170,14 +170,16 @@ export default function Sales() {
     }
   };
 
-  const reloadPageOne = () => {
-    if (currentPage === 1) {
-      setCurrentPage(2);
-      setTimeout(() => setCurrentPage(1), 50);
-    } else {
-      setCurrentPage(1);
-    }
+  const reloadWithBounce = () => {
+    const pageBeforeReload = currentPage;
+    setLoading(true);
+    setCurrentPage(1);
+    setTimeout(() => {
+      setCurrentPage(pageBeforeReload);
+      setLoading(false);
+    }, 100);
   };
+
 
   return (
     <RequirePermission permission="access_sales">
@@ -193,7 +195,7 @@ export default function Sales() {
             items={items}
             deleteItem={deleteSaleById}
             isSale={true}
-            reloadPageOne={reloadPageOne}
+            reloadWithBounce={reloadWithBounce}
             titleAddItem={"Añadir nueva venta"}
             AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}

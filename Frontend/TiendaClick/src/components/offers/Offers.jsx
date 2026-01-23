@@ -76,21 +76,20 @@ export default function Offers() {
 
     };
 
-    const reloadPageOne = () => {
-        if (currentPage === 1) {
-            setCurrentPage(2);
-            setTimeout(() => setCurrentPage(1), 50);
-        } else {
-            setCurrentPage(1);
-        }
+    const reloadWithBounce = () => {
+        const pageBeforeReload = currentPage;
         setLoading(true);
-        setTimeout(() => setLoading(false), 0);
-    }
+        setCurrentPage(1);
+        setTimeout(() => {
+          setCurrentPage(pageBeforeReload);
+          setLoading(false);
+        }, 100);
+      };
 
     const handleUpdateOffer = (data, token) => {
         updateOffer(data, token)
         setSelectedItems(new Map())
-        reloadPageOne()
+        reloadWithBounce()
     }
 
     return (
@@ -108,7 +107,7 @@ export default function Offers() {
                             user={user}
                             items={offers}
                             selectedItemsColumns={importantColumns}
-                            reloadPageOne={() => setCurrentPage(1)}
+                            reloadWithBounce={() => setCurrentPage(1)}
                             onSubmitAddItem={addOffer}
                             onSubmitEditItem={handleUpdateOffer}
                             titleAddItem={'Añadir nueva oferta'}

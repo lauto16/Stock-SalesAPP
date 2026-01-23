@@ -68,16 +68,16 @@ function Providers() {
         }
 
     };
-    const reloadPageOne = () => {
-        if (currentPage === 1) {
-            setCurrentPage(2);
-            setTimeout(() => setCurrentPage(1), 50);
-        } else {
-            setCurrentPage(1);
-        }
+    
+    const reloadWithBounce = () => {
+        const pageBeforeReload = currentPage;
         setLoading(true);
-        setTimeout(() => setLoading(false), 0);
-    }
+        setCurrentPage(1);
+        setTimeout(() => {
+          setCurrentPage(pageBeforeReload);
+          setLoading(false);
+        }, 100);
+      };
 
     return (
         <RequirePermission permission="access_providers">
@@ -95,7 +95,7 @@ function Providers() {
                             items={providers}
                             deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
-                            reloadPageOne={reloadPageOne}
+                            reloadWithBounce={reloadWithBounce}
                             onSubmitAddItem={addProvider}
                             onSubmitEditItem={updateProvider}
                             titleAddItem={'Añadir nuevo proveedor'}

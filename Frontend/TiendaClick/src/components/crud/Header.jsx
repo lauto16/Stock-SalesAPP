@@ -19,7 +19,7 @@ export default function Header({
   extraButtons = [],
   deleteItem,
   selectedItemsColumns = [{}],
-  reloadPageOne = () => { },
+  reloadWithBounce = () => { },
   titleAddItem,
   AddItemcontent = () => { },
   onSubmitAddItem,
@@ -102,7 +102,7 @@ export default function Header({
 
     setSelectedItems(new Map());
     closeDelModal();
-    reloadPageOne();
+    reloadWithBounce();
   };
 
   //Select All button
@@ -132,7 +132,7 @@ export default function Header({
       />
       {/* opens a form to add an Item */}
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={onSubmitAddItem}
-        Content={AddItemcontent} title={titleAddItem} reloadPageOne={reloadPageOne} />
+        Content={AddItemcontent} title={titleAddItem} reloadWithBounce={reloadWithBounce} />
 
       {/* enables to delete a set of Items */}
       <ConfirmationModal
@@ -150,7 +150,7 @@ export default function Header({
         selectedItems={selectedItems}
         Content={InfoFormContent}
         title={titleInfoForm}
-        reloadPageOne={reloadPageOne}
+        reloadWithBounce={reloadWithBounce}
         notModifyItem={notModifyItem}
       /> : <></>
       }

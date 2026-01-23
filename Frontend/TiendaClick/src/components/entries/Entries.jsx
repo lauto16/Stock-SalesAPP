@@ -142,13 +142,14 @@ export default function Entries() {
       }
     };
   
-    const reloadPageOne = () => {
-      if (currentPage === 1) {
-        setCurrentPage(2);
-        setTimeout(() => setCurrentPage(1), 50);
-      } else {
-        setCurrentPage(1);
-      }
+    const reloadWithBounce = () => {
+      const pageBeforeReload = currentPage;
+      setLoading(true);
+      setCurrentPage(1);
+      setTimeout(() => {
+        setCurrentPage(pageBeforeReload);
+        setLoading(false);
+      }, 100);
     };
 
     return (
@@ -165,7 +166,7 @@ export default function Entries() {
                         items={items}
                         deleteItem={''}
                         isSale={true}
-                        reloadPageOne={reloadPageOne}
+                        reloadWithBounce={reloadWithBounce}
                         titleAddItem={"Añadir nuevo ingreso"}
                         AddItemcontent={''}
                         onSubmitAddItem={''}

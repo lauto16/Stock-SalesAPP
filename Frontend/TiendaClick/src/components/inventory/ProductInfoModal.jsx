@@ -8,7 +8,7 @@ import { useNotifications } from "../../context/NotificationSystem";
 import { useUser } from "../../context/UserContext";
 import { useCategories } from "../Hooks/useCategories.js";
 
-export default function ProductInfoModal({ show, handleClose, product, unselectAll, reloadPageOne }) {
+export default function ProductInfoModal({ show, handleClose, product, unselectAll, reloadWithBounce }) {
     const {
         register,
         handleSubmit,
@@ -86,7 +86,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 addNotification("success", "Producto actualizado con éxito");
                 unselectAll();
                 handleClose();
-                reloadPageOne()
+                reloadWithBounce()
             } else {
                 addNotification("error", error || "Error al actualizar el producto");
             }

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNotifications } from "../../../context/NotificationSystem";
 import { useUser } from "../../../context/UserContext";
-export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloadPageOne }) {
+export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloadWithBounce }) {
     const { user } = useUser();
     const token = user?.token;
     const {
@@ -22,7 +22,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
 
     const onSubmit = async (data) => {
         if (!data) return;
-        reloadPageOne()
+        reloadWithBounce()
         reset(data)
         try {
             await onSubmitHandler(data, token);

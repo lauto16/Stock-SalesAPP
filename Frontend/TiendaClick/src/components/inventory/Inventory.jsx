@@ -193,7 +193,7 @@ export default function InventoryPage() {
         if (result.success) {
             addNotification("success", "Precios actualizados correctamente");
             setShowConfirmation(false);
-            reloadPageOne()
+            reloadWithBounce()
         } else {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
             setShowConfirmation(false);
@@ -202,16 +202,15 @@ export default function InventoryPage() {
 
     }
 
-    const reloadPageOne = () => {
-        if (currentPage === 1) {
-            setCurrentPage(2);
-            setTimeout(() => setCurrentPage(1), 50);
-        } else {
-            setCurrentPage(1);
-        }
+    const reloadWithBounce = () => {
+        const pageBeforeReload = currentPage;
         setLoading(true);
-        setTimeout(() => setLoading(false), 0);
-    }
+        setCurrentPage(1);
+        setTimeout(() => {
+          setCurrentPage(pageBeforeReload);
+          setLoading(false);
+        }, 100);
+      };
 
     useEffect(() => {
         setIsSomethingSelected(selectedItems.size > 0);
@@ -310,7 +309,7 @@ export default function InventoryPage() {
                     handleClose={() => setShowProductInfo(false)}
                     product={selectedProduct}
                     unselectAll={unselectAll}
-                    reloadPageOne={reloadPageOne}
+                    reloadWithBounce={reloadWithBounce}
                 />
 
                 <div className="container container-modified">
@@ -332,7 +331,7 @@ export default function InventoryPage() {
                         onSubmitAddItem={addProduct}
                         AddItemcontent={ContentAddProduct}
                         selectedItemsColumns={importantColumns}
-                        reloadPageOne={reloadPageOne}
+                        reloadWithBounce={reloadWithBounce}
                     />
                     <div className="table-container">
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">
