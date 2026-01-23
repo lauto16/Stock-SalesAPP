@@ -1,20 +1,21 @@
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from .serializers import SaleSerializer, SaleCreateSerializer
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse, FileResponse
+from forms.export_to_excel import export_to_excel
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db import transaction
-from rest_framework.views import APIView
 from .models import Sale
-from forms.export_to_excel import export_to_excel
-from django.http import JsonResponse, FileResponse
 import os
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+
 
 class SalePagination(PageNumberPagination):
     """

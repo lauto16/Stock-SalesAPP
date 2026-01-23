@@ -12,6 +12,7 @@ import { getAllUsers, deleteUser } from "../../services/axios.services";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import { FaLock } from "react-icons/fa";
 import { Dropdown } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 
 export default function DeleteUser() {
     const [selectedUser, setSelectedUser] = useState(null);
@@ -55,13 +56,15 @@ export default function DeleteUser() {
     }, []);
 
     const handleDelete = async () => {
+        if (isDeleting) return;
+    
         setIsDeleting(true);
         const result = await deleteUser(selectedUser.id, user.token);
         setIsDeleting(false);
         setShowConfirmModal(false);
-
+    
         if (!result.success) {
-            addNotification("error", result.message || "No se pudo eliminar el usuario");
+            addNotification("error", result.error || "No se pudo eliminar el usuario");
         } else {
             addNotification("success", "Usuario eliminado correctamente");
             setUsers(users.filter((u) => u.id !== selectedUser.id));
@@ -144,9 +147,22 @@ export default function DeleteUser() {
                                             <Button
                                                 type="submit"
                                                 className="mt-3 send-form-button btn btn-danger"
-                                                disabled={loading || !users.length}
+                                                disabled={loading || isDeleting || !users.length || !selectedUser}
                                             >
-                                                Eliminar usuario
+                                                {isDeleting ? (
+                                                    <>
+                                                        <Spinner
+                                                            as="span"
+                                                            animation="border"
+                                                            size="sm"
+                                                            role="status"
+                                                            className="me-2"
+                                                        />
+                                                        Eliminando...
+                                                    </>
+                                                ) : (
+                                                    "Eliminar usuario"
+                                                )}
                                             </Button>
                                         </div>
                                     </Form>
