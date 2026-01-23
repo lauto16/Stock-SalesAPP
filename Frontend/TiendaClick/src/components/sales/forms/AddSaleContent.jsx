@@ -200,16 +200,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                             type='number'
                             step='0.01'
                             defaultValue={0}
-                            register={register("applied_charge_percentage", {
-                                min: {
-                                    value: 0,
-                                    message: "El recargo no puede ser negativo"
-                                },
-                                max: {
-                                    value: 100,
-                                    message: "El recargo no puede ser mayor a 100%"
-                                }
-                            })}
+                            register={register("applied_charge_percentage", {})}
                         />
                         {errors.applied_charge_percentage && (
                             <div className="invalid-feedback d-block">
@@ -327,24 +318,42 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                             </tbody>
                             <tfoot className="table-secondary">
                                 <tr>
-                                    <td colSpan="5" className="text-end"><strong>Subtotal:</strong></td>
-                                    <td className="text-end"><strong>${calculateSubtotal().toFixed(2)}</strong></td>
+                                    <td colSpan="5" className="text-end">
+                                        <strong>Subtotal:</strong>
+                                    </td>
+                                    <td className="text-end">
+                                        <strong>${calculateSubtotal().toFixed(2)}</strong>
+                                    </td>
                                 </tr>
 
-                                {chargePercentage > 0 && (
-                                    <tr>
-                                        <td colSpan="5" className="text-end">
-                                            <strong>Recargo ({chargePercentage}%):</strong>
-                                        </td>
-                                        <td className="text-end text-danger">
-                                            <strong>+${calculateCharge().toFixed(2)}</strong>
-                                        </td>
-                                    </tr>
-                                )}
+                                {(() => {
+                                    const parsedCharge = Number(chargePercentage);
+                                    const hasCharge =
+                                        chargePercentage !== "" &&
+                                        Number.isFinite(parsedCharge);
+
+                                    return hasCharge && (
+                                        <tr>
+                                            <td colSpan="5" className="text-end">
+                                                <strong>Recargo / Descuento ({parsedCharge}%):</strong>
+                                            </td>
+                                            <td className="text-end text-danger">
+                                                <strong>
+                                                    {parsedCharge >= 0 ? "+" : "-"}$
+                                                    {Math.abs(calculateCharge()).toFixed(2)}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    );
+                                })()}
 
                                 <tr className="table-success">
-                                    <td colSpan="5" className="text-end"><strong>TOTAL:</strong></td>
-                                    <td className="text-end"><strong>${calculateTotal().toFixed(2)}</strong></td>
+                                    <td colSpan="5" className="text-end">
+                                        <strong>TOTAL:</strong>
+                                    </td>
+                                    <td className="text-end">
+                                        <strong>${calculateTotal().toFixed(2)}</strong>
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
