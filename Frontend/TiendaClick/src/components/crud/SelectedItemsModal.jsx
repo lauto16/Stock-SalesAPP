@@ -7,13 +7,15 @@ export default function SelectedItemsModal({
     setSelectedItems,
     columns
 }) {
-    const selectedArray = Array.from(selectedItems.values());
-    const handleRemove = (code) => {
+    const selectedArray = Array.from(selectedItems.entries());
+
+    const handleRemove = (key) => {
         const newSelected = new Map(selectedItems);
-        newSelected.delete(code);
+        newSelected.delete(key);
         setSelectedItems(newSelected);
-        if (newSelected.size === 0){
-            handleClose()
+
+        if (newSelected.size === 0) {
+            handleClose();
         }
     };
 
@@ -37,15 +39,15 @@ export default function SelectedItemsModal({
                         </tr>
                     </thead>
                     <tbody>
-                        {selectedArray.map((item) => (
-                            <tr key={item?.code ?? item?.id ?? item?.name}>
+                        {selectedArray.map(([key, item]) => (
+                            <tr key={key}>
                                 {columns.map((column, colIndex) => (
                                     <td key={colIndex}>{item[column.key]}</td>
                                 ))}
                                 <td className="text-center">
                                     <button
                                         className="btn btn-sm btn-remove"
-                                        onClick={() => handleRemove(item.code ?? item.id ?? item.name)}
+                                        onClick={() => handleRemove(key)}
                                         title="Deseleccionar"
                                     >
                                         <i className="bi bi-x-lg"></i>
