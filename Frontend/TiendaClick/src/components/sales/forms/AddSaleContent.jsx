@@ -39,9 +39,6 @@ export default function AddSaleContent({ register, control, errors, watch }) {
         setAllActiveOffers(active_offers)
     }, [selectedProducts])
 
-
-
-    //
     useEffect(() => {
         fetchPaymentMethods(user.token).then((data) => {
             setPaymentMethods(data);
@@ -106,6 +103,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                         rules={{ required: "Debe seleccionar al menos un producto" }}
                         render={({ field }) => (
                             <AsyncSelect
+                                autoFocus
                                 {...field}
                                 value={selectedProducts}
                                 isMulti
