@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import Pagination from "../inventory/Pagination";
-import Search from "../inventory/Search";
-import Table from "../crud/Table";
+import Pagination from "../inventory/Pagination.jsx";
+import Search from "../inventory/Search.jsx";
+import BlameTable from "../crud/BlameTable.jsx";
+import BlameModal from "./BlameInfoModal.jsx";
 import { fetchBlames, fetchSearchBlames } from '../../services/axios.services'
-import { useUser } from "../../context/UserContext";
-import SimpleHeader from "../inventory/SimpleHeader"
+import { useUser } from "../../context/UserContext.jsx";
+import SimpleHeader from "../inventory/SimpleHeader.jsx"
 import '../../css/blame.css'
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 
@@ -50,12 +51,22 @@ export default function ProductBlame({ productCode }) {
   const [selectedItems, setSelectedItems] = useState(new Map());
   const [isSomethingSelected, setIsSomethingSelected] = useState(false);
 
+  // Estados para el modal
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBlameItem, setSelectedBlameItem] = useState(null);
+
   const { user } = useUser();
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return date.toISOString().slice(0, 10);
   };
+
+  const onClickItem = (item) => {
+    console.log(item);
+    setSelectedBlameItem(item);
+    setShowModal(true);
+  }
 
   const FIELD_NAME_TRANSLATIONS = {
     "code": 'Código',
@@ -190,7 +201,7 @@ export default function ProductBlame({ productCode }) {
               </div>
             </div>
 
-            <Table
+            <BlameTable
               items={isSearching ? allSearchResults : items}
               columns={columns}
               loading={loading}
@@ -198,6 +209,7 @@ export default function ProductBlame({ productCode }) {
               setSelectedItems={setSelectedItems}
               setIsSomethingSelected={setIsSomethingSelected}
               pkName="id"
+              onClickItem={onClickItem}
             />
 
             <button
@@ -209,6 +221,13 @@ export default function ProductBlame({ productCode }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de detalles del blame */}
+      <BlameModal 
+        show={showModal} 
+        onHide={() => setShowModal(false)} 
+        blameItem={selectedBlameItem} 
+      />
     </RequirePermission>
   );
 }
