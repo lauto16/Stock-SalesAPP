@@ -56,7 +56,7 @@ export default function SignUp() {
         setLoading(false);
 
         if (!result.success) {
-            addNotification("error", result.message || "No se pudo crear el usuario");
+            addNotification("error", result.error || "No se pudo crear el usuario");
         } else {
             addNotification("success", "Usuario creado correctamente");
             navigate("/dashboard");
