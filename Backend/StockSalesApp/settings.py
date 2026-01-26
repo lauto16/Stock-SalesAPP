@@ -1,5 +1,7 @@
 from pathlib import Path
 from os.path import join
+import json
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xgcshgtd_v@x+-=8+v1ye!s%e!c*_l942k&(!k*527l0g^s_s3'
@@ -31,6 +33,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "StockSalesApp.middleware.Error500PostMiddleware",
     'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -138,3 +141,38 @@ REST_FRAMEWORK = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file_500": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "errors_500.log",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django_500": {
+            "handlers": ["file_500"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
+
+ERROR_500_WEBHOOK_URL = "https://lautarodev.com.ar/api/errors/"
+
+# get api key to send http500 errors to our backend
+with open(BASE_DIR / "PERSONAL_IDENTIFIER.json") as f:
+    PERSONAL_IDENTIFIER = json.load(f)
+
+ERROR_500_API_KEY = PERSONAL_IDENTIFIER.get("key")
