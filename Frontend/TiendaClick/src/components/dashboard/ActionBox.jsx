@@ -15,13 +15,19 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
         )
         : "";
 
-
+    const notLoadedValues = [
+        "undefined",
+        undefined,
+        null,
+        "undefined%",
+        "undefined %"
+    ]
 
     return (
         <div className="col-lg-3 col-md-6 col-12 action-box">
             <div className={containerClass}>
                 <div className="inner">
-                    <h3>{number === "undefined" || number === "undefined%" ? "0" : number}</h3>
+                    <h3>{notLoadedValues.includes(number) ? "0" : number}</h3>
                     <p>{name}</p>
 
                     {subtext && (

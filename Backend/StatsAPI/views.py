@@ -13,6 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from SalesAPI.models import Sale, SaleItem
 from InventoryAPI.models import Product
+from django.db.models import FloatField
 from CategoryAPI.models import Category
 from Auth.models import CustomUser
 from django.utils import timezone
@@ -46,7 +47,6 @@ class ProductsStatsViewSet(viewsets.ViewSet):
             .values("code", "sell_price", "buy_price", "name", "margin")
         )
 
-
     def calculate_higher_margin_products(self, count: int):
         margin_expr = Case(
             When(
@@ -66,11 +66,15 @@ class ProductsStatsViewSet(viewsets.ViewSet):
             .values("code", "sell_price", "buy_price", "name", "margin")
         )
 
-
     def calculate_best_selling_categories(self):
         return (
-            Category.objects.annotate(
-                total_sold=Coalesce(Sum("product__saleitem__quantity"), 0)
+            Category.objects
+            .annotate(
+                total_sold=Coalesce(
+                    Sum("product__saleitem__quantity"),
+                    0.0,
+                    output_field=FloatField()
+                )
             )
             .order_by("-total_sold")
             .values("name", "total_sold")
@@ -122,14 +126,16 @@ class ProductsStatsViewSet(viewsets.ViewSet):
         )
 
         aggregated = qs.aggregate(
-            total_margin=Coalesce(Sum("margin", output_field=FloatField()), 0.0),
+            total_margin=Coalesce(
+                Sum("margin", output_field=FloatField()), 0.0),
         )
 
         product_count = qs.count()
         total_margin = aggregated["total_margin"]
 
         average_margin = (
-            round(total_margin / product_count, 2) if product_count > 0 else 0.0
+            round(total_margin / product_count,
+                  2) if product_count > 0 else 0.0
         )
 
         data = {"average_gain_margin_per_product": average_margin}
@@ -182,7 +188,8 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
         )
 
         def best_seller(queryset):
-            counter = Counter(queryset.values_list("created_by__username", flat=True))
+            counter = Counter(queryset.values_list(
+                "created_by__username", flat=True))
             return counter.most_common(1)[0][0] if counter else None
 
         data = {
@@ -194,7 +201,8 @@ class EmployeesStatsViewSet(viewsets.ViewSet):
                 qs.filter(year=current_year, month=current_month)
             ),
             "most_selling_employee_this_day": best_seller(
-                qs.filter(year=current_year, month=current_month, day__day=current_day)
+                qs.filter(year=current_year, month=current_month,
+                          day__day=current_day)
             ),
         }
 
@@ -219,7 +227,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 hour=0, minute=0, second=0, microsecond=0
             )
         elif period == "month":
-            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
             start_date = now.replace(
                 month=1, day=1, hour=0, minute=0, second=0, microsecond=0
@@ -251,7 +260,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 hour=0, minute=0, second=0, microsecond=0
             )
         elif period == "month":
-            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
             start_date = now.replace(
                 month=1, day=1, hour=0, minute=0, second=0, microsecond=0
@@ -289,7 +299,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
                 hour=0, minute=0, second=0, microsecond=0
             )
         elif period == "month":
-            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_date = now.replace(
+                day=1, hour=0, minute=0, second=0, microsecond=0)
         elif period == "year":
             start_date = now.replace(
                 month=1, day=1, hour=0, minute=0, second=0, microsecond=0
@@ -302,7 +313,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
         qs = SaleItem.objects.select_related("product", "sale")
 
         if start_date:
-            qs = qs.filter(sale__created_at__gte=start_date, sale__created_at__lte=now)
+            qs = qs.filter(sale__created_at__gte=start_date,
+                           sale__created_at__lte=now)
 
         return (
             qs.values(
@@ -330,7 +342,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
             start = f"{h:02d}:00"
             end = f"{(h + 1) % 24:02d}:00"
 
-            result.append({"hour   ": f"{start}-{end}", "count": hours_map.get(h, 0)})
+            result.append({"hour   ": f"{start}-{end}",
+                          "count": hours_map.get(h, 0)})
 
         return result
 
@@ -483,7 +496,8 @@ class SalesStatsViewSet(viewsets.ViewSet):
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(
-                executor.map(lambda fn: fn(), [calc_totals, calc_sales_per_month])
+                executor.map(lambda fn: fn(), [
+                             calc_totals, calc_sales_per_month])
             )
 
         data = {}
