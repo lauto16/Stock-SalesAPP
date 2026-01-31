@@ -59,7 +59,8 @@ router_notifications.register(r'notifications', ProductNotificationViewSet, base
 router_entries = DefaultRouter()
 router_entries.register(r'entries', EntryViewSet, basename='entry')
 
-
+router_entry_details = DefaultRouter()
+router_entry_details.register(r"entry-details", EntryDetailViewSet, basename="entry-detail")
 
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
