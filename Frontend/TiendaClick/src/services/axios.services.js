@@ -533,13 +533,12 @@ async function deleteCategory(category, token) {
     const response = await axios.delete(
       `${apiUrl}categories/${category}/`,
       authHeader(token)
-    );
-    const { status, statusText } = response;
-    if (status !== 204) {
-      throw new Error(statusText);
-    }
-    return;
+    );    
+
+    return response.data;
   } catch (err) {
+    console.log(err);
+    
     console.error("Error al eliminar la categoría:", err.message);
     throw err;
   }

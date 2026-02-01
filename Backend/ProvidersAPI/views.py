@@ -26,9 +26,6 @@ class ProviderValidator:
 
         try:
             name = data.get("name")
-            phone = data.get("phone")
-            address = data.get("address")
-            email = data.get("email")
             products = data.get("products")
 
             if products is not None and not isinstance(products, list):
@@ -42,30 +39,6 @@ class ProviderValidator:
                     "success": False,
                     "error": "El campo 'nombre' no puede estar vacío.",
                 }
-
-            if phone is not None and not phone.strip():
-                return {
-                    "success": False,
-                    "error": "El campo 'teléfono' no puede estar vacío.",
-                }
-
-            if address is not None and not address.strip():
-                return {
-                    "success": False,
-                    "error": "El campo 'dirección' no puede estar vacío.",
-                }
-
-            if email is not None:
-                if not email.strip():
-                    return {
-                        "success": False,
-                        "error": "El campo 'email' no puede estar vacío.",
-                    }
-                if "@" not in email or "." not in email:
-                    return {
-                        "success": False,
-                        "error": "El campo 'email' debe ser una dirección válida.",
-                    }
 
             return {"success": True, "error": None}
 

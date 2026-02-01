@@ -28,7 +28,6 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           type='text'
           defaultValue={selectedItem.phone}
           register={register('phone', {
-            required: "El teléfono es obligatorio",
             pattern: {
               value: /^[0-9+\s-]{7,15}$/,
               message: "Ingrese un teléfono válido (solo números, + o -)"
@@ -45,7 +44,6 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           type='text'
           defaultValue={selectedItem.address}
           register={register('address', {
-            required: "La dirección es obligatoria",
             minLength: {
               value: 5,
               message: "La dirección debe tener al menos 5 caracteres"
@@ -62,7 +60,6 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
           type='text'
           icon='bi-envelope'
           register={register('email', {
-            required: "El email es obligatorio",
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
               message: "Ingrese un email válido"

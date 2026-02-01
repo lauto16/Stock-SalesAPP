@@ -25,7 +25,6 @@ export default function AddItemContent({ register, errors }) {
                     icon='bi-telephone'
                     type='text'
                     register={register('phone', {
-                        required: "El teléfono es obligatorio",
                         pattern: {
                             value: /^[0-9+\s-]{7,15}$/,
                             message: "Ingrese un teléfono válido (solo números, + o -)"
@@ -40,7 +39,6 @@ export default function AddItemContent({ register, errors }) {
                     icon='bi-geo-alt'
                     type='text'
                     register={register('address', {
-                        required: "La dirección es obligatoria",
                         minLength: {
                             value: 5,
                             message: "La dirección debe tener al menos 5 caracteres"
@@ -55,7 +53,6 @@ export default function AddItemContent({ register, errors }) {
                     type='text'
                     icon='bi-envelope'
                     register={register('email', {
-                        required: "El email es obligatorio",
                         pattern: {
                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                             message: "Ingrese un email válido"
