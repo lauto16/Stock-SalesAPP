@@ -24,9 +24,6 @@ class EntryPagination(PageNumberPagination):
 
 
 class EntryDetailSerializer(serializers.ModelSerializer):
-    """
-    Serializer for entry's details.
-    """
     subtotal = serializers.SerializerMethodField()
     product_name = serializers.CharField(source="product.name", read_only=True)
 
@@ -34,6 +31,7 @@ class EntryDetailSerializer(serializers.ModelSerializer):
         model = EntryDetail
         fields = [
             "id",
+            "entry",
             "product",
             "product_name",
             "unit_price",
@@ -47,6 +45,7 @@ class EntryDetailSerializer(serializers.ModelSerializer):
 
     def get_subtotal(self, obj):
         return obj.subtotal
+
     
 
 class EntrySerializer(serializers.ModelSerializer):
