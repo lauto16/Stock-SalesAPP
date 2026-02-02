@@ -47,6 +47,9 @@ if (Test-Path $FrontendApp) {
     Set-Location $FrontendApp
     npm install
     Log "npm install completado."
+    Log "Ejecutando build del Frontend..."
+    npm run build
+    Log "Build del Frontend completado."
 } else {
     Log "ERROR: No se encontró la app frontend."
 }
