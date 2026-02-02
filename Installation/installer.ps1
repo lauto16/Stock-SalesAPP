@@ -59,19 +59,6 @@ Set-Location $TargetDir
 
 Set-Location (Join-Path $TargetDir $BackendPath)
 
-# ============================
-# Create PERSONAL_IDENTIFIER.json
-# ============================
-$PersonalIdentifierPath = Join-Path (Get-Location) "PERSONAL_IDENTIFIER.json"
-
-Log "Creando PERSONAL_IDENTIFIER.json..."
-
-@'
-{
-  "key": ""
-}
-'@ | Set-Content -Path $PersonalIdentifierPath -Encoding UTF8
-
 Log "Instalando virtualenv..."
 & $PythonCmd -m pip install virtualenv
 
