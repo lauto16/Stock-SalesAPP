@@ -4,7 +4,7 @@
 4| ejecutar Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 5| Probar si funciona py, python o python3, Si no es py, cambiar la variable python_command_name en config.json
 6| Ejecutar installer.ps1
-7| Crear el archivo Backend/PERSONAL_IDENTIFIER.json y asignar una clave:
+7| En PERSONAL_IDENTIFIER.json asignar una clave:
 
 {
   "key": "CLAVE"
