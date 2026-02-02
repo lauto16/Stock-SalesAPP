@@ -101,14 +101,13 @@ Log "PIN aceptado."
 Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
-
 # ======================================================
 # === Crear tarea programada: ejecutar run_app.py al inicio ===
 # ======================================================
 
 Log "Creando tarea programada RunApp..."
 
-$PythonW = Join-Path $TargetDir "Backend/venv/Scripts/pythonw.exe"
+$PythonW  = Join-Path $TargetDir "Backend/venv/Scripts/pythonw.exe"
 $RunAppPy = Join-Path $TargetDir "run_app.py"
 
 if (!(Test-Path $PythonW)) {
@@ -121,7 +120,13 @@ if (!(Test-Path $RunAppPy)) {
     exit
 }
 
-$Action = New-ScheduledTaskAction -Execute $PythonW -Argument "`"$RunAppPy`""
+$WorkDir = $TargetDir
+
+$Action = New-ScheduledTaskAction `
+    -Execute $PythonW `
+    -Argument "`"$RunAppPy`"" `
+    -WorkingDirectory $WorkDir
+
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
 
 $User = "$env:USERNAME"
@@ -139,7 +144,6 @@ Register-ScheduledTask `
     -Force
 
 Log "Tarea programada creada con éxito."
-
 
 Log "Ejecutando set_local_ip.py para obtener IP local..."
 
