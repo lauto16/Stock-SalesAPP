@@ -102,48 +102,56 @@ Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
 # ======================================================
-# === Crear tarea programada: ejecutar run_app.py al inicio ===
+# === Crear tarea programada: ejecutar TiendaClick.vbs al inicio ===
 # ======================================================
+Log "Creando tarea programada TiendaClick..."
 
-Log "Creando tarea programada RunApp..."
+$VbsScript = Join-Path $BaseDir "iniciar_oculto.vbs"
 
-$PythonW  = Join-Path $TargetDir "Backend/venv/Scripts/pythonw.exe"
-$RunAppPy = Join-Path $TargetDir "run_app.py"
-
-if (!(Test-Path $PythonW)) {
-    Log "ERROR: No se encontró pythonw.exe en $PythonW"
+if (!(Test-Path $VbsScript)) {
+    Log "ERROR: No se encontró iniciar_oculto.vbs en $VbsScript"
     exit
 }
 
-if (!(Test-Path $RunAppPy)) {
-    Log "ERROR: No se encontró run_app.py en $RunAppPy"
-    exit
-}
+# Definir la acción: ejecutar el .vbs con wscript
+$Action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$VbsScript`""
 
-$WorkDir = $TargetDir
-
-$Action = New-ScheduledTaskAction `
-    -Execute $PythonW `
-    -Argument "`"$RunAppPy`"" `
-    -WorkingDirectory $WorkDir
-
+# Trigger: al iniciar sesión
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
 
+# Usuario actual
 $User = "$env:USERNAME"
+
+# Principal: sin elevación, interactivo
 $Principal = New-ScheduledTaskPrincipal `
     -UserId $User `
     -LogonType Interactive `
     -RunLevel Limited
 
+# Configuración avanzada
+$Settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -ExecutionTimeLimit (New-TimeSpan -Hours 0) `
+    -DeleteExpiredTaskAfter (New-TimeSpan -Days 30) `
+    -DontStopOnIdleEnd `
+    -StartWhenAvailable
+
+# Registrar la tarea
 Register-ScheduledTask `
-    -TaskName "RunAppOnLogin" `
+    -TaskName "TiendaClickOnLogin" `
     -Action $Action `
     -Trigger $Trigger `
     -Principal $Principal `
-    -Description "Ejecuta run_app.py al iniciar sesión sin consola" `
+    -Settings $Settings `
+    -Description "Ejecuta TiendaClick al iniciar sesión sin mostrar ventanas" `
     -Force
 
-Log "Tarea programada creada con éxito."
+Log "Tarea programada 'TiendaClickOnLogin' creada con éxito."
+Log "  - Se ejecutará al iniciar sesión"
+Log "  - Sin límite de tiempo de ejecución"
+Log "  - Tareas expiradas se eliminarán después de 30 días"
+Log "  - Funcionará con batería o corriente alterna"
 
 Log "Ejecutando set_local_ip.py para obtener IP local..."
 
