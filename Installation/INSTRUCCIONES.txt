@@ -3,12 +3,13 @@
 3| Ejecutar powershell como administrador y navegar al escritorio (debe ser instalado en una carpeta donde no se requieran permisos de admin para acceder/modificar archivos)
 4| ejecutar Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 5| Probar si funciona py, python o python3, Si no es py, cambiar la variable python_command_name en config.json
-6| Ejecutar installer.ps1
-7| En PERSONAL_IDENTIFIER.json asignar una clave:
+6| Arrastrar config.json, installer.ps1 y set_local_ip.py al escritorio
+7| Ejecutar installer.ps1
+8| En PERSONAL_IDENTIFIER.json asignar una clave:
 
 {
   "key": "CLAVE"
 }
 
-8| Reiniciar pc y probar
-9| Agregar la clave al backend
+9| Reiniciar pc y probar
+10| Agregar la clave al backend
