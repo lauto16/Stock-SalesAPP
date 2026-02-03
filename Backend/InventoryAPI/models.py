@@ -11,18 +11,22 @@ class Product(models.Model):
     Represents a single product, unique and sellable
     """
 
-    code = models.CharField(max_length=50, unique=True, primary_key=True)
-    name = models.CharField(max_length=120)
-    stock = models.FloatField()
-    sell_price = models.FloatField()
-    buy_price = models.FloatField()
+    code = models.CharField(max_length=50, unique=True, primary_key=True, verbose_name="código")
+    name = models.CharField(max_length=120, verbose_name="nombre")
+    stock = models.FloatField(verbose_name="stock")
+    sell_price = models.FloatField(verbose_name="precio de venta")
+    buy_price = models.FloatField(verbose_name="precio de compra")
     provider = models.ForeignKey(
-        Provider, on_delete=models.SET_NULL, null=True, blank=True
+        Provider, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="proveedor"
     )
-    last_modification = models.DateField(auto_now_add=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    expiration = models.DateField(null=True, blank=True)
-    in_use = models.BooleanField(default=True)
+    last_modification = models.DateField(auto_now_add=True, verbose_name="última modificación")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name="categoria")
+    expiration = models.DateField(null=True, blank=True, verbose_name="vencimiento")
+    in_use = models.BooleanField(default=True, verbose_name="en uso")
+    
+    class Meta:
+        verbose_name = "producto"
+        verbose_name_plural = "productos"
     
     def delete(self, *args, **kwargs) -> None:
         """

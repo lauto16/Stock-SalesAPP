@@ -1,3 +1,5 @@
+// REFACTORIZAR TODAS LAS FUNCIONES de add PARA QUE FUNCIONEN COMO ADDPRODUCT()
+
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
 
@@ -92,14 +94,43 @@ function logoutUser(token) {
 }
 
 
-
 async function addProduct(product, token) {
-  return axios.post(`${apiUrl}products/`, product, authHeader(token))
-    .then(response => response.data)
-    .catch(error => {
-      console.error('Error al crear el producto:', error);
-      throw error;
-    });
+  try { 
+    await axios.post(`${apiUrl}products/`, product, authHeader(token))
+    return { 
+      success: true, 
+      success_message: "Producto creado con éxito"
+    }
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+
+      let message = "Error desconocido";
+
+      if (typeof data === "object") {
+        const firstKey = Object.keys(data)[0];
+        const value = data[firstKey];
+
+        if (Array.isArray(value)) {
+          message = value[0];
+        } else {
+          message = value;
+        }
+      }
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: message,
+      }
+    }
+
+    return {
+      success: false,
+      status: null,
+      error: "Error de red o del cliente",
+    }
+  }
 }
 
 async function addProvider(provider, token) {
