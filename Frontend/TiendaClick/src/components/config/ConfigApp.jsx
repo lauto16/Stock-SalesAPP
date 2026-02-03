@@ -9,24 +9,24 @@ import DashboardHeader from "../dashboard/DashboardHeader";
 import { usePin } from "../../context/PinContext.jsx";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import { useUser } from "../../context/UserContext";
-import {updateAskForPin, getAskForPin} from "../../services/axios.services.js"
+import { updateAskForPin, getAskForPin } from "../../services/axios.services.js"
 
 export default function DeleteUser() {
     const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 850);
     const { pinVerified, checking, pinDisabled, setPinDisabled } = usePin();
     const { user, updateUserData } = useUser();
-    
-    const onChangeAskForPin =  (e) =>{
-        
+
+    const onChangeAskForPin = (e) => {
+
         const response = updateAskForPin(pinDisabled, user.token)
         setPinDisabled(e.target.checked)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         const getPinState = async () => {
             const response = await getAskForPin(user.token)
             console.log(response);
-            
+
             setPinDisabled(!response.askForPin)
         }
         getPinState()
@@ -36,11 +36,11 @@ export default function DeleteUser() {
     return (
         <RequirePermission permission="access_dashboard">
             <div className={`app-wrapper ${!showSidebar ? "no-sidebar" : ""}`}>
-            <div className="header-container text-center mt-2">
-                <DashboardHeader title={"CONFIGURACIÓN"} isDashboard={false} />
-            </div>
+                <div className="header-container text-center mt-2">
+                    <DashboardHeader title={"CONFIGURACIÓN"} isDashboard={false} />
+                </div>
 
-            {showSidebar && <SideBar />}
+                {showSidebar && <SideBar />}
                 <main className="content">
                     <section className="app-content container-fluid d-flex justify-content-center align-items-center flex-column">
                         <Card className="auth-card" style={{ maxWidth: "450px", width: "100%" }}>
@@ -50,7 +50,7 @@ export default function DeleteUser() {
 
                             <Card.Body className="auth-card-body">
                                 <Form className="d-flex align-items-center justify-content-between">
-                                    <span style={{userSelect: 'none'}} className="fw-semibold">No pedir PIN</span>
+                                    <span style={{ userSelect: 'none' }} className="fw-semibold">No pedir PIN</span>
                                     <Form.Check
                                         type="switch"
                                         id="pin-switch"
@@ -58,7 +58,14 @@ export default function DeleteUser() {
                                         checked={pinDisabled}
                                         onChange={(e) => onChangeAskForPin(e)}
                                     />
+
                                 </Form>
+                                <div className="text-muted fst-italic mt-1 d-flex align-items-center gap-2 small">
+                                    <i className="bi bi-info-circle-fill"></i>
+                                    <span>
+                                        En caso de activarse, se te pedirá una última vez
+                                    </span>
+                                </div>
                             </Card.Body>
                         </Card>
                     </section>
