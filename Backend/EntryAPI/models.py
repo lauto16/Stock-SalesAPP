@@ -11,10 +11,14 @@ class Entry(models.Model):
     Represents a stock entry.
     """
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
-    total = models.FloatField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha')
+    created_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL, verbose_name='creado por')
+    total = models.FloatField(default=0, verbose_name='total')
 
+    class Meta:
+        verbose_name = 'ingreso'
+        verbose_name_plural = 'ingresos'
+        
     def calculate_total(self) -> None:
         total = 0
 
@@ -38,14 +42,18 @@ class EntryDetail(models.Model):
     Represents the detail of each product being entered.
     """
 
-    entry = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name="details")
-    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
-    unit_price = models.FloatField()
-    quantity = models.FloatField()
-    observations = models.TextField(null=True, blank=True, default='Sin observaciones')
-    extra_percentage = models.FloatField(default=0)
-    receipt = models.CharField(max_length=200, blank=True, null=True, default='-')
+    entry = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name="details", verbose_name='ingreso')
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL, verbose_name='producto')
+    unit_price = models.FloatField(verbose_name='precio unitario')
+    quantity = models.FloatField(verbose_name='cantidad')
+    observations = models.TextField(null=True, blank=True, default='Sin observaciones', verbose_name='observaciones')
+    extra_percentage = models.FloatField(default=0, verbose_name='porcentaje extra')
+    receipt = models.CharField(max_length=200, blank=True, null=True, default='-', verbose_name='recibo')
 
+    class Meta:
+        verbose_name = "detalle de ingreso"
+        verbose_name_plural = "detalles de ingreso"
+    
     @property
     def subtotal(self):
         return self.unit_price * self.quantity

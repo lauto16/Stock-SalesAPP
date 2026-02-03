@@ -8,14 +8,18 @@ class Provider(models.Model):
     Represents a single provider
     """
 
-    name = models.CharField(max_length=100, default="")
-    phone = models.CharField(max_length=20, blank=True, null=True, default="")
-    address = models.CharField(max_length=200, blank=True, null=True, default="")
+    name = models.CharField(max_length=100, default="", verbose_name='nombre')
+    phone = models.CharField(max_length=20, blank=True, null=True, default="", verbose_name='teléfono')
+    address = models.CharField(max_length=200, blank=True, null=True, default="", verbose_name='dirección')
 
-    email = models.EmailField(max_length=200, blank=True, null=True, default="")
+    email = models.EmailField(max_length=200, blank=True, null=True, default="", verbose_name='email')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha de creación')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='fecha de actualización')
+    
+    class Meta:
+        verbose_name = 'proveedor'
+        verbose_name_plural ='proveedores'
 
     def save(self, *args, **kwargs):
         """

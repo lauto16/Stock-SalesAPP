@@ -14,15 +14,18 @@ class Notification(models.Model):
     name = models.CharField(max_length=200)
     subject = models.CharField(
         max_length=10,
-        choices=Subject.choices
+        choices=Subject.choices,
+        verbose_name='sujeto'
     )
-    text = models.TextField()
-    seen = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(verbose_name='texto')
+    seen = models.BooleanField(default=False, verbose_name='visto')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha')
     
     class Meta:
         abstract = True
-
+        verbose_name = 'notificación'
+        verbose_name_plural ='notificaciones'
+        
     def mark_as_seen(self):
         self.seen = True
         self.save(update_fields=["seen"])
@@ -31,4 +34,8 @@ class Notification(models.Model):
         return self.seen
     
 class ProductNotification(Notification):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='product')
+    
+    class Meta:
+        verbose_name = 'notificación de producto'
+        verbose_name_plural ='notificaciones de productos'

@@ -5,15 +5,19 @@ from Auth.models import CustomUser
 
 
 class Sale(models.Model):
-    applied_charge_percentage = models.FloatField(default=0)
-    charge_reason = models.CharField(max_length=200, blank=True)
-    initial_price = models.FloatField(default=0)
+    applied_charge_percentage = models.FloatField(default=0, verbose_name='porcentaje extra aplicado')
+    charge_reason = models.CharField(max_length=200, blank=True, verbose_name='razón del porcentaje extra aplicado')
+    initial_price = models.FloatField(default=0, verbose_name='precio inicial')
     # Total price when applied 'applied_charge_percentage'
-    total_price = models.FloatField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True) 
-    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
+    total_price = models.FloatField(default=0, verbose_name='precio total')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha')
+    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='creada por')
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, verbose_name='método de pago')
 
+    class Meta:
+        verbose_name = 'venta'
+        verbose_name_plural = 'ventas'
+    
     def update_totals(self):
         initial = sum(item.subtotal for item in self.items.all())
         charged = initial * (1 - self.applied_charge_percentage / 100)
@@ -37,12 +41,16 @@ class SaleItem(models.Model):
     """
     Represents a Sale receipt body, contains the details of all products involved in said sale.
     """
-    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name="items")
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    quantity = models.FloatField()
-    unit_price = models.FloatField()
-    charge_percentage = models.FloatField(default=0)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name="items", verbose_name='venta')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name='producto')
+    quantity = models.FloatField(verbose_name='cantidad')
+    unit_price = models.FloatField(verbose_name='precio unitario')
+    charge_percentage = models.FloatField(default=0, verbose_name='porcentaje extra')
 
+    class Meta:
+        verbose_name = 'detalle de venta'
+        verbose_name_plural = 'detalles de ventas'
+    
     @property
     def subtotal(self):
         """Returns the subtotal of an SaleItem"""
