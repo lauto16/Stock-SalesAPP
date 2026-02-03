@@ -31,14 +31,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     Represents a system's user 
     """
-    username = models.CharField(max_length=150, unique=True)
-    role = models.ForeignKey('Role', on_delete=models.PROTECT)
-    pin = models.CharField(max_length=5)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    askForPin = models.BooleanField(default=True)    
+    username = models.CharField(max_length=150, unique=True, verbose_name='nombre')
+    role = models.ForeignKey('Role', on_delete=models.PROTECT, verbose_name='rol')
+    pin = models.CharField(max_length=5, verbose_name='pin')
+    is_active = models.BooleanField(default=True, verbose_name='está activo')
+    is_staff = models.BooleanField(default=False, verbose_name='es staff')
+    askForPin = models.BooleanField(default=True, verbose_name='pedir pin')
     objects = CustomUserManager()
 
+    class Meta:
+        verbose_name = "usuario"
+        verbose_name_plural = "usuarios"
+    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
@@ -71,13 +75,19 @@ class Role(models.Model):
         ('salesperson_stocker', 'Vendedor y repositor')
     ]
 
-    name = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True)
-    name_sp = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True, verbose_name='nombre')
+    name_sp = models.CharField(max_length=20, unique=True, verbose_name='nombre_esp')
     permissions = models.ManyToManyField(
         CustomPermission,
         related_name='roles',
-        blank=True
+        blank=True, 
+        verbose_name='permisos'
+    
     )
+    
+    class Meta:
+        verbose_name = "rol"
+        verbose_name_plural = "roles"
 
     def __str__(self):
         return dict(self.ROLE_CHOICES).get(self.name, self.name)

@@ -113,8 +113,27 @@ class Offer(models.Model):
     Temporal offer aplies to 'n' products
     """
 
-    name = models.CharField(max_length=100, unique=True)
-    percentage = models.FloatField()
-    end_date = models.DateField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    products = models.ManyToManyField(Product, related_name="offers")
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="nombre"
+    )
+    percentage = models.FloatField(
+        verbose_name="porcentaje"
+    )
+    end_date = models.DateField(
+        verbose_name="fecha de finalización"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="fecha de creación"
+    )
+    products = models.ManyToManyField(
+        Product,
+        related_name="offers",
+        verbose_name="productos"
+    )
+
+    class Meta:
+        verbose_name = "oferta"
+        verbose_name_plural = "ofertas"
