@@ -33,13 +33,32 @@ MANAGE_PY = os.path.join(BACKEND_PATH, "manage.py")
 
 
 def run_git_pull():
-    """Ejecuta git pull en BASE_PATH"""
-    print("Actualizando proyecto desde git...")
+    """Runs git checkout main + git pull on BASE_PATH"""
+    print("Actualizando programa desde git...")
     try:
         git_dir = os.path.join(BASE_PATH, ".git")
 
         if os.path.isdir(git_dir):
-            print("Repositorio detectado. Ejecutando git pull...")
+            print("Repositorio detectado. Cambiando a main...")
+
+            subprocess.Popen(
+                ["git", "fetch"],
+                cwd=BASE_PATH,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            ).wait()
+
+            subprocess.Popen(
+                ["git", "checkout", "main"],
+                cwd=BASE_PATH,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            ).wait()
+
+            print("Ejecutando git pull...")
+
             subprocess.Popen(
                 ["git", "pull", "--force"],
                 cwd=BASE_PATH,
@@ -47,11 +66,11 @@ def run_git_pull():
                 stderr=subprocess.DEVNULL,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             ).wait()
+
         else:
             print("No es un repo git")
     except Exception as e:
         print(e)
-        pass
 
 
 def port_in_use(host, port):
