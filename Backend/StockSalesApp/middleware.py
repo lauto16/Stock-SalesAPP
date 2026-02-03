@@ -1,7 +1,7 @@
+from django.conf import settings
+import threading
 import traceback
 import requests
-import threading
-from django.conf import settings
 
 
 class Error500PostMiddleware:
@@ -40,5 +40,6 @@ class Error500PostMiddleware:
                 },
                 timeout=3,
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             pass
