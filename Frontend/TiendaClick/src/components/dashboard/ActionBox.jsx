@@ -25,7 +25,6 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
 
     return (
         <div className="col-lg-3 col-md-6 col-12 action-box">
-            <h1>test</h1>
             <div className={containerClass}>
                 <div className="inner">
                     <h3>{notLoadedValues.includes(number) ? "0" : number}</h3>
@@ -69,4 +68,5 @@ const ActionBox = ({ name, number, svgName, cardClass, subtext, subtext_value })
 }
 
 export default ActionBox
+
 
