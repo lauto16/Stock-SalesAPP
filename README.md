@@ -1,4 +1,4 @@
-# 🛒 TiendaClick
+# ![Logo](/logo.ico) TiendaClick
 
 **TiendaClick** es una aplicación polimórfica de **gestión de inventario y ventas para cualquier rubro comercial**.  
 Permite administrar productos, proveedores, categorías, ventas, entradas de stock y notificaciones, centralizando la operación del negocio y facilitando la **toma de decisiones mediante un sistema de estadísticas**.
