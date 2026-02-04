@@ -33,7 +33,7 @@ Por ende, para acceder a la app se debe ingresar a:
 
 http://localhost:5173
 ó
-http://0.0.0.0:5173
+http://192.168.x.x:5173
 
 ---
 
