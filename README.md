@@ -29,11 +29,11 @@ Todo corre sobre la misma IP local:
 | React     | `5173` |
 | Django    | `8000` |
 
-Ejemplo:
+Por ende, para acceder a la app se debe ingresar a:
 
 http://localhost:5173
-http://localhost:8000
-
+ó
+http://0.0.0.0:5173
 
 ---
 
