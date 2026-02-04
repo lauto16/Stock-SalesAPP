@@ -1,4 +1,8 @@
-# 🛒 TiendaClick
+<p align="center">
+  <img src="logo.ico" width="300">
+</p>
+
+# TiendaClick
 
 **TiendaClick** es una aplicación polimórfica de **gestión de inventario y ventas para cualquier rubro comercial**.  
 Permite administrar productos, proveedores, categorías, ventas, entradas de stock y notificaciones, centralizando la operación del negocio y facilitando la **toma de decisiones mediante un sistema de estadísticas**.
@@ -100,14 +104,79 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 
 ### ▶ Backend
 
-*(Pendiente de documentación)*
+Ejecute los siguientes comandos en una terminal cmd.
+
+   ```bash
+   cd Backend
+   ```
+
+   ```bash
+   pip install virtualenv
+   ```
+   ```bash
+   virtualenv venv
+   # alternativa: py -m virtualenv venv
+   ```
+   ```bash
+   cd venv/Scripts
+   ```
+   ```bash
+   activate
+   ```
+   
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   ```bash
+   echo { "key": "" } > PERSONAL_IDENTIFIER.json
+   ```
+
+   ```bash
+   py manage.py makemigrations
+   ```
+   ```bash
+   py manage.py migrate
+   ```
+   ```bash
+   py installer_db_population_manager.py
+   ```
+   
+   ```bash
+   py manage.py createsuperuser
+   ```
+   ```bash
+   # <pin> debe ser un pin de 4 digitos que desees.
+   py update_pin.py <pin>
+   ```
+
+   ```bash
+   py manage.py runserver 0.0.0.0:8000
+   ```
 
 ---
 
 ### ▶ Frontend
 
-*(Pendiente de documentación)*
+Ejecute los siguientes comandos en una terminal cmd.
 
+   ```bash
+   cd Frontend
+   ```
+   ```bash
+   npm i
+   ```
+
+   ```bash
+   cd TiendaClick
+   ```
+   ```bash
+   npm i
+   ```
+
+   ```bash
+   npm run dev
+   ```
 ---
 
 ## Licencia
