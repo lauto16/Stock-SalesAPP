@@ -100,7 +100,55 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 
 ### ▶ Backend
 
-*(Pendiente de documentación)*
+Ejecute los siguientes comandos en una terminal cmd.
+
+   ```bash
+   cd Backend
+   ```
+
+   ```bash
+   pip install virtualenv
+   ```
+   ```bash
+   virtualenv venv
+   # alternativa: py -m virtualenv venv
+   ```
+   ```bash
+   cd venv/Scripts
+   ```
+   ```bash
+   activate
+   ```
+   
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   ```bash
+   echo { "key": "" } > PERSONAL_IDENTIFIER.json
+   ```
+
+   ```bash
+   py manage.py makemigrations
+   ```
+   ```bash
+   py manage.py migrate
+   ```
+   ```bash
+   py installer_db_population_manager.py
+   ```
+   
+   ```bash
+   py manage.py createsuperuser
+   ```
+   ```bash
+   # <pin> debe ser un pin de 4 digitos que desees.
+   py update_pin.py <pin>
+   ```
+
+   ```bash
+   py manage.py runserver 0.0.0.0:8000
+   ```
 
 ---
 
@@ -109,22 +157,23 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 Ejecute los siguientes comandos en una terminal cmd.
 
    ```bash
-    cd Frontend
+   cd Frontend
    ```
    ```bash
-    npm i
+   npm i
    ```
 
    ```bash
-    cd TiendaClick
+   cd TiendaClick
    ```
    ```bash
-    npm i
+   npm i
    ```
 
    ```bash
-    npm run dev
+   npm run dev
    ```
+---
 
 ## Licencia
 
