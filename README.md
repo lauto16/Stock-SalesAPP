@@ -64,7 +64,7 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 - `StatsAPI` — Estadísticas y análisis del negocio.
 - `PaymentMethodAPI` — Métodos de pago.
 - `BlameAPI` — Trazabilidad y registro de acciones.
-- `StockSalesApp` — Núcleo de integración entre stock y ventas.
+- `StockSalesApp` — App principal de Django
 
 ---
 
