@@ -137,6 +137,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
         url_path="delete-by-id/(?P<id>[^/.]+)"
     )
     def destroy_by_id(self, request, id=None):
+        return 1/0
         """
         Deletes a product from the DB only if there's no sales associated with the product
         """
