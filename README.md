@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" width="300">
+  <img src="logo.ico" width="300">
 </p>
 
 TiendaClick
