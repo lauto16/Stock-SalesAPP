@@ -107,14 +107,17 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 ### ▶ Frontend
 
 1) Ingresar a Frontend/
-2) Ejecutar ```bash
+2) Ejecutar
+   ```bash
     npm i
    ```
-3) Ingresar a Frontend/TiendaClick
-4) Ejecutar ```bash
+4) Ingresar a Frontend/TiendaClick
+5) Ejecutar
+   ```bash
     npm i
    ```
-5) Ejecutar ```bash
+7) Ejecutar
+   ```bash
     npm run dev
    ```
 
