@@ -89,24 +89,10 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 
 ---
 
-## 🧠 Enfoque del Sistema
-
-TiendaClick está diseñado con un enfoque modular y escalable:
-
-- Separación clara de responsabilidades.
-- APIs desacopladas del frontend.
-- Componentes reutilizables.
-- Orientado a múltiples rubros comerciales.
-- Preparado para crecer en funcionalidades.
-
----
-
 ## 📦 Tecnologías
 
 - **Backend:** Django, Python
 - **Frontend:** React, Vite
-- **Arquitectura:** Modular, basada en dominios
-- **Comunicación:** API REST
 
 ---
 
@@ -126,18 +112,11 @@ TiendaClick está diseñado con un enfoque modular y escalable:
 
 ## 📈 Objetivo del Proyecto
 
-Brindar una plataforma flexible para que cualquier comercio pueda:
-
-- Controlar su stock.
-- Registrar ventas.
-- Analizar resultados.
-- Optimizar decisiones.
-- Centralizar su operación diaria.
-
 ---
 
 ## 📄 Licencia
 
-Definir licencia del proyecto.
+[En español](LICENCIA)
+[En ingles](LICENCE)
 
 ---
