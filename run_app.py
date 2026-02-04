@@ -1,6 +1,7 @@
 from Backend.create_notifications import delete_old_products_notifications, create_product_expiration_notifications, create_best_sellers_products_low_stock_notification
 from datetime import datetime, timedelta
 import subprocess
+import threading
 import socket
 import shutil
 import json
@@ -8,7 +9,7 @@ import time
 import os
 
 """When called tries to initialize a django instance on 0.0.0.0:8000 and a react instance 0.0.0.0:5173, also does
-a git pull --force and creates a db.sqlite3 backup every three days"""
+a git pull --force, creates a db.sqlite3 backup every three days and runs the creations of notifications every 1 hour"""
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_PATH, "config.json")
@@ -159,6 +160,27 @@ def create_db_backup():
     print(f"Backup de DB creado: {backup_name}")
 
 
+def run_notifications():
+    print("Ejecutando notificaciones...")
+    try:
+        delete_old_products_notifications(months=1)
+        create_product_expiration_notifications(limit=5)
+        create_best_sellers_products_low_stock_notification(stock_limit=5)
+        print("Notificaciones generadas correctamente.")
+    except Exception as e:
+        print("Error ejecutando notificaciones:", e)
+
+
+
+def notification_scheduler(interval_seconds=3600):
+    while True:
+        try:
+            time.sleep(interval_seconds)
+            run_notifications()
+        except Exception as e:
+            print("Scheduler error:", e)
+
+
 if __name__ == "__main__":
     print("Ejecutando git pull antes de iniciar servicios...")
     run_git_pull()
@@ -170,10 +192,6 @@ if __name__ == "__main__":
 
     django_process = None
     react_process = None
-
-    delete_old_products_notifications(months=1)
-    create_product_expiration_notifications(limit=5)
-    create_best_sellers_products_low_stock_notification(stock_limit=5)
     
     last_backup = load_last_backup_time()
 
@@ -200,6 +218,15 @@ if __name__ == "__main__":
 
     print("Servicios inicializados. Supervisando procesos lanzados por este script...")
 
+    run_notifications()
+
+    notif_thread = threading.Thread(
+        target=notification_scheduler,
+        args=(3600,),
+        daemon=True
+    )
+    notif_thread.start()
+    
     try:
         while True:
             time.sleep(5)
