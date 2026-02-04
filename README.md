@@ -117,6 +117,6 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 ## 📄 Licencia
 
 [En español](LICENCIA)
-[En ingles](LICENCE)
+[En ingles](LICENSE)
 
 ---
