@@ -1,6 +1,37 @@
+# 🛒 TiendaClick
+
+**TiendaClick** es una aplicación polimórfica de **gestión de inventario y ventas para cualquier rubro comercial**.  
+Permite administrar productos, proveedores, categorías, ventas, entradas de stock y notificaciones, centralizando la operación del negocio y facilitando la **toma de decisiones mediante un sistema de estadísticas**.
+
+El sistema está pensado para adaptarse tanto a pequeños comercios como a operaciones más grandes, ofreciendo control, trazabilidad y organización en un solo lugar.
+
+---
+
+## 🚀 ¿Qué hace TiendaClick?
+
+TiendaClick conecta un **backend en Django** con un **frontend en React** para ofrecer una experiencia completa de administración comercial:
+
+- Gestión de inventario en tiempo real.
+- Control de ventas y movimientos.
+- Administración de proveedores.
+- Manejo de categorías de productos.
+- Registro de entradas de stock.
+- Sistema de notificaciones.
+- Gestión de métodos de pago.
+- Autenticación y permisos.
+- Estadísticas para análisis del negocio.
+- Paneles y dashboards de control.
+
+Todo corre sobre la misma IP local:
+
+| Servicio  | Puerto |
+|----------|--------|
+| React     | `5173` |
+| Django    | `8000` |
+
+Ejemplo:
 
 http://localhost:5173
-
 http://localhost:8000
 
 
