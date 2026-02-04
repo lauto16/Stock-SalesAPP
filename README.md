@@ -7,7 +7,7 @@ El sistema está pensado para adaptarse tanto a pequeños comercios como a opera
 
 ---
 
-## 🚀 ¿Qué hace TiendaClick?
+## ¿Qué hace TiendaClick?
 
 TiendaClick conecta un **backend en Django** con un **frontend en React** para ofrecer una experiencia completa de administración comercial:
 
@@ -37,7 +37,7 @@ http://localhost:8000
 
 ---
 
-## 🧩 Arquitectura General
+## Arquitectura General
 
 El proyecto está dividido en dos grandes capas:
 
@@ -48,7 +48,7 @@ Cada parte está organizada por dominio funcional, permitiendo escalar el sistem
 
 ---
 
-## ⚙️ Funcionalidades Core del Dominio
+## Funcionalidades Core del Dominio
 
 Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulos principales:
 
@@ -89,14 +89,14 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 
 ---
 
-## 📦 Tecnologías
+## Tecnologías
 
 - **Backend:** Django, Python
 - **Frontend:** React, Vite
 
 ---
 
-## 🛠️ Instrucciones para comenzar
+## Instrucciones para comenzar
 
 ### ▶ Backend
 
@@ -110,11 +110,7 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 
 ---
 
-## 📈 Objetivo del Proyecto
-
----
-
-## 📄 Licencia
+## Licencia
 
 [En español](LICENCIA)
 [En ingles](LICENSE)
