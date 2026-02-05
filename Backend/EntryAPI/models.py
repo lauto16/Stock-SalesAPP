@@ -47,7 +47,7 @@ class EntryDetail(models.Model):
     unit_price = models.FloatField(verbose_name='precio unitario')
     quantity = models.FloatField(verbose_name='cantidad')
     observations = models.TextField(null=True, blank=True, default='Sin observaciones', verbose_name='observaciones')
-    extra_percentage = models.FloatField(default=0, verbose_name='porcentaje extra')
+    applied_charge = models.FloatField(default=0, verbose_name='cargo extra')
     receipt = models.CharField(max_length=200, blank=True, null=True, default='-', verbose_name='recibo')
 
     class Meta:
