@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'PaymentMethodAPI',
     'NotificationAPI',
     'EntryAPI',
-    'Testing'
 ]
 
 MIDDLEWARE = [
