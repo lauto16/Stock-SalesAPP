@@ -285,7 +285,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         # TODO: QUITAR ESTE IF, SOLO ESTÁ HASTA QUE HAGAMOS EL CRUD DE ENTRIES.
         if request.data["stock"] > product.stock:
-            print("dsi")
             new_stock = request.data["stock"] - product.stock
             entry = Entry.objects.create(created_by=request.user)
             entry_detail = EntryDetail.objects.create(

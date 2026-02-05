@@ -24,7 +24,7 @@ class Entry(models.Model):
 
         for detail in self.details.all():
             subtotal = detail.subtotal
-            extra = subtotal * detail.extra_percentage / 100
+            extra = subtotal + detail.applied_charge
             total += subtotal + extra
 
         self.total = total

@@ -176,7 +176,6 @@ async function addProvider(provider, token) {
 }
 
 async function addOffer(data, token) {
-  // Normalizamos productos igual que antes
   data.products = data.products.map(product => product.code);
 
   try {
@@ -464,33 +463,56 @@ async function deleteSaleById(id, token) {
 }
 
 async function addSale(formData, token) {
-
-  // Calculate discount and final price
-  const chargePercentage = parseFloat(formData.applied_charge_percentage);
-
-  // Build items array with product_id and quantity
-  const items = formData.selectedProducts.map((product) => ({
-    product_id: product.code,
-    quantity: parseFloat(formData[`quantity_${product.code}`])
-  }));
-
-  // Prepare the payload for backend
-  const saleData = {
-    payment_method: formData.payment_method,
-    applied_charge_percentage: chargePercentage,
-    charge_reason: formData.charge_reason,
-    initial_price: null,
-    total_price: null,
-    items: items
-  };
-
-
-  return axios.post(`${apiUrl}sales/`, saleData, authHeader(token))
-    .then(response => response.data)
-    .catch(error => {
-      console.error('Error al crear la venta:', error);
-      throw error;
-    });
+  try {
+    // Calculate discount and final price
+    const chargePercentage = parseFloat(formData.applied_charge_percentage);
+    
+    // Build items array with product_id and quantity
+    const items = formData.selectedProducts.map((product) => ({
+      product_id: product.code,
+      quantity: parseFloat(formData[`quantity_${product.code}`])
+    }));
+    
+    // Prepare the payload for backend
+    const saleData = {
+      payment_method: formData.payment_method,
+      applied_charge_percentage: chargePercentage,
+      charge_reason: formData.charge_reason,
+      initial_price: null,
+      total_price: null,
+      items: items
+    };
+    
+    await axios.post(`${apiUrl}sales/`, saleData, authHeader(token));
+    
+    return {
+      success: true,
+      success_message: "Venta creada con éxito"
+    };
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+      let value = "Error desconocido";
+      
+      if (typeof data === "object") {
+        const firstKey = Object.keys(data)[0];
+        value = data[firstKey];
+        console.log(error);
+        
+        return {
+          success: false,
+          status: error.response.status,
+          error: value,
+        };
+      }
+    }
+    
+    return {
+      success: false,
+      status: null,
+      error: "Error de red o del cliente",
+    };
+  }
 }
 
 async function getAllUsers(token) {
