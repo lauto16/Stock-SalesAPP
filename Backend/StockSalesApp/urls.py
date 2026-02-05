@@ -11,8 +11,6 @@ from SalesAPI.views import *
 from StatsAPI.views import *
 from EntryAPI.views import *
 from AuthAPI.views import *
-from Testing.views import *
-
 
 router_blame = DefaultRouter()
 router_blame.register(r'blames', ChangeLogViewSet, basename='blame')
@@ -68,7 +66,6 @@ urlpatterns = [
     path('api/sales/search/', SaleSearchView.as_view(), name='sale-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
-    path('tests/sales_test', test_sales, name='test_sales'),
     path('api/', include(router_products.urls)),
     path('api/', include(router_providers.urls)),
     path('api/', include(router_offers.urls)),
