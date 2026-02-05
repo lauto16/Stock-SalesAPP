@@ -1,8 +1,8 @@
 from notifications import run_notifications, notification_scheduler
 from services import start_react, start_django, port_in_use
 from backups import create_db_backup, load_last_backup_time
+from update import run_git_pull, run_migrations
 from datetime import datetime, timedelta
-from update import run_git_pull
 import threading
 import time
 
@@ -13,6 +13,7 @@ def main():
     
     print("Ejecutando git pull antes de iniciar servicios...")
     run_git_pull()
+    run_migrations()
 
     print("Verificando si los servicios ya están ejecutándose...")
 

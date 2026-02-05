@@ -1,4 +1,4 @@
-from consts import BASE_PATH
+from consts import BASE_PATH, BACKEND_LOG, VENV_PYTHON, MANAGE_PY, BACKEND_PATH
 import subprocess
 import os
 
@@ -42,3 +42,26 @@ def run_git_pull():
             print("No es un repo git")
     except Exception as e:
         print(e)
+
+
+def run_migrations():
+    open(BACKEND_LOG, "w", encoding="utf-8").close()
+    print("Corriendo migraciones de base de datos...")
+    with open(BACKEND_LOG, "a", encoding="utf-8") as log:
+        log.write("\n\n--- Running Django migrations ---\n")
+        log.flush()
+
+        migrate = subprocess.Popen(
+            [
+                VENV_PYTHON,
+                MANAGE_PY,
+                "migrate",
+                "--noinput",
+            ],
+            cwd=BACKEND_PATH,
+            stdout=log,
+            stderr=log,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+
+        migrate.wait()
