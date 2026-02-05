@@ -40,3 +40,4 @@ populate_db.py
 db_backups/
 formularios/
 Backend/PERSONAL_IDENTIFIER.json
+Frontend/node_modules
