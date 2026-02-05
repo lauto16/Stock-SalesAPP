@@ -24,6 +24,8 @@ class Product(models.Model):
     expiration = models.DateField(null=True, blank=True, verbose_name="vencimiento")
     in_use = models.BooleanField(default=True, verbose_name="en uso")
     es_test = models.IntegerField(default=10, null=True)
+    es_test_dos = models.IntegerField(default=11, null=True)
+    
     class Meta:
         verbose_name = "producto"
         verbose_name_plural = "productos"
