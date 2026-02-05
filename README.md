@@ -105,7 +105,7 @@ Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulo
 ### ▶ Backend
 ⚠️ **IMPORTANTE**
 
-Este proyecto ejecuta `migrate --noinput` automáticamente al iniciar.
+Este proyecto ejecuta `migrate --noinput` automáticamente al iniciar en producción.
 **NO agregar campos sin `default` o `null=True`**, o el sistema fallará en background.
 
 Para comenzar a trabajar en el backend ejecute los siguientes comandos en una terminal cmd.
@@ -126,6 +126,10 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    ```
    ```bash
    activate
+   ```
+
+   ```bash
+   cd ..
    ```
    
    ```bash
