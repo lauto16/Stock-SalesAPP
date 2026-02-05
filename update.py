@@ -46,7 +46,7 @@ def run_git_pull():
 
 def run_migrations():
     open(BACKEND_LOG, "w", encoding="utf-8").close()
-
+    print("Corriendo migraciones de base de datos...")
     with open(BACKEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Running Django migrations ---\n")
         log.flush()
