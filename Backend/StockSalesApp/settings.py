@@ -104,7 +104,6 @@ LANGUAGE_CODE = 'es'
 
 LANGUAGES = [
     ('es', 'Español'),
-    ('en', 'English'),
 ]
 
 USE_I18N = True
