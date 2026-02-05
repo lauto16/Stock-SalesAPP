@@ -601,22 +601,35 @@ async function fetchCategories(setLoading, token) {
 
 async function addCategory(category, token) {
   try {
-    const response = await axios.post(
-      `${apiUrl}categories/`,
-      category,
-      authHeader(token)
-    );
-
-    const { success, error, data } = response.data;
-
-    if (!success) {
-      throw new Error(error);
+    await axios.post(`${apiUrl}categories/`, category, authHeader(token));
+    
+    return {
+      success: true,
+      success_message: "Categoría creada con éxito"
+    };
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+      let message = "Error desconocido";
+      
+      if (typeof data === "object") {
+        const firstKey = Object.keys(data)[0];
+        message = data[firstKey];
+        console.log(error);
+        
+        return {
+          success: false,
+          status: error.response.status,
+          error: message,
+        };
+      }
     }
-
-    return data;
-  } catch (err) {
-    console.error("Error al crear la categoría:", err.message);
-    throw err;
+    
+    return {
+      success: false,
+      status: null,
+      error: "Error de red o del cliente",
+    };
   }
 }
 

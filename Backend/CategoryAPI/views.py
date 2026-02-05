@@ -37,22 +37,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return self.success_response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-
-        if not serializer.is_valid():
-            # DRF devuelve dict, lo convertimos a string legible
-            return self.error_response(
-                str(serializer.errors),
-                status.HTTP_400_BAD_REQUEST
-            )
-
-        serializer.save()
-        return self.success_response(
-            serializer.data,
-            status.HTTP_201_CREATED
-        )
-
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
