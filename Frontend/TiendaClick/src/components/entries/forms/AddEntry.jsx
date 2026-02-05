@@ -8,6 +8,9 @@ import { useUser } from "../../../context/UserContext.jsx";
 import { fetchSearchProducts, fetchPaymentMethods, addProduct } from "../../../services/axios.services.js";
 import ContentAddProduct from "../../inventory/forms/ContentAddProduct.jsx";
 import AddItemModal from "../../crud/AddItemModal.jsx";
+import { useProviders } from "../../providers/hooks/useProviders.js";
+import Select from "react-select";
+
 export default function AddEntry({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
@@ -15,6 +18,7 @@ export default function AddEntry({ register, control, errors, watch }) {
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
 
+    const { providers } = useProviders(user.token);
     const [showAddItem, setShowAddItem] = useState(false);
 
     // Clear selected products when form is reset
@@ -23,13 +27,6 @@ export default function AddEntry({ register, control, errors, watch }) {
             setSelectedProducts([]);
         }
     }, [watchedSelectedProducts]);
-
-    useEffect(() => {
-        fetchPaymentMethods(user.token).then((data) => {
-            setPaymentMethods(data);
-
-        });
-    }, []);
 
     // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
@@ -126,131 +123,156 @@ export default function AddEntry({ register, control, errors, watch }) {
 
             <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={addProduct}
                 Content={ContentAddProduct} title={'Añadir nuevo producto'} />
-
-            {/* Product Quantities */}
-            <Col md={12}>
-                <h6 className="mb-3">Cantidades por producto:</h6>
-                <Row className="g-3">
-                    {selectedProducts.map((product) => {
-                        // Responsive column sizing based on number of products
-                        const colSize = selectedProducts.length === 1
-                            ? 12
-                            : selectedProducts.length === 2
-                                ? 6
-                                : 4;
-
-                        return (
-                            <Col md={colSize} key={product.code}>
-                                <CustomInput
-                                    label={`${product.name} (${product.code})`}
-                                    icon="bi-box"
-                                    type="text"
-                                    inputMode="decimal"
-                                    step="any"
-                                    defaultValue={1}
-                                    register={register(`quantity_${product.code}`, {
-                                        required: "La cantidad es obligatoria",
-                                        setValueAs: (value) => {
-                                            if (!value) return value;
-                                            return parseFloat(value.toString().replace(',', '.'));
-                                        },
-                                        min: {
-                                            value: 1,
-                                            message: "La cantidad debe ser mayor a 0"
-                                        },
-                                        max: {
-                                            value: product.stock,
-                                            message: `La cantidad no puede ser mayor a ${product.stock}`
-                                        }
-                                    })}
-                                />
-
-                                {errors[`quantity_${product.code}`] && (
-                                    <div className="invalid-feedback d-block">
-                                        {errors[`quantity_${product.code}`].message}
-                                    </div>
-                                )}
-                            </Col>
-
-                        );
-                    })}
-                </Row>
-            </Col>
-
+            {/* charges */}
+            {selectedProducts.length > 0 && (
+                <>
+                    <Col md={9}>
+                        <CustomInput
+                            label="Monto del recargo / descuento (si aplica)"
+                            icon='bi-cash-stack text-danger'
+                            type='number'
+                            defaultValue={0}
+                            register={register("applied_charge", {})}
+                        />
+                        {errors.applied_charge && (
+                            <div className="invalid-feedback d-block">
+                                {errors.applied_charge.message}
+                            </div>
+                        )}
+                    </Col>
+                </>
+            )}
             {/* Summary Table */}
             <Col md={12}>
-                <h6 className="mb-3">Resumen de la venta:</h6>
-                <div className="table-responsive">
-                    <table className="table table-bordered table-hover">
-                        <thead className="table-light">
-                            <tr>
-                                <th>Producto</th>
-                                <th>Código</th>
-                                <th className="text-center">Cantidad</th>
-                                <th className="text-end">Precio Unit.</th>
-                                <th className="text-end">Subtotal</th>
-                                <th className="text-end">Oferta aplicada</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {selectedProducts.map((product) => {
-                                const quantity = parseFloat(watchedQuantities[`quantity_${product.code}`]);
-                                const productSubtotal = product.sell_price * quantity;
-                                const offerPrice = (productSubtotal * product.offers_data.percentage / 100)
-                                return (
-                                    <tr key={product.code}>
-                                        <td>{product.name}</td>
-                                        <td>{product.code}</td>
-                                        <td className="text-center">{quantity}</td>
-                                        <td className="text-end">${product.sell_price.toFixed(2)}</td>
-                                        <td className="text-end">${productSubtotal.toFixed(2)}</td>
-                                        <td className="text-end">${offerPrice.toFixed(2)}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                        <tfoot className="table-secondary">
-                            <tr>
-                                <td colSpan="5" className="text-end">
-                                    <strong>Subtotal:</strong>
-                                </td>
-                                <td className="text-end">
-                                    <strong>${calculateSubtotal().toFixed(2)}</strong>
-                                </td>
-                            </tr>
-
-                            {(() => {
-                                const parsedCharge = Number(chargePercentage);
-                                const hasCharge =
-                                    chargePercentage !== "" &&
-                                    Number.isFinite(parsedCharge);
-
-                                return hasCharge && (
+                {selectedProducts.length > 0 && (
+                    <>
+                        <h6 className="mb-3">Resumen del ingreso de productos:</h6>
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-hover">
+                                <thead className="table-light">
                                     <tr>
-                                        <td colSpan="5" className="text-end">
-                                            <strong>Recargo / Descuento ({parsedCharge}%):</strong>
+                                        <th>Producto</th>
+                                        <th>Código</th>
+                                        <th className="text-center">Cantidad</th>
+                                        <th className="text-end">Precio Unit.</th>
+                                        <th className="text-end">Precio Total</th>
+                                        <th className="text-end">Proveedor</th>
+                                        <th className="text-end">N° Remito</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedProducts.map((product) => {
+                                        const quantity = parseFloat(watchedQuantities[`quantity_${product.code}`]);
+                                        const productSubtotal = product.buy_price * quantity;
+                                        return (
+                                            <tr key={product.code}>
+                                                <td>{product.name}</td>
+                                                <td>{product.code}</td>
+                                                {/* entry quantity */}
+                                                <td className="text-center">
+                                                    <CustomInput
+                                                        type="text"
+                                                        inputMode="decimal"
+                                                        step="any"
+                                                        defaultValue={1}
+                                                        inputStyle={{ width: '70px', textAlign: 'center' }}
+                                                        register={register(`quantity_${product.code}`, {
+                                                            required: "La cantidad es obligatoria",
+                                                            setValueAs: (value) => {
+                                                                if (!value) return value;
+                                                                return parseFloat(value.toString().replace(',', '.'));
+                                                            },
+                                                            min: {
+                                                                value: 0,
+                                                                message: "La cantidad debe ser mayor o igual a 0"
+                                                            }
+                                                        })}
+                                                    />
+
+                                                    {errors[`quantity_${product.code}`] && (
+                                                        <div className="invalid-feedback d-block">
+                                                            {errors[`quantity_${product.code}`].message}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="text-end">${product.buy_price.toFixed(2)}</td>
+                                                <td className="text-end">${productSubtotal.toFixed(2)}</td>
+                                                {/* providers */}
+                                                <td className="text-end">
+                                                    <Controller
+                                                        name={`provider_${product.code}`}
+                                                        control={control}
+                                                        defaultValue={product.provider}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                {...field}
+                                                                value={providers.find(p => p.id === field.value)
+                                                                    ?
+                                                                    {
+                                                                        value: field.value,
+                                                                        label: providers.find(p => p.id === field.value).name
+                                                                    } : null
+                                                                }
+                                                                onChange={(option) => field.onChange(option?.value)}
+                                                                options={providers.map(p => ({
+                                                                    value: p.id,
+                                                                    label: p.name
+                                                                }))}
+                                                                placeholder="Seleccionar proveedor..."
+                                                                isSearchable
+                                                                className="text-start"
+                                                            />
+                                                        )}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                                <tfoot className="table-secondary">
+                                    <tr>
+                                        <td colSpan="6" className="text-end">
+                                            <strong>Subtotal:</strong>
                                         </td>
-                                        <td className="text-end text-danger">
-                                            <strong>
-                                                {parsedCharge >= 0 ? "+" : "-"}$
-                                                {Math.abs(calculateCharge()).toFixed(2)}
-                                            </strong>
+                                        <td className="text-end">
+                                            <strong>${calculateSubtotal().toFixed(2)}</strong>
                                         </td>
                                     </tr>
-                                );
-                            })()}
 
-                            <tr className="table-success">
-                                <td colSpan="5" className="text-end">
-                                    <strong>TOTAL:</strong>
-                                </td>
-                                <td className="text-end">
-                                    <strong>${calculateTotal().toFixed(2)}</strong>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                                    {(() => {
+                                        const parsedCharge = Number(chargePercentage);
+                                        const hasCharge =
+                                            chargePercentage !== "" &&
+                                            Number.isFinite(parsedCharge);
+
+                                        return hasCharge && (
+                                            <tr>
+                                                <td colSpan="6" className="text-end">
+                                                    <strong>Recargo / Descuento ({parsedCharge}%):</strong>
+                                                </td>
+                                                <td className="text-end text-danger">
+                                                    <strong>
+                                                        {parsedCharge >= 0 ? "+" : "-"}$
+                                                        {Math.abs(calculateCharge()).toFixed(2)}
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })()}
+
+                                    <tr className="table-success">
+                                        <td colSpan="6" className="text-end">
+                                            <strong>TOTAL:</strong>
+                                        </td>
+                                        <td className="text-end">
+                                            <strong>${calculateTotal().toFixed(2)}</strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </>
+                )}
             </Col>
         </Row>
     );

@@ -6,7 +6,7 @@ export default function CustomInput({ label, icon, type, placeholder, register, 
   // productos), cuando lo hagas lo podes sacar :)
   return (
     <Form.Group className="mb-1">
-      <Form.Label>{label}</Form.Label>
+      {label && <Form.Label>{label}</Form.Label>}
       <div className="input-group">
         {icon && (
           <span className="input-group-text bg-white">
