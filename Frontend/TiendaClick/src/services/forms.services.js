@@ -1,6 +1,7 @@
 import { apiUrl, authHeader } from './consts';
 import axios from 'axios';
 import { downloadFile } from "./consts.js"
+
 export async function fetchSalesDownloadExcel(token) {
     try {
         const response = await axios.get(`${apiUrl}sales_download_excel/`,
@@ -13,6 +14,7 @@ export async function fetchSalesDownloadExcel(token) {
         return false;
     }
 }
+
 export async function fetchProductsDownloadExcel(token) {
     try {
         const response = await axios.get(`${apiUrl}products/products_download_excel/`,

@@ -9,7 +9,7 @@ import {
   fetchSearchSales,
   deleteSaleById,
   addSale,
-} from "../../services/axios.services.js";
+} from "../../services/axios.services.sales.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";

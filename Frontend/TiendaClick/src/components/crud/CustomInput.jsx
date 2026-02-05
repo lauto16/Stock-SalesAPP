@@ -2,8 +2,6 @@ import React from "react";
 import { Form } from "react-bootstrap";
 
 export default function CustomInput({ label, icon, type, placeholder, register, step, disabled = false, value, inputStyle, defaultValue }) {
-  // hola amigo, el prop disabled es temporal hasta que tercerices el form de product info (el de modificar
-  // productos), cuando lo hagas lo podes sacar :)
   return (
     <Form.Group className="mb-1">
       {label && <Form.Label>{label}</Form.Label>}

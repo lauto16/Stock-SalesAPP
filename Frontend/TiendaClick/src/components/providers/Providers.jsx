@@ -3,12 +3,12 @@ import Table from "../crud/Table.jsx";
 import '../../css/providers.css';
 import { useState, useEffect } from "react";
 import Header from "../crud/Header.jsx"
-import { fetchProviders_by_page, deleteProviderById } from "../../services/axios.services.js";
+import { fetchProvidersByPage, deleteProviderById } from "../../services/axios.services.providers.js";
 import { useUser } from "../../context/UserContext.jsx"
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 import InfoFormContent from "./forms/InfoFormContent.jsx";
 import AddItemContent from "./forms/AddItemContent.jsx";
-import { addProvider, updateProvider } from "../../services/axios.services.js";
+import { addProvider, updateProvider } from "../../services/axios.services.providers.js";
 
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
@@ -40,7 +40,7 @@ function Providers() {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            const data = await fetchProviders_by_page({
+            const data = await fetchProvidersByPage({
                 page: currentPage,
                 setLoading,
                 token: user.token

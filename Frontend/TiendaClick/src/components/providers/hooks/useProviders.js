@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProviders } from "../../../services/axios.services";
+import { fetchProviders } from "../../../services/axios.services.providers.js";
 export function useProviders(token) {
     const [providers, setProviders] = useState([])
     useEffect(() => {

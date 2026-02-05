@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { verifyPin, updateAskForPin } from "../services/axios.services";
+import { verifyPin } from "../services/axios.services.pin_manager.js";
 import { useUser } from "./UserContext";
 const PinContext = createContext();
 

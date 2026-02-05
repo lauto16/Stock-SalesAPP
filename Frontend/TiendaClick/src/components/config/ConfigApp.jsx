@@ -3,13 +3,12 @@ import { Card } from "react-bootstrap";
 import "../../css/auth.css";
 import Form from "react-bootstrap/Form";
 import SideBar from "../sideNav/SideBar";
-import Nav from '../sideNav/Nav.jsx'
 import SideBarBrand from "../sideNav/SideBarBrand";
 import DashboardHeader from "../dashboard/DashboardHeader";
 import { usePin } from "../../context/PinContext.jsx";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import { useUser } from "../../context/UserContext";
-import { updateAskForPin, getAskForPin } from "../../services/axios.services.js"
+import { updateAskForPin, getAskForPin } from "../../services/axios.services.pin_manager.js"
 
 export default function DeleteUser() {
     const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 850);

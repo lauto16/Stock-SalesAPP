@@ -8,7 +8,7 @@ import SideBar from "../sideNav/SideBar";
 import SideBarBrand from "../sideNav/SideBarBrand";
 import DashboardHeader from "../dashboard/DashboardHeader";
 import ConfirmationModal from "../crud/ConfirmationModal";
-import { getAllUsers, deleteUser } from "../../services/axios.services";
+import { getAllUsers, deleteUser } from "../../services/axios.services.auth.js";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import { FaLock } from "react-icons/fa";
 import { Dropdown } from "react-bootstrap";

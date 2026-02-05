@@ -1,5 +1,5 @@
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
-import { fetchOffers, addOffer, updateOffer } from '../../services/axios.services.js'
+import { fetchOffers, addOffer, updateOffer } from '../../services/axios.services.offers.js'
 import { useEffect, useState } from 'react'
 import { useUser } from "../../context/UserContext.jsx";
 import Header from '../crud/Header.jsx';

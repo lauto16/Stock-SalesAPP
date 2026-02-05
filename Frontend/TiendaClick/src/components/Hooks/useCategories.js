@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchCategories } from "../../services/axios.services";
+import { fetchCategories } from "../../services/axios.services.categories";
 
 export function useCategories(token) {
   const [categories, setCategories] = useState([]);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchSearchProducts } from "../../services/axios.services";
+import { fetchSearchProducts } from "../../services/axios.services.products.js";
 export function useProducts(token) {
     const [products, setProducts] = useState([])
     useEffect(() => {

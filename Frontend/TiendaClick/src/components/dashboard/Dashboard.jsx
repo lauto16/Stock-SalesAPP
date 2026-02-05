@@ -12,7 +12,7 @@ import {
   fetchSalesStats,
   fetchEmployeesStats,
   fetchProductsStats,
-} from '../../services/axios.services.js'
+} from '../../services/axios.services.stats.js'
 import '../../css/dashboard.css'
 import { useUser } from '../../context/UserContext.jsx'
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'

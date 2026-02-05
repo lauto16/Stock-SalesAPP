@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form"
 import { useState, useEffect } from "react"
 import AsyncSelect from "react-select/async"
 import { useUser } from "../../../context/UserContext.jsx"
-import { fetchSearchProducts } from "../../../services/axios.services.js"
+import { fetchSearchProducts } from "../../../services/axios.services.products.js"
 
 export default function AddOfferContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);

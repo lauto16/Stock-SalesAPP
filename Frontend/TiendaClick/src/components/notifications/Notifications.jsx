@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchUnseenNotifications, fetchSeenNotifications, markNotificationAsSeen } from "../../services/axios.services";
+import { fetchUnseenNotifications, fetchSeenNotifications, markNotificationAsSeen } from "../../services/axios.services.notifications.js";
 import { useUser } from "../../context/UserContext";
 import { Alert, Spinner } from "react-bootstrap";
 import { Package, AlertTriangle, PackageX, X, Skull } from "lucide-react";

@@ -1,5 +1,5 @@
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
-import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../services/axios.services.js'
+import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../services/axios.services.categories.js'
 import { useEffect, useState } from 'react'
 import { useUser } from "../../context/UserContext.jsx";
 import Header from '../crud/Header.jsx';

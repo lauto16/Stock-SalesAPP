@@ -4,8 +4,8 @@ import { Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
-import { fetchSearchProducts, fetchPaymentMethods } from "../../../services/axios.services.js";
-
+import { fetchSearchProducts } from "../../../services/axios.services.products.js";
+import { fetchPaymentMethods } from "../../../services/axios.services.payment_methods.js"
 
 export default function AddSaleContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);

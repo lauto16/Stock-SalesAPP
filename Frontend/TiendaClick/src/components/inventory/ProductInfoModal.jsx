@@ -3,7 +3,8 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import CustomInput from "../crud/CustomInput";
-import { fetchProviders, updateProduct } from "../../services/axios.services";
+import { updateProduct } from "../../services/axios.services.products.js";
+import { fetchProviders } from "../../services/axios.services.providers.js"
 import { useNotifications } from "../../context/NotificationSystem";
 import { useUser } from "../../context/UserContext";
 import { useCategories } from "../Hooks/useCategories.js";
@@ -29,9 +30,9 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const [isSending, setIsSending] = useState(false)
     const { categories } = useCategories(user.token);
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(categories);
-        
+
     }, [categories]);
 
     useEffect(() => {

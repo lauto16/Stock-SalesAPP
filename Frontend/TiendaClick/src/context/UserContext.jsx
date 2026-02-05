@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginUser, logoutUser, fetchUserData } from "../services/axios.services";
+import { loginUser, fetchUserData } from "../services/axios.services.auth.js";
 
 const UserContext = createContext(null);
 
@@ -46,11 +46,6 @@ export const UserProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        try {
-            await logoutUser();
-        } catch (e) {
-            console.error("Error cerrando sesión:", e);
-        }
         setUser(null);
     };
 

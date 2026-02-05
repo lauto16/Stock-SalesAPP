@@ -4,14 +4,13 @@ function Footer() {
 
 
         <footer className="app-footer">
-            <div className="float-end d-none d-sm-inline">Anything you want</div>
             <strong>
                 Copyright © 2025
                 <a className="text-decoration-none">TiendaClick</a>.
             </strong>
 
             <strong>
-                Todos los derechos reservados.
+                Este software fue producido por <strong>LKDEV</strong> todos los derechos reservados.
             </strong>
 
         </footer>

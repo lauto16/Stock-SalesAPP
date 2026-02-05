@@ -3,7 +3,7 @@ import CustomInput from "../../crud/CustomInput"
 import { useUser } from "../../../context/UserContext"
 import { useController } from "react-hook-form"
 import AsyncSelect from "react-select/async"
-import { fetchSearchProducts } from "../../../services/axios.services"
+import { fetchSearchProducts } from "../../../services/axios.services.products.js"
 import { useState, useEffect } from "react"
 
 export default function InfoOfferContent({ register, selectedItem, errors, control }) {

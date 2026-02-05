@@ -3,7 +3,7 @@ import Pagination from "../inventory/Pagination.jsx";
 import Search from "../inventory/Search.jsx";
 import BlameTable from "../crud/BlameTable.jsx";
 import BlameModal from "./BlameInfoModal.jsx";
-import { fetchBlames, fetchSearchBlames } from '../../services/axios.services'
+import { fetchBlames, fetchSearchBlames } from '../../services/axios.services.blame.js'
 import { useUser } from "../../context/UserContext.jsx";
 import SimpleHeader from "../inventory/SimpleHeader.jsx"
 import '../../css/blame.css'

@@ -18,7 +18,7 @@ import {
     fetchEmployeesStats,
     fetchProductsStats,
     fetchBestSellingCategories
-} from "../../services/axios.services.js";
+} from "../../services/axios.services.stats.js";
 
 export default function Stats() {
     const { user } = useUser();

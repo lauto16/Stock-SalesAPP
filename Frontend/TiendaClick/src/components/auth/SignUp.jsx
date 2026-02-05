@@ -7,7 +7,7 @@ import { useUser } from "../../context/UserContext";
 import SideBar from "../sideNav/SideBar";
 import SideBarBrand from "../sideNav/SideBarBrand";
 import DashboardHeader from "../dashboard/DashboardHeader"
-import { signupUser } from "../../services/axios.services"
+import { signupUser } from "../../services/axios.services.auth.js"
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 
 

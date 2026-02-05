@@ -8,7 +8,7 @@ import {
     fetchSearchProducts, fetchProducts, deleteProductByCode,
     fetchGetByCode, updateSelectedPrices, updateAllPrices,
     addProduct
-} from "../../services/axios.services.js";
+} from "../../services/axios.services.products.js";
 import { fetchProductsDownloadExcel } from "../../services/forms.services.js";
 import ProductInfoModal from "./ProductInfoModal.jsx";
 import PriceUpdateModal from "./PriceUpdateModal.jsx"
