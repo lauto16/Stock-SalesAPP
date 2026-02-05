@@ -131,12 +131,48 @@ async function addProduct(product, token) {
 }
 
 async function addProvider(provider, token) {
-  return axios.post(`${apiUrl}providers/`, provider, authHeader(token))
-    .then(response => response.data)
-    .catch(error => {
-      console.error('Error al crear el producto:', error);
-      throw error;
-    });
+  try {
+    await axios.post(
+      `${apiUrl}providers/`,
+      provider,
+      authHeader(token)
+    );
+
+    return {
+      success: true,
+      success_message: "Proveedor creado con éxito",
+    };
+
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+
+      let message = "Error desconocido";
+
+      if (typeof data === "object") {
+        const firstKey = Object.keys(data)[0];
+        const value = data[firstKey];
+
+        if (Array.isArray(value)) {
+          message = value[0];
+        } else {
+          message = value;
+        }
+      }
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: message,
+      };
+    }
+
+    return {
+      success: false,
+      status: null,
+      error: "Error de red o del cliente",
+    };
+  }
 }
 
 async function addOffer(data, token) {
