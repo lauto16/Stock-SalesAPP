@@ -95,12 +95,54 @@ function logoutUser(token) {
 
 
 async function addProduct(product, token) {
-  try { 
+  try {
     await axios.post(`${apiUrl}products/`, product, authHeader(token))
-    return { 
-      success: true, 
+    return {
+      success: true,
       success_message: "Producto creado con éxito"
     }
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+
+      let message = "Error desconocido";
+
+      if (typeof data === "object") {
+        const firstKey = Object.keys(data)[0];
+        const value = data[firstKey];
+
+        console.log(error);
+
+
+        return {
+          success: false,
+          status: error.response.status,
+          error: message,
+        }
+      }
+
+      return {
+        success: false,
+        status: null,
+        error: "Error de red o del cliente",
+      }
+    }
+  }
+}
+
+async function addProvider(provider, token) {
+  try {
+    await axios.post(
+      `${apiUrl}providers/`,
+      provider,
+      authHeader(token)
+    );
+
+    return {
+      success: true,
+      success_message: "Proveedor creado con éxito",
+    };
+
   } catch (error) {
     if (error.response) {
       const data = error.response.data;
@@ -122,41 +164,59 @@ async function addProduct(product, token) {
         success: false,
         status: error.response.status,
         error: message,
-      }
+      };
     }
 
     return {
       success: false,
       status: null,
       error: "Error de red o del cliente",
-    }
+    };
   }
-}
-
-async function addProvider(provider, token) {
-  return axios.post(`${apiUrl}providers/`, provider, authHeader(token))
-    .then(response => response.data)
-    .catch(error => {
-      console.error('Error al crear el producto:', error);
-      throw error;
-    });
 }
 
 async function addOffer(data, token) {
+  // Normalizamos productos igual que antes
   data.products = data.products.map(product => product.code);
+
   try {
-    const response = await axios.post(`${apiUrl}offers/`, data, authHeader(token));
-    return response.data;
+    await axios.post(
+      `${apiUrl}offers/`,
+      data,
+      authHeader(token)
+    );
+
+    return {
+      success: true,
+      success_message: "Oferta creada con éxito",
+    };
+
   } catch (error) {
-    const message = error.response?.data?.error || 'Error desconocido al crear la oferta';
-    throw new Error(message);
+    if (error.response) {
+      const data = error.response.data;
+      
+      const message = data.error
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: message,
+      };
+    }
+
+    return {
+      success: false,
+      status: null,
+      error: "Error de red o del cliente",
+    };
   }
 }
+
 //TODO revisar que esté bien
 async function updateOffer(data, token) {
   data.products = data.products.map(product => product);
   console.log(data);
-  
+
   try {
     const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
     return response.data;
@@ -564,12 +624,12 @@ async function deleteCategory(category, token) {
     const response = await axios.delete(
       `${apiUrl}categories/${category}/`,
       authHeader(token)
-    );    
+    );
 
     return response.data;
   } catch (err) {
     console.log(err);
-    
+
     console.error("Error al eliminar la categoría:", err.message);
     throw err;
   }
@@ -650,7 +710,7 @@ async function fetchProductsStats(token) {
 
 async function updateAskForPin(askForPin, token) {
   // changes all users askforpin register to AskForPin bool parameter.
-  
+
   try {
     const response = await axios.patch(
       `${apiUrl}admin-user-functions/ask-for-pin/`,
