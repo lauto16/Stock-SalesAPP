@@ -23,7 +23,6 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name="categoria")
     expiration = models.DateField(null=True, blank=True, verbose_name="vencimiento")
     in_use = models.BooleanField(default=True, verbose_name="en uso")
-    test = models.BooleanField(default=True)
     
     class Meta:
         verbose_name = "producto"
