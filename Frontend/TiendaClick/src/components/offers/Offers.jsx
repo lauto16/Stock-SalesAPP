@@ -34,7 +34,7 @@ export default function Offers() {
         { className: "end_date", key: "end_date", label: 'Finaliza' },
     ];
     const formatDate = (offers) => {
-        //refactors date to dd-mm-yyyy format
+        //TODO: refactors date to dd-mm-yyyy format
         return offers.map((offer) => {
             return {
                 ...offer,

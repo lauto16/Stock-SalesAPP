@@ -1,6 +1,19 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
 
+async function fetchDailyReports({ page = 1, setLoading, token }) {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}daily-reports/?page=${page}`, authHeader(token));
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener los reportes diarios:", error);
+      return { results: [], count: 0 };
+    } finally {
+      setLoading(false);
+    }
+  }
+
 // returns the average value of the sales
 async function fetchSalesAverageValueStatsByPeriod(token, period) {
     return axios.get(`${apiUrl}sales_stats/average-sales-value/${period}`, authHeader(token));
@@ -99,5 +112,5 @@ export {
     fetchEmployeesStats,
     fetchProductsStats,
     fetchLowStock,
-
+    fetchDailyReports,
 }

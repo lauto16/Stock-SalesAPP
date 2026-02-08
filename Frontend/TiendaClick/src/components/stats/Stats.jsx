@@ -5,6 +5,8 @@ import ActionBox from "../dashboard/ActionBox.jsx";
 import DashboardHeader from "../dashboard/DashboardHeader.jsx"
 import SalesChart from "./SalesChart.jsx";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
+import Table from "../crud/Table.jsx";
+import Pagination from '../inventory/Pagination.jsx';
 
 import {
     fetchSalesAverageValueStatsByPeriod,
@@ -17,7 +19,8 @@ import {
     fetchSalesStats,
     fetchEmployeesStats,
     fetchProductsStats,
-    fetchBestSellingCategories
+    fetchBestSellingCategories,
+    fetchDailyReports,
 } from "../../services/axios.services.stats.js";
 
 export default function Stats() {
@@ -36,6 +39,104 @@ export default function Stats() {
     const [employeeStats, setEmployeeStats] = useState({})
     const [productStats, setProductStats] = useState({})
     const [bestCategories, setBestCategories] = useState([]);
+
+    const [dailyReports, setDailyReports] = useState([]);
+    const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const PAGE_SIZE = 10;
+
+    const formatDailyReportsData = (data = []) => {
+        data = formatDate(data);
+
+        return data.map((daily_report) => {
+            const isToday = daily_report.is_todays;
+
+            const green = "#114511";
+            const red = "#5c1010";
+
+            return {
+                gain: (
+                    <span
+                        style={{
+                            color: green,
+                            fontWeight: isToday ? "700" : "400",
+                        }}
+                    >
+                        {daily_report.gain}
+                    </span>
+                ),
+
+                loss: (
+                    <span
+                        style={{
+                            color: red,
+                            fontWeight: isToday ? "700" : "400",
+                        }}
+                    >
+                        {daily_report.loss}
+                    </span>
+                ),
+
+                profit: (
+                    <span
+                        style={{
+                            color: daily_report.profit >= 0 ? green : red,
+                            fontWeight: isToday ? "700" : "400",
+                        }}
+                    >
+                        {daily_report.profit}
+                    </span>
+                ),
+
+                created_at: daily_report.created_at,
+            };
+        });
+    };
+
+    const dailyReportsColumns = [
+        { className: "gain", key: "gain", label: 'Ganancia' },
+        { className: "loss", key: "loss", label: 'Perdida' },
+        { className: "profit", key: "profit", label: 'Ganancia - Perdida' },
+        { className: "created_at", key: "created_at", label: 'Fecha' },
+    ];
+
+    const formatDate = (daily_reports) => {
+        //TODO: refactors date to dd-mm-yyyy format
+        return daily_reports.map((daily_report) => {
+            return {
+                ...daily_report,
+                created_at: new Date(daily_report.created_at).toLocaleDateString().replace(/\//g, '-'),
+            };
+        });
+    };
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+
+    };
+
+    useEffect(() => {
+        const loadDailyReports = async () => {
+            const { results, count } = await fetchDailyReports({
+                page: currentPage,
+                setLoading,
+                token: user.token,
+            });
+            console.log(results);
+            const dailyReportsData = formatDailyReportsData(results);
+
+            setDailyReports(dailyReportsData);
+            setCount(count);
+            setTotalPages(Math.ceil(count / PAGE_SIZE));
+            setLoading(false);
+        };
+
+        loadDailyReports();
+    }, [currentPage]);
 
     const round1 = (value) =>
         value !== null && value !== undefined
@@ -124,6 +225,22 @@ export default function Stats() {
             <DashboardHeader title={'ESTADISTICAS'} isDashboard={false} />
             <div className="container my-4">
                 <h2 className="mb-4">Estadísticas de tu tienda</h2>
+
+                <h4 className="mb-4">Reportes diarios de ganancia</h4>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+                <Table
+                    items={dailyReports}
+                    columns={dailyReportsColumns}
+                    loading={loading}
+                    pkName={"id"}
+                />
+
+                <br />
+
                 <h4 className="mb-4">Sobre las ventas</h4>
 
                 <div className="row row-action-box mt-2">
@@ -176,12 +293,15 @@ export default function Stats() {
                 </div>
 
                 <div className="row">
-                    <div className="col-xxl-6 col-12 mb-3">
+                    <div className="col-12 mb-3">
                         <div className="card h-100">
                             <div className="card-header">
-                                <h4>Ventas por mes</h4>
+                                <h5>Ventas por mes</h5>
                             </div>
-                            <SalesChart sales={saleStats.total_sales_by_month} />
+
+                            <div className="card-body w-100">
+                                <SalesChart sales={saleStats.total_sales_by_month} />
+                            </div>
                         </div>
                     </div>
 

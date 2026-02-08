@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from PaymentMethodAPI.views import *
 from NotificationAPI.views import *
+from DailyReportAPI.views import *
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from CategoryAPI.views import *
@@ -60,6 +61,9 @@ router_entries.register(r'entries', EntryViewSet, basename='entry')
 router_entry_details = DefaultRouter()
 router_entry_details.register(r"entry-details", EntryDetailViewSet, basename="entry-detail")
 
+router_daily_reports = DefaultRouter()
+router_daily_reports.register(r"daily-reports", DailyReportViewSet, basename="daily-report")
+
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
@@ -81,6 +85,7 @@ urlpatterns = [
     path('api/', include(router_users_admin_functions.urls)),
     path('api/', include(router_notifications.urls)),
     path('api/', include(router_entries.urls)),
+    path('api/', include(router_daily_reports.urls)),
     path('api/login/', obtain_auth_token),
 
 ]

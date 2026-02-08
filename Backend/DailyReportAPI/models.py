@@ -33,7 +33,15 @@ class DailyReport(models.Model):
             float: gain / loss
         """
         return self.gain - self.loss
-
+    
+    @property
+    def is_todays(self) -> bool:
+        """
+        Returns True if this report belongs to today
+        """
+        today = timezone.localdate()
+        return self.created_at == today
+    
     def _add_gain(self, amount: int | float):
         """
         Adds a gain to a certain DailyReport avoiding concurrency problems using F
