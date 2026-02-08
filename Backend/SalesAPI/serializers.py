@@ -119,7 +119,6 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
         payment_method = validated_data.get("payment_method", "Efectivo")
-        profit = 0
         
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
@@ -128,8 +127,6 @@ class SaleCreateSerializer(serializers.ModelSerializer):
             payment_method=payment_method
         )
         
-        daily_report = DailyReport.get_or_create_today_report()
-
         for item in items_data:
             product = item["product_id"]
             
@@ -148,9 +145,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
                 unit_price=product.sell_price,
                 charge_percentage=charge,
             )
-            
-            profit += sale_item.subtotal - (sale_item.quantity * sale_item.product.buy_price)
-            
-        daily_report.apply_amount(profit)
+        
+
         
         return sale

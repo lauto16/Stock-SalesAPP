@@ -11,7 +11,7 @@ class DailyReport(models.Model):
     gain = models.FloatField(default=0, null=True, blank=True, verbose_name="ganancia")
     loss = models.FloatField(default=0, null=True, blank=True, verbose_name="perdida")
     created_at = models.DateField(unique=True, verbose_name="fecha", auto_now_add=True)
- 
+
     @staticmethod
     def get_or_create_today_report():
         """
@@ -61,14 +61,13 @@ class DailyReport(models.Model):
         """
         if amount == 0:
             return
-        
+
         if amount > 0:
             self._add_gain(amount)
-            
+
         elif amount < 0:
             self._add_loss(abs(amount))
-            
-    
+
     class Meta:
         verbose_name = "Reporte financiero"
         verbose_name_plural = "reportes financieros diarios"

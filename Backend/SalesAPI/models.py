@@ -1,4 +1,5 @@
 from PaymentMethodAPI.models import PaymentMethod
+from DailyReportAPI.models import DailyReport
 from django.db import models, transaction
 from InventoryAPI.models import Product
 from Auth.models import CustomUser
@@ -18,9 +19,17 @@ class Sale(models.Model):
         verbose_name = 'venta'
         verbose_name_plural = 'ventas'
     
+    def calculate_profit(self):
+        profit = 0
+
+        for item in self.items.select_related("product"):
+            profit += item.subtotal - (item.quantity * item.product.buy_price)
+        
+        return profit + (self.total_price - self.initial_price)
+    
     def update_totals(self):
         initial = sum(item.subtotal for item in self.items.all())
-        charged = initial * (1 - self.applied_charge_percentage / 100)
+        charged = initial * (1 + self.applied_charge_percentage / 100)
 
         self.initial_price = initial
         self.total_price = charged
@@ -30,11 +39,15 @@ class Sale(models.Model):
         with transaction.atomic():
             for item in self.items.select_related("product"):
                 product = item.product
-                
-                old_stock = product.stock
-                product.stock = max(0, old_stock - item.quantity)
+                product.stock = max(0, product.stock - item.quantity)
                 product.save(user=user, createChangeLog=False)
+
             self.update_totals()
+
+            daily_report = DailyReport.get_or_create_today_report()
+
+            profit = self.calculate_profit()
+            daily_report.apply_amount(profit)
 
 
 class SaleItem(models.Model):
