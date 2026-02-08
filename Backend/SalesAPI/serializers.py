@@ -1,7 +1,7 @@
 from InventoryAPI.serializers import ProductSerializer
-from PaymentMethodAPI.models import PaymentMethod
-from rest_framework import serializers
+from DailyReportAPI.models import DailyReport
 from InventoryAPI.models import Product
+from rest_framework import serializers
 from .models import Sale, SaleItem
 from django.db import transaction
 
@@ -119,13 +119,16 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
         payment_method = validated_data.get("payment_method", "Efectivo")
-    
+        profit = 0
+        
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
             charge_reason=validated_data.get("charge_reason", ""),
             created_by=user,
             payment_method=payment_method
         )
+        
+        daily_report = DailyReport.get_or_create_today_report()
 
         for item in items_data:
             product = item["product_id"]
@@ -138,12 +141,16 @@ class SaleCreateSerializer(serializers.ModelSerializer):
                           
             quantity = item["quantity"]
 
-            SaleItem.objects.create(
+            sale_item = SaleItem.objects.create(
                 sale=sale,
                 product=product,
                 quantity=quantity,
                 unit_price=product.sell_price,
                 charge_percentage=charge,
             )
-
+            
+            profit += sale_item.subtotal - (sale_item.quantity * sale_item.product.buy_price)
+            
+        daily_report.apply_amount(profit)
+        
         return sale

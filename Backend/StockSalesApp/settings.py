@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'PaymentMethodAPI',
     'NotificationAPI',
     'EntryAPI',
+    'DailyReportAPI',
 ]
 
 MIDDLEWARE = [
