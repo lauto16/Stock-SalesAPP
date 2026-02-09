@@ -4,15 +4,12 @@ import Table from "../crud/Table.jsx";
 import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "../inventory/Search.jsx";
-/*import {
-
-} from "../../services/axios.services.js";*/
+import addEntry from "../../services/axios.services.entries.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
-//import AddSaleContent from "./forms/AddSaleContent.jsx";
+import AddEntryContent from "./forms/AddEntryContent.jsx";
 //import InfoFormContent from "./forms/InfoFormContent.jsx";
-import AddEntry from "./forms/AddEntry.jsx";
 
 export default function Entries() {
   const [items, setItems] = useState([]);
@@ -169,8 +166,8 @@ export default function Entries() {
             isSale={true}
             reloadWithBounce={reloadWithBounce}
             titleAddItem={"Añadir nuevo ingreso"}
-            AddItemcontent={AddEntry}
-            onSubmitAddItem={''}
+            AddItemcontent={AddEntryContent}
+            onSubmitAddItem={addEntry}
             titleInfoForm={"Informacion del ingreso"}
             onSubmitEditItem={() => { }}
             InfoFormContent={''}
