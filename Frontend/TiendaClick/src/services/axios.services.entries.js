@@ -2,7 +2,7 @@ import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
 
 
-export default async function addEntry(formData, token) {
+export async function addEntry(formData, token) {
     // Calculate discount and final price
     console.log(formData);
     const applied_charge = parseFloat(formData.applied_charge);
@@ -55,3 +55,31 @@ export default async function addEntry(formData, token) {
         }
     }
 }
+
+export async function deleteEntryById(id, token) {
+    try {
+        const response = await axios.delete(
+            `${apiUrl}entries/delete-by-id/${id}/`,
+            authHeader(token)
+        );
+        console.error(response)
+        return response.data;
+    } catch (error) {
+        const backendError = error.response?.data?.error || "Error al eliminar la entrada.";
+        return { success: false, error: backendError };
+    }
+}
+
+export async function fetchEntries({ page = 1, setLoading, token }) {
+    try {
+        setLoading(true);
+        const response = await axios.get(`${apiUrl}entries/?page=${page}`, authHeader(token));
+        return response.data;
+    } catch (error) {
+        console.error("Error al obtener las entradas:", error);
+        return { results: [], count: 0 };
+    } finally {
+        setLoading(false);
+    }
+}
+

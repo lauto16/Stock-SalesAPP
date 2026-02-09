@@ -15,7 +15,7 @@ import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddSaleContent from "./forms/AddSaleContent.jsx";
 import InfoFormContent from "./forms/InfoFormContent.jsx";
-
+import { formatDate, formatHour } from "../../utils/formatDate.js";
 export default function Sales() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,21 +43,6 @@ export default function Sales() {
      FORMAT HELPERS
      ======================= */
 
-  const formatDate = (isoString) => {
-    if (!isoString) return "";
-    return isoString.slice(0, 10).replaceAll("-", "/");
-  };
-
-  const formatHour = (isoString) => {
-    if (!isoString) return "";
-    return new Date(isoString).toLocaleTimeString("es-AR", {
-      timeZone: "America/Argentina/Buenos_Aires",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  };
 
   const formatSalesData = (data = []) => {
     return data.map((sale) => {

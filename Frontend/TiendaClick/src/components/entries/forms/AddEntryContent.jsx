@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 import { useUser } from "../../../context/UserContext.jsx";
-import { fetchSearchProducts, addProduct } from "../../../services/axios.services.js";
+import { fetchSearchProducts, addProduct } from "../../../services/axios.services.products.js";
 import ContentAddProduct from "../../inventory/forms/ContentAddProduct.jsx";
 import AddItemModal from "../../crud/AddItemModal.jsx";
 import { useProviders } from "../../providers/hooks/useProviders.js";

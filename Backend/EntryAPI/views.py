@@ -38,8 +38,32 @@ class EntryViewSet(viewsets.ModelViewSet):
             {"success": True, "total": entry.total},
             status=status.HTTP_200_OK
         )
+    @action(detail=False, methods=["delete"], url_path=r"delete-by-id/(?P<id>\d+)")
+    def destroy_by_id(self, request, id=None):
+            """
+            Deletes an Entry by ID and restores stock for all products involved in the sale.
+            """
+            try:
+                entry = (
+                    Entry.objects.select_related("created_by")
+                    .prefetch_related("details__product")
+                    .get(id=id)
+                )
+            except Entry.DoesNotExist:
+                return Response(
+                    {"error": f"No se pudo eliminar la erntrada con ID {id}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            #Falta encontrar la relacion, buscar en cada detalle, cual es el de la entrada
+            #  Entry 1--> 1* EntryDetail 
+            with transaction.atomic():
+                for item in Entry.details.all():
+                    product = item.product
+                    product.stock -= item.quantity
+                    product.save(user=request.user)
+                entry.delete()
 
-
+            return Response({"success": True})
 class EntryDetailViewSet(viewsets.ModelViewSet):
     """
     CRUD for EntryDetail

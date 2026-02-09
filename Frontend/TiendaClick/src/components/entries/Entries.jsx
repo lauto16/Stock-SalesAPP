@@ -4,11 +4,12 @@ import Table from "../crud/Table.jsx";
 import Pagination from "../inventory/Pagination.jsx";
 import "../../css/inventory.css";
 import Search from "../inventory/Search.jsx";
-import addEntry from "../../services/axios.services.entries.js";
+import { addEntry, fetchEntries, deleteEntryById } from "../../services/axios.services.entries.js";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddEntryContent from "./forms/AddEntryContent.jsx";
+import { formatDate, formatHour } from "../../utils/formatDate.js";
 //import InfoFormContent from "./forms/InfoFormContent.jsx";
 
 export default function Entries() {
@@ -29,110 +30,55 @@ export default function Entries() {
 
   const columns = [
     { className: "total", key: "total", label: "Total pagado" },
-    { className: "created_at", key: "created_at", label: "Fecha" },
+    { className: "created_at", key: "full_date", label: "Fecha" },
+    { className: "created_at", key: "hour", label: "Hora" },
   ];
 
-  /* =======================
-     FORMAT HELPERS
-     ======================= */
-
-  const formatDate = (isoString) => {
-    if (!isoString) return "";
-    return isoString.slice(0, 10).replaceAll("-", "/");
-  };
-
-  const formatHour = (isoString) => {
-    if (!isoString) return "";
-    return new Date(isoString).toLocaleTimeString("es-AR", {
-      timeZone: "America/Argentina/Buenos_Aires",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  };
-
-  /* =======================
-     FETCH NORMAL
-     ======================= */
-
-  /*useEffect(() => {
+  useEffect(() => {
     if (isSearching) return;
- 
- 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await fetchSales({ page: currentPage, setLoading: setLoading, token: user.token });
+        const data = await fetchEntries({ page: currentPage, setLoading: setLoading, token: user.token });
         if (!data.results) {
           return
         }
-        const results = data?.results.map((sale) => {
+        console.log(data.results)
+        const results = data?.results.map((entry) => {
           return {
-            ...sale,
-            full_date: sale.created_at ? formatDate(sale.created_at) : "",
-            hour: sale.created_at ? formatHour(sale.created_at) : "",
+            ...entry,
+            full_date: entry.created_at ? formatDate(entry.created_at) : "",
+            hour: entry.created_at ? formatHour(entry.created_at) : "",
           };
         });
- 
-        setItems(formatSalesData(results));
+
+        setItems(results);
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       } catch (error) {
-        addNotification("error", "Error cargando ventas.");
+        addNotification("error", "Error cargando entradas.");
         console.error(error);
       }
       setLoading(false);
     };
- 
+
     if (user?.token) fetchData();
-  }, [currentPage, isSearching, user]);*/
+    console.log(items)
+  }, [currentPage, isSearching, user]);
 
-  /* =======================
-     SEARCH
-     ======================= */
 
-  /*const handleSearchSubmit = async (query) => {
-    if (query.length < 2) return;
- 
-    setIsSearching(true);
-    setCurrentPage(1);
-    setLoading(true);
- 
-    try {
-      const data = await fetchSearchSales(query, setLoading, user.token);
-      const formatted = formatSalesData(data);
- 
-      setAllSearchResults(formatted);
-      setItems(formatted.slice(0, PAGE_SIZE));
-      setTotalPages(Math.ceil(formatted.length / PAGE_SIZE));
-    } catch (error) {
-      addNotification("error", "Error buscando ventas.");
-      setAllSearchResults([]);
-      setItems([]);
-      setTotalPages(1);
-    }
- 
-    setLoading(false);
-  };
- 
-  const clearSearch = () => {
-    setIsSearching(false);
-    setSearchInput("");
-    setCurrentPage(1);
-  };
- 
- 
   useEffect(() => {
     if (!isSearching) return;
- 
+
     const start = (currentPage - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
     setItems(allSearchResults.slice(start, end));
   }, [currentPage, isSearching, allSearchResults]);
- 
+
   useEffect(() => {
     setIsSomethingSelected(selectedItems.size > 0);
-  }, [selectedItems]);*/
+  }, [selectedItems]);
+
+
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -162,7 +108,7 @@ export default function Entries() {
             setSelectedItems={setSelectedItems}
             user={user}
             items={items}
-            deleteItem={''}
+            deleteItem={deleteEntryById}
             isSale={true}
             reloadWithBounce={reloadWithBounce}
             titleAddItem={"Añadir nuevo ingreso"}
@@ -171,6 +117,7 @@ export default function Entries() {
             titleInfoForm={"Informacion del ingreso"}
             onSubmitEditItem={() => { }}
             InfoFormContent={''}
+            selectedItemsColumns={columns}
           />
 
           <div className="table-container">
