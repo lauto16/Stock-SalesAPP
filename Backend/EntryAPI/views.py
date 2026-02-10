@@ -92,8 +92,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         with transaction.atomic():
-            entry = serializer.save(
+            serializer.save(
                 created_by=self.request.user,
                 created_at=timezone.now()
             )
-            entry.apply_entry()

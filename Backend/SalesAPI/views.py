@@ -240,7 +240,6 @@ class SaleSearchView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])

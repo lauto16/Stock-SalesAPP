@@ -20,7 +20,10 @@ class EntryDataValidator:
     def validate_product_exists(product):
         if product is None:
             raise serializers.ValidationError("El producto no existe.")
-
+        
+        if not product.in_use:
+            raise serializers.ValidationError(f"El producto {product.name} no existe.")
+        
     @staticmethod
     def validate_quantity(quantity):
         if quantity is None or quantity <= 0:
