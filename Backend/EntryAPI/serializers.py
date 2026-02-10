@@ -1,26 +1,39 @@
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
+from InventoryAPI.models import Product
 from rest_framework import serializers
 from .models import Entry, EntryDetail
+from django.db import transaction
 
-class EntryPagination(PageNumberPagination):
+
+class EntryDataValidator:
     """
-    Pagination class for Entry results.
+    Helper class that contains validations for stock entries creation process.
     """
 
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
+    @staticmethod
+    def validate_details_present(details):
+        if not details or len(details) == 0:
+            raise serializers.ValidationError(
+                "Un ingreso debe contener al menos un producto."
+            )
 
-    def paginate_queryset(self, queryset, request, view=None):
-        try:
-            return super().paginate_queryset(queryset, request, view)
-        except NotFound:
-            self.error_response = Response({
-                "success": False,
-                "error": "La página solicitada no existe."
-            })
+    @staticmethod
+    def validate_product_exists(product):
+        if product is None:
+            raise serializers.ValidationError("El producto no existe.")
+
+    @staticmethod
+    def validate_quantity(quantity):
+        if quantity is None or quantity <= 0:
+            raise serializers.ValidationError(
+                "La cantidad debe ser mayor a cero."
+            )
+
+    @staticmethod
+    def validate_unit_price(unit_price):
+        if unit_price is None or unit_price <= 0:
+            raise serializers.ValidationError(
+                "El precio unitario debe ser mayor a cero."
+            )
 
 
 class EntryDetailSerializer(serializers.ModelSerializer):
@@ -46,8 +59,73 @@ class EntryDetailSerializer(serializers.ModelSerializer):
 
     def get_subtotal(self, obj):
         return obj.subtotal
-
     
+
+class EntryDetailCreateSerializer(serializers.Serializer):
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(),
+        source='product'
+    )
+    unit_price = serializers.FloatField()
+    quantity = serializers.FloatField()
+    applied_charge = serializers.FloatField(default=0)
+    observations = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="Sin observaciones"
+    )
+
+
+class EntryCreateSerializer(serializers.ModelSerializer):
+    details = EntryDetailCreateSerializer(many=True)
+
+    class Meta:
+        model = Entry
+        fields = [
+            'rute_number',
+            'details'
+        ]
+
+    def validate(self, data):
+        details = data.get("details")
+
+        EntryDataValidator.validate_details_present(details)
+
+        for detail in details:
+            product = detail.get("product")
+            quantity = detail.get("quantity")
+            unit_price = detail.get("unit_price")
+
+            EntryDataValidator.validate_product_exists(product)
+            EntryDataValidator.validate_quantity(quantity)
+            EntryDataValidator.validate_unit_price(unit_price)
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        details_data = validated_data.pop("details")
+        user = self.context['request'].user if "request" in self.context else None
+
+        entry = Entry.objects.create(
+            created_by=user,
+            rute_number=validated_data.get("rute_number", "0")
+        )
+
+        for detail in details_data:
+            EntryDetail.objects.create(
+                entry=entry,
+                product=detail["product"],
+                unit_price=detail["unit_price"],
+                quantity=detail["quantity"],
+                applied_charge=detail.get("applied_charge", 0),
+                observations=detail.get("observations", "Sin observaciones")
+            )
+
+        entry.apply_entry()
+
+        return entry
+
 
 class EntrySerializer(serializers.ModelSerializer):
     """

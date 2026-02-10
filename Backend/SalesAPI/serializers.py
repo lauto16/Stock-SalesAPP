@@ -15,7 +15,8 @@ class SaleDataValidator:
     @staticmethod
     def validate_items_present(items):
         if not items or len(items) == 0:
-            raise serializers.ValidationError("Una venta debe contener al menos un producto.")
+            raise serializers.ValidationError(
+                "Una venta debe contener al menos un producto.")
 
     @staticmethod
     def validate_item_product_exists(product):
@@ -25,7 +26,8 @@ class SaleDataValidator:
     @staticmethod
     def validate_item_quantity(quantity):
         if quantity is None or quantity <= 0:
-            raise serializers.ValidationError("La cantidad a vender debe ser mayor a cero")
+            raise serializers.ValidationError(
+                "La cantidad a vender debe ser mayor a cero")
 
     @staticmethod
     def validate_stock_availability(product, quantity):
@@ -33,7 +35,8 @@ class SaleDataValidator:
             raise serializers.ValidationError(
                 f"Stock insuficiente para el producto '{product.name}'. Disponible: {product.stock}."
             )
-        
+
+
 class SaleItemSerializer(serializers.ModelSerializer):
     """
     Serializer for individual items within a sale.
@@ -76,7 +79,8 @@ class SaleSerializer(serializers.ModelSerializer):
 
 class SaleItemCreateSerializer(serializers.Serializer):
     """Represents the data required to create a single sale item."""
-    product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all())
     quantity = serializers.FloatField()
     charge_percentage = serializers.FloatField(default=0)
 
@@ -119,23 +123,23 @@ class SaleCreateSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop("items")
         user = self.context['request'].user if "request" in self.context else None
         payment_method = validated_data.get("payment_method", "Efectivo")
-        
+
         sale = Sale.objects.create(
             applied_charge_percentage=validated_data["applied_charge_percentage"],
             charge_reason=validated_data.get("charge_reason", ""),
             created_by=user,
             payment_method=payment_method
         )
-        
+
         for item in items_data:
             product = item["product_id"]
-            
+
             offer = product.get_active_discount()
             if offer:
                 charge = offer.percentage
             else:
                 charge = item["charge_percentage"]
-                          
+
             quantity = item["quantity"]
 
             sale_item = SaleItem.objects.create(
@@ -145,7 +149,5 @@ class SaleCreateSerializer(serializers.ModelSerializer):
                 unit_price=product.sell_price,
                 charge_percentage=charge,
             )
-        
 
-        
         return sale

@@ -3,32 +3,34 @@ import { apiUrl, authHeader } from './consts';
 
 
 export async function addEntry(formData, token) {
-    // Calculate discount and final price
     console.log("formData", formData);
-    const applied_charge = parseFloat(formData.applied_charge);
 
-    // Build items array with product_id and quantity
-    const items = formData.selectedProducts.map((product) => ({
-        product: product.code,
+    const details = formData.selectedProducts.map((product) => ({
+        product_id: product.code,
         quantity: parseFloat(formData[`quantity_${product.code}`]),
-        unit_price: parseFloat(formData[`unit_price_${product.code}`])
+        unit_price: parseFloat(formData[`unit_price_${product.code}`]),
+        applied_charge: 0
     }));
 
-    // Prepare the payload for backend
     const entryData = {
-        applied_charge: applied_charge,
         rute_number: formData.rute_number,
-        total_price: parseFloat(formData.total_price),
-        details: items
+        details: details
     };
+
     console.log("entryData", entryData);
 
     try {
-        await axios.post(`${apiUrl}entries/`, entryData, authHeader(token))
+        await axios.post(
+            `${apiUrl}entries/`,
+            entryData,
+            authHeader(token)
+        );
+
         return {
             success: true,
             success_message: "Ingreso creado con éxito"
-        }
+        };
+
     } catch (error) {
         if (error.response) {
             const data = error.response.data;
@@ -39,23 +41,24 @@ export async function addEntry(formData, token) {
                 const firstKey = Object.keys(data)[0];
                 value = data[firstKey];
 
-                console.log(error);
+                console.error(error.response);
 
                 return {
                     success: false,
                     status: error.response.status,
                     error: value,
-                }
-            }
-
-            return {
-                success: false,
-                status: null,
-                error: "Error de red o del cliente",
+                };
             }
         }
+
+        return {
+            success: false,
+            status: null,
+            error: "Error de red o del cliente",
+        };
     }
 }
+
 
 export async function deleteEntryById(id, token) {
     try {
