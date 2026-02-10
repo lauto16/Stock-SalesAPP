@@ -89,11 +89,8 @@ export default function Header({
 
     for (let { id, displayName } of itemsToDelete) {
       const result = await deleteItem(id, user.token);
-      console.log(result);
-      
       if (result?.success) {
         addNotification("success", `"${displayName}" eliminado con éxito`);
-
       } else {
         const message = result?.error || `"${displayName}" no se pudo eliminar`;
         addNotification("error", message);

@@ -4,14 +4,14 @@ import { apiUrl, authHeader } from './consts';
 
 export async function addEntry(formData, token) {
     // Calculate discount and final price
-    console.log(formData);
+    console.log("formData", formData);
     const applied_charge = parseFloat(formData.applied_charge);
 
     // Build items array with product_id and quantity
     const items = formData.selectedProducts.map((product) => ({
-        product_id: product.code,
+        product: product.code,
         quantity: parseFloat(formData[`quantity_${product.code}`]),
-        buy_price: parseFloat(formData[`buy_price_${product.code}`])
+        unit_price: parseFloat(formData[`unit_price_${product.code}`])
     }));
 
     // Prepare the payload for backend
@@ -19,8 +19,9 @@ export async function addEntry(formData, token) {
         applied_charge: applied_charge,
         rute_number: formData.rute_number,
         total_price: parseFloat(formData.total_price),
-        items: items
+        details: items
     };
+    console.log("entryData", entryData);
 
     try {
         await axios.post(`${apiUrl}entries/`, entryData, authHeader(token))
@@ -62,7 +63,7 @@ export async function deleteEntryById(id, token) {
             `${apiUrl}entries/delete-by-id/${id}/`,
             authHeader(token)
         );
-        console.error(response)
+        console.log(response);
         return response.data;
     } catch (error) {
         const backendError = error.response?.data?.error || "Error al eliminar la entrada.";

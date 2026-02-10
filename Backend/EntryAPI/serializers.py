@@ -26,6 +26,7 @@ class EntryPagination(PageNumberPagination):
 class EntryDetailSerializer(serializers.ModelSerializer):
     subtotal = serializers.SerializerMethodField()
     product_name = serializers.CharField(source="product.name", read_only=True)
+    product_code = serializers.CharField(source="product.code", read_only=True)
 
     class Meta:
         model = EntryDetail
@@ -34,11 +35,11 @@ class EntryDetailSerializer(serializers.ModelSerializer):
             "entry",
             "product",
             "product_name",
+            "product_code",
             "unit_price",
             "quantity",
             "subtotal",
-            "extra_percentage",
-            "receipt",
+            "applied_charge",
             "observations",
         ]
         read_only_fields = ["id", "subtotal"]
@@ -64,5 +65,6 @@ class EntrySerializer(serializers.ModelSerializer):
             "created_by_username",
             "total",
             "details",
+            "rute_number",
         ]
         read_only_fields = ["id", "created_at", "total"]

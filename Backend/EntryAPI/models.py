@@ -14,7 +14,8 @@ class Entry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha')
     created_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL, verbose_name='creado por')
     total = models.FloatField(default=0, verbose_name='total')
-
+    rute_number = models.CharField(max_length=200, blank=True, null=True, default='0', verbose_name='numero de ruta')
+    
     class Meta:
         verbose_name = 'ingreso'
         verbose_name_plural = 'ingresos'
@@ -48,7 +49,7 @@ class EntryDetail(models.Model):
     quantity = models.FloatField(verbose_name='cantidad')
     observations = models.TextField(null=True, blank=True, default='Sin observaciones', verbose_name='observaciones')
     applied_charge = models.FloatField(default=0, verbose_name='cargo extra')
-    receipt = models.CharField(max_length=200, blank=True, null=True, default='-', verbose_name='recibo')
+
 
     class Meta:
         verbose_name = "detalle de ingreso"

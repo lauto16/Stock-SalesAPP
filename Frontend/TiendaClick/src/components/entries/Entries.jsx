@@ -9,6 +9,7 @@ import { useUser } from "../../context/UserContext.jsx";
 import { useNotifications } from "../../context/NotificationSystem";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddEntryContent from "./forms/AddEntryContent.jsx";
+import OnExtraInfoEntries from "./forms/OnExtraInfoEntries.jsx";
 import { formatDate, formatHour } from "../../utils/formatDate.js";
 //import InfoFormContent from "./forms/InfoFormContent.jsx";
 
@@ -116,7 +117,7 @@ export default function Entries() {
             onSubmitAddItem={addEntry}
             titleInfoForm={"Informacion del ingreso"}
             onSubmitEditItem={() => { }}
-            InfoFormContent={''}
+            InfoFormContent={OnExtraInfoEntries}
             selectedItemsColumns={columns}
           />
 

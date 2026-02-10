@@ -1,29 +1,26 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import CustomInput from "../../crud/CustomInput";
 import Table from "../../crud/Table";
 import { formatDate, formatHour } from "../../../utils/formatDate.js";
-export default function InfoFormContent({ register, selectedItem, errors }) {
-    // InfoForm content for editing sales
-    // Only discount percentage and discount reason are editable
-    // Products and quantities cannot be modified after sale creation
+
+export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
 
     // Transform items to flatten product data for table display
-    const tableItems = selectedItem.items?.map(item => ({
-        code: item.product?.code || 'N/A',
-        name: item.product?.name || 'N/A',
+    const tableItems = selectedItem.details?.map(item => ({
+        product_name: item.product_name,
+        product_code: item.product_code,
         quantity: item.quantity,
-        unit_price: `$${item.unit_price?.toFixed(2) || '0.00'}`,
-        subtotal: `$${item.subtotal?.toFixed(2) || '0.00'}`
+        unit_price: item.unit_price,
+        subtotal: item.subtotal,
     })) || [];
 
     const columns = [
-        { className: "code", key: "code", label: "Código" },
-        { className: "name", key: "name", label: "Nombre" },
+        { className: "Producto", key: "product_name", label: "Producto" },
+        { className: "Código", key: "product_code", label: "Código" },
         { className: "quantity", key: "quantity", label: "Cantidad" },
         { className: "unit_price", key: "unit_price", label: "Precio Unit." },
         { className: "subtotal", key: "subtotal", label: "Subtotal" },
     ];
-
     return (
         <Row className="g-3">
             {/* Sale ID (hidden) */}
@@ -39,23 +36,35 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
             <Col md={12}>
                 <div className="alert alert-info">
                     <h6>Información de la venta</h6>
-                    <p className="mb-1"><strong>ID:</strong> #{selectedItem.id}</p>
+                    <p className="mb-1"><strong>Número de ruta:</strong> #{selectedItem.rute_number}</p>
                     <p className="mb-1"><strong>Fecha:</strong> {formatDate(selectedItem.created_at)} - {formatHour(selectedItem.created_at)}</p>
                     <p className="mb-1"><strong>Vendedor:</strong> {selectedItem.created_by || 'N/A'}</p>
-                    <p className="mb-1"><strong>Productos:</strong> {selectedItem.product_count || selectedItem.items?.length || 0}</p>
-                    <p className="mb-0"><strong>Total:</strong> ${selectedItem.total_price}</p>
+                    <p className="mb-1"><strong>Productos:</strong> {selectedItem.details?.length || 0}</p>
+                    <p className="mb-0"><strong>Total:</strong> ${selectedItem.total}</p>
                 </div>
             </Col>
 
             {/* Products List (Read-only) */}
-            {tableItems.length > 0 && (
-                <Col md={12}>
-                    <h6>Productos en esta venta:</h6>
+            <Col md={12}>
+                <h6>Productos en esta entrada:</h6>
 
-                    <Table columns={columns} items={tableItems} />
+                <Table columns={columns} items={tableItems} >
+                    <tfoot className="table-secondary">
+                        <tr>
+                            <td colSpan="5" className="text-end">
+                                <strong>Subtotal:</strong>
+                            </td>
+                            <td className="text-end">
+                                <strong>$0</strong>
+                            </td>
+                        </tr>
 
-                </Col>
-            )}
+
+                    </tfoot>
+                </Table>
+
+
+            </Col>
         </Row>
     );
 }

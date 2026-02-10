@@ -239,7 +239,7 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                                                         step="any"
                                                         defaultValue={product.buy_price}
                                                         inputStyle={{ width: '70px', textAlign: 'center' }}
-                                                        register={register(`buy_price_${product.code}`, {
+                                                        register={register(`unit_price_${product.code}`, {
                                                             required: true,
                                                             setValueAs: (value) => {
                                                                 if (!value) return 0;
@@ -251,9 +251,9 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                                                             }
                                                         })}
                                                     />
-                                                    {errors[`buy_price_${product.code}`] && (
+                                                    {errors[`unit_price_${product.code}`] && (
                                                         <div className="invalid-feedback d-block">
-                                                            {errors[`buy_price_${product.code}`].message}
+                                                            {errors[`unit_price_${product.code}`].message}
                                                         </div>
                                                     )}
                                                 </td>
