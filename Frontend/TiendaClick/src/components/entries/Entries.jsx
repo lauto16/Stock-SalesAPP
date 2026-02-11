@@ -119,6 +119,7 @@ export default function Entries() {
             onSubmitEditItem={() => { }}
             InfoFormContent={OnExtraInfoEntries}
             selectedItemsColumns={columns}
+            displayName={'Ingreso'}
           />
 
           <div className="table-container">

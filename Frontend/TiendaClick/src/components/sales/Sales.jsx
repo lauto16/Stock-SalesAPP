@@ -193,6 +193,7 @@ export default function Sales() {
               { className: "total_price", key: "total_price", label: "Total" },
               { className: "hour", key: "hour", label: "Hora" },
             ]}
+            displayName={'Venta'}
           />
 
           <div className="table-container">

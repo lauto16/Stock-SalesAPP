@@ -99,6 +99,7 @@ export default function Categories() {
                             InfoFormContent={InfoCategoryContent}
                             titleInfoForm={'Informacion de la categoria (editar)'}
                             deleteItem={deleteCategory}
+                            displayName={'Categoria'}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

@@ -102,6 +102,7 @@ function Providers() {
                             AddItemcontent={AddItemContent}
                             InfoFormContent={InfoFormContent}
                             titleInfoForm={'Informacion del producto (editar)'}
+                            displayName={'Proveedor'}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

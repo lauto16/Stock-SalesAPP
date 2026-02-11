@@ -5,7 +5,7 @@ import json
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xgcshgtd_v@x+-=8+v1ye!s%e!c*_l942k&(!k*527l0g^s_s3'
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [

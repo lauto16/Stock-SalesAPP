@@ -332,6 +332,7 @@ export default function InventoryPage() {
                         AddItemcontent={ContentAddProduct}
                         selectedItemsColumns={importantColumns}
                         reloadWithBounce={reloadWithBounce}
+                        displayName={'Producto'}
                     />
                     <div className="table-container">
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap ">

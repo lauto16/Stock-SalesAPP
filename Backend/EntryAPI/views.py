@@ -1,15 +1,18 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets, permissions, status
+from django.db.models.functions import Greatest
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Entry, EntryDetail
+from InventoryAPI.models import Product
 from django.db import transaction
 from django.utils import timezone
+from django.db.models import F
 from .serializers import (
     EntrySerializer,
     EntryCreateSerializer
 )
+from .models import Entry
 
 
 class EntryPagination(PageNumberPagination):
@@ -80,7 +83,8 @@ class EntryViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        entry = Entry.objects.prefetch_related("details__product").filter(id=id).first()
+        entry = Entry.objects.prefetch_related(
+            "details__product").filter(id=id).first()
         if not entry:
             return Response(
                 {"error": "El ingreso no existe"},
@@ -89,6 +93,35 @@ class EntryViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(entry)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["delete"], url_path=r"delete-by-id/(?P<id>\d+)")
+    def destroy_by_id(self, request, id=None):
+        """
+        Deletes an entry by ID and diminishes stock for all products involved in the entry.
+        """
+        try:
+            entry = (
+                Entry.objects
+                .select_related("created_by")
+                .prefetch_related("details__product")
+                .get(id=id)
+            )
+        except Entry.DoesNotExist:
+            return Response(
+                {"error": f"No se pudo eliminar el ingreso con ID {id}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            for detail in entry.details.all():
+                if detail.product and detail.product.in_use:
+                    Product.objects.filter(pk=detail.product.pk).update(
+                        stock=Greatest(F("stock") - detail.quantity, 0)
+                    )
+
+            entry.delete()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
         with transaction.atomic():

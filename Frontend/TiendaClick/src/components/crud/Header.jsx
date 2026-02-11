@@ -27,7 +27,8 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
-  notModifyItem
+  notModifyItem,
+  displayName
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
@@ -56,15 +57,12 @@ export default function Header({
   } = useModal()
 
 
-  //delete logic
   const prepareDelete = () => {
     if (selectedItems.size === 0) return;
 
     const selectedArray = Array.from(selectedItems.values());
     const itemsToShow = selectedArray.slice(0, 5);
-    const extraCount = selectedArray.length - 5;
 
-    // Create table with selected items
     const tableContent = (
       <>
         <Table
@@ -82,25 +80,38 @@ export default function Header({
 
   const handleDelete = async () => {
     const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
-      name: item.name,
       id: item.code ?? item.id,
-      displayName: item.name || `Venta #${item.id}`
     }));
 
-    for (let { id, displayName } of itemsToDelete) {
-      const result = await deleteItem(id, user.token);
+    const deletePromises = itemsToDelete.map(({ id }) =>
+      deleteItem(id, user.token)
+    );
+
+    const results = await Promise.all(deletePromises);
+
+    let hasSuccess = false;
+
+    results.forEach((result) => {
       if (result?.success) {
-        addNotification("success", `"${displayName}" eliminado con éxito`);
+        hasSuccess = true;
+        addNotification("success", result.success_message);
       } else {
-        const message = result?.error || `"${displayName}" no se pudo eliminar`;
-        addNotification("error", message);
+        console.log(result.error)
+        addNotification(
+          "error",
+          result?.error || "No se pudo eliminar"
+        );
       }
+    });
+
+    if (hasSuccess) {
+      reloadWithBounce();
     }
 
     setSelectedItems(new Map());
     closeDelModal();
-    reloadWithBounce();
   };
+
 
   //Select All button
   const toggleSelectAll = () => {

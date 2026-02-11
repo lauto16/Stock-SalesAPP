@@ -31,16 +31,38 @@ async function fetchSearchSales(search, setLoading, token) {
   }
 }
 
+//TODO: This is the desired structure in every deleteObject axios function, change them all and
+// assure that backend correlates to it. 
 async function deleteSaleById(id, token) {
   try {
-    const response = await axios.delete(
+    await axios.delete(
       `${apiUrl}sales/delete-by-id/${id}/`,
       authHeader(token)
     );
-    return response.data;
+
+    return {
+      success: true,
+      success_message: "Venta eliminada con éxito"
+    };
+
   } catch (error) {
-    const backendError = error.response?.data?.error || "Error al eliminar la venta.";
-    return { success: false, error: backendError };
+    if (error.response) {
+
+      const data = error.response.data;
+      let value = "Error desconocido";
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: data?.error || value,
+      };
+    }
+
+    return {
+      success: false,
+      status: error.response.status,
+      error: "Error del servidor",
+    };
   }
 }
 
