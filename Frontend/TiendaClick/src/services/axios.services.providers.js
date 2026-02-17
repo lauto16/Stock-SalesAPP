@@ -25,13 +25,35 @@ async function fetchProvidersById(id, token) {
 
 async function deleteProviderById(id, token) {
     try {
-        const response = await axios.delete(`${apiUrl}providers/delete-by-id/${id}/`, authHeader(token));
-        return response.data;
+      await axios.delete(
+        `${apiUrl}providers/delete-by-id/${id}/`,
+        authHeader(token)
+      );
+  
+      return {
+        success: true,
+        success_message: "Proveedor eliminado con éxito"
+      };
+  
     } catch (error) {
-        console.error("Error al eliminar el proveedor:", error.response?.data || error.message);
-        throw error.response?.data || error;
+      if (error.response) {
+        const data = error.response.data;
+        let value = "Error desconocido";
+  
+        return {
+          success: false,
+          status: error.response.status,
+          error: data?.error || value,
+        };
+      }
+  
+      return {
+        success: false,
+        status: null,
+        error: "Error del servidor",
+      };
     }
-}
+  }
 
 async function updateProvider(updatedData, token) {
     try {

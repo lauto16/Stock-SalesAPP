@@ -62,14 +62,33 @@ async function fetchSearchProducts(search, token) {
 
 async function deleteProductByCode(code, token) {
   try {
-    const response = await axios.delete(
+    await axios.delete(
       `${apiUrl}products/delete-by-code/${code}/`,
       authHeader(token)
     );
-    return response.data;
+
+    return {
+      success: true,
+      success_message: "Producto eliminado con éxito"
+    };
+
   } catch (error) {
-    const backendError = error.response?.data?.error || "Error al eliminar el producto.";
-    return { success: false, error: backendError };
+    if (error.response) {
+      const data = error.response.data;
+      let value = "Error desconocido";
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: data?.error || value,
+      };
+    }
+
+    return {
+      success: false,
+      status: null,
+      error: "Error del servidor",
+    };
   }
 }
 

@@ -85,17 +85,33 @@ async function updateCategory(category, token) {
 
 async function deleteCategory(category, token) {
   try {
-    const response = await axios.delete(
+    await axios.delete(
       `${apiUrl}categories/${category}/`,
       authHeader(token)
     );
 
-    return response.data;
-  } catch (err) {
-    console.log(err);
+    return {
+      success: true,
+      success_message: "Categoría eliminada con éxito"
+    };
 
-    console.error("Error al eliminar la categoría:", err.message);
-    throw err;
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data;
+      let value = "Error desconocido";
+
+      return {
+        success: false,
+        status: error.response.status,
+        error: data?.error || value,
+      };
+    }
+
+    return {
+      success: false,
+      status: null,
+      error: "Error del servidor",
+    };
   }
 }
 
