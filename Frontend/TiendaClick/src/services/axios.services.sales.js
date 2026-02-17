@@ -31,7 +31,7 @@ async function fetchSearchSales(search, setLoading, token) {
   }
 }
 
-//TODO: This is the desired structure in every deleteObject axios function, change them all and
+//TODO: This is the desired structure in every delete<Object>() axios function, change them all and
 // assure that backend correlates to it. 
 async function deleteSaleById(id, token) {
   try {
@@ -68,16 +68,13 @@ async function deleteSaleById(id, token) {
 
 async function addSale(formData, token) {
   try {
-    // Calculate discount and final price
     const chargePercentage = parseFloat(formData.applied_charge_percentage);
 
-    // Build items array with product_id and quantity
     const items = formData.selectedProducts.map((product) => ({
       product_id: product.code,
       quantity: parseFloat(formData[`quantity_${product.code}`])
     }));
 
-    // Prepare the payload for backend
     const saleData = {
       payment_method: formData.payment_method,
       applied_charge_percentage: chargePercentage,

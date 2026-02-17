@@ -82,32 +82,32 @@ export default function Header({
     const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
       id: item.code ?? item.id,
     }));
-
+  
     const deletePromises = itemsToDelete.map(({ id }) =>
       deleteItem(id, user.token)
     );
-
+  
     const results = await Promise.all(deletePromises);
-
+  
     let hasSuccess = false;
-
+  
     results.forEach((result) => {
       if (result?.success) {
         hasSuccess = true;
         addNotification("success", result.success_message);
       } else {
-        console.log(result.error)
+        console.log(result?.error);
         addNotification(
           "error",
           result?.error || "No se pudo eliminar"
         );
       }
     });
-
+  
     if (hasSuccess) {
       reloadWithBounce();
     }
-
+  
     setSelectedItems(new Map());
     closeDelModal();
   };

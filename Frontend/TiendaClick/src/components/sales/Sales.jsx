@@ -196,6 +196,8 @@ export default function Sales() {
             displayName={'Venta'}
           />
 
+          
+
           <div className="table-container">
             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
               <Pagination

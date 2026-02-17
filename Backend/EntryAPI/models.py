@@ -25,8 +25,10 @@ class Entry(models.Model):
 
         for detail in self.details.all():
             subtotal = detail.subtotal
-            extra = subtotal + detail.applied_charge
+            extra = detail.applied_charge
             total += subtotal + extra
+            
+            print(subtotal, " + ", extra, " = ", total)
 
         self.total = total
         self.save()

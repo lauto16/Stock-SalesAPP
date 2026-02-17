@@ -62,17 +62,35 @@ export async function addEntry(formData, token) {
 
 export async function deleteEntryById(id, token) {
     try {
-        const response = await axios.delete(
-            `${apiUrl}entries/delete-by-id/${id}/`,
-            authHeader(token)
-        );
-        console.log(response);
-        return response.data;
+      await axios.delete(
+        `${apiUrl}entries/delete-by-id/${id}/`,
+        authHeader(token)
+      );
+  
+      return {
+        success: true,
+        success_message: "Ingreso eliminado con éxito"
+      };
+  
     } catch (error) {
-        const backendError = error.response?.data?.error || "Error al eliminar la entrada.";
-        return { success: false, error: backendError };
+      if (error.response) {
+        const data = error.response.data;
+        let value = "Error desconocido";
+  
+        return {
+          success: false,
+          status: error.response.status,
+          error: data?.error || value,
+        };
+      }
+  
+      return {
+        success: false,
+        status: null,
+        error: "Error del servidor",
+      };
     }
-}
+  }
 
 export async function fetchEntries({ page = 1, setLoading, token }) {
     try {
