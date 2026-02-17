@@ -31,8 +31,6 @@ async function fetchSearchSales(search, setLoading, token) {
   }
 }
 
-//TODO: This is the desired structure in every delete<Object>() axios function, change them all and
-// assure that backend correlates to it. 
 async function deleteSaleById(id, token) {
   try {
     await axios.delete(
