@@ -19,14 +19,6 @@ class Sale(models.Model):
         verbose_name = 'venta'
         verbose_name_plural = 'ventas'
     
-    def calculate_profit(self):
-        profit = 0
-
-        for item in self.items.select_related("product"):
-            profit += item.subtotal - (item.quantity * item.product.buy_price)
-        
-        return profit + (self.total_price - self.initial_price)
-    
     def update_totals(self):
         initial = sum(item.subtotal for item in self.items.all())
         charged = initial * (1 + self.applied_charge_percentage / 100)
@@ -45,9 +37,7 @@ class Sale(models.Model):
             self.update_totals()
 
             daily_report = DailyReport.get_or_create_today_report()
-
-            profit = self.calculate_profit()
-            daily_report.apply_amount(profit)
+            daily_report.apply_amount(self.total_price)
 
 
 class SaleItem(models.Model):

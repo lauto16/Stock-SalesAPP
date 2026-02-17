@@ -129,3 +129,4 @@ class EntryViewSet(viewsets.ModelViewSet):
                 created_by=self.request.user,
                 created_at=timezone.now()
             )
+            
