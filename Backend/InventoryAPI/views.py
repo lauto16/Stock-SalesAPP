@@ -7,7 +7,7 @@ from .serializers import (
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.contrib.contenttypes.models import ContentType
 from forms.export_to_excel import export_to_excel
-from EntryAPI.models import Entry, EntryDetail
+from DailyReportAPI.models import DailyReport
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ProvidersAPI.models import Provider
@@ -22,6 +22,7 @@ from django.http import HttpRequest
 from .models import Product, Offer
 from rest_framework import status
 from django.utils import timezone
+from decimal import Decimal
 
 
 class ProductValidator:
@@ -234,10 +235,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["patch"], url_path="patch-by-code/(?P<code>[^/.]+)")
     def patch_by_code(self, request, code=None):
         """
-        Modifies a certain product
+        Modifies a certain product and registers loss if stock decreases
         """
+
         validate_response = ProductValidator.validate_data(request)
-        if validate_response["success"] is False:
+        if not validate_response["success"]:
             return Response(
                 {"success": False, "error": validate_response["error"] or ""},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -251,95 +253,30 @@ class ProductViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        previous_stock = product.stock
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # TODO: QUITAR ESTE IF, SOLO ESTÁ HASTA QUE HAGAMOS EL CRUD DE ENTRIES.
-        if request.data["stock"] > product.stock:
-            new_stock = request.data["stock"] - product.stock
-            entry = Entry.objects.create(created_by=request.user)
-            entry_detail = EntryDetail.objects.create(
-                entry=entry,
-                product=product,
-                quantity=new_stock,
-                unit_price=product.buy_price
-            )
-            entry_detail.apply_entry()
-            request.data['stock'] = product.stock + new_stock
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
         serializer = ProductSerializer(product, data=request.data, partial=True)
 
         if serializer.is_valid():
+            new_stock = serializer.validated_data.get("stock", previous_stock)
+            stock_decreased = new_stock < previous_stock
+            stock_lost = previous_stock - new_stock if stock_decreased else 0
+
             for attr, value in serializer.validated_data.items():
                 setattr(product, attr, value)
 
             product.last_modification = timezone.now()
             product.save(user=request.user)
 
+            if stock_decreased and stock_lost > 0:
+                daily_report = DailyReport.get_or_create_today_report()
+                loss_amount = Decimal(stock_lost) * Decimal(product.buy_price)
+
+                daily_report.apply_amount(amount=-loss_amount)
+
             return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
 
         else:
-            print(serializer.errors)
             return Response(
                 {"success": False, "error": "El codigo ya existe para otro producto"},
                 status=status.HTTP_400_BAD_REQUEST,

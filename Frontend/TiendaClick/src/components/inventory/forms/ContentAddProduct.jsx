@@ -169,6 +169,12 @@ export default function ContentAddProduct({ register, watch, control, errors, se
 
                 />
                 {errors.stock && <div className="invalid-feedback d-block">{errors.stock.message}</div>}
+                <div className="text-muted fst-italic mt-1 d-flex align-items-center gap-2 small">
+                    <i className="bi bi-info-circle-fill"></i>
+                    <span>
+                        Los cambios positivos de stock no se registrarán como ingresos, registra ingresos en <a style={{ textDecoration: 'none' }} href="/entries/">Ingresos</a>
+                    </span>
+                </div>
             </Col>
             <Col md={6} className="d-flex flex-column">
                 <CustomInput
