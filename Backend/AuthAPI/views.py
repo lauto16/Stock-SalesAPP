@@ -98,6 +98,7 @@ class LoginViewSet(viewsets.ViewSet):
                 "permissions": permissions,
                 "askForPin": user.askForPin,
                 "allowedStockDecrease": user.allowed_to_decide_stock_decrease,
+                "createLossWhenProductDelete": user.create_loss_when_product_delete
             }
         )
 
@@ -231,7 +232,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path="get-ask-for-pin")
     def get_ask_for_pin(self, request):
-        return Response({"askForPin": request.user.askForPin}, status=200)
+        return Response({"askForPinValue": request.user.askForPin}, status=200)
 
     @action(detail=False, methods=["patch"], url_path="ask-for-pin")
     def update_ask_for_pin(self, request):
@@ -304,5 +305,50 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response(
             {"success": True, "areUsersAllowedValue": areUsersAllowed},
+            status=status.HTTP_200_OK,
+        )
+
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="get-create-loss-when-product-delete",
+    )
+
+    def get_create_loss_when_product_delete(self, request):
+        return Response(
+            {"createLossWhenProductDeleteValue": request.user.create_loss_when_product_delete},
+            status=200,
+        )
+
+    @action(
+        detail=False,
+        methods=["patch"],
+        url_path="update-create-loss-when-product-delete",
+    )
+    def update_create_loss_when_product_delete(self, request):
+        user = request.user
+
+        if not hasattr(user, "role") or user.role.name != "administrator":
+            return Response(
+                {"detail": "No tenés permisos para modificar este valor."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        createLossWhenProductDelete = request.data.get("createLossWhenProductDelete")
+        if not isinstance(createLossWhenProductDelete, bool):
+            return Response(
+                {"detail": "createLossWhenProductDelete debe ser booleano."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        target_users = CustomUser.objects.all()
+
+        for target_user in target_users:
+            target_user.create_loss_when_product_delete = createLossWhenProductDelete
+            target_user.save(update_fields=["create_loss_when_product_delete"])
+
+        return Response(
+            {"success": True, "areUsersAllowedValue": createLossWhenProductDelete},
             status=status.HTTP_200_OK,
         )

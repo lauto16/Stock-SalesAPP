@@ -27,7 +27,8 @@ export const UserProvider = ({ children }) => {
                 const permissions = user_data.permissions
                 const askForPin = user_data.askForPin
                 const allowedStockDecrease = user_data.allowedStockDecrease
-                setUser((prev) => ({ ...prev, role, permissions, askForPin, allowedStockDecrease }));
+                const createLossWhenProductDelete = user_data.createLossWhenProductDelete
+                setUser((prev) => ({ ...prev, role, permissions, askForPin, allowedStockDecrease, createLossWhenProductDelete }));
             }
         }
     };

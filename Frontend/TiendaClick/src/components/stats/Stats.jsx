@@ -224,7 +224,6 @@ export default function Stats() {
             <br />
             <DashboardHeader title={'ESTADISTICAS'} isDashboard={false} />
             <div className="container my-4">
-                <h2 className="mb-4">Estadísticas de tu tienda</h2>
 
                 <h4 className="mb-4">Reportes diarios de ganancia</h4>
                 <Pagination

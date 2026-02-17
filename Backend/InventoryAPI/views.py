@@ -218,8 +218,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     def destroy_by_code(self, request, code=None):
         """
         Deletes a product from the DB only if there's no sales associated with the product
-        """
+        """        
         product = Product.objects.filter(code=code, in_use=True).first()
+        
+        
         if not product:
             return Response(
                 {
@@ -228,6 +230,11 @@ class ProductViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+            
+        if request.user.create_loss_when_product_delete:
+            loss = product.buy_price * product.stock
+            daily_report = DailyReport.get_or_create_today_report()
+            daily_report.apply_amount(-loss)
 
         product.delete(user=request.user)
         return Response({"success": True}, status=status.HTTP_200_OK)
@@ -258,6 +265,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ProductSerializer(product, data=request.data, partial=True)
 
         if serializer.is_valid():
+
             new_stock = serializer.validated_data.get("stock", previous_stock)
             stock_decreased = new_stock < previous_stock
             stock_lost = previous_stock - new_stock if stock_decreased else 0
@@ -267,20 +275,23 @@ class ProductViewSet(viewsets.ModelViewSet):
 
             product.last_modification = timezone.now()
             product.save(user=request.user)
+            
+            # add loss to the daily report if necessary
+            create_loss = request.data.get("create_loss", False)
+            if isinstance(create_loss, str):
+                create_loss = create_loss.lower() == "true"
 
-            if stock_decreased and stock_lost > 0:
+            if stock_decreased and stock_lost > 0 and create_loss and request.user.allowed_to_decide_stock_decrease:
                 daily_report = DailyReport.get_or_create_today_report()
-                loss_amount = Decimal(stock_lost) * Decimal(product.buy_price)
-
+                loss_amount = Decimal(str(stock_lost)) * Decimal(str(product.buy_price))
                 daily_report.apply_amount(amount=-loss_amount)
 
             return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
 
-        else:
-            return Response(
-                {"success": False, "error": "El codigo ya existe para otro producto"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {"success": False, "error": "El codigo ya existe para otro producto"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @action(detail=False, methods=["patch"], url_path="patch-selected-prices")
     def patch_selected(self, request):

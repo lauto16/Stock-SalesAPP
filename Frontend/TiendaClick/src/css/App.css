@@ -17289,3 +17289,8 @@ fieldset legend {
   margin: 0.5rem;
 
 }
+
+
+.container{
+  max-width: 98% !important;
+}

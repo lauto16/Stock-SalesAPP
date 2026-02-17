@@ -29,9 +29,49 @@ async function updateAreUsersAllowedToDecideStockDecrease(areUsersAllowed, token
             return { success: false };
         }
     }
+
+
+    async function getCreateLossWhenProductDelete(token) {
+        try {
+            const response = await axios.get(
+                `${apiUrl}admin-user-functions/get-create-loss-when-product-delete/`,
+                authHeader(token)
+            );
     
+            return response.data || false;
+    
+        } catch (error) {
+            console.error(
+                "Error al consultar si eliminar un producto genera pérdida económica:",
+                error
+            );
+            return false;
+        }
+    }
+    
+    
+    async function updateCreateLossWhenProductDelete(createLossWhenProductDelete, token) {
+        try {
+            const response = await axios.patch(
+                `${apiUrl}admin-user-functions/update-create-loss-when-product-delete/`,
+                { createLossWhenProductDelete },
+                authHeader(token)
+            );
+    
+            return response.data;
+    
+        } catch (error) {
+            console.error(
+                "Error al actualizar la configuración de pérdida al eliminar producto:",
+                error
+            );
+            return { success: false };
+        }
+    }
 
 export {
     getAreUsersAllowedToDecideStockDecrease,
-    updateAreUsersAllowedToDecideStockDecrease
+    updateAreUsersAllowedToDecideStockDecrease,
+    getCreateLossWhenProductDelete,
+    updateCreateLossWhenProductDelete
 }

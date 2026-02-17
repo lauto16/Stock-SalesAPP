@@ -38,7 +38,7 @@ export default function InventoryPage() {
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const { addNotification } = useNotifications();
 
-    const { user } = useUser();
+    const { user, updateUserData } = useUser();
 
     const [isSending, setIsSending] = useState(false)
     const {
@@ -82,7 +82,6 @@ export default function InventoryPage() {
         setSearchInput("");
         setCurrentPage(1);
     };
-
 
     const handleSearchSubmit = async (query) => {
         if (query.length >= 2) {
@@ -250,7 +249,11 @@ export default function InventoryPage() {
         const pageItems = allSearchResults.slice(start, end);
         setItems(pageItems);
     }, [allSearchResults, currentPage, isSearching]);
-
+    
+    useEffect(() => {
+        updateUserData()
+    }, [showConfirmation]);
+    
     const EXTRABUTTONS = [{
         action: onPriceUpdate,
         title: 'Aumentar precios',

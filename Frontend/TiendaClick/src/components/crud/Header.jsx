@@ -7,6 +7,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
 import Table from "./Table.jsx";
+import {getCreateLossWhenProductDelete} from "../../services/axios.services.config.js"
 
 export default function Header({
   title,
@@ -57,12 +58,13 @@ export default function Header({
   } = useModal()
 
 
-  const prepareDelete = () => {
+  const prepareDelete = async () => {
     if (selectedItems.size === 0) return;
 
     const selectedArray = Array.from(selectedItems.values());
     const itemsToShow = selectedArray.slice(0, 5);
-
+    const deleteLoss = await getCreateLossWhenProductDelete(user.token)
+    
     const tableContent = (
       <>
         <Table
@@ -70,8 +72,9 @@ export default function Header({
           items={itemsToShow}
           showHeader={false}
         />
+        {deleteLoss.createLossWhenProductDeleteValue ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
         <p>Esta accion es irreversible, ¿estas seguro?</p>
-
+        
       </>
     );
 

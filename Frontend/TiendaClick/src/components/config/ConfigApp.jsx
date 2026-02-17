@@ -15,7 +15,9 @@ import {
 
 import {
     getAreUsersAllowedToDecideStockDecrease,
-    updateAreUsersAllowedToDecideStockDecrease
+    updateAreUsersAllowedToDecideStockDecrease,
+    getCreateLossWhenProductDelete,
+    updateCreateLossWhenProductDelete
 } from "../../services/axios.services.config.js";
 
 export default function DeleteUser() {
@@ -25,15 +27,19 @@ export default function DeleteUser() {
     const { user, updateUserData } = useUser();
 
     const [areUsersAllowedToDecideStockDecrease, setAreUsersAllowedToDecideStockDecrease] = useState(false);
+    const [createLossWhenProductDelete, setCreateLossWhenProductDelete] = useState(false);
 
     useEffect(() => {
         const loadConfig = async () => {
 
             const pinResponse = await getAskForPin(user.token);
-            setPinDisabled(pinResponse.askForPin);
+            setPinDisabled(pinResponse.askForPinValue);
 
             const stockResponse = await getAreUsersAllowedToDecideStockDecrease(user.token);
             setAreUsersAllowedToDecideStockDecrease(stockResponse.areUsersAllowedValue);
+
+            const deleteLossResponse = await getCreateLossWhenProductDelete(user.token);
+            setCreateLossWhenProductDelete(deleteLossResponse.createLossWhenProductDeleteValue);
 
             updateUserData();
         };
@@ -41,6 +47,12 @@ export default function DeleteUser() {
         loadConfig();
     }, []);
 
+    const onChangeDeleteLossConfig = async (e) => {
+        const newValue = e.target.checked;
+
+        setCreateLossWhenProductDelete(newValue);
+        await updateCreateLossWhenProductDelete(newValue, user.token);
+    };
 
     const onChangeAskForPin = async (e) => {
         const newValue = (e.target.checked);
@@ -106,6 +118,20 @@ export default function DeleteUser() {
                                         type="switch"
                                         checked={areUsersAllowedToDecideStockDecrease}
                                         onChange={onChangeStockDecision}
+                                    />
+                                </Form>
+
+                                <br />
+
+                                <Form className="d-flex align-items-center justify-content-between">
+                                    <span className="fw-semibold" style={{ userSelect: 'none' }}>
+                                        Considerar pérdidas económicas al eliminar productos
+                                    </span>
+
+                                    <Form.Check
+                                        type="switch"
+                                        checked={createLossWhenProductDelete}
+                                        onChange={onChangeDeleteLossConfig}
                                     />
                                 </Form>
 

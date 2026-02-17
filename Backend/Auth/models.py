@@ -38,6 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False, verbose_name='es staff')
     askForPin = models.BooleanField(default=True, verbose_name='pedir pin')
     allowed_to_decide_stock_decrease = models.BooleanField(default=True, verbose_name='puede decidir si la disminucion de stock genera perdidas')
+    create_loss_when_product_delete = models.BooleanField(default=True, verbose_name='genera perdidas cuando se eliminan productos')
     objects = CustomUserManager()
 
     class Meta:

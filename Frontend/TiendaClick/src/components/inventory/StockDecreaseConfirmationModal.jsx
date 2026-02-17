@@ -1,4 +1,7 @@
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
+import { useUser } from "../../context/UserContext.jsx";
+import { useState, useEffect } from "react";
+import { getAreUsersAllowedToDecideStockDecrease } from '../../services/axios.services.config.js'
 
 export default function StockDecreaseConfirmationModal({
   show,
@@ -6,8 +9,30 @@ export default function StockDecreaseConfirmationModal({
   title,
   message,
   onConfirm,
-  isSending = false
+  isSending = false,
+  createLoss,
+  setCreateLoss
 }) {
+
+  const { user } = useUser();
+  const [usersAllowed, setUsersAllowed] = useState(false)
+
+  useEffect(() => {
+    setCreateLoss(createLoss);
+  }, [createLoss, show]);
+
+  useEffect(() => {
+    const callUsersAllowed = async () => {
+      const allowedStockDecrease = await getAreUsersAllowedToDecideStockDecrease(user.token);
+      setUsersAllowed(allowedStockDecrease.areUsersAllowedValue)
+    } 
+    callUsersAllowed()
+
+    console.log(usersAllowed);
+    
+  },[]);
+
+
   return (
     <Modal
       show={show}
@@ -31,6 +56,16 @@ export default function StockDecreaseConfirmationModal({
         ) : (
           message
         )}
+
+        <Form className="mt-3">
+          <Form.Check
+            type="checkbox"
+            label="Considerar como pérdida de dinero"
+            checked={createLoss}
+            disabled={!usersAllowed}
+            onChange={(e) => setCreateLoss(e.target.checked)}
+          />
+        </Form>
       </Modal.Body>
 
       <Modal.Footer style={{ backgroundColor: "#f0f0f0" }}>
@@ -43,7 +78,7 @@ export default function StockDecreaseConfirmationModal({
         </Button>
 
         <Button
-          onClick={onConfirm}
+          onClick={() => onConfirm(createLoss)}
           disabled={isSending}
           className="mt-2 send-form-button btn-danger"
         >

@@ -31,7 +31,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     const { user } = useUser();
     const [isSending, setIsSending] = useState(false)
     const { categories } = useCategories(user.token);
-
+    const [createLoss, setCreateLoss] = useState(true)
     const [showStockDecreaseConfModal, setShowStockDecreaseConfModal] = useState(true);
     const [showDecreaseConfirm, setShowDecreaseConfirm] = useState(false);
     const [pendingSubmitData, setPendingSubmitData] = useState(null);
@@ -49,6 +49,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                     provider: data.provider,
                     expiration: data.expiration,
                     category: data.category,
+                    create_loss: createLoss
                 },
                 user.token
             );
@@ -141,11 +142,20 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
                 onConfirm={confirmStockDecrease}
                 title="Disminución de stock detectada"
                 message={
-                    "El stock del producto fue reducido.\n" +
-                    "Esta disminución será registrada como una pérdida económica.\n\n" +
-                    "¿Deseas continuar?"
+                    <>
+                        <p>El stock del producto fue reducido.</p>
+
+                        <p>
+                            Esta disminución{" "}
+                            {!createLoss && <strong>no</strong>} será registrada como una pérdida económica.
+                        </p>
+
+                        <p>¿Deseas continuar?</p>
+                    </>
                 }
                 isSending={isSending}
+                createLoss={createLoss}
+                setCreateLoss={setCreateLoss}
             />
 
             <Modal show={show} onHide={handleClose} centered size="lg">
