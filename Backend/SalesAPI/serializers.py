@@ -145,7 +145,7 @@ class SaleCreateSerializer(serializers.ModelSerializer):
 
             quantity = item["quantity"]
 
-            sale_item = SaleItem.objects.create(
+            SaleItem.objects.create(
                 sale=sale,
                 product=product,
                 quantity=quantity,

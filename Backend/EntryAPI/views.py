@@ -2,6 +2,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets, permissions, status
 from django.db.models.functions import Greatest
 from rest_framework.exceptions import NotFound
+from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from InventoryAPI.models import Product
@@ -111,6 +112,9 @@ class EntryViewSet(viewsets.ModelViewSet):
                 {"error": f"No se pudo eliminar el ingreso con ID {id}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        daily_report = DailyReport.get_or_create_today_report()
+        daily_report.apply_amount(amount=entry.total, remove_loss=True)
 
         with transaction.atomic():
             for detail in entry.details.all():

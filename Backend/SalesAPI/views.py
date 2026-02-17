@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse, FileResponse
 from forms.export_to_excel import export_to_excel
 from rest_framework.exceptions import NotFound
+from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -129,6 +130,9 @@ class SaleViewSet(viewsets.ModelViewSet):
                 {"error": f"No se pudo eliminar la venta con ID {id}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+            
+        daily_report = DailyReport.get_or_create_today_report()
+        daily_report.apply_amount(amount=sale.total_price, remove_gain=True)
 
         with transaction.atomic():
             for item in sale.items.all():
