@@ -26,7 +26,8 @@ export const UserProvider = ({ children }) => {
                 const role = user_data.role_name_sp
                 const permissions = user_data.permissions
                 const askForPin = user_data.askForPin
-                setUser((prev) => ({ ...prev, role, permissions, askForPin }));
+                const allowedStockDecrease = user_data.allowedStockDecrease
+                setUser((prev) => ({ ...prev, role, permissions, askForPin, allowedStockDecrease }));
             }
         }
     };

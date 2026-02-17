@@ -13,7 +13,7 @@ async function verifyPin(pin, token) {
 
 async function updateAskForPin(askForPin, token) {
     // changes all users askforpin register to AskForPin bool parameter.
-
+    
     try {
         const response = await axios.patch(
             `${apiUrl}admin-user-functions/ask-for-pin/`,
