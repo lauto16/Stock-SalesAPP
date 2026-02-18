@@ -10,7 +10,8 @@ export default function AddItemModal({
     selectedItems,
     title,
     Content,
-    reloadWithBounce
+    reloadWithBounce,
+    onItemCreated
 }) {
     const {
         register,
@@ -20,6 +21,7 @@ export default function AddItemModal({
         errors,
         reset,
         control,
+        setValue
     } = useAddItemForm({ onSubmitHandler, handleClose, reloadWithBounce });
 
     const [selectedItem, setSelectedItem] = useState({});
@@ -39,7 +41,11 @@ export default function AddItemModal({
 
         try {
             setIsSending(true);
-            await onSubmit(data);
+            const res = await onSubmit(data);
+            if (onItemCreated && res.success) {
+                console.log(data);
+                onItemCreated(data);
+            }
         } finally {
             setIsSending(false);
         }
@@ -59,7 +65,14 @@ export default function AddItemModal({
             </Modal.Header>
 
             <Modal.Body style={{ backgroundColor: "#f0f0f0" }}>
-                <Form onSubmit={handleSubmit(safeSubmit)}>
+                <Form
+                    onSubmit={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleSubmit(safeSubmit)(e);
+                    }}
+                >
+
                     <Content
                         register={register}
                         selectedItem={selectedItem}
@@ -67,6 +80,7 @@ export default function AddItemModal({
                         errors={errors}
                         control={control}
                         disabled={isSending}
+                        setValue={setValue}
                     />
 
                     <div className="d-flex justify-content-end">

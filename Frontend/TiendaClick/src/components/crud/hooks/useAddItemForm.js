@@ -11,7 +11,8 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
     reset,
     control,
     watch,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useForm({ mode: "onSubmit" });
 
   const { addNotification } = useNotifications();
@@ -43,5 +44,6 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
     watch,
     errors,
     onSubmit,
+    setValue
   };
 }

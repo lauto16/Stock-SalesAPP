@@ -10,7 +10,7 @@ import AddItemModal from "../../crud/AddItemModal.jsx";
 import { useProviders } from "../../providers/hooks/useProviders.js";
 import Select from "react-select";
 
-export default function AddEntryContent({ register, control, errors, watch }) {
+export default function AddEntryContent({ register, control, errors, watch, setValue }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
     const watchedQuantities = watch();
@@ -62,7 +62,27 @@ export default function AddEntryContent({ register, control, errors, watch }) {
         const charge = parseFloat(watch("applied_charge")) || 0;
         return subtotal + charge;
     };
+    const handleProductCreated = (newProduct) => {
+        const newProductData = {
+            ...newProduct,
+            sell_price: Number(newProduct.sell_price),
+            stock: Number(newProduct.stock),
+            buy_price: Number(newProduct.buy_price),
+        }
+        console.log(newProductData)
+        if (!newProduct) return;
+        const formatted = {
+            value: newProductData.code,
+            label: `${newProductData.name} (${newProductData.code}) - $${newProductData.sell_price?.toFixed(2)} - Stock: ${newProductData.stock}`,
+            ...newProductData
+        };
 
+        const updatedProducts = [...selectedProducts, formatted];
+        console.log(updatedProducts);
+        setSelectedProducts(updatedProducts);
+
+        setValue("selectedProducts", updatedProducts);
+    };
     return (
         <Row className="g-3">
             {/* Multi-Product Selector with Async Search */}
@@ -108,13 +128,13 @@ export default function AddEntryContent({ register, control, errors, watch }) {
 
                 </Form.Group>
                 <Col md={12}>
-                    <Button variant="success" className="mt-2 send-form-button" onClick={() => setShowAddItem(true)}>
+                    <Button variant="success" className="mt-2 send-form-button" onClick={() => { setShowAddItem(true) }}>
                         <i className="bi bi-plus" style={{ fontSize: '18px' }}></i> Crear nuevo producto</Button>
                 </Col>
             </Col>
 
             <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={addProduct}
-                Content={ContentAddProduct} title={'Añadir nuevo producto'} />
+                Content={ContentAddProduct} title={'Añadir nuevo producto'} onItemCreated={handleProductCreated} />
             {/* charges */}
             {selectedProducts.length > 0 && (
                 <>
