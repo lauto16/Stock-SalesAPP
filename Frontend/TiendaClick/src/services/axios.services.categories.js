@@ -70,17 +70,12 @@ async function updateCategory(category, token) {
       authHeader(token)
     );
 
-    const { success, error, data } = response.data;
+    return response.data
 
-    if (!success) {
-      throw new Error(error);
-    }
-
-    return data;
-  } catch (err) {
-    console.error("Error al actualizar la categoría:", err.message);
-    throw err;
-  }
+  } catch (error) {
+    const backendError = error.response?.data?.error || error.message || "Error desconocido";
+    return { success: false, error: backendError };
+}
 }
 
 async function deleteCategory(category, token) {

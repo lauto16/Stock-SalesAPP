@@ -122,7 +122,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
             if products is not None:
                 provider.products.set(products)
 
-            return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
+            return Response({"success": True, "success_message": "Proveedor modificado con éxito", "error": ""}, status=status.HTTP_200_OK)
 
         else:
             print(serializer.errors)

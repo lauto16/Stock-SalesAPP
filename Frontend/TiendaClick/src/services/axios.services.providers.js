@@ -59,11 +59,7 @@ async function updateProvider(updatedData, token) {
     try {
         const id = updatedData.id
         const response = await axios.patch(`${apiUrl}providers/patch-by-id/${id}/`, updatedData, authHeader(token));
-
-        return {
-            success: response.data?.success ?? false,
-            error: response.data?.error || "",
-        };
+        return response.data
     } catch (error) {
         const backendError = error.response?.data?.error || error.message || "Error desconocido";
         return { success: false, error: backendError };

@@ -37,10 +37,7 @@ async function fetchGetByCode(code, token) {
 async function updateProduct(oldCode, updatedData, token) {
   try {
     const response = await axios.patch(`${apiUrl}products/patch-by-code/${oldCode}/`, updatedData, authHeader(token));
-    return {
-      success: response.data?.success ?? false,
-      error: response.data?.error || "",
-    };
+    return response.data
   } catch (error) {
     const backendError = error.response?.data?.error || error.message || "Error desconocido";
     return { success: false, error: backendError };

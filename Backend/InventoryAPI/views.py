@@ -254,7 +254,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         product = Product.objects.filter(code=code).first()
 
-        if not product:
+        if not product or not product.in_use:
             return Response(
                 {"success": False, "error": "No se encontro el producto a modificar"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -286,7 +286,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 loss_amount = Decimal(str(stock_lost)) * Decimal(str(product.buy_price))
                 daily_report.apply_amount(amount=-loss_amount)
 
-            return Response({"success": True, "error": ""}, status=status.HTTP_200_OK)
+            return Response({"success": True, "success_message": "Producto modificado con éxito", "error": ""}, status=status.HTTP_200_OK)
 
         return Response(
             {"success": False, "error": "El codigo ya existe para otro producto"},
@@ -519,7 +519,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         percentage = request.data.get("percentage", offer.percentage)
         end_date = request.data.get("end_date", offer.end_date)
         products_ids = request.data.get("products", None)
-
+        
         if Offer.objects.filter(name=name).exclude(id=offer.id).exists():
 
             return Response(
@@ -543,6 +543,13 @@ class OfferViewSet(viewsets.ModelViewSet):
                     {"success": False, "error": "Uno o más productos no existen."},
                     400,
                 )
+            
+            for product in products:
+                if product.has_discount():
+                    return Response(
+                    {"success": False, "error": f"El producto {product.name} ya posee una oferta activa."},
+                    400,
+                )
 
             offer.products.set(products)
 
@@ -551,7 +558,7 @@ class OfferViewSet(viewsets.ModelViewSet):
             offer.end_date = end_date
             offer.save()
 
-            return Response({"success": True, "error": ""}, 200)
+            return Response({"success": True, "success_message": "Oferta modificada con éxito", "error": ""}, 200)
 
     def list(self, request, *args, **kwargs):
         """

@@ -26,7 +26,8 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
     reloadWithBounce();
 
     const response = await onSubmitHandler(data, token);
-
+    console.log(response);
+    
     if (response.success) {
       reset();
       handleBeforeClose("success", response.success_message, handleClose);
