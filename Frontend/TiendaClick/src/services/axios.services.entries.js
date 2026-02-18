@@ -13,6 +13,7 @@ export async function addEntry(formData, token) {
 
   const entryData = {
     rute_number: formData.rute_number || "-",
+    observations: formData.observations || null,
     details: details,
     applied_charge: parseFloat(formData.applied_charge)
   };

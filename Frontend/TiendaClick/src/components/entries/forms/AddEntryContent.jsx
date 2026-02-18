@@ -148,6 +148,21 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                             </div>
                         )}
                     </Col>
+
+                    {/* Observations */}
+                    <Col md={9}>
+                        <CustomInput
+                            label="Observaciones"
+                            icon='bi-chat-left-text'
+                            type='text'
+                            register={register("observations", {})}
+                        />
+                        {errors.observations && (
+                            <div className="invalid-feedback d-block">
+                                {errors.observations.message}
+                            </div>
+                        )}
+                    </Col>
                 </>
             )}
             {/* Summary Table */}
