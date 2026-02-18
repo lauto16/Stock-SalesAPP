@@ -11,6 +11,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def success_response(self, data=None, status_code=status.HTTP_200_OK):
         return Response({
             "success": True,
+            "success_message": "Categoria modificada con éxito",
             "error": "",
             "data": data
         }, status=status_code)

@@ -38,7 +38,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
 
     const executeUpdate = async (data) => {
         try {
-            const { success, error } = await updateProduct(
+            const { success, error, success_message } = await updateProduct(
                 product.code,
                 {
                     code: data.code,
@@ -55,7 +55,7 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
             );
 
             if (success) {
-                addNotification("success", "Producto actualizado con éxito");
+                addNotification("success", success_message);
                 unselectAll();
                 handleClose();
                 reloadWithBounce();

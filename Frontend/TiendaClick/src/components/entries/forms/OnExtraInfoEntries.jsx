@@ -23,7 +23,6 @@ export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
     ];
     return (
         <Row className="g-3">
-            {/* Sale ID (hidden) */}
             <Col md={6} className="d-flex flex-column">
                 <CustomInput
                     defaultValue={selectedItem.id}
@@ -33,7 +32,6 @@ export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
 
             </Col>
 
-            {/* Sale Information (Read-only display) */}
             <Col md={12}>
                 <div className="alert alert-info">
                     <h6>Información de la venta</h6>
@@ -46,7 +44,6 @@ export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
                 </div>
             </Col>
 
-            {/* Products List (Read-only) */}
             <Col md={12}>
                 <h6>Productos en esta entrada:</h6>
 

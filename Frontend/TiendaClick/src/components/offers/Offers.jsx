@@ -86,10 +86,11 @@ export default function Offers() {
         }, 100);
       };
 
-    const handleUpdateOffer = (data, token) => {
-        updateOffer(data, token)
+    const handleUpdateOffer = async (data, token) => {
+        const response = await updateOffer(data, token)
         setSelectedItems(new Map())
         reloadWithBounce()
+        return response
     }
 
     return (
