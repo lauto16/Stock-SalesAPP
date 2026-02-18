@@ -18,7 +18,7 @@ export default function AddEntryContent({ register, control, errors, watch }) {
 
     const { providers } = useProviders(user.token);
     const [showAddItem, setShowAddItem] = useState(false);
-
+    const charge = Number(watch("applied_charge") || 0);
     // Clear selected products when form is reset
     useEffect(() => {
         if (!watchedSelectedProducts) {
@@ -287,20 +287,15 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                                         </td>
                                     </tr>
 
-                                    {(() => {
-                                        const charge = watch("applied_charge");
-                                        const isPositive = charge > 0;
-                                        return charge !== 0 && (
-                                            <tr>
-                                                <td colSpan="5" className="text-end"><strong>Recargo / Descuento:</strong></td>
-                                                {isPositive ? <td className="text-end text-danger"><strong>
-                                                    +${Math.abs(charge)}
-                                                </strong></td> : <td className="text-end text-success"><strong>
-                                                    -${Math.abs(charge)}
-                                                </strong></td>}
-                                            </tr>
-                                        );
-                                    })()}
+                                    {charge !== 0 &&
+                                        <tr>
+                                            <td colSpan="5" className="text-end"><strong>Recargo / Descuento:</strong></td>
+                                            {charge > 0 ? <td className="text-end text-danger"><strong>
+                                                +${Math.abs(charge)}
+                                            </strong></td> : <td className="text-end text-success"><strong>
+                                                -${Math.abs(charge)}
+                                            </strong></td>}
+                                        </tr>}
                                     <tr className="table-success">
                                         <td colSpan="5" className="text-end">
                                             <strong>TOTAL:</strong>
