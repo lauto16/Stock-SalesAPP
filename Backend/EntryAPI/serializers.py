@@ -56,7 +56,6 @@ class EntryDetailSerializer(serializers.ModelSerializer):
             "quantity",
             "subtotal",
             "applied_charge",
-            "observations",
         ]
         read_only_fields = ["id", "subtotal"]
 
@@ -72,11 +71,6 @@ class EntryDetailCreateSerializer(serializers.Serializer):
     unit_price = serializers.FloatField()
     quantity = serializers.FloatField()
     applied_charge = serializers.FloatField(default=0)
-    observations = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        default="Sin observaciones"
-    )
 
 
 class EntryCreateSerializer(serializers.ModelSerializer):
@@ -86,7 +80,8 @@ class EntryCreateSerializer(serializers.ModelSerializer):
         model = Entry
         fields = [
             'rute_number',
-            'details'
+            'details',
+            'observations',
         ]
 
     def validate(self, data):
@@ -112,7 +107,8 @@ class EntryCreateSerializer(serializers.ModelSerializer):
 
         entry = Entry.objects.create(
             created_by=user,
-            rute_number=validated_data.get("rute_number", "0")
+            rute_number=validated_data.get("rute_number", "0"),
+            observations=validated_data.get("observations", "Sin observaciones")
         )
 
         for detail in details_data:
@@ -121,8 +117,7 @@ class EntryCreateSerializer(serializers.ModelSerializer):
                 product=detail["product"],
                 unit_price=detail["unit_price"],
                 quantity=detail["quantity"],
-                applied_charge=detail.get("applied_charge", 0),
-                observations=detail.get("observations", "Sin observaciones")
+                applied_charge=detail.get("applied_charge", 0)
             )
 
         entry.apply_entry()
@@ -147,5 +142,6 @@ class EntrySerializer(serializers.ModelSerializer):
             "total",
             "details",
             "rute_number",
+            "observations",
         ]
         read_only_fields = ["id", "created_at", "total"]
