@@ -69,7 +69,6 @@ export default function AddEntryContent({ register, control, errors, watch, setV
             stock: Number(newProduct.stock),
             buy_price: Number(newProduct.buy_price),
         }
-        console.log(newProductData)
         if (!newProduct) return;
         const formatted = {
             value: newProductData.code,
@@ -78,7 +77,6 @@ export default function AddEntryContent({ register, control, errors, watch, setV
         };
 
         const updatedProducts = [...selectedProducts, formatted];
-        console.log(updatedProducts);
         setSelectedProducts(updatedProducts);
 
         setValue("selectedProducts", updatedProducts);
