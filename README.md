@@ -110,7 +110,7 @@ This project automatically runs `migrate --noinput` on production startup.
 
 To start working on the backend, run the following commands in a CMD terminal:
 
-```bash
+  ```bash
    cd Backend
    ```
 
@@ -119,7 +119,7 @@ To start working on the backend, run the following commands in a CMD terminal:
    ```
    ```bash
    virtualenv venv
-   # alternativa: py -m virtualenv venv
+   # alternative: py -m virtualenv venv
    ```
    ```bash
    cd venv/Scripts
