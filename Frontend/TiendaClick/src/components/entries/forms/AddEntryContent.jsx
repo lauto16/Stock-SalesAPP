@@ -140,7 +140,7 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                             label="N° de remito"
                             icon='bi-box-seam'
                             type='text'
-                            register={register("ruteNumber", {})}
+                            register={register("rute_number", {})}
                         />
                         {errors.ruteNumber && (
                             <div className="invalid-feedback d-block">
