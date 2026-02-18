@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import F
 from django.db import models
-
+from decimal import Decimal
 
 class DailyReport(models.Model):
     """
@@ -55,6 +55,7 @@ class DailyReport(models.Model):
         Args:
             amount (int | float)
         """
+        amount = Decimal(str(amount))
         DailyReport.objects.filter(pk=self.pk).update(gain=F("gain") + amount)
 
     def _add_loss(self, amount: int | float):
@@ -64,12 +65,14 @@ class DailyReport(models.Model):
         Args:
             amount (int | float)
         """
+        amount = Decimal(str(amount))
         DailyReport.objects.filter(pk=self.pk).update(loss=F("loss") + amount)
 
     def _remove_loss(self, amount: int | float):
         """
         Removes loss. If loss goes below 0, overflow becomes gain.
         """
+        amount = Decimal(str(amount))
         with transaction.atomic():
             report = DailyReport.objects.select_for_update().get(pk=self.pk)
 
@@ -88,6 +91,7 @@ class DailyReport(models.Model):
         """
         Removes gain. If gain goes below 0, overflow becomes loss.
         """
+        amount = Decimal(str(amount))
         with transaction.atomic():
             report = DailyReport.objects.select_for_update().get(pk=self.pk)
 

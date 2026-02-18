@@ -20,8 +20,8 @@ class Entry(models.Model):
         max_length=200,
         blank=True,
         null=True,
-        default="0",
-        verbose_name="numero de ruta",
+        default="-",
+        verbose_name="numero de remito",
     )
 
     class Meta:
