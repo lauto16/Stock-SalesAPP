@@ -140,11 +140,26 @@ export default function AddEntryContent({ register, control, errors, watch }) {
                             label="N° de remito"
                             icon='bi-box-seam'
                             type='text'
-                            register={register("ruteNumber", {})}
+                            register={register("rute_number", {})}
                         />
                         {errors.ruteNumber && (
                             <div className="invalid-feedback d-block">
                                 {errors.ruteNumber.message}
+                            </div>
+                        )}
+                    </Col>
+
+                    {/* Observations */}
+                    <Col md={9}>
+                        <CustomInput
+                            label="Observaciones"
+                            icon='bi-chat-left-text'
+                            type='text'
+                            register={register("observations", {})}
+                        />
+                        {errors.observations && (
+                            <div className="invalid-feedback d-block">
+                                {errors.observations.message}
                             </div>
                         )}
                     </Col>
