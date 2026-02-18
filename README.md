@@ -4,113 +4,113 @@
 
 # TiendaClick
 
-**TiendaClick** es una aplicación polimórfica de **gestión de inventario y ventas para cualquier rubro comercial**.  
-Permite administrar productos, proveedores, categorías, ventas, entradas de stock y notificaciones, centralizando la operación del negocio y facilitando la **toma de decisiones mediante un sistema de estadísticas**.
+**TiendaClick** is a polymorphic **inventory and sales management application for any commercial sector**.  
+It allows you to manage products, suppliers, categories, sales, stock entries, and notifications, centralizing business operations and enabling **data-driven decision-making through a statistics system**.
 
-El sistema está pensado para adaptarse tanto a pequeños comercios como a operaciones más grandes, ofreciendo control, trazabilidad y organización en un solo lugar.
+The system is designed to adapt to both small businesses and larger operations, offering control, traceability, and organization in one place.
 
 ---
 
-## ¿Qué hace TiendaClick?
+## What does TiendaClick do?
 
-TiendaClick conecta un **backend en Django** con un **frontend en React** para ofrecer una experiencia completa de administración comercial:
+TiendaClick connects a **Django backend** with a **React frontend** to provide a complete business management experience:
 
-- Gestión de inventario en tiempo real.
-- Control de ventas y movimientos.
-- Administración de proveedores.
-- Manejo de categorías de productos.
-- Registro de entradas de stock.
-- Sistema de notificaciones.
-- Gestión de métodos de pago.
-- Autenticación y permisos.
-- Estadísticas para análisis del negocio.
-- Paneles y dashboards de control.
+- Real-time inventory management.
+- Sales and transaction control.
+- Supplier management.
+- Product category handling.
+- Stock entry records.
+- Notification system.
+- Payment method management.
+- Authentication and permissions.
+- Business analytics and statistics.
+- Control panels and dashboards.
 
-Todo corre sobre la misma IP local:
+Everything runs on the same local IP:
 
-| Servicio  | Puerto |
-|----------|--------|
-| React     | `5173` |
-| Django    | `8000` |
+| Service | Port |
+|--------|------|
+| React  | `5173` |
+| Django | `8000` |
 
-Por ende, para acceder a la app se debe ingresar a:
+Therefore, to access the app, go to:
 
-http://localhost:5173
-ó
+http://localhost:5173  
+or  
 http://192.168.x.x:5173
 
 ---
 
-## Arquitectura General
+## General Architecture
 
-El proyecto está dividido en dos grandes capas:
+The project is divided into two main layers:
 
 - **Backend (Django + APIs)**
-- **Frontend (React + Hooks + Módulos)**
+- **Frontend (React + Hooks + Modules)**
 
-Cada parte está organizada por dominio funcional, permitiendo escalar el sistema sin perder orden.
+Each part is organized by functional domain, allowing the system to scale without losing structure.
 
 ---
 
-## Funcionalidades Core del Dominio
+## Core Domain Features
 
-Basado en la estructura del proyecto, TiendaClick incluye los siguientes módulos principales:
+Based on the project structure, TiendaClick includes the following main modules:
 
 ### Backend (APIs)
 
-- `AuthAPI` — Autenticación y control de acceso.
-- `InventoryAPI` — Gestión de inventario y stock.
-- `SalesAPI` — Registro y control de ventas.
-- `ProvidersAPI` — Administración de proveedores.
-- `CategoryAPI` — Organización por categorías.
-- `EntryAPI` — Entradas de productos y movimientos.
-- `NotificationAPI` — Sistema de notificaciones.
-- `StatsAPI` — Estadísticas y análisis del negocio.
-- `PaymentMethodAPI` — Métodos de pago.
-- `BlameAPI` — Trazabilidad y registro de acciones.
-- `StockSalesApp` — App principal de Django
+- `AuthAPI` — Authentication and access control.
+- `InventoryAPI` — Inventory and stock management.
+- `SalesAPI` — Sales registration and control.
+- `ProvidersAPI` — Supplier management.
+- `CategoryAPI` — Category organization.
+- `EntryAPI` — Product entries and stock movements.
+- `NotificationAPI` — Notification system.
+- `StatsAPI` — Business statistics and analytics.
+- `PaymentMethodAPI` — Payment methods.
+- `BlameAPI` — Action traceability and logging.
+- `StockSalesApp` — Main Django app.
 
 ---
 
 ### Frontend (React)
 
-- `inventory` — Vista y control de inventario.
-- `sales` — Interfaz de ventas.
-- `providers` — Gestión de proveedores.
-- `categories` — Administración de categorías.
-- `entries` — Registro de entradas.
-- `notifications` — Centro de notificaciones.
-- `stats` — Visualización de estadísticas.
-- `auth` — Login y autenticación.
-- `dashboard` — Panel principal.
-- `offers` — Ofertas y promociones.
-- `permissions_manager` — Gestión de permisos.
-- `pin_manager` — Seguridad por PIN.
-- `profile` — Perfil de usuario.
-- `sideNav` — Navegación lateral.
-- `hooks` — Lógica reutilizable.
-- `global` — Componentes globales.
+- `inventory` — Inventory view and control.
+- `sales` — Sales interface.
+- `providers` — Supplier management.
+- `categories` — Category administration.
+- `entries` — Entry registration.
+- `notifications` — Notification center.
+- `stats` — Statistics visualization.
+- `auth` — Login and authentication.
+- `dashboard` — Main dashboard.
+- `offers` — Offers and promotions.
+- `permissions_manager` — Permission management.
+- `pin_manager` — PIN-based security.
+- `profile` — User profile.
+- `sideNav` — Side navigation.
+- `hooks` — Reusable logic.
+- `global` — Global components.
 
 ---
 
-## Tecnologías
+## Technologies
 
 - **Backend:** Django, Python
 - **Frontend:** React, Vite
 
 ---
 
-## Instrucciones para comenzar
+## Getting Started
 
 ### ▶ Backend
-⚠️ **IMPORTANTE**
+⚠️ **IMPORTANT**
 
-Este proyecto ejecuta `migrate --noinput` automáticamente al iniciar en producción.
-**NO agregar campos sin `default` o `null=True`**, o el sistema fallará en background.
+This project automatically runs `migrate --noinput` on production startup.  
+**DO NOT add fields without a `default` or `null=True`**, or the system will fail in the background.
 
-Para comenzar a trabajar en el backend ejecute los siguientes comandos en una terminal cmd.
+To start working on the backend, run the following commands in a CMD terminal:
 
-   ```bash
+  ```bash
    cd Backend
    ```
 
@@ -119,7 +119,7 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    ```
    ```bash
    virtualenv venv
-   # alternativa: py -m virtualenv venv
+   # alternative: py -m virtualenv venv
    ```
    ```bash
    cd venv/Scripts
@@ -154,7 +154,7 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    py manage.py createsuperuser
    ```
    ```bash
-   # <pin> debe ser un pin de 4 digitos que desees.
+   # <pin> has to be a 4 digit pin
    py update_pin.py <pin>
    ```
 
@@ -166,7 +166,7 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
 
 ### ▶ Frontend
 
-Para comenzar a trabajar en el frontend ejecute los siguientes comandos en una terminal cmd.
+To start working on the frontend, run the following commands in a CMD terminal:
 
    ```bash
    cd Frontend
@@ -189,7 +189,7 @@ Para comenzar a trabajar en el frontend ejecute los siguientes comandos en una t
 
 ## Licencia
 
-[En español](LICENCIA)
-[En ingles](LICENSE)
+[In spanish](LICENCIA)
+[In english](LICENSE)
 
 ---
