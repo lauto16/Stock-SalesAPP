@@ -20,8 +20,11 @@ class Entry(models.Model):
         max_length=200,
         blank=True,
         null=True,
-        default="0",
-        verbose_name="numero de ruta",
+        default="-",
+        verbose_name="numero de remito",
+    )
+    observations = models.TextField(
+        null=True, blank=True, default="Sin observaciones", verbose_name="observaciones"
     )
 
     class Meta:
@@ -62,9 +65,6 @@ class EntryDetail(models.Model):
     )
     unit_price = models.FloatField(verbose_name="precio unitario")
     quantity = models.FloatField(verbose_name="cantidad")
-    observations = models.TextField(
-        null=True, blank=True, default="Sin observaciones", verbose_name="observaciones"
-    )
     applied_charge = models.FloatField(default=0, verbose_name="cargo extra")
 
     class Meta:
