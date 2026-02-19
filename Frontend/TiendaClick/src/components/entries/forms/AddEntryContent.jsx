@@ -9,8 +9,7 @@ import ContentAddProduct from "../../inventory/forms/ContentAddProduct.jsx";
 import AddItemModal from "../../crud/AddItemModal.jsx";
 import { useProviders } from "../../providers/hooks/useProviders.js";
 import Select from "react-select";
-import { formatProducts, castProductData } from "./utils/formatProducts.js";
-
+import { formatProducts, castProductData } from "../../crud/utils/products/formatProducts.js";
 export default function AddEntryContent({ register, control, errors, watch, setValue }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();

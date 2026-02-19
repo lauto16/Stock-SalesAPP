@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import AsyncSelect from "react-select/async"
 import { useUser } from "../../../context/UserContext.jsx"
 import { fetchSearchProducts } from "../../../services/axios.services.products.js"
-
+import { formatProducts } from "../../crud/utils/products/formatProducts.js"
 export default function AddOfferContent({ register, control, errors, watch }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const { user } = useUser();
@@ -31,14 +31,7 @@ export default function AddOfferContent({ register, control, errors, watch }) {
 
         try {
             const data = await fetchSearchProducts(inputValue, user.token);
-            if (data) {
-                return data.map((p) => ({
-                    value: p.code,
-                    label: `${p.name} (${p.code}) - $${p.sell_price.toFixed(2)}`,
-                    ...p
-                }));
-            }
-            return [];
+            return formatProducts(data);
         } catch (error) {
             console.error("Error searching products:", error);
             return [];
@@ -121,25 +114,13 @@ export default function AddOfferContent({ register, control, errors, watch }) {
                         render={({ field }) => (
                             <AsyncSelect
                                 {...field}
-                                value={field.value || []}
-
                                 isMulti
                                 cacheOptions
-                                defaultOptions={false}
                                 loadOptions={loadProductOptions}
-                                onChange={(selected) => {
-                                    field.onChange(selected);
-                                    setSelectedProducts(selected || []);
-                                }}
-
-                                placeholder="Buscar productos por nombre o código (mín. 2 caracteres)..."
-                                noOptionsMessage={({ inputValue }) =>
-                                    inputValue.length < 2
-                                        ? "Escribe al menos 2 caracteres para buscar"
-                                        : "No se encontraron productos"
-                                }
-                                loadingMessage={() => "Buscando productos..."}
+                                onChange={(selected) => field.onChange(selected)}
+                                value={field.value || []}
                             />
+
                         )}
                     />
                     {errors.products && (

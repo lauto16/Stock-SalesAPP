@@ -28,11 +28,7 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
-<<<<<<< HEAD
   notModifyItem
-=======
-  notModifyItem,
->>>>>>> koch
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
