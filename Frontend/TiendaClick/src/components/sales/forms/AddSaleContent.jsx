@@ -114,12 +114,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     field.onChange(selected);
                                     setSelectedProducts(selected || []);
                                 }}
-                                onKeyDown={(e) => {
-                                    // Prevent form submission when pressing Enter
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                    }
-                                }}
+
                                 placeholder="Buscar productos por nombre o código (mín. 2 caracteres)..."
                                 noOptionsMessage={({ inputValue }) =>
                                     inputValue.length < 2

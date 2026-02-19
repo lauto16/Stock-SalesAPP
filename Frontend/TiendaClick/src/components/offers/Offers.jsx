@@ -42,6 +42,7 @@ export default function Offers() {
                 setLoading,
                 token: user.token,
             });
+
             const offersData = results.offers.map((offer) => {
                 return {
                     ...offer,

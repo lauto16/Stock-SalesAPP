@@ -20,7 +20,7 @@ export default function Header({
   extraButtons = [],
   deleteItem,
   selectedItemsColumns = [{}],
-  reload,
+  reload = () => { },
   titleAddItem,
   AddItemcontent = () => { },
   onSubmitAddItem,
@@ -28,8 +28,7 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
-  notModifyItem,
-  displayName
+  notModifyItem
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
