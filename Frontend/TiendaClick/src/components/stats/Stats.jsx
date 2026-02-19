@@ -7,7 +7,8 @@ import SalesChart from "./SalesChart.jsx";
 import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 import Table from "../crud/Table.jsx";
 import Pagination from '../inventory/Pagination.jsx';
-
+import { FaSearch } from "react-icons/fa";
+import { useRef } from "react";
 import {
     fetchSalesAverageValueStatsByPeriod,
     fetchMostUsedPaymentMethodsStatsByPeriod,
@@ -47,7 +48,21 @@ export default function Stats() {
     const [totalPages, setTotalPages] = useState(1);
     const PAGE_SIZE = 10;
 
+    const yearRef = useRef();
+    const monthRef = useRef();
+    const dayRef = useRef();
+
+    const handleSubmitDateReport = () => {
+        const year = yearRef.current.value;
+        const month = monthRef.current.value;
+        const day = dayRef.current.value;
+
+        console.log("Buscando reporte:", { year, month, day });
+    };
+
+
     const formatDailyReportsData = (data = []) => {
+
         data = formatDate(data);
 
         return data.map((daily_report) => {
@@ -98,7 +113,7 @@ export default function Stats() {
     const dailyReportsColumns = [
         { className: "gain", key: "gain", label: 'Ganancia' },
         { className: "loss", key: "loss", label: 'Perdida' },
-        { className: "profit", key: "profit", label: 'Ganancia - Perdida' },
+        { className: "profit", key: "profit", label: 'Margen' },
         { className: "created_at", key: "created_at", label: 'Fecha' },
     ];
 
@@ -221,7 +236,7 @@ export default function Stats() {
 
     return (
         <RequirePermission permission="access_dashboard">
-            <br />
+            <hr style={{opacity:'0'}}/>
             <DashboardHeader title={'ESTADISTICAS'} isDashboard={false} />
             <div className="container my-4">
 
@@ -238,6 +253,87 @@ export default function Stats() {
                     pkName={"id"}
                 />
 
+                <br />
+                <div className="card shadow-sm p-3">
+                    <div className="container-fluid">
+                        <div className="row align-items-end">
+
+                            <div className="col-md-3">
+                                <label className="form-label">Año</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    placeholder="2026"
+                                    min="1900"
+                                    max="2100"
+                                    ref={yearRef}
+                                />
+                            </div>
+
+                            <div className="col-md-3">
+                                <label className="form-label">Mes</label>
+                                <select
+                                    className="form-select"
+                                    ref={monthRef}
+                                >
+                                    <option value="">Seleccionar</option>
+                                    {[...Array(12)].map((_, i) => (
+                                        <option key={i + 1} value={i + 1}>
+                                            {i + 1}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-md-3">
+                                <label className="form-label">Día</label>
+                                <select
+                                    className="form-select"
+                                    ref={dayRef}
+                                >
+                                    <option value="">Seleccionar</option>
+                                    {[...Array(31)].map((_, i) => (
+                                        <option key={i + 1} value={i + 1}>
+                                            {i + 1}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-md-3">
+                                <button
+                                    className="mt-2 send-form-button btn btn-success"
+                                    onClick={handleSubmitDateReport}
+                                >
+                                    <FaSearch className="me-2" />
+                                    Buscar
+                                </button>
+                            </div>
+
+                        </div>
+                        <div className="mt-4">
+                            <div className="table-responsive">
+                                <table className="table table-bordered text-center align-middle">
+                                    <thead className="table-light">
+                                        <tr>
+                                            <th>Ganancia</th>
+                                            <th>Pérdida</th>
+                                            <th>Margen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
                 <br />
 
                 <h4 className="mb-4">Sobre las ventas</h4>
