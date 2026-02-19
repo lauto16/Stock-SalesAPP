@@ -7,7 +7,7 @@ import ConfirmationModal from "../crud/ConfirmationModal.jsx";
 import { useModal } from "./hooks/useModal.js";
 import SelectedItemsModal from "../crud/SelectedItemsModal.jsx";
 import Table from "./Table.jsx";
-import {getCreateLossWhenProductDelete} from "../../services/axios.services.config.js"
+import { getCreateLossWhenProductDelete } from "../../services/axios.services.config.js"
 
 export default function Header({
   title,
@@ -20,7 +20,7 @@ export default function Header({
   extraButtons = [],
   deleteItem,
   selectedItemsColumns = [{}],
-  reloadWithBounce = () => { },
+  reload,
   titleAddItem,
   AddItemcontent = () => { },
   onSubmitAddItem,
@@ -64,7 +64,7 @@ export default function Header({
     const selectedArray = Array.from(selectedItems.values());
     const itemsToShow = selectedArray.slice(0, 5);
     const deleteLoss = await getCreateLossWhenProductDelete(user.token)
-    
+
     const tableContent = (
       <>
         <Table
@@ -74,7 +74,7 @@ export default function Header({
         />
         {deleteLoss.createLossWhenProductDeleteValue ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
         <p>Esta accion es irreversible, ¿estas seguro?</p>
-        
+
       </>
     );
 
@@ -85,15 +85,15 @@ export default function Header({
     const itemsToDelete = Array.from(selectedItems.values()).map(item => ({
       id: item.code ?? item.id,
     }));
-  
+
     const deletePromises = itemsToDelete.map(({ id }) =>
       deleteItem(id, user.token)
     );
-  
+
     const results = await Promise.all(deletePromises);
-  
+
     let hasSuccess = false;
-  
+
     results.forEach((result) => {
       if (result?.success) {
         hasSuccess = true;
@@ -106,11 +106,11 @@ export default function Header({
         );
       }
     });
-  
+
     if (hasSuccess) {
-      reloadWithBounce();
+      reload();
     }
-  
+
     setSelectedItems(new Map());
     closeDelModal();
   };
@@ -143,7 +143,7 @@ export default function Header({
       />
       {/* opens a form to add an Item */}
       <AddItemModal show={showAddItem} handleClose={setShowAddItem} onSubmitHandler={onSubmitAddItem}
-        Content={AddItemcontent} title={titleAddItem} reloadWithBounce={reloadWithBounce} />
+        Content={AddItemcontent} title={titleAddItem} reload={reload} />
 
       {/* enables to delete a set of Items */}
       <ConfirmationModal
@@ -161,7 +161,7 @@ export default function Header({
         selectedItems={selectedItems}
         Content={InfoFormContent}
         title={titleInfoForm}
-        reloadWithBounce={reloadWithBounce}
+        reload={reload}
         notModifyItem={notModifyItem}
       /> : <></>
       }

@@ -11,7 +11,7 @@ import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddEntryContent from "./forms/AddEntryContent.jsx";
 import OnExtraInfoEntries from "./forms/OnExtraInfoEntries.jsx";
 import { formatDate, formatHour } from "../../utils/formatDate.js";
-//import InfoFormContent from "./forms/InfoFormContent.jsx";
+import useReload from "../crud/hooks/useReload.js";
 
 export default function Entries() {
   const [items, setItems] = useState([]);
@@ -23,7 +23,7 @@ export default function Entries() {
   const [isSomethingSelected, setIsSomethingSelected] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [allSearchResults, setAllSearchResults] = useState([]);
-
+  const { reload, reloadHandler } = useReload();
   const { user } = useUser();
   const { addNotification } = useNotifications();
 
@@ -63,8 +63,7 @@ export default function Entries() {
     };
 
     if (user?.token) fetchData();
-    console.log(items)
-  }, [currentPage, isSearching, user]);
+  }, [currentPage, isSearching, user, reload]);
 
 
   useEffect(() => {
@@ -87,16 +86,6 @@ export default function Entries() {
     }
   };
 
-  const reloadWithBounce = () => {
-    const pageBeforeReload = currentPage;
-    setLoading(true);
-    setCurrentPage(1);
-    setTimeout(() => {
-      setCurrentPage(pageBeforeReload);
-      setLoading(false);
-    }, 100);
-  };
-
   return (
     <RequirePermission permission="access_inventory">
       <div className="d-flex justify-content-center mt-5">
@@ -111,7 +100,7 @@ export default function Entries() {
             items={items}
             deleteItem={deleteEntryById}
             isSale={true}
-            reloadWithBounce={reloadWithBounce}
+            reload={reloadHandler}
             titleAddItem={"Añadir nuevo ingreso"}
             AddItemcontent={AddEntryContent}
             onSubmitAddItem={addEntry}

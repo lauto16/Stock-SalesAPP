@@ -9,7 +9,7 @@ import RequirePermission from '../permissions_manager/PermissionVerifier.jsx'
 import InfoFormContent from "./forms/InfoFormContent.jsx";
 import AddItemContent from "./forms/AddItemContent.jsx";
 import { addProvider, updateProvider } from "../../services/axios.services.providers.js";
-
+import useReload from "../crud/hooks/useReload.js";
 function Providers() {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +18,7 @@ function Providers() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false)
     const { user } = useUser();
+    const { reload, reloadHandler } = useReload();
     const PAGE_SIZE = 10;
 
     const columns = [
@@ -52,7 +53,7 @@ function Providers() {
         };
 
         fetchData();
-    }, [currentPage]);
+    }, [currentPage, reload]);
 
     useEffect(() => {
         if (selectedItems.size !== 0) {
@@ -68,16 +69,7 @@ function Providers() {
         }
 
     };
-    
-    const reloadWithBounce = () => {
-        const pageBeforeReload = currentPage;
-        setLoading(true);
-        setCurrentPage(1);
-        setTimeout(() => {
-          setCurrentPage(pageBeforeReload);
-          setLoading(false);
-        }, 100);
-      };
+
 
     return (
         <RequirePermission permission="access_providers">
@@ -95,7 +87,7 @@ function Providers() {
                             items={providers}
                             deleteItem={deleteProviderById}
                             selectedItemsColumns={importantColumns}
-                            reloadWithBounce={reloadWithBounce}
+                            reload={reloadHandler}
                             onSubmitAddItem={addProvider}
                             onSubmitEditItem={updateProvider}
                             titleAddItem={'Añadir nuevo proveedor'}

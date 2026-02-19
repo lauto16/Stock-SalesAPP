@@ -7,6 +7,7 @@ import Table from '../crud/Table.jsx';
 import Pagination from '../inventory/Pagination.jsx';
 import AddOfferContent from './forms/AddOfferContent.jsx';
 import InfoOfferContent from './forms/InfoOfferContent.jsx';
+import useReload from '../crud/hooks/useReload.js';
 
 export default function Offers() {
 
@@ -19,7 +20,7 @@ export default function Offers() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false);
     const PAGE_SIZE = 10;
-
+    const { reload, reloadHandler } = useReload();
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
@@ -59,7 +60,7 @@ export default function Offers() {
         };
 
         loadOffers();
-    }, [currentPage]);
+    }, [currentPage, reload]);
 
     useEffect(() => {
         if (selectedItems.size !== 0) {
@@ -75,21 +76,10 @@ export default function Offers() {
         }
 
     };
-
-    const reloadWithBounce = () => {
-        const pageBeforeReload = currentPage;
-        setLoading(true);
-        setCurrentPage(1);
-        setTimeout(() => {
-          setCurrentPage(pageBeforeReload);
-          setLoading(false);
-        }, 100);
-      };
-
     const handleUpdateOffer = (data, token) => {
         updateOffer(data, token)
         setSelectedItems(new Map())
-        reloadWithBounce()
+        reloadHandler()
     }
 
     return (

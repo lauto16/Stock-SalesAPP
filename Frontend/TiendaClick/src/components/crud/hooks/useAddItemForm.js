@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNotifications } from "../../../context/NotificationSystem";
 import { useUser } from "../../../context/UserContext";
 
-export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloadWithBounce = () => { } }) {
+export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reload = () => { } }) {
   const { user } = useUser();
   const token = user?.token;
   const {
@@ -20,11 +20,12 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
     handleClose()
     reset()
     addNotification(type, message)
+    reload();
+
   };
 
   const onSubmit = async (data) => {
     if (!data) return;
-    reloadWithBounce();
 
     const response = await onSubmitHandler(data, token);
 
@@ -34,6 +35,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
     } else {
       handleBeforeClose("error", response.error, handleClose);
     }
+
   };
 
   return {

@@ -10,7 +10,7 @@ export default function AddItemModal({
     selectedItems,
     title,
     Content,
-    reloadWithBounce,
+    reload,
     onItemCreated
 }) {
     const {
@@ -22,7 +22,7 @@ export default function AddItemModal({
         reset,
         control,
         setValue
-    } = useAddItemForm({ onSubmitHandler, handleClose, reloadWithBounce });
+    } = useAddItemForm({ onSubmitHandler, handleClose, reload });
 
     const [selectedItem, setSelectedItem] = useState({});
     const [isSending, setIsSending] = useState(false);

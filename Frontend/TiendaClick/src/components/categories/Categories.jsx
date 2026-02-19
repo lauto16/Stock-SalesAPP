@@ -8,6 +8,7 @@ import Pagination from '../inventory/Pagination.jsx';
 import AddCategoryContent from './forms/AddCategoryContent.jsx';
 import InfoCategoryContent from './forms/InfoCategoryContent.jsx';
 import { useNotifications } from '../../context/NotificationSystem';
+import useReload from '../crud/hooks/useReload.js';
 
 export default function Categories() {
 
@@ -21,7 +22,7 @@ export default function Categories() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false);
     const PAGE_SIZE = 10;
     const { addNotification } = useNotifications();
-
+    const [reload, reloadHandler] = useReload();
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "description", key: "description", label: 'Descripción' },
@@ -65,17 +66,6 @@ export default function Categories() {
 
     };
 
-    const reloadWithBounce = () => {
-        const pageBeforeReload = currentPage;
-    
-        setLoading(true);
-        setCurrentPage(1);
-            setTimeout(() => {
-            setCurrentPage(pageBeforeReload);
-            setLoading(false);
-        }, 100);
-    };
-
     return (
         <RequirePermission permission="access_inventory">
             <div className="d-flex justify-content-center mt-5">
@@ -91,7 +81,7 @@ export default function Categories() {
                             user={user}
                             items={categories}
                             selectedItemsColumns={columns}
-                            reloadWithBounce={reloadWithBounce}
+                            reload={reloadHandler}
                             onSubmitAddItem={addCategory}
                             onSubmitEditItem={updateCategory}
                             titleAddItem={'Añadir nueva categoria'}
