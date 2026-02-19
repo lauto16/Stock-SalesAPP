@@ -59,9 +59,12 @@ export default function AddEntryContent({ register, control, errors, watch, setV
         return subtotal + charge;
     };
     const handleProductCreated = (newProduct) => {
-
         if (!newProduct) return;
+        //cast product data to correct types
+        const newProductData = castProductData(newProduct);
+        //convert the string to an apealing format for the user
         const formatted = formatProducts([newProductData]);
+        //add the formatted product to the selected products
         const updatedProducts = [...selectedProducts, ...formatted];
         setSelectedProducts(updatedProducts);
         setValue("selectedProducts", updatedProducts);
