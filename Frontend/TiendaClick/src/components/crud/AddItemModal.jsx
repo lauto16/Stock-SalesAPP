@@ -68,7 +68,6 @@ export default function AddItemModal({
                     onSubmit={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        handleSubmit(safeSubmit)(e);
                     }}
                 >
 
@@ -88,7 +87,8 @@ export default function AddItemModal({
                         ) : (
                             <Button
                                 variant="success"
-                                type="submit"
+                                type="button"
+                                onClick={handleSubmit(safeSubmit)}
                                 className="mt-2 send-form-button"
                                 disabled={isSending}
                             >

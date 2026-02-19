@@ -9,7 +9,7 @@ import ContentAddProduct from "../../inventory/forms/ContentAddProduct.jsx";
 import AddItemModal from "../../crud/AddItemModal.jsx";
 import { useProviders } from "../../providers/hooks/useProviders.js";
 import Select from "react-select";
-import formatProducts from "./utils/formatProducts.js";
+import { formatProducts, castProductData } from "./utils/formatProducts.js";
 
 export default function AddEntryContent({ register, control, errors, watch, setValue }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
@@ -92,12 +92,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                     field.onChange(selected);
                                     setSelectedProducts(selected || []);
                                 }}
-                                onKeyDown={(e) => {
-                                    // Prevent form submission when pressing Enter
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                    }
-                                }}
+
                                 placeholder="Buscar productos por nombre o código (mín. 2 caracteres)..."
                                 noOptionsMessage={({ inputValue }) =>
                                     inputValue.length < 2
@@ -228,7 +223,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                                 {/* entry quantity */}
                                                 <td className="text-center">
                                                     <CustomInput
-                                                        type="text"
+                                                        type="number"
                                                         inputMode="decimal"
                                                         step="any"
                                                         defaultValue={1}
@@ -255,7 +250,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                                 {/* unit price */}
                                                 <td className="text-center">
                                                     <CustomInput
-                                                        type="text"
+                                                        type="number"
                                                         inputMode="decimal"
                                                         step="any"
                                                         defaultValue={product.buy_price}

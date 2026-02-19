@@ -8,7 +8,7 @@ import Pagination from '../inventory/Pagination.jsx';
 import AddOfferContent from './forms/AddOfferContent.jsx';
 import InfoOfferContent from './forms/InfoOfferContent.jsx';
 import useReload from '../crud/hooks/useReload.js';
-import formatDate from '../../utils/formatDate.js';
+import { formatDate } from '../../utils/formatDate.js';
 export default function Offers() {
 
     const { user } = useUser();
@@ -72,11 +72,6 @@ export default function Offers() {
         }
 
     };
-    const handleUpdateOffer = (data, token) => {
-        updateOffer(data, token)
-        setSelectedItems(new Map())
-        reloadHandler()
-    }
 
     return (
         <RequirePermission permission="access_offers">
@@ -95,7 +90,7 @@ export default function Offers() {
                             selectedItemsColumns={importantColumns}
                             reload={reloadHandler}
                             onSubmitAddItem={addOffer}
-                            onSubmitEditItem={handleUpdateOffer}
+                            onSubmitEditItem={updateOffer}
                             titleAddItem={'Añadir nueva oferta'}
                             AddItemcontent={AddOfferContent}
                             InfoFormContent={InfoOfferContent}
