@@ -11,7 +11,6 @@ export default function AddOfferContent({ register, control, errors, watch }) {
     const { user } = useUser();
 
     const percentage = watch("percentage", 0);
-    const watchedSelectedProducts = watch("selectedProducts");
 
     // Clear selected products when form is reset
     const watchedProducts = watch("products");
