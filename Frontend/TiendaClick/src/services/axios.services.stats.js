@@ -99,6 +99,16 @@ async function fetchLowStock({ setLoading, amount = 100 }, token) {
     }
 }
 
+async function fetchDailyReportStatsByDate(token, year, month, day) {
+    return axios.get(
+        `${apiUrl}daily_reports_stats/daily-report-by-date/`,
+        {
+            ...authHeader(token),
+            params: { year, month, day }
+        }
+    );
+}
+
 export {
     fetchSalesAverageValueStatsByPeriod,
     fetchMostUsedPaymentMethodsStatsByPeriod,
@@ -113,4 +123,5 @@ export {
     fetchProductsStats,
     fetchLowStock,
     fetchDailyReports,
+    fetchDailyReportStatsByDate,
 }

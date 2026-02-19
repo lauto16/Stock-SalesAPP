@@ -6,11 +6,14 @@ from django.db.models.functions import (
 )
 from django.db.models import Sum, Count, Q, F, FloatField, ExpressionWrapper, When, Case, Value
 from django.db.models.functions import ExtractMonth, ExtractHour
+from DailyReportAPI.serializers import DailyReportSerializer
 from concurrent.futures import ThreadPoolExecutor
 from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
+from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from datetime import date as datetime_date
 from SalesAPI.models import Sale, SaleItem
 from InventoryAPI.models import Product
 from django.db.models import FloatField
@@ -21,6 +24,56 @@ from collections import Counter
 from datetime import timedelta
 from datetime import datetime
 
+
+
+class DailyReportStatsViewSet(viewsets.ViewSet):
+    """
+    A set of api endpoints retrieving daily-report's data statistics calculated using fast and
+    efficient methods.
+    """
+
+    def get_daily_report(self, date):
+        """
+        Returns serialized DailyReport for a given date
+        or None if not found.
+        """
+
+        report = DailyReport.objects.filter(created_at=date).first()
+
+        if not report:
+            return None
+
+        serializer = DailyReportSerializer(report)
+        return serializer.data
+
+    @action(detail=False, methods=["get"], url_path="daily-report-by-date")
+    def daily_report_by_date(self, request):
+
+        year = request.query_params.get("year")
+        month = request.query_params.get("month")
+        day = request.query_params.get("day")
+
+        if not (year and month and day):
+            return Response(
+                {"error": "Año, mes y dia son requeridos"},
+                status=400
+            )
+
+        try:
+            parsed_date = datetime_date(
+                int(year),
+                int(month),
+                int(day)
+            )
+        except ValueError:
+            return Response(
+                {"error": "Fecha invalida"},
+                status=400
+            )
+
+        daily_report = self.get_daily_report(parsed_date)
+
+        return Response({"success": True, "daily_report": daily_report})
 
 class ProductsStatsViewSet(viewsets.ViewSet):
     """

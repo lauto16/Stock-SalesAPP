@@ -61,6 +61,9 @@ router_entries.register(r'entries', EntryViewSet, basename='entry')
 router_daily_reports = DefaultRouter()
 router_daily_reports.register(r"daily-reports", DailyReportViewSet, basename="daily-report")
 
+router_daily_reports_stats = DefaultRouter()
+router_daily_reports_stats.register(r"daily_reports_stats", DailyReportStatsViewSet, basename="daily_report_stat")
+
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
@@ -83,6 +86,7 @@ urlpatterns = [
     path('api/', include(router_notifications.urls)),
     path('api/', include(router_entries.urls)),
     path('api/', include(router_daily_reports.urls)),
+    path('api/', include(router_daily_reports_stats.urls)),
     path('api/login/', obtain_auth_token),
 
 ]

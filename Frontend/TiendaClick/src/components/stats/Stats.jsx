@@ -22,6 +22,7 @@ import {
     fetchProductsStats,
     fetchBestSellingCategories,
     fetchDailyReports,
+    fetchDailyReportStatsByDate,
 } from "../../services/axios.services.stats.js";
 
 export default function Stats() {
@@ -40,6 +41,7 @@ export default function Stats() {
     const [employeeStats, setEmployeeStats] = useState({})
     const [productStats, setProductStats] = useState({})
     const [bestCategories, setBestCategories] = useState([]);
+    const [dailyReportStats, setDailyReportStats] = useState({})
 
     const [dailyReports, setDailyReports] = useState([]);
     const [count, setCount] = useState(0);
@@ -51,19 +53,30 @@ export default function Stats() {
     const yearRef = useRef();
     const monthRef = useRef();
     const dayRef = useRef();
+    
+    const todays_year = new Date().getFullYear();
 
-    const handleSubmitDateReport = () => {
+    const handleSubmitDateReport = async () => {
         const year = yearRef.current.value;
         const month = monthRef.current.value;
         const day = dayRef.current.value;
 
-        console.log("Buscando reporte:", { year, month, day });
+        try {
+            const response = await fetchDailyReportStatsByDate(
+                user.token,
+                year,
+                month,
+                day
+            );
+            const daily_report = formatDailyReportsData([response.data.daily_report]) 
+            setDailyReportStats(daily_report[0]);
+
+        } catch (error) {
+            console.error("Error al obtener reporte diario:", error);
+        }
     };
 
-
     const formatDailyReportsData = (data = []) => {
-
-        data = formatDate(data);
 
         return data.map((daily_report) => {
             const isToday = daily_report.is_todays;
@@ -79,7 +92,7 @@ export default function Stats() {
                             fontWeight: isToday ? "700" : "400",
                         }}
                     >
-                        {daily_report.gain}
+                        ${daily_report.gain}
                     </span>
                 ),
 
@@ -90,7 +103,7 @@ export default function Stats() {
                             fontWeight: isToday ? "700" : "400",
                         }}
                     >
-                        {daily_report.loss}
+                        ${daily_report.loss}
                     </span>
                 ),
 
@@ -101,7 +114,7 @@ export default function Stats() {
                             fontWeight: isToday ? "700" : "400",
                         }}
                     >
-                        {daily_report.profit}
+                        ${daily_report.profit}
                     </span>
                 ),
 
@@ -116,16 +129,6 @@ export default function Stats() {
         { className: "profit", key: "profit", label: 'Margen' },
         { className: "created_at", key: "created_at", label: 'Fecha' },
     ];
-
-    const formatDate = (daily_reports) => {
-        //TODO: refactors date to dd-mm-yyyy format
-        return daily_reports.map((daily_report) => {
-            return {
-                ...daily_report,
-                created_at: new Date(daily_report.created_at).toLocaleDateString().replace(/\//g, '-'),
-            };
-        });
-    };
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -236,7 +239,7 @@ export default function Stats() {
 
     return (
         <RequirePermission permission="access_dashboard">
-            <hr style={{opacity:'0'}}/>
+            <hr style={{ opacity: '0' }} />
             <DashboardHeader title={'ESTADISTICAS'} isDashboard={false} />
             <div className="container my-4">
 
@@ -263,10 +266,9 @@ export default function Stats() {
                                 <input
                                     type="number"
                                     className="form-control"
-                                    placeholder="2026"
-                                    min="1900"
-                                    max="2100"
+                                    placeholder="Ej: 2026"
                                     ref={yearRef}
+                                    value={todays_year ? todays_year: ''}
                                 />
                             </div>
 
@@ -323,9 +325,9 @@ export default function Stats() {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td>{dailyReportStats ? dailyReportStats.gain : '0'}</td>
+                                            <td>{dailyReportStats ? dailyReportStats.loss : '0'}</td>
+                                            <td>{dailyReportStats ? dailyReportStats.profit : '0'}</td>
                                         </tr>
                                     </tbody>
                                 </table>
