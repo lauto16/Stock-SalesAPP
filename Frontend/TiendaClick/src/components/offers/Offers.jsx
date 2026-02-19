@@ -96,7 +96,6 @@ export default function Offers() {
                             InfoFormContent={InfoOfferContent}
                             titleInfoForm={'Informacion de la oferta (editar)'}
                             disabledDeleteButton={true}
-                            displayName={'Oferta'}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

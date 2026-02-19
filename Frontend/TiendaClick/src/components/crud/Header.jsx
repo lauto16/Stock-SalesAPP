@@ -29,7 +29,6 @@ export default function Header({
   titleInfoForm,
   disabledDeleteButton = false,
   notModifyItem,
-  displayName
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();

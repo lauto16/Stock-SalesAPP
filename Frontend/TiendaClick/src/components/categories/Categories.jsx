@@ -22,7 +22,7 @@ export default function Categories() {
     const [isSomethingSelected, setIsSomethingSelected] = useState(false);
     const PAGE_SIZE = 10;
     const { addNotification } = useNotifications();
-    const [reload, reloadHandler] = useReload();
+    const { reload, reloadHandler } = useReload();
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "description", key: "description", label: 'Descripción' },
@@ -49,7 +49,7 @@ export default function Categories() {
         };
 
         loadcategories();
-    }, [currentPage]);
+    }, [currentPage, reload]);
 
     useEffect(() => {
         if (selectedItems.size !== 0) {

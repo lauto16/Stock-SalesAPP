@@ -16,7 +16,7 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
   } = useForm({ mode: "onSubmit" });
 
   const { addNotification } = useNotifications();
-  const handleBeforeClose = (type, message, handleClose) => {
+  const handleBeforeClose = (type, message) => {
     handleClose()
     reset()
     addNotification(type, message)
@@ -29,12 +29,11 @@ export function useAddItemForm({ onSubmitHandler, handleClose = () => { }, reloa
 
     const response = await onSubmitHandler(data, token);
     console.log(response);
-    
+
     if (response.success) {
-      reset();
-      handleBeforeClose("success", response.success_message, handleClose);
+      handleBeforeClose("success", response.success_message);
     } else {
-      handleBeforeClose("error", response.error, handleClose);
+      handleBeforeClose("error", response.error);
     }
 
   };
