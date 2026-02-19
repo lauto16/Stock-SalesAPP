@@ -71,7 +71,7 @@ export default function Header({
           items={itemsToShow}
           showHeader={false}
         />
-        {deleteLoss.createLossWhenProductDeleteValue ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
+        {deleteLoss.createLossWhenProductDeleteValue && title ==='INVENTARIO' ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
         <p>Esta accion es irreversible, ¿estas seguro?</p>
 
       </>
