@@ -39,7 +39,12 @@ export default function Sales() {
     { className: "product_count", key: "product_count", label: "Cantidad de productos" },
     { className: "date", key: "full_date", label: "Fecha" },
   ];
-
+  const selectedItemsColumns = [
+    { className: "id", key: "id", label: "ID" },
+    { className: "full_date", key: "full_date", label: "Fecha" },
+    { className: "total_price", key: "total_price", label: "Total" },
+    { className: "hour", key: "hour", label: "Hora" },
+  ]
   /* =======================
      FORMAT HELPERS
      ======================= */
@@ -177,12 +182,7 @@ export default function Sales() {
             titleInfoForm={"Informacion de la venta"}
             onSubmitEditItem={() => { }}
             InfoFormContent={InfoFormContent}
-            selectedItemsColumns={[
-              { className: "id", key: "id", label: "ID" },
-              { className: "full_date", key: "full_date", label: "Fecha" },
-              { className: "total_price", key: "total_price", label: "Total" },
-              { className: "hour", key: "hour", label: "Hora" },
-            ]}
+            selectedItemsColumns={selectedItemsColumns}
             displayName={'Venta'}
           />
 

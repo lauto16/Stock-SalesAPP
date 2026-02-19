@@ -54,7 +54,7 @@ async function updateOffer(data, token) {
     data.products = data.products.map(product => product);
 
     try {
-        const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));        
+        const response = await axios.put(`${apiUrl}offers/${data.id}/`, data, authHeader(token));
         return response.data;
     } catch (error) {
         const backendError = error.response?.data?.error || error.message || "Error desconocido";

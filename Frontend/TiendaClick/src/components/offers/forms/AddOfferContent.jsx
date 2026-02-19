@@ -14,11 +14,14 @@ export default function AddOfferContent({ register, control, errors, watch }) {
     const watchedSelectedProducts = watch("selectedProducts");
 
     // Clear selected products when form is reset
+    const watchedProducts = watch("products");
+
     useEffect(() => {
-        if (!watchedSelectedProducts) {
+        if (!watchedProducts) {
             setSelectedProducts([]);
         }
-    }, [watchedSelectedProducts]);
+    }, [watchedProducts]);
+
 
     // Load products dynamically based on search input
     const loadProductOptions = async (inputValue) => {
@@ -118,7 +121,8 @@ export default function AddOfferContent({ register, control, errors, watch }) {
                         render={({ field }) => (
                             <AsyncSelect
                                 {...field}
-                                value={selectedProducts}
+                                value={field.value || []}
+
                                 isMulti
                                 cacheOptions
                                 defaultOptions={false}
@@ -138,8 +142,10 @@ export default function AddOfferContent({ register, control, errors, watch }) {
                             />
                         )}
                     />
-                    {errors.selectedProducts && (
-                        <small className="text-danger">{errors.selectedProducts.message}</small>
+                    {errors.products && (
+                        <small className="text-danger">
+                            {errors.products.message}
+                        </small>
                     )}
                 </Form.Group>
             </Col>

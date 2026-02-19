@@ -16,7 +16,12 @@ export function useAddItemForm({ onSubmitHandler, handleClose, reload = () => { 
   } = useForm({ mode: "onSubmit" });
 
   const { addNotification } = useNotifications();
+<<<<<<< HEAD
   const handleBeforeClose = (type, message, handleClose) => {
+=======
+  const handleBeforeClose = (type, message) => {
+    handleClose()
+>>>>>>> koch
     reset()
     addNotification(type, message)
     reload();
@@ -31,9 +36,13 @@ export function useAddItemForm({ onSubmitHandler, handleClose, reload = () => { 
     console.log(response);
 
     if (response.success) {
+<<<<<<< HEAD
       handleBeforeClose("success", response.success_message, handleClose);
+=======
+      handleBeforeClose("success", response.success_message);
+>>>>>>> koch
     } else {
-      handleBeforeClose("error", response.error, handleClose);
+      handleBeforeClose("error", response.error);
     }
 
   };

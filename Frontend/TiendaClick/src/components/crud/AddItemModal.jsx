@@ -41,8 +41,8 @@ export default function AddItemModal({
 
         try {
             setIsSending(true);
-            const res = await onSubmit(data);
-            if (onItemCreated && res.success) {
+            await onSubmit(data);
+            if (onItemCreated) {
                 onItemCreated(data);
             }
         } finally {
