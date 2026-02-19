@@ -16,6 +16,7 @@ import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import AddSaleContent from "./forms/AddSaleContent.jsx";
 import InfoFormContent from "./forms/InfoFormContent.jsx";
 import { formatDate, formatHour } from "../../utils/formatDate.js";
+import useReload from "../crud/hooks/useReload.js";
 export default function Sales() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,7 @@ export default function Sales() {
   const [isSomethingSelected, setIsSomethingSelected] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [allSearchResults, setAllSearchResults] = useState([]);
-
+  const { reload, reloadHandler } = useReload();
   const { user } = useUser();
   const { addNotification } = useNotifications();
 
@@ -68,7 +69,7 @@ export default function Sales() {
   };
 
   /* =======================
-     FETCH NORMAL
+     FETCH
      ======================= */
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function Sales() {
     };
 
     if (user?.token) fetchData();
-  }, [currentPage, isSearching, user]);
+  }, [currentPage, isSearching, user, reload]);
 
   /* =======================
      SEARCH
@@ -155,17 +156,6 @@ export default function Sales() {
     }
   };
 
-  const reloadWithBounce = () => {
-    const pageBeforeReload = currentPage;
-    setLoading(true);
-    setCurrentPage(1);
-    setTimeout(() => {
-      setCurrentPage(pageBeforeReload);
-      setLoading(false);
-    }, 100);
-  };
-
-
   return (
     <RequirePermission permission="access_sales">
       <div className="d-flex justify-content-center mt-5">
@@ -180,7 +170,7 @@ export default function Sales() {
             items={items}
             deleteItem={deleteSaleById}
             isSale={true}
-            reloadWithBounce={reloadWithBounce}
+            reload={reloadHandler}
             titleAddItem={"Añadir nueva venta"}
             AddItemcontent={AddSaleContent}
             onSubmitAddItem={addSale}
@@ -196,7 +186,7 @@ export default function Sales() {
             displayName={'Venta'}
           />
 
-          
+
 
           <div className="table-container">
             <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

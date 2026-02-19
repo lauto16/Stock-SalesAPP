@@ -18,7 +18,7 @@ import { useNotifications } from '../../context/NotificationSystem';
 import { useModal } from "../crud/hooks/useModal.js";
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import ContentAddProduct from "./forms/ContentAddProduct.jsx";
-
+import useReload from "../crud/hooks/useReload.js";
 export default function InventoryPage() {
 
     const [items, setItems] = useState([]);
@@ -37,6 +37,7 @@ export default function InventoryPage() {
     const [confirmationText, setConfirmationText] = useState('')
     const [confirmationTitle, setConfirmationTitle] = useState('')
     const { addNotification } = useNotifications();
+    const { reload, reloadHandler } = useReload();
 
     const { user, updateUserData } = useUser();
 
@@ -192,7 +193,7 @@ export default function InventoryPage() {
         if (result.success) {
             addNotification("success", "Precios actualizados correctamente");
             setShowConfirmation(false);
-            reloadWithBounce()
+            reloadHandler()
         } else {
             addNotification("error", result.error || "Hubo un error al actualizar los precios");
             setShowConfirmation(false);
@@ -200,17 +201,6 @@ export default function InventoryPage() {
         setIsSending(false)
 
     }
-
-    const reloadWithBounce = () => {
-        const pageBeforeReload = currentPage;
-        setLoading(true);
-        setCurrentPage(1);
-        setTimeout(() => {
-          setCurrentPage(pageBeforeReload);
-          setLoading(false);
-        }, 100);
-      };
-
     useEffect(() => {
         setIsSomethingSelected(selectedItems.size > 0);
     }, [selectedItems]);
@@ -236,7 +226,7 @@ export default function InventoryPage() {
         };
 
         fetchData();
-    }, [currentPage, isSearching, user]);
+    }, [currentPage, isSearching, user, reload]);
 
     useEffect(() => {
         if (!isSearching) return;
@@ -249,11 +239,11 @@ export default function InventoryPage() {
         const pageItems = allSearchResults.slice(start, end);
         setItems(pageItems);
     }, [allSearchResults, currentPage, isSearching]);
-    
+
     useEffect(() => {
         updateUserData()
     }, [showConfirmation]);
-    
+
     const EXTRABUTTONS = [{
         action: onPriceUpdate,
         title: 'Aumentar precios',
@@ -312,7 +302,7 @@ export default function InventoryPage() {
                     handleClose={() => setShowProductInfo(false)}
                     product={selectedProduct}
                     unselectAll={unselectAll}
-                    reloadWithBounce={reloadWithBounce}
+                    reloadWithBounce={reloadHandler}
                 />
 
                 <div className="container container-modified">
@@ -334,7 +324,7 @@ export default function InventoryPage() {
                         onSubmitAddItem={addProduct}
                         AddItemcontent={ContentAddProduct}
                         selectedItemsColumns={importantColumns}
-                        reloadWithBounce={reloadWithBounce}
+                        reload={reloadHandler}
                         displayName={'Producto'}
                     />
                     <div className="table-container">

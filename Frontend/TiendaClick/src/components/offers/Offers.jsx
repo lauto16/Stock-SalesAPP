@@ -7,7 +7,8 @@ import Table from '../crud/Table.jsx';
 import Pagination from '../inventory/Pagination.jsx';
 import AddOfferContent from './forms/AddOfferContent.jsx';
 import InfoOfferContent from './forms/InfoOfferContent.jsx';
-
+import useReload from '../crud/hooks/useReload.js';
+import formatDate from '../../utils/formatDate.js';
 export default function Offers() {
 
     const { user } = useUser();
@@ -19,7 +20,7 @@ export default function Offers() {
     const [selectedItems, setSelectedItems] = useState(new Map());
     const [isSomethingSelected, setIsSomethingSelected] = useState(false);
     const PAGE_SIZE = 10;
-
+    const { reload, reloadHandler } = useReload();
     const columns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
@@ -33,16 +34,7 @@ export default function Offers() {
         { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
         { className: "end_date", key: "end_date", label: 'Finaliza' },
     ];
-    const formatDate = (offers) => {
-        //TODO: refactors date to dd-mm-yyyy format
-        return offers.map((offer) => {
-            return {
-                ...offer,
 
-                created_at: new Date(offer.created_at).toLocaleDateString().replace(/\//g, '-'),
-            };
-        });
-    };
     useEffect(() => {
         const loadOffers = async () => {
             const { results, count } = await fetchOffers({
@@ -50,7 +42,12 @@ export default function Offers() {
                 setLoading,
                 token: user.token,
             });
-            const offersData = formatDate(results.offers);
+            const offersData = results.offers.map((offer) => {
+                return {
+                    ...offer,
+                    created_at: formatDate(offer.created_at),
+                };
+            });
             setOffers(offersData);
 
             setCount(count);
@@ -59,7 +56,7 @@ export default function Offers() {
         };
 
         loadOffers();
-    }, [currentPage]);
+    }, [currentPage, reload]);
 
     useEffect(() => {
         if (selectedItems.size !== 0) {
@@ -75,22 +72,10 @@ export default function Offers() {
         }
 
     };
-
-    const reloadWithBounce = () => {
-        const pageBeforeReload = currentPage;
-        setLoading(true);
-        setCurrentPage(1);
-        setTimeout(() => {
-          setCurrentPage(pageBeforeReload);
-          setLoading(false);
-        }, 100);
-      };
-
-    const handleUpdateOffer = async (data, token) => {
-        const response = await updateOffer(data, token)
+    const handleUpdateOffer = (data, token) => {
+        updateOffer(data, token)
         setSelectedItems(new Map())
-        reloadWithBounce()
-        return response
+        reloadHandler()
     }
 
     return (
@@ -108,7 +93,7 @@ export default function Offers() {
                             user={user}
                             items={offers}
                             selectedItemsColumns={importantColumns}
-                            reloadWithBounce={() => setCurrentPage(1)}
+                            reload={reloadHandler}
                             onSubmitAddItem={addOffer}
                             onSubmitEditItem={handleUpdateOffer}
                             titleAddItem={'Añadir nueva oferta'}

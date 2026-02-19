@@ -9,6 +9,7 @@ import ContentAddProduct from "../../inventory/forms/ContentAddProduct.jsx";
 import AddItemModal from "../../crud/AddItemModal.jsx";
 import { useProviders } from "../../providers/hooks/useProviders.js";
 import Select from "react-select";
+import formatProducts from "./utils/formatProducts.js";
 
 export default function AddEntryContent({ register, control, errors, watch, setValue }) {
     const [selectedProducts, setSelectedProducts] = useState([]);
@@ -35,18 +36,13 @@ export default function AddEntryContent({ register, control, errors, watch, setV
         try {
             const data = await fetchSearchProducts(inputValue, user.token);
             if (data) {
-                return data.map((p) => ({
-                    value: p.code,
-                    label: `${p.name} (${p.code}) - $${p.sell_price.toFixed(2)} - Stock: ${p.stock}`,
-                    ...p
-                }));
+                return formatProducts(data);
             }
             return [];
         } catch (error) {
             console.error("Error searching products:", error);
             return [];
         }
-
     };
 
     // Calculate total based on selected products and quantities
@@ -63,22 +59,14 @@ export default function AddEntryContent({ register, control, errors, watch, setV
         return subtotal + charge;
     };
     const handleProductCreated = (newProduct) => {
-        const newProductData = {
-            ...newProduct,
-            sell_price: Number(newProduct.sell_price),
-            stock: Number(newProduct.stock),
-            buy_price: Number(newProduct.buy_price),
-        }
         if (!newProduct) return;
-        const formatted = {
-            value: newProductData.code,
-            label: `${newProductData.name} (${newProductData.code}) - $${newProductData.sell_price?.toFixed(2)} - Stock: ${newProductData.stock}`,
-            ...newProductData
-        };
-
-        const updatedProducts = [...selectedProducts, formatted];
+        //cast product data to correct types
+        const newProductData = castProductData(newProduct);
+        //convert the string to an apealing format for the user
+        const formatted = formatProducts([newProductData]);
+        //add the formatted product to the selected products
+        const updatedProducts = [...selectedProducts, ...formatted];
         setSelectedProducts(updatedProducts);
-
         setValue("selectedProducts", updatedProducts);
     };
     return (
@@ -264,7 +252,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                                         </div>
                                                     )}
                                                 </td>
-                                                {/* buy price */}
+                                                {/* unit price */}
                                                 <td className="text-center">
                                                     <CustomInput
                                                         type="text"
@@ -279,8 +267,8 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                                                 return parseFloat(value.toString().replace(',', '.'));
                                                             },
                                                             min: {
-                                                                value: 0,
-                                                                message: "El precio debe ser mayor o igual a 0"
+                                                                value: 0.01,
+                                                                message: "El precio debe ser mayor a 0"
                                                             }
                                                         })}
                                                     />
