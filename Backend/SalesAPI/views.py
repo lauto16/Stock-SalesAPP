@@ -11,12 +11,13 @@ from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from InventoryAPI.models import Product
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import F
 from .models import Sale
 import os
-
 
 class SalePagination(PageNumberPagination):
     """
@@ -136,9 +137,9 @@ class SaleViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             for item in sale.items.all():
-                product = item.product
-                product.stock += item.quantity
-                product.save(user=request.user)
+                Product.objects.filter(code=item.product.code).update(
+                    stock=F("stock") + item.quantity
+                )
 
             sale.delete()
 
@@ -147,7 +148,6 @@ class SaleViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """
         Intercepts the creation process to wrap operations in a database transaction.
-
         Automatically assigns the current user and timestamp to the sale,
         and triggers the 'finalize_sale' method on the model instance to
         handle post-creation business logic (like stock updates).
@@ -248,7 +248,6 @@ class SaleSearchView(APIView):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def sale_download_excel(request):
-    print(request.user)
     columns = [
         ("Fecha", "created_at"),
         ("Monto", "total_price"),

@@ -71,7 +71,7 @@ export default function Header({
           items={itemsToShow}
           showHeader={false}
         />
-        {deleteLoss.createLossWhenProductDeleteValue && title ==='INVENTARIO' ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
+        {deleteLoss.createLossWhenProductDeleteValue && title === 'INVENTARIO' ? <p>Se considerarán los productos eliminados como <strong>perdidas económicas</strong></p> : ""}
         <p>Esta accion es irreversible, ¿estas seguro?</p>
 
       </>
@@ -85,26 +85,27 @@ export default function Header({
       id: item.code ?? item.id,
     }));
 
-    const deletePromises = itemsToDelete.map(({ id }) =>
-      deleteItem(id, user.token)
-    );
-
-    const results = await Promise.all(deletePromises);
-
     let hasSuccess = false;
 
-    results.forEach((result) => {
-      if (result?.success) {
-        hasSuccess = true;
-        addNotification("success", result.success_message);
-      } else {
-        console.log(result?.error);
-        addNotification(
-          "error",
-          result?.error || "No se pudo eliminar"
-        );
+    for (const { id } of itemsToDelete) {
+      try {
+        const result = await deleteItem(id, user.token);
+
+        if (result?.success) {
+          hasSuccess = true;
+          addNotification("success", result.success_message);
+        } else {
+          console.log(result?.error);
+          addNotification(
+            "error",
+            result?.error || "No se pudo eliminar"
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        addNotification("error", "Error inesperado al eliminar");
       }
-    });
+    }
 
     if (hasSuccess) {
       reload();
@@ -113,6 +114,7 @@ export default function Header({
     setSelectedItems(new Map());
     closeDelModal();
   };
+
 
 
   //Select All button
