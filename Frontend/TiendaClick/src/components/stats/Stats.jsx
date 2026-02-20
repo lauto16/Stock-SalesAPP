@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { useUser } from "../../context/UserContext.jsx";
 import ActionBox from "../dashboard/ActionBox.jsx";
@@ -9,6 +9,8 @@ import Table from "../crud/Table.jsx";
 import Pagination from '../inventory/Pagination.jsx';
 import { FaSearch } from "react-icons/fa";
 import { useRef } from "react";
+import { useNotifications } from "../../context/NotificationSystem.jsx";
+
 import {
     fetchSalesAverageValueStatsByPeriod,
     fetchMostUsedPaymentMethodsStatsByPeriod,
@@ -23,10 +25,13 @@ import {
     fetchBestSellingCategories,
     fetchDailyReports,
     fetchDailyReportStatsByDate,
+    fetchDailyReportByYear,
+    fetchDailyReportByMonth
 } from "../../services/axios.services.stats.js";
 
 export default function Stats() {
     const { user } = useUser();
+    const {addNotification} = useNotifications()
 
     const [avgSales, setAvgSales] = useState({});
     const [paymentMethods, setPaymentMethods] = useState(null);
@@ -54,9 +59,6 @@ export default function Stats() {
     const monthRef = useRef();
     const dayRef = useRef();
 
-    const todays_year = new Date().getFullYear();
-
-    // SI EL USUARIO INGRESA SOLO YEAR, PEGARLE A ESTE: daily-report-by-year, si ingresa year y month, a otro
 
     const handleSubmitDateReport = async () => {
         const year = yearRef.current.value;
@@ -64,17 +66,51 @@ export default function Stats() {
         const day = dayRef.current.value;
 
         try {
-            const response = await fetchDailyReportStatsByDate(
-                user.token,
-                year,
-                month,
-                day
-            );
-            const daily_report = formatDailyReportsData([response.data.daily_report])
-            setDailyReportStats(daily_report[0]);
+            let response;
+
+            // Case 1: full date
+            if (year && month && day) {
+                response = await fetchDailyReportStatsByDate(
+                    user.token,
+                    year,
+                    month,
+                    day
+                );
+
+                const daily_report = formatDailyReportsData([response.data.daily_report]);
+                setDailyReportStats(daily_report[0]);
+                return;
+            }
+
+            // Case 2: month + year
+            if (year && month) {
+                response = await fetchDailyReportByMonth(
+                    user.token,
+                    year,
+                    month
+                );
+                const monthly_report = formatDailyReportsData([response.data.monthly_report]);
+                setDailyReportStats(monthly_report[0]);
+                return;
+            }
+
+            // Case 3: only year
+            if (year) {
+                response = await fetchDailyReportByYear(
+                    user.token,
+                    year
+                );
+
+                const yearly_report = formatDailyReportsData([response.data.yearly_report]);
+                setDailyReportStats(yearly_report[0]);
+                return;
+            }
+
+            addNotification("error", "Debe ingresar al menos el año.");
 
         } catch (error) {
-            console.error("Error al obtener reporte diario:", error);
+            addNotification("error", "No se encontraron reportes");
+            setDailyReportStats({});
         }
     };
 
@@ -272,7 +308,6 @@ export default function Stats() {
                                     className="form-control"
                                     placeholder="Ej: 2026"
                                     ref={yearRef}
-                                    value={todays_year ? todays_year : ''}
                                 />
                             </div>
 
