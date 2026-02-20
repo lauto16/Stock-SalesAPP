@@ -29,7 +29,13 @@ export default function Header({
   titleInfoForm,
   disabledDeleteButton = false,
   notModifyItem
-}) {
+})
+/* Header component has 4 buttons, and extra can be added. 
+For each button, a form component can be to add content to the modals, 
+provided as props, 
+1° the form component
+2° the onSubmit (axios functions to send data to the backend) that is called when the form is submitted   
+do all of this for each add, update, delete*/ {
   const [showAddItem, setShowAddItem] = useState(false);
   const { addNotification } = useNotifications();
   //Delete modal

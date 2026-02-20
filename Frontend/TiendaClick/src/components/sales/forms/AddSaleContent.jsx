@@ -15,12 +15,16 @@ export default function AddSaleContent({ register, control, errors, watch }) {
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
     const [allActiveOffers, setAllActiveOffers] = useState([]);
+    const [dynamicColSpan, setDynamicColSpan] = useState(5);
 
     // Clear selected products when form is reset
     useEffect(() => {
         if (!watchedSelectedProducts) {
             setSelectedProducts([]);
         }
+        //Responsive design for dynamicColSpan changing when a product is selected
+        const widthColspan = window.innerWidth <= 600 ? 3 : 5;
+        setDynamicColSpan(widthColspan);
     }, [watchedSelectedProducts]);
 
     useEffect(() => {
@@ -287,9 +291,9 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                     <th>Producto</th>
                                     <th>Código</th>
                                     <th className="text-center">Cantidad</th>
-                                    <th className="text-end">Precio Unit.</th>
+                                    <th className="text-end hide-mobile">Precio Unit.</th>
                                     <th className="text-end">Subtotal</th>
-                                    <th className="text-end">Oferta aplicada</th>
+                                    <th className="text-end hide-mobile">Oferta aplicada</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -302,16 +306,16 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                             <td>{product.name}</td>
                                             <td>{product.code}</td>
                                             <td className="text-center">{quantity}</td>
-                                            <td className="text-end">${product.sell_price.toFixed(2)}</td>
+                                            <td className="text-end hide-mobile">${product.sell_price.toFixed(2)}</td>
                                             <td className="text-end">${productSubtotal.toFixed(2)}</td>
-                                            <td className="text-end">${offerPrice.toFixed(2)}</td>
+                                            <td className="text-end hide-mobile">${offerPrice.toFixed(2)}</td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                             <tfoot className="table-secondary">
                                 <tr>
-                                    <td colSpan="5" className="text-end">
+                                    <td colSpan={dynamicColSpan} className="text-end">
                                         <strong>Subtotal:</strong>
                                     </td>
                                     <td className="text-end">
@@ -327,7 +331,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
 
                                     return hasCharge && (
                                         <tr>
-                                            <td colSpan="5" className="text-end">
+                                            <td colSpan={dynamicColSpan} className="text-end">
                                                 <strong>Recargo / Descuento ({parsedCharge}%):</strong>
                                             </td>
                                             <td className="text-end text-danger">
@@ -341,7 +345,7 @@ export default function AddSaleContent({ register, control, errors, watch }) {
                                 })()}
 
                                 <tr className="table-success">
-                                    <td colSpan="5" className="text-end">
+                                    <td colSpan={dynamicColSpan} className="text-end">
                                         <strong>TOTAL:</strong>
                                     </td>
                                     <td className="text-end">

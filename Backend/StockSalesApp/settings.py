@@ -177,4 +177,4 @@ try:
 except FileNotFoundError as e:
     print('No se encontró el identificador personal del programa.')
     
-ERROR_500_API_KEY = PERSONAL_IDENTIFIER.get("key")
+# ERROR_500_API_KEY = PERSONAL_IDENTIFIER.get("key")

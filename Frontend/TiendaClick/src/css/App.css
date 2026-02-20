@@ -17291,6 +17291,48 @@ fieldset legend {
 }
 
 
-.container{
+.container {
   max-width: 98% !important;
+}
+
+.custom-table-responsive table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.custom-table-responsive th,
+.custom-table-responsive td {
+  vertical-align: middle;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 14px;
+}
+
+.custom-table-responsive td:nth-child(1) {
+  /* Producto */
+  max-width: 180px;
+}
+
+.custom-table-responsive td:nth-child(3) {
+  /* Proveedor */
+  max-width: 200px;
+}
+
+.custom-table-responsive td:nth-child(4),
+.custom-table-responsive td:nth-child(5) {
+  max-width: 100px;
+}
+
+@media (max-width: 768px) {
+
+  .custom-table-responsive th,
+  .custom-table-responsive td {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hide-mobile {
+    display: none !important;
+  }
 }

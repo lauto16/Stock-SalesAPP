@@ -15,15 +15,18 @@ export default function AddEntryContent({ register, control, errors, watch, setV
     const { user } = useUser();
     const watchedQuantities = watch();
     const watchedSelectedProducts = watch("selectedProducts");
-
     const { providers } = useProviders(user.token);
     const [showAddItem, setShowAddItem] = useState(false);
     const charge = Number(watch("applied_charge") || 0);
+    const [dynamicColSpan, setDynamicColSpan] = useState(5);
     // Clear selected products when form is reset
     useEffect(() => {
         if (!watchedSelectedProducts) {
             setSelectedProducts([]);
         }
+        //Responsive design for dynamicColSpan changing when a product is selected
+        const widthColspan = window.innerWidth <= 600 ? 3 : 5;
+        setDynamicColSpan(widthColspan);
     }, [watchedSelectedProducts]);
 
     // Load products dynamically based on search input
@@ -170,13 +173,13 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                 {selectedProducts.length > 0 && (
                     <>
                         <h6 className="mb-3">Resumen del ingreso de productos:</h6>
-                        <div className="table-responsive">
+                        <div className="table-responsive custom-table-responsive">
                             <table className="table table-bordered table-hover">
                                 <thead className="table-light">
                                     <tr>
-                                        <th>Producto</th>
+                                        <th className="hide-mobile">Producto</th>
                                         <th>Código</th>
-                                        <th className="text-center">Proveedor</th>
+                                        <th className="text-center hide-mobile">Proveedor</th>
                                         <th className="text-center">Cantidad</th>
                                         <th className="text-center">Precio Unit.</th>
                                         <th className="text-center">Precio Total</th>
@@ -188,10 +191,10 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                         const productSubtotal = product.buy_price * quantity || product.buy_price;
                                         return (
                                             <tr key={product.code}>
-                                                <td>{product.name}</td>
+                                                <td className="hide-mobile">{product.name}</td>
                                                 <td>{product.code}</td>
                                                 {/* providers */}
-                                                <td className="text-end">
+                                                <td className="text-end w-25 hide-mobile">
                                                     <Controller
                                                         name={`provider_${product.code}`}
                                                         control={control}
@@ -199,6 +202,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                                         render={({ field }) => (
                                                             <Select
                                                                 {...field}
+
                                                                 value={providers.find(p => p.id === field.value)
                                                                     ?
                                                                     {
@@ -279,7 +283,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                 </tbody>
                                 <tfoot className="table-secondary">
                                     <tr>
-                                        <td colSpan="5" className="text-end">
+                                        <td colSpan={dynamicColSpan} className="text-end">
                                             <strong>Subtotal:</strong>
                                         </td>
                                         <td className="text-end">
@@ -289,7 +293,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
 
                                     {charge !== 0 &&
                                         <tr>
-                                            <td colSpan="5" className="text-end"><strong>Recargo / Descuento:</strong></td>
+                                            <td colSpan={dynamicColSpan} className="text-end"><strong>Recargo / Descuento:</strong></td>
                                             {charge > 0 ? <td className="text-end text-danger"><strong>
                                                 +${Math.abs(charge)}
                                             </strong></td> : <td className="text-end text-success"><strong>
@@ -297,7 +301,7 @@ export default function AddEntryContent({ register, control, errors, watch, setV
                                             </strong></td>}
                                         </tr>}
                                     <tr className="table-success">
-                                        <td colSpan="5" className="text-end">
+                                        <td colSpan={dynamicColSpan} className="text-end">
                                             <strong>TOTAL:</strong>
                                         </td>
                                         <td className="text-end">
