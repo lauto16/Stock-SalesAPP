@@ -53,7 +53,7 @@ export default function Stats() {
     const yearRef = useRef();
     const monthRef = useRef();
     const dayRef = useRef();
-    
+
     const todays_year = new Date().getFullYear();
 
     const handleSubmitDateReport = async () => {
@@ -68,7 +68,7 @@ export default function Stats() {
                 month,
                 day
             );
-            const daily_report = formatDailyReportsData([response.data.daily_report]) 
+            const daily_report = formatDailyReportsData([response.data.daily_report])
             setDailyReportStats(daily_report[0]);
 
         } catch (error) {
@@ -259,6 +259,8 @@ export default function Stats() {
                 <br />
                 <div className="card shadow-sm p-3">
                     <div className="container-fluid">
+                        <h4 className="mb-4 ">Generar reportes diarios de ganancia</h4>
+
                         <div className="row align-items-end">
 
                             <div className="col-md-3">
@@ -268,7 +270,7 @@ export default function Stats() {
                                     className="form-control"
                                     placeholder="Ej: 2026"
                                     ref={yearRef}
-                                    value={todays_year ? todays_year: ''}
+                                    value={todays_year ? todays_year : ''}
                                 />
                             </div>
 
@@ -303,6 +305,7 @@ export default function Stats() {
                             </div>
 
                             <div className="col-md-3">
+
                                 <button
                                     className="mt-2 send-form-button btn btn-success"
                                     onClick={handleSubmitDateReport}
@@ -313,9 +316,12 @@ export default function Stats() {
                             </div>
 
                         </div>
+
                         <div className="mt-4">
                             <div className="table-responsive">
+
                                 <table className="table table-bordered text-center align-middle">
+
                                     <thead className="table-light">
                                         <tr>
                                             <th>Ganancia</th>
