@@ -1,19 +1,6 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
 
-async function fetchDailyReports({ page = 1, setLoading, token }) {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${apiUrl}daily-reports/?page=${page}`, authHeader(token));
-      return response.data;
-    } catch (error) {
-      console.error("Error al obtener los reportes diarios:", error);
-      return { results: [], count: 0 };
-    } finally {
-      setLoading(false);
-    }
-  }
-
 // returns the average value of the sales
 async function fetchSalesAverageValueStatsByPeriod(token, period) {
     return axios.get(`${apiUrl}sales_stats/average-sales-value/${period}`, authHeader(token));
@@ -109,6 +96,38 @@ async function fetchDailyReportStatsByDate(token, year, month, day) {
     );
 }
 
+async function fetchDailyReportByMonth(token, year, month) {
+    return axios.get(
+        `${apiUrl}daily_reports_stats/daily-report-by-month/`,
+        {
+            ...authHeader(token),
+            params: { year, month }
+        }
+    );
+}
+async function fetchDailyReports({ page = 1, setLoading, token }) {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}daily-reports/?page=${page}`, authHeader(token));
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener los reportes diarios:", error);
+      return { results: [], count: 0 };
+    } finally {
+      setLoading(false);
+    }
+  }
+
+async function fetchDailyReportByYear(token, year) {
+    return axios.get(
+        `${apiUrl}daily_reports_stats/daily-report-by-year/`,
+        {
+            ...authHeader(token),
+            params: { year }
+        }
+    );
+}
+
 export {
     fetchSalesAverageValueStatsByPeriod,
     fetchMostUsedPaymentMethodsStatsByPeriod,
@@ -124,4 +143,6 @@ export {
     fetchLowStock,
     fetchDailyReports,
     fetchDailyReportStatsByDate,
+    fetchDailyReportByYear,
+    fetchDailyReportByMonth
 }

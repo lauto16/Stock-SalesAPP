@@ -35,11 +35,6 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
     """
 
     def get_monthly_report(self, year, month):
-        """
-        Returns aggregated DailyReport data for a given month and year.
-        Sums gain, loss and profit.
-        """
-
         reports = DailyReport.objects.filter(
             created_at__year=year,
             created_at__month=month
@@ -49,11 +44,11 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
             return None
 
         summary = reports.aggregate(
-            total_gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
-            total_loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
-            total_profit=Coalesce(
-                Sum("profit"), 0, output_field=DecimalField()),
+            gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
+            loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
         )
+
+        summary["profit"] = summary["gain"] - summary["loss"]
 
         return summary
 
@@ -72,22 +67,17 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
         return serializer.data
 
     def get_yearly_report(self, year):
-        """
-        Returns aggregated DailyReport data for a given year.
-        Sums gain, loss and profit.
-        """
-
         reports = DailyReport.objects.filter(created_at__year=year)
 
         if not reports.exists():
             return None
 
         summary = reports.aggregate(
-            total_gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
-            total_loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
-            total_profit=Coalesce(
-                Sum("profit"), 0, output_field=DecimalField()),
+            gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
+            loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
         )
+
+        summary["profit"] = summary["gain"] - summary["loss"]
 
         return summary
 
@@ -125,7 +115,7 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
                 status=404
             )
 
-        return Response(monthly_report)
+        return Response({"success": True, "monthly_report": monthly_report})
 
     @action(detail=False, methods=["get"], url_path="daily-report-by-year")
     def daily_report_by_year(self, request):
@@ -147,7 +137,7 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
                 status=404
             )
 
-        return Response(yearly_report)
+        return Response({"success": True, "yearly_report": yearly_report})
 
     @action(detail=False, methods=["get"], url_path="daily-report-by-date")
     def daily_report_by_date(self, request):
