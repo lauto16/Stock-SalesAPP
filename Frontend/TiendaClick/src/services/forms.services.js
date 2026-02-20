@@ -27,3 +27,17 @@ export async function fetchProductsDownloadExcel(token) {
         return false;
     }
 }
+
+export async function fetchDailyReportsDownloadExcel(token) {
+    try {
+      const response = await axios.get(`${apiUrl}dailyreports_download_excel/`, {
+        responseType: "blob",
+        ...authHeader(token)
+      });
+      downloadFile(response.data, "reportes_diarios.xlsx");
+      return true;
+    } catch (error) {
+      console.error("Error al descargar el Excel de reportes diarios:", error);
+      return false;
+    }
+  }
