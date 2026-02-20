@@ -37,6 +37,21 @@ Log "Repositorio clonado correctamente."
 
 Set-Location $TargetDir
 
+# ==========================================
+# Mover PERSONAL_IDENTIFIER.json al Backend
+# ==========================================
+
+$SourceIdentifier = Join-Path $BasePath "PERSONAL_IDENTIFIER.json"
+$DestinationIdentifier = Join-Path $TargetDir "$BackendPath\PERSONAL_IDENTIFIER.json"
+
+if (Test-Path $SourceIdentifier) {
+    Log "Moviendo PERSONAL_IDENTIFIER.json al Backend..."
+    Move-Item -Path $SourceIdentifier -Destination $DestinationIdentifier -Force
+    Log "Archivo movido correctamente."
+} else {
+    Log "PERSONAL_IDENTIFIER.json no encontrado en carpeta del instalador."
+}
+
 # ============================
 # Frontend
 # ============================
