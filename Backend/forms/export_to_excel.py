@@ -42,7 +42,6 @@ def export_to_excel(filename: str, columns: list, queryset):
     headers = [col[0] for col in columns]
     ws.append(headers)
     
-    # Calculate column widths and prepare data
     max_len = {header: len(str(header)) for header in headers}
     
     # Process data
@@ -50,7 +49,6 @@ def export_to_excel(filename: str, columns: list, queryset):
     for obj in queryset:
         row = []
         for i, (_, field) in enumerate(columns):
-            # Use helper to get value (handles plain fields and nested lookups)
             value = get_nested_attr(obj, field)
             
             if isinstance(value, datetime):
@@ -65,24 +63,20 @@ def export_to_excel(filename: str, columns: list, queryset):
             
         formatted_rows.append(row)
 
-    # Apply column widths
     for i, header in enumerate(headers, start=1):
         col_letter = get_column_letter(i)
         ws.column_dimensions[col_letter].width = max_len[header] + 2
 
-    # Style Header
     for col in range(1, len(headers) + 1):
         cell = ws.cell(row=1, column=col)
         cell.alignment = Alignment(horizontal="center", vertical="center")
         cell.font = Font(bold=True)
 
-    # Add rows and apply styles
     fill = PatternFill(start_color="f1f1f1", end_color="f1f1f1", fill_type="solid")
     
     for idx, row_data in enumerate(formatted_rows, start=1):
         ws.append(row_data)
         
-        # Apply styles to the row we just added (row index is idx + 1 because header is at 1)
         current_row = idx + 1
         is_even = current_row % 2 == 0
         

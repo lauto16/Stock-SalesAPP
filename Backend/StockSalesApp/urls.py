@@ -66,6 +66,7 @@ router_daily_reports_stats.register(r"daily_reports_stats", DailyReportStatsView
 
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
+    path('api/dailyreports_download_excel/', dailyreport_download_excel, name='dailyreport_download_excel'),
     path('api/products/search/', ProductSearchView.as_view(), name='product-search'),
     path('api/sales/search/', SaleSearchView.as_view(), name='sale-search'),
     path('api/blames/search/', ChangeLogSearchViewForProducts.as_view(), name='blame-search'),
