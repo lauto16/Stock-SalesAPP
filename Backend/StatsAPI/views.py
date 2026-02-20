@@ -10,20 +10,22 @@ from DailyReportAPI.serializers import DailyReportSerializer
 from concurrent.futures import ThreadPoolExecutor
 from PaymentMethodAPI.models import PaymentMethod
 from rest_framework import viewsets, permissions
+from django.db.models.functions import Coalesce
 from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import date as datetime_date
 from SalesAPI.models import Sale, SaleItem
+from django.db.models import DecimalField
 from InventoryAPI.models import Product
 from django.db.models import FloatField
 from CategoryAPI.models import Category
 from Auth.models import CustomUser
 from django.utils import timezone
+from django.db.models import Sum
 from collections import Counter
 from datetime import timedelta
 from datetime import datetime
-
 
 
 class DailyReportStatsViewSet(viewsets.ViewSet):
@@ -31,6 +33,29 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
     A set of api endpoints retrieving daily-report's data statistics calculated using fast and
     efficient methods.
     """
+
+    def get_monthly_report(self, year, month):
+        """
+        Returns aggregated DailyReport data for a given month and year.
+        Sums gain, loss and profit.
+        """
+
+        reports = DailyReport.objects.filter(
+            created_at__year=year,
+            created_at__month=month
+        )
+
+        if not reports.exists():
+            return None
+
+        summary = reports.aggregate(
+            total_gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
+            total_loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
+            total_profit=Coalesce(
+                Sum("profit"), 0, output_field=DecimalField()),
+        )
+
+        return summary
 
     def get_daily_report(self, date):
         """
@@ -45,6 +70,84 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
 
         serializer = DailyReportSerializer(report)
         return serializer.data
+
+    def get_yearly_report(self, year):
+        """
+        Returns aggregated DailyReport data for a given year.
+        Sums gain, loss and profit.
+        """
+
+        reports = DailyReport.objects.filter(created_at__year=year)
+
+        if not reports.exists():
+            return None
+
+        summary = reports.aggregate(
+            total_gain=Coalesce(Sum("gain"), 0, output_field=DecimalField()),
+            total_loss=Coalesce(Sum("loss"), 0, output_field=DecimalField()),
+            total_profit=Coalesce(
+                Sum("profit"), 0, output_field=DecimalField()),
+        )
+
+        return summary
+
+    @action(detail=False, methods=["get"], url_path="daily-report-by-month")
+    def daily_report_by_month(self, request):
+        year = request.query_params.get("year")
+        month = request.query_params.get("month")
+
+        if not year or not month:
+            return Response(
+                {"error": "Año y mes son requeridos"},
+                status=400
+            )
+
+        try:
+            year = int(year)
+            month = int(month)
+        except ValueError:
+            return Response(
+                {"error": "Año o mes inválido"},
+                status=400
+            )
+
+        if month < 1 or month > 12:
+            return Response(
+                {"error": "Mes debe estar entre 1 y 12"},
+                status=400
+            )
+
+        monthly_report = self.get_monthly_report(year, month)
+
+        if not monthly_report:
+            return Response(
+                {"message": "No hay reportes para ese mes"},
+                status=404
+            )
+
+        return Response(monthly_report)
+
+    @action(detail=False, methods=["get"], url_path="daily-report-by-year")
+    def daily_report_by_year(self, request):
+        year = request.query_params.get("year")
+
+        if not year:
+            return Response({"error": "Año es requerido"}, status=400)
+
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Año inválido"}, status=400)
+
+        yearly_report = self.get_yearly_report(year)
+
+        if not yearly_report:
+            return Response(
+                {"message": "No hay reportes para ese año"},
+                status=404
+            )
+
+        return Response(yearly_report)
 
     @action(detail=False, methods=["get"], url_path="daily-report-by-date")
     def daily_report_by_date(self, request):
@@ -74,6 +177,7 @@ class DailyReportStatsViewSet(viewsets.ViewSet):
         daily_report = self.get_daily_report(parsed_date)
 
         return Response({"success": True, "daily_report": daily_report})
+
 
 class ProductsStatsViewSet(viewsets.ViewSet):
     """

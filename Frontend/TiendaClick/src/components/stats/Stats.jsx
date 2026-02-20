@@ -56,6 +56,8 @@ export default function Stats() {
     
     const todays_year = new Date().getFullYear();
 
+    // SI EL USUARIO INGRESA SOLO YEAR, PEGARLE A ESTE: daily-report-by-year, si ingresa year y month, a otro
+
     const handleSubmitDateReport = async () => {
         const year = yearRef.current.value;
         const month = monthRef.current.value;
