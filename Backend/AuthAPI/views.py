@@ -252,8 +252,6 @@ class UserViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        print(ask_for_pin)
-
         target_users = CustomUser.objects.all()
 
         for target_user in target_users:

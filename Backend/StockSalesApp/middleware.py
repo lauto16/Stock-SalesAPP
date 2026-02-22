@@ -12,7 +12,6 @@ class Error500PostMiddleware:
         return self.get_response(request)
 
     def process_exception(self, request, exception):
-        print(str(settings.ERROR_500_API_KEY))
         payload = {
             "path": request.path,
             "method": request.method,
