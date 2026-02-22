@@ -58,6 +58,7 @@ export default function AddItemModal({
             size="lg"
             contentClassName="blurred-modal-content"
             backdropClassName="blurred-backdrop"
+            animation={false}
         >
             <Modal.Header style={{ backgroundColor: "#f5c193" }} closeButton={!isSending}>
                 <Modal.Title>{title}</Modal.Title>

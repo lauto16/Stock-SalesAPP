@@ -17,12 +17,10 @@ export function useAddItemForm({ onSubmitHandler, handleClose, reload = () => { 
 
   const { addNotification } = useNotifications();
   const handleBeforeClose = (type, message) => {
-    handleClose()
     reset()
-    addNotification(type, message)
-    reload();
     handleClose()
-
+    addNotification(type, message)
+    reload()
   };
 
   const onSubmit = async (data) => {
