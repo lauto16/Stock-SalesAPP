@@ -115,8 +115,8 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
                 show={showPrintOptions}
                 handleClose={() => setShowPrintOptions(false)}
                 title="Opciones de impresión"
-                message="¿Deseas imprimir en impresora de calor o ver otras opciones de impresión?"
-                confirmText="Impresora de calor"
+                message="¿Deseas imprimir en impresora predeterminada o ver otras opciones de impresión?"
+                confirmText="Impresora predeterminada"
                 cancelText="Ver otras opciones"
                 onSendForm={() => {
                     setShowPrintOptions(false);
