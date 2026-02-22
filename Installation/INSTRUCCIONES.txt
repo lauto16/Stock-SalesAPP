@@ -13,3 +13,4 @@
 
 9| Reiniciar pc y probar
 10| Agregar la clave al backend
+11| Verificar que la impresora por defecto sea la que vayan a usar.
