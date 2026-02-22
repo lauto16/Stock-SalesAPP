@@ -16,6 +16,8 @@ import Stats from "./components/stats/Stats.jsx"
 import Categories from './components/categories/Categories.jsx'
 import ConfigApp from './components/config/ConfigApp.jsx'
 import Entries from './components/entries/Entries.jsx'
+import QrPage from './components/qr/QrPage.jsx'
+
 function App() {
   return (
     <Router>
@@ -23,6 +25,17 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
+
+          <Route
+          path="/qr"
+          element={
+            <PrivateRoute>
+              <QrPage/>  
+            </PrivateRoute>
+          }
+          >
+            
+          </Route>
 
           <Route
             path="/dashboard"
