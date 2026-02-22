@@ -28,7 +28,6 @@ export default function Offers() {
         { className: "created_at", key: "created_at", label: 'Creada' },
     ];
 
-    //selectedItemsColums
     const importantColumns = [
         { className: "name", key: "name", label: 'Nombre' },
         { className: "percentage", key: "percentage", label: 'Porcentaje Descuento' },
@@ -97,6 +96,7 @@ export default function Offers() {
                             InfoFormContent={InfoOfferContent}
                             titleInfoForm={'Informacion de la oferta (editar)'}
                             disabledDeleteButton={true}
+                            disableSelectAllButton={true}
                         />
 
                         <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">

@@ -28,6 +28,7 @@ export default function Header({
   InfoFormContent,
   titleInfoForm,
   disabledDeleteButton = false,
+  disableSelectAllButton = false,
   notModifyItem
 })
 /* Header component has 4 buttons, and extra can be added. 
@@ -186,33 +187,34 @@ do all of this for each add, update, delete*/ {
         >
           <i className="bi bi-plus-circle-fill"></i>
         </button>
+        {disabledDeleteButton ? "" :
+          <button
+            type="button"
+            className="btn btn-danger remove-products-button"
+            title="Eliminar productos seleccionados"
+            onClick={prepareDelete}
+            disabled={!isSomethingSelected}
+          >
+            <i className="bi bi-trash-fill"></i>
 
-        <button
-          type="button"
-          className="btn btn-danger remove-products-button"
-          title="Eliminar productos seleccionados"
-          onClick={prepareDelete}
-          disabled={!isSomethingSelected || disabledDeleteButton}
-        >
-          <i className="bi bi-trash-fill"></i>
-
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          title={
-            isSomethingSelected ? "Deseleccionar todos" : "Seleccionar todos"
-          }
-          onClick={toggleSelectAll}
-        >
-          {isSomethingSelected ? (
-            <i className="bi bi-check-square-fill"></i>
-          ) : (
-            <i className="bi bi-square-fill"></i>
-          )}
-        </button>
-
+          </button>
+        }
+        {disableSelectAllButton ? "" :
+          <button
+            type="button"
+            className="btn btn-primary"
+            title={
+              isSomethingSelected ? "Deseleccionar todos" : "Seleccionar todos"
+            }
+            onClick={toggleSelectAll}
+          >
+            {isSomethingSelected ? (
+              <i className="bi bi-check-square-fill"></i>
+            ) : (
+              <i className="bi bi-square-fill"></i>
+            )}
+          </button>
+        }
         <button
           type="button"
           className="btn btn-primary position-relative view-selected-products"
