@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from .services import print_raw_to_default_printer, generate_ticket_data
 from .serializers import SaleSerializer, SaleCreateSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
@@ -7,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse, FileResponse
 from forms.export_to_excel import export_to_excel
 from rest_framework.exceptions import NotFound
+from django.shortcuts import get_object_or_404
 from DailyReportAPI.models import DailyReport
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -158,6 +160,34 @@ class SaleViewSet(viewsets.ModelViewSet):
             )
             sale.finalize_sale(user=self.request.user)
 
+
+    @action(detail=False, methods=["post"], url_path="print-ticket-by-id")
+    def print_ticket_by_id(self, request):
+
+        sale_id = request.data.get("sale_id")
+
+        if not sale_id:
+            return Response(
+                {"success": False, "error": "sale_id es requerido"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        sale = get_object_or_404(Sale, id=sale_id)
+
+        try:
+            ticket_bytes = generate_ticket_data(sale)
+            print_raw_to_default_printer(ticket_bytes)
+
+            return Response({
+                "success": True,
+                "message": f"Ticket de venta #{sale_id} enviado a la cola de impresión"
+            })
+
+        except Exception as e:
+            return Response(
+                {"success": False, "error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class SaleSearchView(APIView):
     """

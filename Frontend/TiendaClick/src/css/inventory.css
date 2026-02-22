@@ -407,3 +407,49 @@ tr.selected-product td {
     background-color: rgba(0, 0, 0, 0.65) !important;
   }
 
+
+  @media print {
+
+    @page {
+      margin: 0;
+    }
+  
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  
+    /* ocultar todo */
+    body * {
+      visibility: hidden;
+    }
+  
+    /* mostrar ticket */
+    .modal-body,
+    .modal-body * {
+      visibility: visible;
+    }
+  
+    /* quitar layout bootstrap modal */
+    .modal,
+    .modal-dialog,
+    .modal-content {
+      position: static !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: none !important;
+      min-height: auto !important;
+    }
+  
+    /* posicion real del ticket */
+    .modal-body {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      margin: 0 !important;
+      padding: 10px !important;
+    }
+  
+  }

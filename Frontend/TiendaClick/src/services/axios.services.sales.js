@@ -114,9 +114,29 @@ async function addSale(formData, token) {
   }
 }
 
+async function printSaleTicket(saleId, token) {
+  try {
+
+    const response = await axios.post(
+      `${apiUrl}sales/print-ticket-by-id/`,
+      { sale_id: saleId },
+      authHeader(token)
+    );
+
+    return response.data;
+
+  } catch (error) {
+    console.error("Error printing ticket:", error);
+    return { success: false };
+
+  } finally {
+  }
+}
+
 export {
   addSale,
   fetchSales,
   deleteSaleById,
   fetchSearchSales,
+  printSaleTicket
 }
