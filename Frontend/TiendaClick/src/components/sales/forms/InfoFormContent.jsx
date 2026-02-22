@@ -6,12 +6,14 @@ import { formatDate, formatHour } from "../../../utils/formatDate.js";
 import { useState } from "react";
 import { printSaleTicket } from '../../../services/axios.services.sales.js'
 import { useUser } from "../../../context/UserContext.jsx";
+import {useNotifications} from "../../../context/NotificationSystem.jsx"
 
 export default function InfoFormContent({ register, selectedItem, errors }) {
     const { user } = useUser();
     const [printMode, setPrintMode] = useState(false);
     const [showPrintOptions, setShowPrintOptions] = useState(false);
-    
+    const { addNotification } = useNotifications();
+
 
     const handleBrowserPrint = () => {
         setPrintMode(true);
