@@ -119,9 +119,6 @@ async function addProduct(product, token) {
         const firstKey = Object.keys(data)[0];
         value = data[firstKey];
 
-        console.log(error);
-
-
         return {
           success: false,
           status: error.response.status,

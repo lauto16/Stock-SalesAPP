@@ -31,9 +31,9 @@ export default function InfoFormContent({ register, selectedItem, errors }) {
             );
 
             if (result?.success) {
-                console.log("Ticket enviado a impresora térmica");
+                addNotification("success", "Ticket enviado a impresora predeterminada del sistema");
             } else {
-                console.error("No se pudo imprimir");
+                addNotification("error", "No se pudo imprimir");
             }
 
         } catch (error) {

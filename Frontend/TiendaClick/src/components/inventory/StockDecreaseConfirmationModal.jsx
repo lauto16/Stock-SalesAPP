@@ -27,8 +27,6 @@ export default function StockDecreaseConfirmationModal({
       setUsersAllowed(allowedStockDecrease.areUsersAllowedValue)
     } 
     callUsersAllowed()
-
-    console.log(usersAllowed);
     
   },[]);
 

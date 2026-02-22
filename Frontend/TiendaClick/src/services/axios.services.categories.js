@@ -44,7 +44,6 @@ async function addCategory(category, token) {
       if (typeof data === "object") {
         const firstKey = Object.keys(data)[0];
         message = data[firstKey];
-        console.log(error);
 
         return {
           success: false,

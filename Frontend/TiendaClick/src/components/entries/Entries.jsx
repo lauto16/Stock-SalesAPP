@@ -44,7 +44,6 @@ export default function Entries() {
         if (!data.results) {
           return
         }
-        console.log(data.results)
         const results = data?.results.map((entry) => {
           return {
             ...entry,

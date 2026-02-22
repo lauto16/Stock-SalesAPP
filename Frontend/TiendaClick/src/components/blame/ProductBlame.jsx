@@ -63,7 +63,6 @@ export default function ProductBlame({ productCode }) {
   };
 
   const onClickItem = (item) => {
-    console.log(item);
     setSelectedBlameItem(item);
     setShowModal(true);
   }

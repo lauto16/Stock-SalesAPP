@@ -17,9 +17,7 @@ export const UserProvider = ({ children }) => {
         }
     }, [user]);
 
-    const updateUserData = async () => {
-        console.log('updating user');
-        
+    const updateUserData = async () => {        
         if (user?.token) {
             const user_data = await fetchUserData(user.token);
             if (user_data) {

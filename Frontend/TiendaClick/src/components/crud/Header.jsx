@@ -102,7 +102,6 @@ do all of this for each add, update, delete*/ {
           hasSuccess = true;
           addNotification("success", result.success_message);
         } else {
-          console.log(result?.error);
           addNotification(
             "error",
             result?.error || "No se pudo eliminar"

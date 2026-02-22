@@ -96,7 +96,6 @@ async function addSale(formData, token) {
       if (typeof data === "object") {
         const firstKey = Object.keys(data)[0];
         value = data[firstKey];
-        console.log(error);
 
         return {
           success: false,

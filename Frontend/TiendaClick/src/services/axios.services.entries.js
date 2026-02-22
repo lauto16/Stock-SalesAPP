@@ -3,7 +3,6 @@ import { apiUrl, authHeader } from './consts';
 
 
 export async function addEntry(formData, token) {
-  console.log("formData", formData);
 
   const details = formData.selectedProducts.map((product) => ({
     product_id: product.code,
@@ -18,7 +17,6 @@ export async function addEntry(formData, token) {
     applied_charge: parseFloat(formData.applied_charge)
   };
 
-  console.log("entryData", entryData);
 
   try {
     await axios.post(

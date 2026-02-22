@@ -71,11 +71,6 @@ export default function ProductInfoModal({ show, handleClose, product, unselectA
     };
 
     useEffect(() => {
-        console.log(categories);
-
-    }, [categories]);
-
-    useEffect(() => {
 
         if (show && product) {
             setIsSending(true)

@@ -182,7 +182,6 @@ export default function Stats() {
                 setLoading,
                 token: user.token,
             });
-            console.log(results);
             const dailyReportsData = formatDailyReportsData(results);
 
             setDailyReports(dailyReportsData);
