@@ -25,7 +25,7 @@ export default function OnExtraInfoEntries({ register, selectedItem }) {
 
             <Col md={12}>
                 <div className="alert alert-info">
-                    <h6>Información de la venta</h6>
+                    <h6>Información del ingreso</h6>
                     <p className="mb-1"><strong>Número de remito:</strong> {selectedItem.rute_number}</p>
                     <p className="mb-1"><strong>Fecha:</strong> {formatDate(selectedItem.created_at)} - {formatHour(selectedItem.created_at)}</p>
                     <p className="mb-1"><strong>Creado por:</strong> {selectedItem.created_by || 'N/A'}</p>
@@ -36,7 +36,7 @@ export default function OnExtraInfoEntries({ register, selectedItem }) {
             </Col>
 
             <Col md={12}>
-                <h6>Productos en esta entrada:</h6>
+                <h6>Productos en este ingreso:</h6>
 
                 <table className="table table-bordered table-hover">
                     <thead className="table-light">
