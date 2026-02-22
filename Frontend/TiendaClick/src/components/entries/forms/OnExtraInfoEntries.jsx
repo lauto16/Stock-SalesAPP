@@ -1,26 +1,17 @@
 import { Row, Col, Form, Button } from "react-bootstrap";
 import CustomInput from "../../crud/CustomInput";
-import Table from "../../crud/Table";
 import { formatDate, formatHour } from "../../../utils/formatDate.js";
+import { useState, useEffect } from "react";
 
-export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
+export default function OnExtraInfoEntries({ register, selectedItem }) {
+    const [dynamicColSpan, setDynamicColSpan] = useState(4);
+    useEffect(() => {
+        //Responsive design for dynamicColSpan changing when a product is selected
+        const widthColspan = window.innerWidth <= 600 ? 2 : 4;
+        setDynamicColSpan(widthColspan);
+    }, []);
 
-    // Transform items to flatten product data for table display
-    const tableItems = selectedItem.details?.map(item => ({
-        product_name: item.product_name,
-        product_code: item.product_code,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        subtotal: item.subtotal,
-    })) || [];
 
-    const columns = [
-        { className: "Producto", key: "product_name", label: "Producto" },
-        { className: "Código", key: "product_code", label: "Código" },
-        { className: "quantity", key: "quantity", label: "Cantidad" },
-        { className: "unit_price", key: "unit_price", label: "Precio Unit." },
-        { className: "subtotal", key: "subtotal", label: "Subtotal" },
-    ];
     return (
         <Row className="g-3">
             <Col md={6} className="d-flex flex-column">
@@ -47,22 +38,50 @@ export default function OnExtraInfoEntries({ register, selectedItem, errors }) {
             <Col md={12}>
                 <h6>Productos en esta entrada:</h6>
 
-                <Table columns={columns} items={tableItems} >
+                <table className="table table-bordered table-hover">
+                    <thead className="table-light">
+                        <tr>
+                            <th>Producto</th>
+                            <th className="hide-mobile">Código</th>
+                            <th className="text-center">Cantidad</th>
+                            <th className="text-center">Precio Unit.</th>
+                            <th className="text-end hide-mobile">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {selectedItem.details?.length > 0 ? (
+                            selectedItem.details.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.product_name}</td>
+                                    <td className="hide-mobile">{item.product_code}</td>
+                                    <td className="text-center">{item.quantity}</td>
+                                    <td className="text-center">
+                                        ${Number(item.unit_price).toFixed(2)}
+                                    </td>
+                                    <td className="text-end hide-mobile">
+                                        ${Number(item.subtotal).toFixed(2)}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={dynamicColSpan} className="text-center text-muted">
+                                    No hay productos en esta entrada
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
                     <tfoot className="table-secondary">
                         <tr>
-                            <td colSpan="5" className="text-end">
-                                <strong>Subtotal:</strong>
+                            <td colSpan={dynamicColSpan} className="text-end">
+                                <strong>Total:</strong>
                             </td>
                             <td className="text-end">
-                                <strong>$0</strong>
+                                <strong>${selectedItem.total}</strong>
                             </td>
                         </tr>
-
-
                     </tfoot>
-                </Table>
-
-
+                </table>
             </Col>
         </Row>
     );
