@@ -5,7 +5,7 @@ import json
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xgcshgtd_v@x+-=8+v1ye!s%e!c*_l942k&(!k*527l0g^s_s3'
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -177,4 +177,4 @@ try:
 except FileNotFoundError as e:
     print('No se encontró el identificador personal del programa.')
     
-# ERROR_500_API_KEY = PERSONAL_IDENTIFIER.get("key")
+ERROR_500_API_KEY = PERSONAL_IDENTIFIER.get("key")
