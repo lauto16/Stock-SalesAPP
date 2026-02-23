@@ -8,7 +8,19 @@ from consts import (
 )
 import subprocess
 import socket
+from datetime import datetime, timedelta
 
+# ============================
+# CONFIG TRIAL
+# ============================
+
+TRIAL_START_DATE = datetime(2026, 2, 23)  # 🔹 Inicio fijo del trial
+TRIAL_DAYS = 15
+TODAY = datetime(2026, 2, 23)  # 🔹 Fecha HARDCODEADA
+
+def is_trial_valid():
+    expiration_date = TRIAL_START_DATE + timedelta(days=TRIAL_DAYS)
+    return TODAY <= expiration_date
 
 def port_in_use(host, port):
     """Returns True if port is in use"""
@@ -16,9 +28,18 @@ def port_in_use(host, port):
         s.settimeout(0.5)
         return s.connect_ex((host, port)) == 0
 
-
 def start_django():
     open(BACKEND_LOG, "w", encoding="utf-8").close()
+
+    if not is_trial_valid():
+        with open(BACKEND_LOG, "a", encoding="utf-8") as log:
+            log.write("\n\n--- TRIAL EXPIRED ---\n")
+            log.write("The 15-day trial period has expired.\n")
+            log.flush()
+
+        print("El período de prueba ha expirado.")
+        return None
+
     """Starts django instance"""
     with open(BACKEND_LOG, "a", encoding="utf-8") as log:
         log.write("\n\n--- Starting Django Server ---\n")
