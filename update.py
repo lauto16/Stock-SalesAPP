@@ -1,4 +1,4 @@
-from consts import BASE_PATH, BACKEND_LOG, VENV_PYTHON, MANAGE_PY, BACKEND_PATH
+from consts import BASE_PATH, BACKEND_LOG, VENV_PYTHON, MANAGE_PY, BACKEND_PATH, FRONTEND_PATH
 import subprocess
 import os
 
@@ -65,3 +65,44 @@ def run_migrations():
         )
 
         migrate.wait()
+
+def install_backend_requirements():
+    """Installs backend dependencies"""
+    print("Instalando dependencias del backend...")
+
+    try:
+        subprocess.Popen(
+            [
+                VENV_PYTHON,
+                "-m",
+                "pip",
+                "install",
+                "-r",
+                "requirements.txt",
+                "--upgrade"
+            ],
+            cwd=BACKEND_PATH,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        ).wait()
+
+    except Exception as e:
+        print(e)
+
+
+def install_frontend_dependencies():
+    """Executes npm install"""
+    print("Instalando dependencias del frontend...")
+
+    try:
+        subprocess.Popen(
+            ["npm", "i"],
+            cwd=FRONTEND_PATH,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        ).wait()
+
+    except Exception as e:
+        print(e)
