@@ -78,8 +78,7 @@ def install_backend_requirements():
                 "pip",
                 "install",
                 "-r",
-                "requirements.txt",
-                "--upgrade"
+                "requirements.txt"
             ],
             cwd=BACKEND_PATH,
             stdout=subprocess.DEVNULL,
