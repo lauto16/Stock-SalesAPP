@@ -12,11 +12,14 @@ def main():
     a git pull --force, creates a db.sqlite3 backup every three days and runs the creations of notifications every 1 hour"""
     
     print("Ejecutando git pull antes de iniciar servicios...")
-    run_git_pull()
-    run_migrations()
 
-    install_backend_requirements()
-    install_frontend_dependencies()
+    try:
+        run_git_pull()
+        run_migrations()
+        install_backend_requirements()
+        install_frontend_dependencies()
+    except Exception as e:
+        print(e)
 
 
     print("Verificando si los servicios ya están ejecutándose...")
