@@ -187,7 +187,7 @@ To start working on the frontend, run the following commands in a CMD terminal:
    ```
 ---
 
-## Licencia
+## License
 
 [In spanish](LICENCIA)
 [In english](LICENSE)
