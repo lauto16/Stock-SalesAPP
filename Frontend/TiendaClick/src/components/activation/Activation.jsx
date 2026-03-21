@@ -4,6 +4,7 @@ import { getActivationStatus, activateLicense } from "../../services/axios.servi
 import RequirePermission from "../permissions_manager/PermissionVerifier.jsx";
 import SideBar from "../sideNav/SideBar";
 import DashboardHeader from "../dashboard/DashboardHeader";
+import { useUser } from "../../context/UserContext.jsx";
 
 export default function Activation() {
   const [isActivated, setIsActivated] = useState(null);
@@ -11,6 +12,7 @@ export default function Activation() {
   const [key, setKey] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 850);
+  const {user} = useUser()
 
   useEffect(() => {
     fetchStatus();
@@ -34,7 +36,7 @@ export default function Activation() {
   }, [remainingTime]);
 
   const fetchStatus = async () => {
-    const data = await getActivationStatus();
+    const data = await getActivationStatus(user.token);
     setIsActivated(data.isActivated);
     setRemainingTime(data.remainingTime);
   };
@@ -44,7 +46,7 @@ export default function Activation() {
 
     try {
       setIsSending(true);
-      const res = await activateLicense(key);
+      const res = await activateLicense(key, user.token);
 
       if (res.success) {
         await fetchStatus();
@@ -106,7 +108,7 @@ export default function Activation() {
                       placeholder="Ingrese clave de activación"
                       value={key}
                       onChange={(e) => setKey(e.target.value)}
-                      style={{ maxWidth: "350px", margin: "0 auto" }}
+                      style={{ textAlign: "center", textJustify: "center", maxWidth: "350px", margin: "0 auto" }}
                       className="mb-3"
                     />
 

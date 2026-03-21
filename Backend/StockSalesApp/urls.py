@@ -7,6 +7,7 @@ from DailyReportAPI.views import *
 from InventoryAPI.views import *
 from ProvidersAPI.views import *
 from CategoryAPI.views import *
+from Activation.views import *
 from BlameAPI.views import *
 from SalesAPI.views import *
 from StatsAPI.views import *
@@ -64,6 +65,9 @@ router_daily_reports.register(r"daily-reports", DailyReportViewSet, basename="da
 router_daily_reports_stats = DefaultRouter()
 router_daily_reports_stats.register(r"daily_reports_stats", DailyReportStatsViewSet, basename="daily_report_stat")
 
+router_activation = DefaultRouter()
+router_activation.register(r"activations", ActivationViewSet, basename="activation")
+
 urlpatterns = [
     path('api/sales_download_excel/', sale_download_excel, name='sale_download_excel'),
     path('api/dailyreports_download_excel/', dailyreport_download_excel, name='dailyreport_download_excel'),
@@ -88,6 +92,7 @@ urlpatterns = [
     path('api/', include(router_entries.urls)),
     path('api/', include(router_daily_reports.urls)),
     path('api/', include(router_daily_reports_stats.urls)),
+    path('api/', include(router_activation.urls)),
     path('api/login/', obtain_auth_token),
 
 ]

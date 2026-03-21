@@ -4,7 +4,7 @@ import { apiUrl, authHeader } from './consts';
 async function getActivationStatus(token) {
     try {
         const response = await axios.get(
-            `${apiUrl}activation/status/`,
+            `${apiUrl}activations/`,
             authHeader(token)
         );
 
