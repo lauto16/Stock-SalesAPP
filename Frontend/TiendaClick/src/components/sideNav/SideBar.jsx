@@ -52,6 +52,7 @@ function SideBar({ onLogout }) {
                                 <NavLink name="Eliminar usuarios" url="/delete-user" />
                                 <NavLink name="Configuración" url="/config-app" />
                                 <NavLink name="Ingresar por celular" url="/qr" />
+                                <NavLink name="Activacion" url="/activation"/>
                             </ul>
                         </nav>
                     </div>
