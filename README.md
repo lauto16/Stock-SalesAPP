@@ -140,9 +140,22 @@ To start working on the backend, run the following commands in a CMD terminal:
    echo { "key": "" } > PERSONAL_IDENTIFIER.json
    ```
 
+  ```bash
+   cd Activation
+   ```
+
+  ```bash
+   py create_activated_json.py
+   ```
+
+  ```bash
+   cd ..
+   ```
+
    ```bash
    py manage.py makemigrations
    ```
+
    ```bash
    py manage.py migrate
    ```
