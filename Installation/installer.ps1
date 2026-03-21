@@ -112,6 +112,9 @@ Log "PIN aceptado."
 Log "Actualizando PIN..."
 & $PythonCmd update_pin.py $Pin
 
+Log "Inicializando periodo de prueba"
+& $PythonCmd ".\Activation\create_activated_json.py"
+
 
 # ======================================================
 # === Crear tarea programada: ejecutar run_app.py al inicio ===
