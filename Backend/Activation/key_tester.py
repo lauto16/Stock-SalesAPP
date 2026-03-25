@@ -25,7 +25,3 @@ def test_key(key: str) -> bool:
             return True
 
     return False
-
-
-if __name__ == "__main__":
-    print(test_key("tiendaclick_activate_9876578736493222135633745"))
