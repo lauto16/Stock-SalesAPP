@@ -1,8 +1,17 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
-
+import { getActivationStatus } from "./axios.services.activation";
 
 export async function addEntry(formData, token) {
+
+  const data = await getActivationStatus(token);
+  if (data.remainingTime === 0 && data.isActivated === false) {
+    return {
+      success: false,
+      status: 500,
+      error: "Para continuar se debe activar TiendaClick.",
+    }
+  }
 
   const details = formData.selectedProducts.map((product) => ({
     product_id: product.code,
