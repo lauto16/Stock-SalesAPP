@@ -4,6 +4,8 @@
 4| ejecutar Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 5| Probar si funciona py, python o python3, Si no es py, cambiar la variable python_command_name en config.json
 6| Arrastrar config.json, installer.ps1, PERSONAL_IDENTIFIER.json y set_local_ip.py al escritorio
+6.1| Fijarse que keys.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
+6.2| Fijarse que activated.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
 7| Ejecutar installer.ps1
 8| En PERSONAL_IDENTIFIER.json asignar una clave:
 
