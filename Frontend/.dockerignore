@@ -1,0 +1,6 @@
+TiendaClick/node_modules/
+TiendaClick/dist/
+TiendaClick/.vite/
+node_modules/
+.git
+*.log

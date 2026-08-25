@@ -1,9 +1,14 @@
 from django.utils import timezone
 from escpos.printer import Dummy
 from pathlib import Path
-import win32print
-import win32api
 import pytz
+
+try:
+    import win32print
+    import win32api
+except ImportError:
+    win32print = None
+    win32api = None
 
 
 ARG_TZ = pytz.timezone("America/Argentina/Buenos_Aires")
@@ -79,6 +84,9 @@ def generate_ticket_data(sale):
 
 
 def print_raw_to_default_printer(data: bytes):
+    if win32print is None:
+        raise RuntimeError("La impresión directa solo está disponible en Windows.")
+
     printer_name = win32print.GetDefaultPrinter()
      
     handle = win32print.OpenPrinter(printer_name)
