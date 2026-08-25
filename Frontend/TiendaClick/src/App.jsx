@@ -17,6 +17,7 @@ import Categories from './components/categories/Categories.jsx'
 import ConfigApp from './components/config/ConfigApp.jsx'
 import Entries from './components/entries/Entries.jsx'
 import QrPage from './components/qr/QrPage.jsx'
+import Activation from './components/activation/Activation.jsx';
 
 function App() {
   return (
@@ -136,6 +137,14 @@ function App() {
                 <Entries />
               </PrivateRoute>
             }
+          />
+          <Route
+                path='/activation/'
+                element={
+                  <PrivateRoute>
+                    <Activation />
+                  </PrivateRoute>
+                }
           />
         </Routes>
       </AuthGuard>

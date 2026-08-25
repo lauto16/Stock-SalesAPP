@@ -110,7 +110,7 @@ Este proyecto ejecuta `migrate --noinput` automáticamente al iniciar en producc
 
 Para comenzar a trabajar en el backend ejecute los siguientes comandos en una terminal cmd.
 
-   ```bash
+    ```bash
    cd Backend
    ```
 
@@ -119,7 +119,7 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    ```
    ```bash
    virtualenv venv
-   # alternativa: py -m virtualenv venv
+   # alternative: py -m virtualenv venv
    ```
    ```bash
    cd venv/Scripts
@@ -140,9 +140,22 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    echo { "key": "" } > PERSONAL_IDENTIFIER.json
    ```
 
+  ```bash
+   cd Activation
+   ```
+
+  ```bash
+   py create_activated_json.py
+   ```
+
+  ```bash
+   cd ..
+   ```
+
    ```bash
    py manage.py makemigrations
    ```
+
    ```bash
    py manage.py migrate
    ```
@@ -154,7 +167,7 @@ Para comenzar a trabajar en el backend ejecute los siguientes comandos en una te
    py manage.py createsuperuser
    ```
    ```bash
-   # <pin> debe ser un pin de 4 digitos que desees.
+   # <pin> has to be a 4 digit pin
    py update_pin.py <pin>
    ```
 

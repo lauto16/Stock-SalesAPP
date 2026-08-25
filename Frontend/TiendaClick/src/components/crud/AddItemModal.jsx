@@ -29,7 +29,6 @@ export default function AddItemModal({
 
     useEffect(() => {
         if (selectedItems?.size) {
-            // get the only selected item, making the translation from map to array
             const item = Array.from(selectedItems)[0][1];
             setSelectedItem(item);
             reset(item);
