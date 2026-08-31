@@ -1,18 +1,28 @@
+ANTES DE INSTALAR
+1| Asegurarse que la computadora tenga acceso a internet.
+2| Correr ipconfig en un CMD y Anotar la ipv4 de la computadora en papel.
+
+INSTALAR
 1| Instalar todos los .exe
 2| Reiniciar pc
 3| Ejecutar powershell como administrador y navegar al escritorio (debe ser instalado en una carpeta donde no se requieran permisos de admin para acceder/modificar archivos)
-4| ejecutar Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+4| Ejecutar Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 5| Probar si funciona py, python o python3, Si no es py, cambiar la variable python_command_name en config.json
 6| Arrastrar config.json, installer.ps1, PERSONAL_IDENTIFIER.json y set_local_ip.py al escritorio
-6.1| Fijarse que keys.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
-6.2| Fijarse que activated.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
 7| Ejecutar installer.ps1
-8| En PERSONAL_IDENTIFIER.json asignar una clave:
-
+7.1| Fijarse que keys.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
+7.2| Fijarse que activated.json este en Backend/ y en Activation/Backend, si no, copiarlo y pegarlo.
+8| En PERSONAL_IDENTIFIER.json asignar una clave y anotarla en papel:
 {
   "key": "CLAVE"
 }
+9| Reiniciar pc y probar (Si no funciona al instante esperar 3 minutos y hacer f5 en la pagina hasta que windows pida permiso
+10| Una vez funcionando, eliminar ser_local_ip.py, PERSONAL_IDENTIFIER.json, installer.ps1 y config.json del escritorio. 
+para que python y node crucen el firewall de windows)
+10| Verificar que la impresora por defecto sea la que vayan a usar.
+11| Activar el producto.
+12| Explicar que hace cada configuración del Dashboard.
 
-9| Reiniciar pc y probar
-10| Agregar la clave al backend
-11| Verificar que la impresora por defecto sea la que vayan a usar.
+
+YA EN CASA
+1| Agregar la clave al backend
