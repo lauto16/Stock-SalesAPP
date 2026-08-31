@@ -19,9 +19,14 @@ INSTALAR
 9| Reiniciar pc y probar (Si no funciona al instante esperar 3 minutos y hacer f5 en la pagina hasta que windows pida permiso
 10| Una vez funcionando, eliminar ser_local_ip.py, PERSONAL_IDENTIFIER.json, installer.ps1 y config.json del escritorio. 
 para que python y node crucen el firewall de windows)
-10| Verificar que la impresora por defecto sea la que vayan a usar.
-11| Activar el producto.
-12| Explicar que hace cada configuración del Dashboard.
+11| Si tienen base de datos de RefrigeracionMartino, renombrarla a old.sqlite3, moverla a una carpeta separada,
+luego mover a la misma carpeta la base de datos de TiendaClick db.sqlite3 y el archivo migrate_rm_to_tc.py
+11.1| Ejecutar migrate_rm_to_tc.py en un CMD.
+11.2| Mover la base de datos db.sqlite3 de nuevo a la carpeta de TiendaClick.
+11.3| Comprobar que se haya migrado bien.
+12| Verificar que la impresora por defecto sea la que vayan a usar.
+13| Activar el producto (tener en cuenta las cuotas, si el cliente paga en n cuotas, activar por n cuotas mas 10 dias de gracia).
+14| Explicar que hace cada configuración del Dashboard.
 
 
 YA EN CASA
