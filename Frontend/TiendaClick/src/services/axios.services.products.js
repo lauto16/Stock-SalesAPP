@@ -115,6 +115,7 @@ async function addProduct(product, token) {
     }
   }
 
+
   try {
     await axios.post(`${apiUrl}products/`, product, authHeader(token))
     return {
