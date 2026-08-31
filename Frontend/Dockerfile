@@ -1,12 +1,6 @@
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
-
-COPY TiendaClick/package*.json ./
-RUN npm install
-
-COPY TiendaClick/ .
-
-EXPOSE 5173
-
-CMD ["npm", "run", "dev"]
+COPY ./lavadero_atiel/dist/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
