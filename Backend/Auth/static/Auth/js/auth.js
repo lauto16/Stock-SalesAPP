@@ -54,4 +54,4 @@ submitFormButton.addEventListener("click", (e) => {
       }
     })
     .catch(() => alert("Error en la comunicación con el servidor."));
-});
+  });

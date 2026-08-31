@@ -26,13 +26,13 @@ async function getActivationStatus(token) {
 async function activateLicense(key, token) {
     try {
         const response = await axios.post(
-            `${apiUrl}activation/activate/`,
+            `${apiUrl}activations/activate/`,
             { key },
             authHeader(token)
         );
 
         return {
-            success: response.data?.success === true
+            success: response.data?.isActivated === true
         };
 
     } catch (error) {

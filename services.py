@@ -14,9 +14,9 @@ from datetime import datetime, timedelta
 # CONFIG TRIAL
 # ============================
 
-TRIAL_START_DATE = datetime(2026, 2, 23)  # 🔹 Inicio fijo del trial
+TRIAL_START_DATE = datetime(2026, 2, 23)
 TRIAL_DAYS = 15
-TODAY = datetime(2026, 2, 23)  # 🔹 Fecha HARDCODEADA
+TODAY = datetime(2026, 2, 23)
 
 def is_trial_valid():
     expiration_date = TRIAL_START_DATE + timedelta(days=TRIAL_DAYS)

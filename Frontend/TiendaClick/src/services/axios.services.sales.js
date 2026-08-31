@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
+import { getActivationStatus } from "./axios.services.activation";
 
 async function fetchSales({ page = 1, setLoading, token }) {
   try {
@@ -65,6 +66,16 @@ async function deleteSaleById(id, token) {
 }
 
 async function addSale(formData, token) {
+
+  const data = await getActivationStatus(token);
+  if (data.remainingTime === 0 && data.isActivated === false) {
+    return {
+      success: false,
+      status: 500,
+      error: "Para continuar se debe activar TiendaClick.",
+    }
+  }
+  
   try {
     const chargePercentage = parseFloat(formData.applied_charge_percentage);
 

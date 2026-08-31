@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiUrl, authHeader } from './consts';
+import { getActivationStatus } from "./axios.services.activation";
 
 async function updateSelectedPrices(data, selectedItems, token) {
   try {
@@ -103,6 +104,18 @@ async function fetchProducts({ page = 1, setLoading, token }) {
 }
 
 async function addProduct(product, token) {
+
+
+  const data = await getActivationStatus(token);
+  if (data.remainingTime === 0 && data.isActivated === false) {
+    return {
+      success: false,
+      status: 500,
+      error: "Para continuar se debe activar TiendaClick.",
+    }
+  }
+
+
   try {
     await axios.post(`${apiUrl}products/`, product, authHeader(token))
     return {

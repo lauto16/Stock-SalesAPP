@@ -3,7 +3,6 @@ import threading
 import traceback
 import requests
 
-
 class Error500PostMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
