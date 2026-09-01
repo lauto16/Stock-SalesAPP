@@ -55,12 +55,12 @@ def main():
 
     print("Servicios inicializados. Supervisando procesos lanzados por este script...")
 
-    #run_notifications()
+    run_notifications()
 
-    #notif_thread = threading.Thread(
-    #    target=notification_scheduler, args=(3600,), daemon=True
-    #)
-    #notif_thread.start()
+    notif_thread = threading.Thread(
+        target=notification_scheduler, args=(3600,), daemon=True
+    )
+    notif_thread.start()
 
     try:
         while True:
